@@ -1,0 +1,7 @@
+Dependencies to install to a fresh expo project:
+
+react-native-picker-select
+react-native-safe-area-context
+react-native-elements
+react-native-gesture-handler
+expo-constants
