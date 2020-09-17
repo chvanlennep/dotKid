@@ -7,6 +7,11 @@ export default Object.freeze({
     FLUID_CALCULATOR: 'FluidCalculator',
     WETFLAG: 'WETFLAG',
     NEONATE_HOMEPAGE: 'NeonateHomepage',
+    BIRTH_CENTILE: 'BirthCentile',
+    NEONATE_CENTILE: 'NCentile',
+    ENDOTRACHEAL_TUBE_LENGTH: 'EndotrachealTube',
+    ENTERAL_FEED: 'EnteralFeed',
+    JAUNDICE: 'Jaundice',
 
 });
 
