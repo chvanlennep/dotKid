@@ -10,7 +10,14 @@ const NCalcScreen = ({children, style}) => {
 
         <Screen style={styles.container}>
         <View style={styles.topContainer}>
-        <TopIcon name="baby-face-outline" height={50} width={50} borderRadius={20} backgroundColor={colors.white} iconColor={colors.secondary} style={styles.face}/>
+        <TopIcon name="baby-face-outline" 
+        height={50} 
+        width={50} 
+        borderRadius={20} 
+        backgroundColor={colors.white} 
+        iconColor={colors.secondary} 
+        style={styles.face}
+        onPress={() => navigation.navigate("NeonateHomepage")}/>
         </View>
         <View style={styles.face}>
         <TopIcon name="face" height={40} width={40} backgroundColor={colors.white} iconColor={colors.medium}  />

@@ -1,14 +1,16 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 
 import colors from '../../config/colors'
 import AppText from '../AppText'
 
-const InputButton = ({ children, style }) => {
+const InputButton = ({ children, style, onPress }) => {
     return (
+        <TouchableOpacity onPress={onPress}>
         <View style={[ styles.button, style ]}> 
         <AppText>{children}</AppText>
         </View>
+        </TouchableOpacity>
     )
 }
 
