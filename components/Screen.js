@@ -27,10 +27,4 @@ const Screen = ({ children, style }) => {
 
 export default Screen
 
-        <LowerNavBar />
-      </View>
-    </View>
-  );
-};
 
-export default Screen;
