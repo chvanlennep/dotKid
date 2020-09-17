@@ -1,0 +1,12 @@
+NPM command: npm install --cache /tmp/empty-cache
+
+Dependencies to install to a fresh expo project:
+
+react-native-picker-select
+react-native-safe-area-context
+react-native-elements
+expo-constants
+npm install react-navigation/native
+expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view
+npm install @react-navigation/stack
+npm install @react-navigation/bottom-tabs
