@@ -1,5 +1,5 @@
 import React from 'react'
-import { View } from 'react-native'
+import { TouchableWithoutFeedback, View } from 'react-native'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import colors from '../config/colors'
 
@@ -9,9 +9,11 @@ function TopIcon({
     height,
     iconColor = "#fff",
     name,
+    onPress,
     width 
      }) {
     return (
+        <TouchableWithoutFeedback onPress={onPress}>
         <View style={{
             width,
             height,
@@ -23,6 +25,7 @@ function TopIcon({
         }}>
         <MaterialCommunityIcons name={name} color={iconColor} size={width} />
         </View>
+        </TouchableWithoutFeedback>
     )
 }
 

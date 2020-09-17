@@ -8,8 +8,10 @@ import AppText from '../components/AppText'
 import InputButton from '../components/buttons/InputButton'
 import Button from '../components/buttons/Button'
 import DOBButton from '../components/buttons/DOBButton'
+import routes from '../navigation/routes'
 
-const PaedsHomepageScreen = () => {
+
+const PaedsHomepageScreen = ({ navigation }) => {
     return (
         <PCalcScreen>
         <View style={styles.topContainer}>
@@ -18,12 +20,12 @@ const PaedsHomepageScreen = () => {
         </View>
         <View style={styles.bottomContainer}>
         <AppText style={styles.text}> Paediatric </AppText>
-        <Button> Blood Pressure Calculator </Button>
-        <Button> Body Surface Area Calculator </Button>
-        <Button> Centile Calculator </Button>
-        <Button> ECG Calculator </Button>
-        <Button> IV Fluid Calculator </Button>
-        <Button> WETFLAG </Button>
+        <Button onPress={() => navigation.navigate(routes.BLOOD_PRESSURE)}> Blood Pressure Calculator </Button>
+        <Button onPress={() => navigation.navigate(routes.BODY_SURFACE_AREA)}> Body Surface Area Calculator </Button>
+        <Button onPress={() => navigation.navigate(routes.PAEDIATRIC_CENTILE)}> Centile Calculator </Button>
+        <Button onPress={() => navigation.navigate(routes.ECG)}> ECG Calculator </Button>
+        <Button onPress={() => navigation.navigate(routes.FLUID_CALCULATOR)}> IV Fluid Calculator </Button>
+        <Button onPress={() => navigation.navigate(routes.WETFLAG)}> WETFLAG </Button>
         </View>
         </PCalcScreen>
     )

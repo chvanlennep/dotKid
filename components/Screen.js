@@ -20,10 +20,11 @@ const Screen = ({ children, style }) => {
     <View style={{ flex: 1 }}>
       <View style={[styles.screen, style]}>
         <View style={[styles.view, style]}>{children}</View>
-        <LowerNavBar />
-      </View>
-    </View>
-  );
-};
+        </View>
+        </View>
+    )
+}
 
-export default Screen;
+export default Screen
+
+

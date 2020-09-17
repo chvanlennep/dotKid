@@ -1,11 +1,12 @@
 import React, { Children } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
 
 import Screen from './Screen'
 import TopIcon from './TopIcon'
 import colors from '../config/colors'
 
-const PCalcScreen = ({children, style}) => {
+const PCalcScreen = ({children, navigation, style}) => {
     return (
 
         <Screen style={styles.container}>
@@ -13,7 +14,12 @@ const PCalcScreen = ({children, style}) => {
         <TopIcon name="face" height={50} width={50} borderRadius={20} backgroundColor={colors.white} iconColor={colors.primary} style={styles.face}/>
         </View>
         <View style={styles.baby}>
-        <TopIcon name="baby-face-outline" height={40} width={40} backgroundColor={colors.white} iconColor={colors.medium}  />
+        <TopIcon name="baby-face-outline" 
+        height={40} 
+        width={40} 
+        backgroundColor={colors.white} 
+        iconColor={colors.medium}
+        onPress={() => navigation.navigate("NeonateHomepage")}  />
         </View>
         <View style={style}>{children}</View>
         </Screen>
