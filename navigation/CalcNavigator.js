@@ -10,11 +10,17 @@ import FluidCalculatorScreen from '../screens/FluidCalculatorScreen'
 import WETFLAGScreen from '../screens/WETFLAGScreen'
 import NeonateHomepageScreen from '../screens/NeonateHomepageScreen'
 import PaedsHomepageScreen from '../screens/PaedsHomepageScreen';
+import routes from './routes';
+import BirthCentileScreen from '../screens/BirthCentileScreen';
+import NCentileScreen from '../screens/NCentileScreen'
+import EnteralFeedScreen from '../screens/EnteralFeedScreen';
+import JaundiceScreen from '../screens/JaundiceScreen';
+
 
 const Stack = createStackNavigator();
 
 const CalcNavigator = () => (
-    <Stack.Navigator mode="card" >
+    <Stack.Navigator mode="card" screenOptions={{headerShown: false}} >
     <Stack.Screen name="PaedsHomepage" component={PaedsHomepageScreen} options={{headerShown: false}} />
     <Stack.Screen name="BloodPressure" component={BPScreen} />
     <Stack.Screen name="BSA" component={BSAScreen} />
@@ -23,7 +29,13 @@ const CalcNavigator = () => (
     <Stack.Screen name="FluidCalculator" component={FluidCalculatorScreen} />
     <Stack.Screen name="WETFLAG" component={WETFLAGScreen} />
     <Stack.Screen name="NeonateHomepage" component={NeonateHomepageScreen} />
+    <Stack.Screen name="BirthCentile" component={BirthCentileScreen} />
+    <Stack.Screen name="NCentile" component={NCentileScreen} />
+    <Stack.Screen name="EnteralFeed" component={EnteralFeedScreen} />
+    <Stack.Screen name="Jaundice" component={JaundiceScreen} />
     </Stack.Navigator>
 );
 
 export default CalcNavigator;
+
+// ENDOTRACHEAL TUBE LENGTH SCREEN <Stack.Screen name="EndotrachealTube" component={} />
