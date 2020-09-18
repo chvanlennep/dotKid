@@ -1,33 +1,50 @@
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React from "react";
+import {
+  StyleSheet,
+  useWindowDimensions,
+  View,
+  TouchableOpacity,
+} from "react-native";
 
-import colors from '../../config/colors'
-import ButtonIcon from './ButtonIcon'
-import AppText from '../AppText'
+import colors from "../../config/colors";
+import ButtonIcon from "./ButtonIcon";
+import AppText from "../AppText";
 
-const InputButton = ({name, children}) => {
-    return (
-        <View style={styles.button}> 
-        <ButtonIcon name={name}/>
-        <AppText>{children}</AppText>
-        </View>
-    )
-}
+const InputButton = ({ name, children }) => {
+  const windowWidth = useWindowDimensions().width;
+  const buttonWidth = windowWidth - 10;
+  return (
+    <View>
+      <View style={[styles.button, { width: buttonWidth }]}>
+        <TouchableOpacity onPress={() => console.log("Boom")}>
+          <View style={[styles.textBox, { width: buttonWidth * 0.8 }]}>
+            <ButtonIcon name={name} />
+            <AppText>{children}</AppText>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => console.log("Boom")}>
+          <ButtonIcon name="cancel" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
 
-export default InputButton
+export default InputButton;
 
 const styles = StyleSheet.create({
-    button: {
-        alignItems: "center",
-        backgroundColor: colors.dark,
-        borderRadius: 5,
-        color: colors.white,
-        flexDirection: "row",
-        height: 57,
-        margin: 5, 
-        padding: 10,
-        width: 300,
-        
-    },
-
-})
+  button: {
+    alignItems: "center",
+    backgroundColor: colors.dark,
+    borderRadius: 5,
+    color: colors.white,
+    flexDirection: "row",
+    height: 57,
+    margin: 5,
+    padding: 10,
+  },
+  textBox: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+});
