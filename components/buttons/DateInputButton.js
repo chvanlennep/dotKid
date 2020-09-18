@@ -12,20 +12,9 @@ import AppText from "../AppText";
 import colors from "../../config/colors";
 import ButtonIcon from "./ButtonIcon";
 
-const DOBButton = () => {
+const DateInputButton = ({ buttonName, iconName, fillInToday = false }) => {
   const windowWidth = useWindowDimensions().width;
   const buttonWidth = windowWidth - 10;
-
-  const [date, setDate] = useState(null);
-  const [show, setShow] = useState(false);
-  const [text, setText] = useState("DOB");
-  const [showCancel, setShowCancel] = useState(false);
-
-  const onChange = (e, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === "ios");
-    setDate(currentDate);
-  };
 
   const formatDate = (date) => {
     let month = "" + (date.getMonth() + 1);
@@ -36,13 +25,35 @@ const DOBButton = () => {
     return [day, month, year].join("/");
   };
 
+  let initialName;
+  let initialDate;
+
+  const [showCancel, setShowCancel] = useState(false);
+
+  if (fillInToday) {
+    initialName = `${buttonName}: ${formatDate(new Date())}`;
+    initialDate = new Date();
+  } else {
+    initialName = buttonName;
+  }
+
+  const [date, setDate] = useState(initialDate);
+  const [show, setShow] = useState(false);
+  const [text, setText] = useState(`${initialName}`);
+
+  const onChange = (e, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === "ios");
+    setDate(currentDate);
+  };
+
   const toggleDatepicker = () => {
     if (!date) {
       setDate(new Date());
     }
     if (show) {
       setShow(false);
-      setText(`DOB: ${formatDate(date)}`);
+      setText(`${buttonName}: ${formatDate(date)}`);
       setShowCancel(true);
     } else {
       setText("Tap here when selected");
@@ -53,7 +64,7 @@ const DOBButton = () => {
 
   const cancelInput = () => {
     setShow(false);
-    setText("DOB");
+    setText(`${buttonName}`);
     setDate(null);
     setShowCancel(false);
   };
@@ -63,7 +74,7 @@ const DOBButton = () => {
       <View style={[styles.button, { width: buttonWidth }]}>
         <TouchableOpacity onPress={toggleDatepicker}>
           <View style={[styles.textBox, { width: buttonWidth * 0.8 }]}>
-            <ButtonIcon name="calendar-range" />
+            <ButtonIcon name={iconName} />
             <AppText>{text}</AppText>
           </View>
         </TouchableOpacity>
@@ -103,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DOBButton;
+export default DateInputButton;
