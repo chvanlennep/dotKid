@@ -8,6 +8,7 @@ import ReferenceScreen from '../screens/ReferenceScreen'
 import SettingsScreen from '../screens/SettingsScreen'
 import CalcNavigator from './CalcNavigator';
 import colors from '../config/colors';
+import ALSNavigator from './ALSNavigator';
 
 
 const Tab = createBottomTabNavigator();
@@ -24,7 +25,7 @@ const AppNavigator = () => (
 
     }}
      />
-    <Tab.Screen name="ALS" component={APLSScreen} options={{
+    <Tab.Screen name="ALS" component={ALSNavigator} options={{
         tabBarIcon: ({ color, size }) => 
         <MaterialCommunityIcons name="hospital-box" color={color} size={size} />
 

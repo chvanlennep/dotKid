@@ -1,13 +1,15 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native'
 import AppText from '../AppText'
 import colors from '../../config/colors'
 
-const ALSToolButton = ({ name }) => {
+const ALSToolButton = ({ name, onPress }) => {
     return (
+        <TouchableWithoutFeedback onPress={onPress}>
         <View style={styles.container}>
-            <AppText>{name}</AppText>
+        <AppText>{name}</AppText>
         </View>
+        </TouchableWithoutFeedback>
     )
 }
 

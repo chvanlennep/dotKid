@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Modal, FlatList, StyleSheet, Text, View } from 'react-native'
 
 
 import PCalcScreen from '../components/PCalcScreen'
@@ -8,49 +8,59 @@ import Button from '../components/buttons/Button'
 import colors from '../config/colors'
 import AppText from '../components/AppText'
 import { ScrollView } from 'react-native-gesture-handler'
+import ALSDisplayButton from '../components/buttons/ALSDisplayButton'
+import ALSFunctionButton from '../components/buttons/ALSFunctionButton'
+import Stopwatch from '../components/Stopwatch'
+import LogScreen from './APLSLogScreen'
+import routes from '../navigation/routes'
 
-const APLSScreen = () => {
+
+
+const APLSScreen = ({ navigation }) => {
+
     return (
         <PCalcScreen>
         <ALSToolbar/>
         <View style={styles.container}>
-        <Button style={styles.button}>00:00</Button>
-        <Button style={styles.button}>Adrenaline</Button>
-        <Button style={styles.button}>Analyse Rhythm</Button>
-        <Button style={styles.button}>Log</Button>
+        <ALSDisplayButton style={styles.button}><Stopwatch/></ALSDisplayButton>
+        <ALSDisplayButton style={styles.button}>Adrenaline</ALSDisplayButton>
+        <ALSDisplayButton style={styles.button}>Analyse Rhythm</ALSDisplayButton>
+        <ALSDisplayButton 
+        style={styles.button}
+        onPress={() => navigation.navigate(routes.APLS_LOG)}>Log</ALSDisplayButton>
         </View>
         <ScrollView style={styles.bottomContainer}>
         <AppText style={styles.text}> APLS </AppText>
-        <Button style={styles.mediumButton}>Confirm Cardiac Arrest</Button>
-        <Button style={styles.mediumButton}>Call For Help</Button>
-        <Button style={styles.mediumButton}>Assign Team Roles</Button>
-        <Button style={styles.mediumButton}>Initiate CPR 15:2</Button>
-        <Button style={styles.mediumButton}>Bag-Mask Ventilation</Button>
-        <Button style={styles.mediumButton}>Get Cardiac Arrest Trolley</Button>
-        <Button style={styles.mediumButton}>Attach Defibrillator</Button>
-        <Button style={styles.mediumButton}>Gain Vascular Access</Button>
-        <Button style={styles.mediumButton}>Take Bloods & Blood Gas</Button>
-        <Button style={styles.darkButton}>Exclude The Following Hs & Ts:</Button>
-        <Button style={styles.mediumButton}>Hypoxia</Button>
-        <Button style={styles.mediumButton}>Hypovolaemia</Button>
-        <Button style={styles.mediumButton}>Hypothermia</Button>
-        <Button style={styles.mediumButton}>Hyper/Hypokalaemia</Button>
-        <Button style={styles.mediumButton}>Tension Pneumothorax</Button>
-        <Button style={styles.mediumButton}>Cardiac Tamponade</Button>
-        <Button style={styles.mediumButton}>Toxins</Button>
-        <Button style={styles.mediumButton}>Thrombosis</Button>
-        <Button style={styles.darkButton}>Additional Drugs & Procedures:</Button>
-        <Button style={styles.mediumButton}>Patient Intubated</Button>
-        <Button style={styles.mediumButton}>Automatic Compression Device</Button>
-        <Button style={styles.mediumButton}>Tension Decompressed</Button>
-        <Button style={styles.mediumButton}>Calcium Given</Button>
-        <Button style={styles.mediumButton}>Insulin-Dextrose Given</Button>
-        <Button style={styles.mediumButton}>Salbutamol IV Given</Button>
-        <Button style={styles.mediumButton}>Blood Transfusion Started</Button>
-        <Button style={styles.mediumButton}>Tranexamic Acid Given</Button>
-        <Button style={styles.mediumButton}>Thrombolysis Given</Button>
-        <Button style={styles.mediumButton}>Sodium Bicarbonate Given</Button>
-        <Button style={styles.bottomButton}>IV Magnesium Given</Button>
+        <ALSFunctionButton style={styles.mediumButton}>Confirm Cardiac Arrest</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Call For Help</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Assign Team Roles</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Initiate CPR 15:2</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Bag-Mask Ventilation</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Get Cardiac Arrest Trolley</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Attach Defibrillator</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Gain Vascular Access</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Take Bloods & Blood Gas</ALSFunctionButton>
+        <ALSDisplayButton style={styles.darkButton}>Exclude The Following Hs & Ts:</ALSDisplayButton>
+        <ALSFunctionButton style={styles.mediumButton}>Hypoxia</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Hypovolaemia</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Hypothermia</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Hyper/Hypokalaemia</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Tension Pneumothorax</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Cardiac Tamponade</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Toxins</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Thrombosis</ALSFunctionButton>
+        <ALSDisplayButton style={styles.darkButton}>Additional Drugs & Procedures:</ALSDisplayButton>
+        <ALSFunctionButton style={styles.mediumButton}>Patient Intubated</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Automatic Compression Device</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Tension Decompressed</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Calcium Given</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Insulin-Dextrose Given</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Salbutamol IV Given</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Blood Transfusion Started</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Tranexamic Acid Given</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Thrombolysis Given</ALSFunctionButton>
+        <ALSFunctionButton style={styles.mediumButton}>Sodium Bicarbonate Given</ALSFunctionButton>
+        <ALSFunctionButton style={styles.bottomButton}>IV Magnesium Given</ALSFunctionButton>
 
         </ScrollView>
         </PCalcScreen>

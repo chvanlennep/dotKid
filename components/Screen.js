@@ -3,7 +3,7 @@ import { StyleSheet, View, Platform } from "react-native";
 import Constants from "expo-constants";
 
 import colors from "../config/colors";
-import LowerNavBar from "./LowerNavBar";
+
 
 const Screen = ({ children, style }) => {
   const styles = StyleSheet.create({

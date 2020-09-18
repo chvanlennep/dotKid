@@ -15,7 +15,7 @@ import BirthCentileScreen from '../screens/BirthCentileScreen';
 import NCentileScreen from '../screens/NCentileScreen'
 import EnteralFeedScreen from '../screens/EnteralFeedScreen';
 import JaundiceScreen from '../screens/JaundiceScreen';
-
+import APLSLogScreen from '../screens/APLSLogScreen'
 
 const Stack = createStackNavigator();
 
