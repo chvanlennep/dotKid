@@ -30,7 +30,6 @@ const NumberInputButton = ({ iconName, buttonName, unitsOfMeasurement }) => {
         : setButtonText(`${buttonName}`);
       setShowTextInput(false);
     } else {
-      setButtonText("Tap here when entered");
       setShowTextInput(true);
     }
   };

@@ -15,8 +15,6 @@ const SexInputButton = () => {
   const buttonWidth = windowWidth - 10;
 
   const [showSexInput, setShowSexInput] = useState(false);
-  const [selectedMale, setSelectedMale] = useState(false);
-  const [selectedFemale, setSelectedFemale] = useState(false);
   const [buttonText, setButtonText] = useState("Sex");
   const [showCancel, setShowCancel] = useState(false);
   const [sex, setSex] = useState(null);
@@ -26,22 +24,21 @@ const SexInputButton = () => {
       setShowSexInput(false);
       sex ? setButtonText(`Sex: ${sex}`) : setButtonText("Sex");
     } else {
-      setButtonText("Tap here when entered");
       setShowSexInput(true);
     }
   };
 
-  const handleSelection = (sex) => {
-    if (sex === "male") {
-      setSelectedFemale(false);
-      setSelectedMale(true);
+  const handleSelection = (userInputSex) => {
+    if (userInputSex === "Male") {
       setShowCancel(true);
-      setSex("Male");
+      setShowSexInput(false);
+      setButtonText(`Sex: ${userInputSex}`);
+      setSex(userInputSex);
     } else {
-      setSelectedMale(false);
-      setSelectedFemale(true);
       setShowCancel(true);
-      setSex("Female");
+      setShowSexInput(false);
+      setButtonText(`Sex: ${userInputSex}`);
+      setSex(userInputSex);
     }
   };
 
@@ -50,8 +47,6 @@ const SexInputButton = () => {
     setButtonText("Sex");
     setSex(null);
     setShowCancel(false);
-    setSelectedFemale(false);
-    setSelectedMale(false);
   };
 
   return (
@@ -72,25 +67,19 @@ const SexInputButton = () => {
         </View>
       </View>
       {showSexInput && (
-        <TouchableOpacity onPress={() => handleSelection("male")}>
+        <TouchableOpacity onPress={() => handleSelection("Male")}>
           <View style={[styles.inputBox, { width: buttonWidth }]}>
             <View style={[styles.buttonTextBox, { width: buttonWidth * 0.8 }]}>
               <AppText>Male</AppText>
-              {selectedMale && (
-                <ButtonIcon backgroundColor={colors.medium} name="check" />
-              )}
             </View>
           </View>
         </TouchableOpacity>
       )}
       {showSexInput && (
-        <TouchableOpacity onPress={() => handleSelection("female")}>
+        <TouchableOpacity onPress={() => handleSelection("Female")}>
           <View style={[styles.inputBox, { width: buttonWidth }]}>
             <View style={[styles.buttonTextBox, { width: buttonWidth * 0.8 }]}>
               <AppText>Female</AppText>
-              {selectedFemale && (
-                <ButtonIcon backgroundColor={colors.medium} name="check" />
-              )}
             </View>
           </View>
         </TouchableOpacity>

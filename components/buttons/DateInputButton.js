@@ -56,7 +56,6 @@ const DateInputButton = ({ buttonName, iconName, fillInToday = false }) => {
       setText(`${buttonName}: ${formatDate(date)}`);
       setShowCancel(true);
     } else {
-      setText("Tap here when selected");
       setShow(true);
       setShowCancel(true);
     }
@@ -93,6 +92,13 @@ const DateInputButton = ({ buttonName, iconName, fillInToday = false }) => {
           onChange={onChange}
         />
       )}
+      {show && (
+        <TouchableOpacity onPress={toggleDatepicker}>
+          <View style={[styles.submitButton, { width: buttonWidth }]}>
+            <AppText>Submit</AppText>
+          </View>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -107,6 +113,17 @@ const styles = StyleSheet.create({
     height: 57,
     margin: 5,
     padding: 10,
+  },
+  submitButton: {
+    alignItems: "center",
+    backgroundColor: colors.medium,
+    borderRadius: 5,
+    color: colors.white,
+    flexDirection: "row",
+    height: 57,
+    margin: 5,
+    padding: 10,
+    justifyContent: "center",
   },
   textBox: {
     flexDirection: "row",
