@@ -1,46 +1,92 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { StyleSheet, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import PCalcScreen from "../components/PCalcScreen";
-import DOBButton from "../components/buttons/DOBButton";
-import InputButton from "../components/buttons/InputButton";
 import AppText from "../components/AppText";
 import colors from "../config/colors";
 import SmallButton from "../components/buttons/SmallButton";
-import DateInputButton from "../components/buttons/DateInputButton";
-import SexInputButton from "../components/buttons/SexInputButton";
-import NumberInputButton from "../components/buttons/NumberInputButton";
+import DateInputButton from "../components/buttons/input/DateInputButton";
+import SexInputButton from "../components/buttons/input/SexInputButton";
+import NumberInputButton from "../components/buttons/input/NumberInputButton";
+import GestationInputButton from "../components/buttons/input/GestationInputButton";
+import SubmitButton from "../components/buttons/SubmitButton";
 
 const PCentileScreen = () => {
+  const [sex, setSex] = useState(null);
+  const [dob, setDob] = useState(null);
+  const [height, setHeight] = useState(null);
+  const [weight, setWeight] = useState(null);
+  const [hc, setHc] = useState(null);
+  const [dom, setDom] = useState(new Date());
+  const [gestationWeeks, setGestationWeeks] = useState(40);
+  const [gestationDays, setGestationDays] = useState(0);
+  const weeksState = {
+    value: gestationWeeks,
+    setValue: setGestationWeeks,
+  };
+  const daysState = {
+    value: gestationDays,
+    setValue: setGestationDays,
+  };
+
+  const collateMeasurements = () => {
+    return {
+      sex: sex,
+      dob: dob,
+      height: height,
+      weight: weight,
+      hc: hc,
+      dom: dom,
+      gestationInDays: gestationWeeks * 7 + gestationDays,
+    };
+  };
+
   return (
     <PCalcScreen>
-      <ScrollView>
+      <KeyboardAwareScrollView>
         <View style={styles.topContainer}>
           <DateInputButton
-            buttonName="Date of Birth"
+            userLabel="Date of Birth"
             iconName="calendar-range"
+            dateValue={dob}
+            setDateValue={setDob}
           />
-          <SexInputButton />
+          <GestationInputButton weeksState={weeksState} daysState={daysState} />
+          <SexInputButton value={sex} setValue={setSex} />
           <NumberInputButton
-            buttonName="Height"
+            userLabel="Height"
             iconName="arrow-up-down"
             unitsOfMeasurement="cm"
+            value={height}
+            setValue={setHeight}
           />
           <NumberInputButton
-            buttonName="Weight"
+            userLabel="Weight"
             iconName="chart-bar"
             unitsOfMeasurement="kg"
+            value={weight}
+            setValue={setWeight}
           />
           <NumberInputButton
-            buttonName="Head Circumference"
+            userLabel="Head Circumference"
             iconName="emoticon-outline"
             unitsOfMeasurement="cm"
+            value={hc}
+            setValue={setHc}
           />
           <DateInputButton
-            buttonName="Measured on"
+            userLabel="Measured on"
             iconName="clock-outline"
-            fillInToday={true}
+            renderFilledIn={true}
+            dateValue={dom}
+            setDateValue={setDom}
+          />
+          <SubmitButton name="Reset" onPress={() => console.log("Reset")} />
+          <SubmitButton
+            name="Calculate Centiles"
+            backgroundColor={colors.dark}
+            onPress={() => console.log(collateMeasurements())}
           />
         </View>
         <View style={styles.bottomContainer}>
@@ -95,7 +141,7 @@ const PCentileScreen = () => {
             </View>
           </View>
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </PCalcScreen>
   );
 };
