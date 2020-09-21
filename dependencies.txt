@@ -10,3 +10,7 @@ expo install react-native-gesture-handler react-native-reanimated react-native-s
 npm install @react-navigation/stack
 npm install @react-navigation/bottom-tabs
 expo install @react-native-community/datetimepicker
+expo install @react-native-community/picker
+npm install react-native-keyboard-aware-scroll-view
+expo install formik
+expo install yup

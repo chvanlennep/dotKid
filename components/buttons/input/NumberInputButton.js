@@ -7,38 +7,47 @@ import {
   TextInput,
 } from "react-native";
 
-import colors from "../../config/colors";
-import globalStyles from "../../config/styles";
-import ButtonIcon from "./ButtonIcon";
-import AppText from "../AppText";
+import colors from "../../../config/colors";
+import globalStyles from "../../../config/styles";
+import ButtonIcon from "../ButtonIcon";
+import AppText from "../../AppText";
 
-const NumberInputButton = ({ iconName, buttonName, unitsOfMeasurement }) => {
+const NumberInputButton = ({
+  iconName,
+  name,
+  userLabel,
+  unitsOfMeasurement,
+  value,
+  setValue,
+}) => {
   const windowWidth = useWindowDimensions().width;
   const buttonWidth = windowWidth - 10;
 
-  const [textInputValue, setTextInputValue] = useState(
-    `Enter ${buttonName} here (in ${unitsOfMeasurement})`
-  );
+  const textInputValue = value;
+  const setTextInputValue = setValue;
+
   const [showTextInput, setShowTextInput] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
-  const [buttonText, setButtonText] = useState(`${buttonName}`);
+  const [buttonText, setButtonText] = useState(`${userLabel}`);
+
+  const cancelInput = () => {
+    setShowTextInput(false);
+    setButtonText(`${userLabel}`);
+    setShowCancel(false);
+    setTextInputValue(null);
+  };
 
   const toggleTextInput = () => {
     if (showTextInput) {
-      textInputValue !== `Enter ${buttonName} here (in ${unitsOfMeasurement})`
-        ? setButtonText(`${buttonName}: ${textInputValue}${unitsOfMeasurement}`)
-        : setButtonText(`${buttonName}`);
-      setShowTextInput(false);
+      // only if onBlur() isn't activated, therefore textInputValue must be null
+      cancelInput();
     } else {
-      setButtonText("Tap here when entered");
+      userLabel === "Head Circumference"
+        ? setButtonText(`Enter HC below (in ${unitsOfMeasurement})`)
+        : setButtonText(`Enter ${userLabel} below (in ${unitsOfMeasurement}):`);
       setShowTextInput(true);
+      setShowCancel(true);
     }
-  };
-  const cancelInput = () => {
-    setShowTextInput(false);
-    setButtonText(`${buttonName}`);
-    setTextInputValue(`Enter ${buttonName} here (in ${unitsOfMeasurement})`);
-    setShowCancel(false);
   };
 
   return (
@@ -46,14 +55,14 @@ const NumberInputButton = ({ iconName, buttonName, unitsOfMeasurement }) => {
       <View>
         <View style={[styles.button, { width: buttonWidth }]}>
           <TouchableOpacity onPress={toggleTextInput}>
-            <View style={[styles.buttonTextBox, { width: buttonWidth * 0.8 }]}>
+            <View style={[styles.buttonTextBox, { width: buttonWidth - 55 }]}>
               <ButtonIcon name={iconName} />
               <AppText>{buttonText}</AppText>
             </View>
           </TouchableOpacity>
           {showCancel && (
             <TouchableOpacity onPress={cancelInput}>
-              <ButtonIcon name="cancel" />
+              <ButtonIcon name="delete-forever" />
             </TouchableOpacity>
           )}
         </View>
@@ -64,7 +73,7 @@ const NumberInputButton = ({ iconName, buttonName, unitsOfMeasurement }) => {
             style={[
               globalStyles.text,
               { color: colors.white },
-              { width: buttonWidth - 10 },
+              { width: buttonWidth },
             ]}
             onChangeText={(text) => {
               setTextInputValue(text);
@@ -73,15 +82,19 @@ const NumberInputButton = ({ iconName, buttonName, unitsOfMeasurement }) => {
             value={textInputValue}
             clearTextOnFocus={true}
             keyboardType={"decimal-pad"}
+            placeholder="Enter here"
+            placeholderTextColor={colors.white}
             multiline={false}
             textAlignVertical="top"
             onBlur={() => {
-              textInputValue !==
-              `Enter ${buttonName} here (in ${unitsOfMeasurement})`
-                ? setButtonText(
-                    `${buttonName}: ${textInputValue}${unitsOfMeasurement}`
-                  )
-                : setButtonText(`${buttonName}`);
+              if (textInputValue) {
+                setButtonText(
+                  `${userLabel}: ${textInputValue}${unitsOfMeasurement}`
+                );
+              } else {
+                setButtonText(`${userLabel}`);
+                setShowCancel(false);
+              }
               setShowTextInput(false);
             }}
           />

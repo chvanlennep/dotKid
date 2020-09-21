@@ -1,92 +1,47 @@
 import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { StyleSheet, Text, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
 import PCalcScreen from "../components/PCalcScreen";
 import AppText from "../components/AppText";
 import colors from "../config/colors";
 import SmallButton from "../components/buttons/SmallButton";
-import DateInputButton from "../components/buttons/input/DateInputButton";
-import SexInputButton from "../components/buttons/input/SexInputButton";
-import NumberInputButton from "../components/buttons/input/NumberInputButton";
-import GestationInputButton from "../components/buttons/input/GestationInputButton";
-import SubmitButton from "../components/buttons/SubmitButton";
+import DateInputButton from "../components/buttons/DateInputButton";
+import SexInputButton from "../components/buttons/SexInputButton";
+import NumberInputButton from "../components/buttons/NumberInputButton";
+import Child from "../objects/Child";
 
-const PCentileScreen = () => {
-  const [sex, setSex] = useState(null);
-  const [dob, setDob] = useState(null);
-  const [height, setHeight] = useState(null);
-  const [weight, setWeight] = useState(null);
-  const [hc, setHc] = useState(null);
-  const [dom, setDom] = useState(new Date());
-  const [gestationWeeks, setGestationWeeks] = useState(40);
-  const [gestationDays, setGestationDays] = useState(0);
-  const weeksState = {
-    value: gestationWeeks,
-    setValue: setGestationWeeks,
-  };
-  const daysState = {
-    value: gestationDays,
-    setValue: setGestationDays,
-  };
-
-  const collateMeasurements = () => {
-    return {
-      sex: sex,
-      dob: dob,
-      height: height,
-      weight: weight,
-      hc: hc,
-      dom: dom,
-      gestationInDays: gestationWeeks * 7 + gestationDays,
-    };
-  };
+const ScreenExp = () => {
+  [childMeasurements, updateChildMeasurements] = useState(Child);
 
   return (
     <PCalcScreen>
-      <KeyboardAwareScrollView>
+      <ScrollView>
         <View style={styles.topContainer}>
           <DateInputButton
-            userLabel="Date of Birth"
+            buttonName="Date of Birth"
             iconName="calendar-range"
-            dateValue={dob}
-            setDateValue={setDob}
           />
-          <GestationInputButton weeksState={weeksState} daysState={daysState} />
-          <SexInputButton value={sex} setValue={setSex} />
+          <SexInputButton />
           <NumberInputButton
-            userLabel="Height"
+            buttonName="Height"
             iconName="arrow-up-down"
             unitsOfMeasurement="cm"
-            value={height}
-            setValue={setHeight}
           />
           <NumberInputButton
-            userLabel="Weight"
+            buttonName="Weight"
             iconName="chart-bar"
             unitsOfMeasurement="kg"
-            value={weight}
-            setValue={setWeight}
           />
           <NumberInputButton
-            userLabel="Head Circumference"
+            buttonName="Head Circumference"
             iconName="emoticon-outline"
             unitsOfMeasurement="cm"
-            value={hc}
-            setValue={setHc}
           />
           <DateInputButton
-            userLabel="Measured on"
+            buttonName="Measured on"
             iconName="clock-outline"
-            renderFilledIn={true}
-            dateValue={dom}
-            setDateValue={setDom}
-          />
-          <SubmitButton name="Reset" onPress={() => console.log("Reset")} />
-          <SubmitButton
-            name="Calculate Centiles"
-            backgroundColor={colors.dark}
-            onPress={() => console.log(collateMeasurements())}
+            fillInToday={true}
           />
         </View>
         <View style={styles.bottomContainer}>
@@ -141,12 +96,12 @@ const PCentileScreen = () => {
             </View>
           </View>
         </View>
-      </KeyboardAwareScrollView>
+      </ScrollView>
     </PCalcScreen>
   );
 };
 
-export default PCentileScreen;
+export default ScreenExp;
 
 const styles = StyleSheet.create({
   bottomContainer: {

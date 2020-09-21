@@ -17,7 +17,7 @@ const InputButton = ({ name, children }) => {
     <View>
       <View style={[styles.button, { width: buttonWidth }]}>
         <TouchableOpacity onPress={() => console.log("Boom")}>
-          <View style={[styles.textBox, { width: buttonWidth * 0.8 }]}>
+          <View style={[styles.textBox, { width: buttonWidth - 55 }]}>
             <ButtonIcon name={name} />
             <AppText>{children}</AppText>
           </View>

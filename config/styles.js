@@ -1,4 +1,4 @@
-import { Platform } from "react-native";
+import { Platform, useWindowDimensions } from "react-native";
 
 import colors from "./colors";
 

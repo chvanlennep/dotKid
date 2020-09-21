@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import * as Yup from "yup";
 
 import PCalcScreen from "../components/PCalcScreen";
 import AppText from "../components/AppText";
@@ -12,36 +12,20 @@ import NumberInputButton from "../components/buttons/input/NumberInputButton";
 import GestationInputButton from "../components/buttons/input/GestationInputButton";
 import SubmitButton from "../components/buttons/SubmitButton";
 
-const PCentileScreen = () => {
-  const [sex, setSex] = useState(null);
-  const [dob, setDob] = useState(null);
-  const [height, setHeight] = useState(null);
-  const [weight, setWeight] = useState(null);
-  const [hc, setHc] = useState(null);
-  const [dom, setDom] = useState(new Date());
-  const [gestationWeeks, setGestationWeeks] = useState(40);
-  const [gestationDays, setGestationDays] = useState(0);
-  const weeksState = {
-    value: gestationWeeks,
-    setValue: setGestationWeeks,
-  };
-  const daysState = {
-    value: gestationDays,
-    setValue: setGestationDays,
-  };
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import PCentileScreen from "./PCentileScreen";
 
-  const collateMeasurements = () => {
-    return {
-      sex: sex,
-      dob: dob,
-      height: height,
-      weight: weight,
-      hc: hc,
-      dom: dom,
-      gestationInDays: gestationWeeks * 7 + gestationDays,
-    };
-  };
+const validationSchema = Yup.object().shape({
+  dob: Yup.date().required().label("Date of Birth"),
+  dom: Yup.date().required().label("Measured on"),
+  gestationInDays: Yup.number().required().label("Birth Gestation"),
+  sex: Yup.string().required().label("Sex"),
+  height: Yup.number().min(10).max(250).label("Height"),
+  weight: Yup.number().min(0.1).max(200).label("Weight"),
+  hc: Yup.number().min(10).max(100).label("Head Circumference"),
+});
 
+function PCentileScreen() {
   return (
     <PCalcScreen>
       <KeyboardAwareScrollView>
@@ -144,9 +128,7 @@ const PCentileScreen = () => {
       </KeyboardAwareScrollView>
     </PCalcScreen>
   );
-};
-
-export default PCentileScreen;
+}
 
 const styles = StyleSheet.create({
   bottomContainer: {
@@ -194,3 +176,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
+export default PCentileScreen;
