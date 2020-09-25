@@ -14,19 +14,19 @@ const PaedsHomepageScreen = ({ navigation }) => {
   const [dob, setDob] = useState(null);
   const [sex, setSex] = useState(null);
   return (
+    <PCalcScreen>
+    <View style={styles.topContainer}>
+    <DateInputButton
+    userLabel="Date of Birth"
+    iconName="calendar-range"
+    dateValue={dob}
+    setDateValue={setDob}
+    />
+    <SexInputButton value={sex} setValue={setSex} />
+    </View>
+    <View style={styles.bottomContainer}>
+    <AppText style={styles.text}> Paediatric </AppText>
     <ScrollView>
-      <PCalcScreen>
-        <View style={styles.topContainer}>
-          <DateInputButton
-            userLabel="Date of Birth"
-            iconName="calendar-range"
-            dateValue={dob}
-            setDateValue={setDob}
-          />
-          <SexInputButton value={sex} setValue={setSex} />
-        </View>
-        <View style={styles.bottomContainer}>
-          <AppText style={styles.text}> Paediatric </AppText>
           <Button onPress={() => navigation.navigate(routes.BLOOD_PRESSURE)}>
             {" "}
             Blood Pressure Calculator{" "}
@@ -53,9 +53,9 @@ const PaedsHomepageScreen = ({ navigation }) => {
             {" "}
             WETFLAG{" "}
           </Button>
+          </ScrollView>
         </View>
       </PCalcScreen>
-    </ScrollView>
   );
 };
 

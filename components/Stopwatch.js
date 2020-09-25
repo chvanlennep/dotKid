@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
+
 const Stopwatch = () => {
 
   const [seconds, setSeconds] = useState(0.01);
-  const [isActive, setIsActive] = useState(false);
+  const [minutes, setMinutes] = useState(0)
+  const [isActive, setIsActive] = useState(true);
 
   function toggle() {
       setIsActive(!isActive);
@@ -22,8 +24,10 @@ const Stopwatch = () => {
               interval = setInterval(() => {
                   setSeconds(seconds => seconds + 0.01);
               }, 1000);
+              
             } else if (!isActive && seconds !== 0) {
                 clearInterval(interval);
+
             }
             return () => clearInterval(interval);
               }, [isActive, seconds]);

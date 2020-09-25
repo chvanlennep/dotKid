@@ -19,14 +19,14 @@ export default InputButton
 const styles = StyleSheet.create({
     button: {
         alignItems: "center",
-        backgroundColor: colors.light,
+        backgroundColor: colors.medium,
         borderRadius: 5,
         color: colors.white,
         flexDirection: "row",
         height: 57,
         margin: 5, 
         padding: 10,
-        width: "100%",
+        width: "98%",
         
     },
 

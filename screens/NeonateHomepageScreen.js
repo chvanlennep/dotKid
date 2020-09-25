@@ -13,19 +13,19 @@ const NeonateHomepageScreen = ({ navigation }) => {
   const [dob, setDob] = useState(null);
   const [sex, setSex] = useState(null);
   return (
+    <NCalcScreen>
+    <View style={styles.topContainer}>
+    <DateInputButton
+    userLabel="Date of Birth"
+    iconName="calendar-range"
+    dateValue={dob}
+    setDateValue={setDob}
+    />
+    <SexInputButton value={sex} setValue={setSex} />
+    </View>
+    <View style={styles.bottomContainer}>
+    <AppText style={styles.text}> Neonate </AppText>
     <ScrollView>
-      <NCalcScreen>
-        <View style={styles.topContainer}>
-          <DateInputButton
-            userLabel="Date of Birth"
-            iconName="calendar-range"
-            dateValue={dob}
-            setDateValue={setDob}
-          />
-          <SexInputButton value={sex} setValue={setSex} />
-        </View>
-        <View style={styles.bottomContainer}>
-          <AppText style={styles.text}> Neonate </AppText>
           <Button onPress={() => navigation.navigate(routes.BIRTH_CENTILE)}>
             {" "}
             Birth Centile Calculator{" "}
@@ -48,9 +48,9 @@ const NeonateHomepageScreen = ({ navigation }) => {
             {" "}
             Jaundice Calculator{" "}
           </Button>
+          </ScrollView>
         </View>
       </NCalcScreen>
-    </ScrollView>
   );
 };
 
