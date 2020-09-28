@@ -4,18 +4,16 @@ import { StyleSheet, TouchableHighlight, View } from 'react-native'
 import colors from '../../config/colors'
 import AppText from '../AppText'
 
-const ALSFunctionButton = ({ logState, isButtonPressed, itemTime, reset, setReset, style, title }) => {
-
-        const log = logState.value;
-        const setLog = logState.setValue;
+const ALSFunctionButton = ({  onPress, style, title }) => {
+ 
 
         const [changeBackground, setChangeBackground] = useState(false)
 
         const handlePress = () => {
         //some logic to prevent double pressing may need to go here
-        isButtonPressed ? isButtonPressed = false : isButtonPressed = true
+        
         setChangeBackground(true);
-        setLog(log => [...log, title])
+        reducer(state, action)
         console.log(log)
         
         }
@@ -25,7 +23,7 @@ const ALSFunctionButton = ({ logState, isButtonPressed, itemTime, reset, setRese
         <TouchableHighlight 
         activeOpacity={0.5}
         underlayColor={colors.light}
-        onPress={handlePress}
+        onPress={onPress}
         style={[ styles.button, style, changeBackground && styles.buttonPressed ]}
         pressed={changeBackground}
         title={title}
