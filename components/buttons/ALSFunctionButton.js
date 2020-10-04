@@ -1,34 +1,42 @@
-import React, { useState, useContext } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, TouchableHighlight, View } from 'react-native'
-import { Colors } from 'react-native/Libraries/NewAppScreen'
 
 import colors from '../../config/colors'
 import AppText from '../AppText'
 
-const ALSFunctionButton = ({ children, style }) => {
-    const [isPressed, setPressed] = useState(false);
-    const [log, setLog] = useState([])
+const ALSFunctionButton = ({ logState, isButtonPressed, itemTime, reset, setReset, style, title }) => {
 
-    const handlePress = () => {
+        const log = logState.value;
+        const setLog = logState.setValue;
+
+        const [changeBackground, setChangeBackground] = useState(false)
+
+        const handlePress = () => {
         //some logic to prevent double pressing may need to go here
-        setPressed(true);
-        setLog(log => [...log, children])
-    };
-    
+        isButtonPressed ? isButtonPressed = false : isButtonPressed = true
+        setChangeBackground(true);
+        setLog(log => [...log, title])
+        console.log(log)
+        
+        }
+        
+     
     return (
         <TouchableHighlight 
         activeOpacity={0.5}
-        underlayColor={colors.primary}
+        underlayColor={colors.light}
         onPress={handlePress}
-        style={[ styles.button, style, isPressed && styles.buttonPressed ]}
-        pressed={isPressed}
+        style={[ styles.button, style, changeBackground && styles.buttonPressed ]}
+        pressed={changeBackground}
+        title={title}
         >
          
-        <AppText>{children}</AppText>
+        <AppText>{title}</AppText>
+        
        
         </TouchableHighlight>
     )
-}
+};
 
 export default ALSFunctionButton
 
@@ -37,15 +45,17 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: colors.medium,
         borderRadius: 5,
-        color: colors.white,
         flexDirection: "row",
         height: 57,
         margin: 5, 
         padding: 10,
-        width: "100%",
+        width: "98%",
         
     },
     buttonPressed: {
-        backgroundColor: colors.light,
-      }
+        backgroundColor: colors.primary
+    }
+
 })
+
+

@@ -1,5 +1,5 @@
-import React from 'react'
-import { Modal, FlatList, StyleSheet, Text, View } from 'react-native'
+import React, { useState, useReducer } from 'react'
+import { FlatList, StyleSheet, View } from 'react-native'
 
 
 import PCalcScreen from '../components/PCalcScreen'
@@ -11,19 +11,129 @@ import { ScrollView } from 'react-native-gesture-handler'
 import ALSDisplayButton from '../components/buttons/ALSDisplayButton'
 import ALSFunctionButton from '../components/buttons/ALSFunctionButton'
 import Stopwatch from '../components/Stopwatch'
-import LogScreen from './APLSLogScreen'
 import routes from '../navigation/routes'
 
 
+let primaryButtons = [
+{ id: "Confirm Cardiac Arrest",
+isButtonPressed: false,
+time: null},
+{ id: "Call For Help",
+isButtonPressed: false,
+time: null},
+{ id: "Assign Team Roles",
+isButtonPressed: false,
+time: null},
+{ id: "Initiate CPR 15:2",
+isButtonPressed: false,
+time: null},
+{ id: "Bag-Mask Ventilation",
+isButtonPressed: false,
+time: null},
+{ id: "Get Cardiac Arrest Trolley",
+isButtonPressed: false,
+time: null},
+{ id: "Attach Defibrillator",
+isButtonPressed: false,
+time: null},
+{ id: "Gain Vascular Access",
+isButtonPressed: false,
+time: null},
+{ id: "Take Bloods & Blood Gas",
+isButtonPressed: false,
+time: null}
+];
+let secondaryButtons = [
+{ id: "Hypoxia",
+isButtonPressed: false,
+time: null},
+{ id: "Hypovolaemia",
+isButtonPressed: false,
+time: null},
+{ id: "Hypothermia",
+isButtonPressed: false,
+time: null},
+{ id: "Hyper/Hypokalaemia",
+isButtonPressed: false,
+time: null},
+{ id: "Tension Pneumothorax",
+isButtonPressed: false,
+time: null},
+{ id: "Cardiac Tamponade",
+isButtonPressed: false,
+time: null},
+{ id: "Toxins",
+isButtonPressed: false,
+time: null},
+{ id: "Thrombosis",
+isButtonPressed: false,
+time: null},
+];
+let tertiaryButtons = [
+{ id: "Patient Intubated",
+isButtonPressed: false,
+time: null},
+{ id: "Automatic Compression Device",
+isButtonPressed: false,
+time: null},
+{ id: "Tension Decompressed",
+isButtonPressed: false,
+time: null},
+{ id: "Calcium Given",
+isButtonPressed: false,
+time: null},
+{ id: "Insulin-Dextrose Given",
+isButtonPressed: false,
+time: null},
+{ id: "Salbutamol IV Given",
+isButtonPressed: false,
+time: null},
+{ id: "Blood Transfusion Started",
+isButtonPressed: false,
+time: null},
+{ id: "Tranexamic Acid Given",
+isButtonPressed: false,
+time: null},
+{ id: "Thrombolysis Given",
+isButtonPressed: false,
+time: null},
+{ id: "Sodium Bicarbonate Given",
+isButtonPressed: false,
+time: null},
+{ id: "IV Magnesium Given",
+isButtonPressed: false,
+time: null},
+];
+
 
 const APLSScreen = ({ navigation }) => {
+    const [reset, setReset] = useState(false);
+
+
+
+    const [pButtons, setPButtons] = useState(primaryButtons);
+    const [sButtons, setSButtons] = useState(secondaryButtons);
+    const [tButtons, setTButtons] = useState(tertiaryButtons);
+
+    const [log, setLog] = useState(["APLS LOG"]);
+
+    const logState = {
+        value: log,
+        setValue: setLog,
+    };
+
+    const resetLog = () => {
+        setLog(log => ["APLS LOG"]);
+
+
+    }
 
     return (
         <PCalcScreen>
         <ALSToolbar/>
         <View style={styles.container}>
         <ALSDisplayButton style={styles.button}><Stopwatch/></ALSDisplayButton>
-        <ALSDisplayButton style={styles.button}>Adrenaline</ALSDisplayButton>
+        <ALSDisplayButton onPress={resetLog} style={styles.button}>TEMP RESET</ALSDisplayButton>
         <ALSDisplayButton style={styles.button}>Analyse Rhythm</ALSDisplayButton>
         <ALSDisplayButton 
         style={styles.button}
@@ -31,37 +141,50 @@ const APLSScreen = ({ navigation }) => {
         </View>
         <ScrollView style={styles.bottomContainer}>
         <AppText style={styles.text}> APLS </AppText>
-        <ALSFunctionButton style={styles.mediumButton}>Confirm Cardiac Arrest</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Call For Help</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Assign Team Roles</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Initiate CPR 15:2</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Bag-Mask Ventilation</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Get Cardiac Arrest Trolley</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Attach Defibrillator</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Gain Vascular Access</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Take Bloods & Blood Gas</ALSFunctionButton>
+        <FlatList
+        data={pButtons}
+        keyExtractor={pbutton => pbutton.id.toString()}
+        renderItem={({ item }) =>
+        <ALSFunctionButton
+        title={item.id}
+        isButtonPressed={item.isButtonPressed}
+        itemTime={item.time}
+        logState={logState}
+        reset={reset}
+        setReset={setReset}
+        
+        />
+        } />
         <ALSDisplayButton style={styles.darkButton}>Exclude The Following Hs & Ts:</ALSDisplayButton>
-        <ALSFunctionButton style={styles.mediumButton}>Hypoxia</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Hypovolaemia</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Hypothermia</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Hyper/Hypokalaemia</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Tension Pneumothorax</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Cardiac Tamponade</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Toxins</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Thrombosis</ALSFunctionButton>
+        <FlatList
+        data={sButtons}
+        keyExtractor={secondaryButton => secondaryButton.id.toString()}
+        renderItem={({ item }) =>
+        <ALSFunctionButton
+        title={item.id}
+        isButtonPressed={item.isButtonPressed}
+        itemTime={item.time} 
+        logState={logState}
+        reset={reset}
+        setReset={setReset}
+        
+        />
+        } />
         <ALSDisplayButton style={styles.darkButton}>Additional Drugs & Procedures:</ALSDisplayButton>
-        <ALSFunctionButton style={styles.mediumButton}>Patient Intubated</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Automatic Compression Device</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Tension Decompressed</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Calcium Given</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Insulin-Dextrose Given</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Salbutamol IV Given</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Blood Transfusion Started</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Tranexamic Acid Given</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Thrombolysis Given</ALSFunctionButton>
-        <ALSFunctionButton style={styles.mediumButton}>Sodium Bicarbonate Given</ALSFunctionButton>
-        <ALSFunctionButton style={styles.bottomButton}>IV Magnesium Given</ALSFunctionButton>
-
+        <FlatList
+        data={tButtons}
+        keyExtractor={tbutton => tbutton.id.toString()}
+        renderItem={({ item }) =>
+        <ALSFunctionButton
+        title={item.id}
+        isButtonPressed={item.isButtonPressed}
+        itemTime={item.time}
+        logState={logState}
+        reset={reset}
+        setReset={setReset} 
+        
+        />
+        } />
         </ScrollView>
         </PCalcScreen>
     )
@@ -85,6 +208,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: '44%',
     },
+    buttonPressed: {
+        backgroundColor: colors.light,
+      },
     container: {
         flexDirection: "row",
         flexWrap: "wrap",
