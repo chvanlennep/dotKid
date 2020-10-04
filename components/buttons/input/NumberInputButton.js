@@ -1,63 +1,133 @@
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  useWindowDimensions,
-  View,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
+import React, { useState, useEffect, useContext } from "react";
+import { StyleSheet, View, TouchableOpacity, TextInput } from "react-native";
+import { useFormikContext } from "formik";
+import { GlobalStateContext } from "../../GlobalStateContext";
 
 import colors from "../../../config/colors";
-import globalStyles from "../../../config/styles";
+import defaultStyles from "../../../config/styles";
 import ButtonIcon from "../ButtonIcon";
 import AppText from "../../AppText";
+import ErrorMessage from "../../ErrorMessage";
 
+// Must be a child of AppForm and GlobalStateContext
+// If global is set to false, values are only managed by Formik and not written to global state
 const NumberInputButton = ({
+  global = true,
+  kind,
   iconName,
   name,
-  userLabel,
   unitsOfMeasurement,
-  value,
-  setValue,
+  userLabel,
 }) => {
-  const windowWidth = useWindowDimensions().width;
-  const buttonWidth = windowWidth - 10;
-
-  const textInputValue = value;
-  const setTextInputValue = setValue;
-
   const [showTextInput, setShowTextInput] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
   const [buttonText, setButtonText] = useState(`${userLabel}`);
+  const [localNumber, setLocalNumber] = useState("");
+  const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
+
+  const { setFieldValue, errors, touched, values } = useFormikContext();
+
+  const manageStats = {
+    read: function (kind, measurementType) {
+      return globalStats[kind][measurementType];
+    },
+    write: function (kind, measurementType, value) {
+      if (kind === "child") {
+        setGlobalStats((globalStats) => {
+          const child = { ...globalStats.child };
+          const neonate = { ...globalStats.neonate };
+          child[measurementType] = value;
+          return { child, neonate };
+        });
+      } else if (kind === "neonate")
+        setGlobalStats((globalStats) => {
+          const child = { ...globalStats.child };
+          const neonate = { ...globalStats.neonate };
+          neonate[measurementType] = value;
+          return { child, neonate };
+        });
+    },
+  };
 
   const cancelInput = () => {
     setShowTextInput(false);
     setButtonText(`${userLabel}`);
     setShowCancel(false);
-    setTextInputValue(null);
+    setFieldValue(name, "");
+    if (global) {
+      manageStats.write(kind, name, "");
+    }
+    setLocalNumber("");
   };
 
   const toggleTextInput = () => {
     if (showTextInput) {
-      // only if onBlur() isn't activated, therefore textInputValue must be null
-      cancelInput();
+      if (localNumber) {
+        setButtonText(`${userLabel}: ${localNumber}${unitsOfMeasurement}`);
+        setShowCancel(true);
+        setFieldValue(name, localNumber);
+        if (global) {
+          manageStats.write(kind, name, localNumber);
+        }
+      }
+      setShowTextInput(false);
     } else {
-      userLabel === "Head Circumference"
-        ? setButtonText(`Enter HC below (in ${unitsOfMeasurement})`)
-        : setButtonText(`Enter ${userLabel} below (in ${unitsOfMeasurement}):`);
       setShowTextInput(true);
-      setShowCancel(true);
     }
   };
+
+  useEffect(() => {
+    let globalNumber;
+    // button has been filled in by user:
+    if (showCancel && localNumber && !showTextInput) {
+      // Reset by formik:
+      if (!values[name]) {
+        setShowTextInput(false);
+        setShowCancel(false);
+        setButtonText(`${userLabel}`);
+        manageStats.write(kind, name, "");
+        setLocalNumber("");
+      }
+      if (global) {
+        globalNumber = manageStats.read(kind, name);
+        // Reset via global state:
+        if (!globalNumber) {
+          setShowCancel(false);
+          setButtonText(`${userLabel}`);
+          setLocalNumber("");
+          setFieldValue(name, "");
+        }
+        // value changed by global state (must put no show picker / input otherwise value stuck):
+        if (globalNumber && globalNumber !== localNumber) {
+          setFieldValue(name, globalNumber);
+          setLocalNumber(globalNumber);
+          setButtonText(`${userLabel}: ${globalNumber}${unitsOfMeasurement}`);
+        }
+      }
+    }
+    if (global) {
+      globalNumber = manageStats.read(kind, name);
+      // button has not been filled in by user:
+      if (!showCancel && !localNumber && !showTextInput) {
+        // value updated via global state:
+        if (globalNumber) {
+          setFieldValue(name, globalNumber);
+          setLocalNumber(globalNumber);
+          setButtonText(`${userLabel}: ${globalNumber}${unitsOfMeasurement}`);
+          setShowCancel(true);
+        }
+      }
+    }
+  });
 
   return (
     <>
       <View>
-        <View style={[styles.button, { width: buttonWidth }]}>
+        <View style={styles.button}>
           <TouchableOpacity onPress={toggleTextInput}>
-            <View style={[styles.buttonTextBox, { width: buttonWidth - 55 }]}>
+            <View style={styles.buttonTextBox}>
               <ButtonIcon name={iconName} />
-              <AppText>{buttonText}</AppText>
+              <AppText style={{ color: colors.white }}>{buttonText}</AppText>
             </View>
           </TouchableOpacity>
           {showCancel && (
@@ -68,38 +138,30 @@ const NumberInputButton = ({
         </View>
       </View>
       {showTextInput && (
-        <View style={[styles.inputBox, { width: buttonWidth }]}>
+        <View style={styles.inputBox}>
           <TextInput
             style={[
-              globalStyles.text,
+              defaultStyles.text,
+              defaultStyles.container,
               { color: colors.white },
-              { width: buttonWidth },
             ]}
             onChangeText={(text) => {
-              setTextInputValue(text);
               setShowCancel(true);
+              setLocalNumber(text);
             }}
-            value={textInputValue}
+            value={localNumber}
             clearTextOnFocus={true}
             keyboardType={"decimal-pad"}
-            placeholder="Enter here"
+            placeholder={`Enter here (in ${unitsOfMeasurement})`}
             placeholderTextColor={colors.white}
             multiline={false}
             textAlignVertical="top"
-            onBlur={() => {
-              if (textInputValue) {
-                setButtonText(
-                  `${userLabel}: ${textInputValue}${unitsOfMeasurement}`
-                );
-              } else {
-                setButtonText(`${userLabel}`);
-                setShowCancel(false);
-              }
-              setShowTextInput(false);
-            }}
+            onBlur={toggleTextInput}
+            returnKeyType="done"
           />
         </View>
       )}
+      <ErrorMessage error={errors[name]} visible={touched[name]} />
     </>
   );
 };
@@ -108,6 +170,7 @@ export default NumberInputButton;
 
 const styles = StyleSheet.create({
   button: {
+    ...defaultStyles.container,
     alignItems: "center",
     backgroundColor: colors.dark,
     borderRadius: 5,
@@ -120,6 +183,7 @@ const styles = StyleSheet.create({
   buttonTextBox: {
     flexDirection: "row",
     alignItems: "center",
+    width: defaultStyles.container.width - 55,
   },
   inputBox: {
     alignItems: "center",
@@ -130,5 +194,6 @@ const styles = StyleSheet.create({
     height: 57,
     margin: 5,
     padding: 10,
+    ...defaultStyles.container,
   },
 });
