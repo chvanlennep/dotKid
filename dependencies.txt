@@ -14,3 +14,4 @@ expo install @react-native-community/picker
 npm install react-native-keyboard-aware-scroll-view
 expo install formik
 expo install yup
+npm install regression
