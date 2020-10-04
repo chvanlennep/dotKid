@@ -1,5 +1,6 @@
 import React, { useState, useReducer } from 'react'
-import { FlatList, StyleSheet, View } from 'react-native'
+import { Alert, FlatList, StyleSheet, View } from 'react-native'
+
 
 
 import PCalcScreen from '../components/PCalcScreen'
@@ -12,132 +13,381 @@ import ALSDisplayButton from '../components/buttons/ALSDisplayButton'
 import ALSFunctionButton from '../components/buttons/ALSFunctionButton'
 import Stopwatch from '../components/Stopwatch'
 import routes from '../navigation/routes'
+import ALSTertiaryFunctionButton from '../components/buttons/ALSTertiaryFunctionButton'
+import AdrenalineTimer from '../components/AdrenalineTimer'
+import AnalyseRhythm from '../components/AnalyseRhythm'
 
 
 let primaryButtons = [
-{ id: "Confirm Cardiac Arrest",
-isButtonPressed: false,
-time: null},
-{ id: "Call For Help",
-isButtonPressed: false,
-time: null},
-{ id: "Assign Team Roles",
-isButtonPressed: false,
-time: null},
-{ id: "Initiate CPR 15:2",
-isButtonPressed: false,
-time: null},
-{ id: "Bag-Mask Ventilation",
-isButtonPressed: false,
-time: null},
-{ id: "Get Cardiac Arrest Trolley",
-isButtonPressed: false,
-time: null},
-{ id: "Attach Defibrillator",
-isButtonPressed: false,
-time: null},
-{ id: "Gain Vascular Access",
-isButtonPressed: false,
-time: null},
-{ id: "Take Bloods & Blood Gas",
-isButtonPressed: false,
-time: null}
+{ id: "Confirm Cardiac Arrest"},
+{ id: "Call For Help"},
+{ id: "Assign Team Roles"},
+{ id: "Initiate CPR 15:2"},
+{ id: "Bag-Mask Ventilation"},
+{ id: "Get Cardiac Arrest Trolley"},
+{ id: "Attach Defibrillator"},
+{ id: "Gain Vascular Access"},
+{ id: "Take Bloods & Blood Gas"}
 ];
 let secondaryButtons = [
-{ id: "Hypoxia",
-isButtonPressed: false,
-time: null},
-{ id: "Hypovolaemia",
-isButtonPressed: false,
-time: null},
-{ id: "Hypothermia",
-isButtonPressed: false,
-time: null},
-{ id: "Hyper/Hypokalaemia",
-isButtonPressed: false,
-time: null},
-{ id: "Tension Pneumothorax",
-isButtonPressed: false,
-time: null},
-{ id: "Cardiac Tamponade",
-isButtonPressed: false,
-time: null},
-{ id: "Toxins",
-isButtonPressed: false,
-time: null},
-{ id: "Thrombosis",
-isButtonPressed: false,
-time: null},
+{ id: "Hypoxia"},
+{ id: "Hypovolaemia"},
+{ id: "Hypothermia"},
+{ id: "Hyper/Hypokalaemia"},
+{ id: "Tension Pneumothorax"},
+{ id: "Cardiac Tamponade"},
+{ id: "Toxins"},
+{ id: "Thrombosis"},
 ];
 let tertiaryButtons = [
-{ id: "Patient Intubated",
-isButtonPressed: false,
-time: null},
-{ id: "Automatic Compression Device",
-isButtonPressed: false,
-time: null},
-{ id: "Tension Decompressed",
-isButtonPressed: false,
-time: null},
-{ id: "Calcium Given",
-isButtonPressed: false,
-time: null},
-{ id: "Insulin-Dextrose Given",
-isButtonPressed: false,
-time: null},
-{ id: "Salbutamol IV Given",
-isButtonPressed: false,
-time: null},
-{ id: "Blood Transfusion Started",
-isButtonPressed: false,
-time: null},
-{ id: "Tranexamic Acid Given",
-isButtonPressed: false,
-time: null},
-{ id: "Thrombolysis Given",
-isButtonPressed: false,
-time: null},
-{ id: "Sodium Bicarbonate Given",
-isButtonPressed: false,
-time: null},
-{ id: "IV Magnesium Given",
-isButtonPressed: false,
-time: null},
+    { id: "Automatic Compression Device"},
+    { id: "Blood Transfusion Started"},
+    { id: "Calcium Given"},
+    { id: "Insulin-Dextrose Given"},
+    { id: "IV Magnesium Given"},
+    { id: "Salbutamol IV Given"},
+    { id: "Patient Intubated"},
+    { id: "Repeat Blood Gas"},
+    { id: "Repeat Bloods"},
+    { id: "Sodium Bicarbonate Given"},
+    { id: "Tension Decompressed"},
+    { id: "Thrombolysis Given"},
+{ id: "Tranexamic Acid Given"},
 ];
+
+const functionButtons = {
+    "Start Time" : [],
+    "Asystole" : [],
+    "Ventricular Fibrillation" : [],
+    "Pulseless VT" : [],
+    "PEA" : [],
+    "Shock Delivered" : [],
+    "Adrenaline Administered" : [],
+    "Rhythm Analysed" : [],
+    "Confirm Cardiac Arrest" :  [],
+    "Call For Help" :  [],
+    "Assign Team Roles" :  [],
+    "Initiate CPR 15:2" :  [],
+    "Bag-Mask Ventilation" :  [],
+    "Get Cardiac Arrest Trolley" :  [],
+    "Attach Defibrillator" :  [],
+    "Gain Vascular Access" :  [],
+    "Take Bloods & Blood Gas" :  [],
+    "Hypoxia" :  [],
+    "Hypovolaemia" :  [],
+    "Hypothermia" :  [],
+    "Hyper/Hypokalaemia" :  [],
+    "Tension Pneumothorax" :  [],
+    "Cardiac Tamponade" :  [],
+    "Toxins" :  [],
+    "Thrombosis" :  [],
+    "Patient Intubated" :  [],
+    "Automatic Compression Device" :  [],
+    "Tension Decompressed" :  [],
+    "Calcium Given" :  [],
+    "Insulin-Dextrose Given" :  [],
+    "Salbutamol IV Given" :  [],
+    "Blood Transfusion Started" :  [],
+    "Tranexamic Acid Given" :  [],
+    "Thrombolysis Given" :  [],
+    "Sodium Bicarbonate Given" :  [],
+    "IV Magnesium Given" :  [],
+    "Repeat Blood Gas" : [],
+    "Repeat Bloods" : [],
+    "ROSC" : [],
+    "RIP" : []
+ };
+
+
+ const resetButtons = {
+    "Start Time" : [],
+    "Asystole" : [],
+    "Ventricular Fibrillation" : [],
+    "Pulseless VT" : [],
+    "PEA" : [],
+    "Shock Delivered" : [],
+    "Adrenaline Administered" : [],
+    "Rhythm Analysed" : [],
+    "Confirm Cardiac Arrest" :  [],
+    "Call For Help" :  [],
+    "Assign Team Roles" :  [],
+    "Initiate CPR 15:2" :  [],
+    "Bag-Mask Ventilation" :  [],
+    "Get Cardiac Arrest Trolley" :  [],
+    "Attach Defibrillator" :  [],
+    "Gain Vascular Access" :  [],
+    "Take Bloods & Blood Gas" :  [],
+    "Hypoxia" :  [],
+    "Hypovolaemia" :  [],
+    "Hypothermia" :  [],
+    "Hyper/Hypokalaemia" :  [],
+    "Tension Pneumothorax" :  [],
+    "Cardiac Tamponade" :  [],
+    "Toxins" :  [],
+    "Thrombosis" :  [],
+    "Patient Intubated" :  [],
+    "Automatic Compression Device" :  [],
+    "Tension Decompressed" :  [],
+    "Calcium Given" :  [],
+    "Insulin-Dextrose Given" :  [],
+    "Salbutamol IV Given" :  [],
+    "Blood Transfusion Started" :  [],
+    "Tranexamic Acid Given" :  [],
+    "Thrombolysis Given" :  [],
+    "Sodium Bicarbonate Given" :  [],
+    "IV Magnesium Given" :  [],
+    "Repeat Blood Gas" : [],
+    "Repeat Bloods" : [],
+    "ROSC" : [],
+    "RIP" : []
+ };
 
 
 const APLSScreen = ({ navigation }) => {
     const [reset, setReset] = useState(false);
 
-
-
     const [pButtons, setPButtons] = useState(primaryButtons);
     const [sButtons, setSButtons] = useState(secondaryButtons);
     const [tButtons, setTButtons] = useState(tertiaryButtons);
+    const [fButtons, setFunctionButtons] = useState(functionButtons);
+    const [intervalTime, setIntervalTime] = useState(0)
+    const [adrenalineTime, setAdrenalineTime] = useState(0)
+    const [rhythmTime, setRhythmTime] = useState(0);
+    const [adrenalinePressed, setAdrenalinePressed] = useState(false);
+    const [rhythmPressed, setRhythmPressed] = useState(false);
 
-    const [log, setLog] = useState(["APLS LOG"]);
+    const rhythmTimeState = {
+        value: rhythmTime,
+        setValue: setRhythmTime
+    }
 
-    const logState = {
-        value: log,
-        setValue: setLog,
+
+    const rhythmPressedState = {
+        value: rhythmPressed,
+        setValue: setRhythmPressed
+    }
+
+    const adrenalineTimeState = {
+        value: adrenalineTime,
+        setValue: setAdrenalineTime
+    }
+
+    const adrenalinePressedState = {
+        value: adrenalinePressed,
+        setValue: setAdrenalinePressed
     };
 
-    const resetLog = () => {
-        setLog(log => ["APLS LOG"]);
+    const intervalState = {
+        value: intervalTime,
+        setValue: setIntervalTime
+    };
 
 
+    const logState = {
+        value: functionButtons,
+        setValue: setFunctionButtons,
+    };
+
+    const resetState = {
+        value: reset,
+        setValue: setReset
+    };
+
+    //clears functionButtons object
+    const resetLogTimes = (functionButtons) => {
+        for (let value in functionButtons) {
+            functionButtons[value] = []
+        }
+        return functionButtons
     }
+
+
+    //Adrenaline logic
+    const adrenaline = () => {
+        if (!adrenalinePressed){
+            setAdrenalinePressed(true);
+            handleLogEvent(functionButtons, "Adrenaline Administered")
+            console.log(functionButtons)
+        } else if (adrenalinePressed){
+            Alert.alert(
+                'You can only log this every 3 minutes',
+                'Please click undo if you need to cancel this log entry.',
+                [
+                    {
+                        text: 'Undo',
+                        onPress: () => {removeTime("Adrenaline Administered", functionButtons)
+                                        setAdrenalinePressed(false)},
+                        style: 'cancel'
+                    },
+                    { text: 'OK', onPress: () => console.log('OK Pressed') }
+                ],
+                { cancelable: false }
+                );
+        }
+    }
+
+    //analyse rhythm logic
+    const analyse = () => {
+        if (!rhythmPressed){
+            setRhythmPressed(true);
+            handleLogEvent(functionButtons, "Rhythm Analysed")
+            console.log(functionButtons)
+        } else if (rhythmPressed){
+            Alert.alert(
+                'You can only log this every 2 minutes',
+                'Please click undo if you need to cancel this log entry.',
+                [
+                    {
+                        text: 'Undo',
+                        onPress: () => {removeTime("Rhythm Analysed", functionButtons)
+                                        setRhythmPressed(false)},
+                        style: 'cancel'
+                    },
+                    { text: 'OK', onPress: () => console.log('OK Pressed') }
+                ],
+                { cancelable: false }
+                );
+        }
+    }
+
+        //reset button logic
+    const handleReset = () => {
+        setFunctionButtons(resetLogTimes(functionButtons))
+        setReset(true)
+        Alert.alert(
+            'Your APLS Log has been reset.',
+            '',
+            [
+                  {
+                    text: 'OK',
+                    onPress: () => (console.log("OK")),
+                    style: 'cancel'
+                  },
+            ],
+            { cancelable: true }
+          );
+        setReset(false)
+    }
+
+    //reset button alert
+    const resetLog = () => {
+        Alert.alert(
+            'Do you wish to reset your APLS Log?',
+            '',
+            [
+                { text: 'RESET', onPress: () => handleReset() },
+                  {
+                    text: 'Cancel',
+                    onPress: () => (console.log("Cancel")),
+                    style: 'cancel'
+                  },
+            ],
+            { cancelable: false }
+          );
+    }
+
+    // RIP Alert window
+    const RIPAPLS = () => {
+        Alert.alert(
+            'Do you wish to terminate this APLS encounter?',
+            '',
+            [
+                { text: 'Yes - confirm patient as RIP', onPress: () => handleLogEvent(functionButtons, "RIP") },
+                  {
+                    text: 'Cancel',
+                    onPress: () => (console.log("Cancel")),
+                    
+                  },
+            ],
+            { cancelable: false }
+          );
+        
+    }
+    // ROSC alert window
+    const ROSCAPLS = () => {
+        Alert.alert(
+            'Do you wish to terminate this APLS encounter?',
+            '',
+            [
+                { text: 'Yes - confirm patient as ROSC', onPress: () => handleLogEvent(functionButtons, "ROSC") },
+                  {
+                    text: 'Cancel',
+                    onPress: () => (console.log("Cancel")),
+                    
+                  },
+            ],
+            { cancelable: false }
+          );
+        
+    }
+
+    //removes time from log object
+    const removeTime = (title, oldState) => {
+        const oldButtonArray = oldState[title];
+        if (oldButtonArray.length < 2 ) {
+            setFunctionButtons((oldState) => {
+                const updatingState = oldState;
+                updatingState[title] = []
+                return updatingState
+            })
+        }  else {
+            const newButtonArray = oldButtonArray.slice(0, -1)
+            setFunctionButtons((oldState) => {
+                const updatingState = oldState;
+                updatingState[title] = newButtonArray
+                return updatingState;
+            })
+        }
+    };
+
+
+    // adds time to log object
+const handleLogEvent = (newState, title) => {
+        const newTime = new Date();
+        const oldLogArray = newState[title]
+        const newLogArray = oldLogArray.concat(newTime);
+        setFunctionButtons((newState) => {
+            const updateState = newState;
+            updateState[title] = newLogArray;
+            return updateState;
+        });
+        console.log(functionButtons)
+    }
+
 
     return (
         <PCalcScreen>
-        <ALSToolbar/>
+
+        <ALSToolbar reset={resetLog} rip={RIPAPLS} rosc={ROSCAPLS}/>
+
         <View style={styles.container}>
-        <ALSDisplayButton style={styles.button}><Stopwatch/></ALSDisplayButton>
-        <ALSDisplayButton onPress={resetLog} style={styles.button}>TEMP RESET</ALSDisplayButton>
-        <ALSDisplayButton style={styles.button}>Analyse Rhythm</ALSDisplayButton>
+
+        <ALSDisplayButton style={styles.button}> <Stopwatch intervalState={intervalState} logState={logState} resetState={resetState}/></ALSDisplayButton>
+
         <ALSDisplayButton 
         style={styles.button}
         onPress={() => navigation.navigate(routes.APLS_LOG)}>Log</ALSDisplayButton>
+
+        <ALSDisplayButton 
+        onPress={() => adrenaline()} 
+        style={[styles.button, {paddingHorizontal: 45}, adrenalinePressed && styles.buttonPressed]}>
+        Adrenaline {"\n"}
+        { adrenalinePressed && <AdrenalineTimer 
+        adrenalinePressedState={adrenalinePressedState} 
+        adrenalineTimeState={adrenalineTimeState}
+        resetState={resetState} /> }
+        </ALSDisplayButton>
+
+        <ALSDisplayButton 
+        onPress={() => analyse()} 
+        style={[styles.button, rhythmPressed && styles.buttonPressed]}>
+        Analyse Rhythm {"\n"} 
+        { rhythmPressed && <AnalyseRhythm
+            rhythmPressedState={rhythmPressedState}
+            rhythmTimeState={rhythmTimeState}
+            resetState={resetState} /> }
+        </ALSDisplayButton>
+
         </View>
         <ScrollView style={styles.bottomContainer}>
         <AppText style={styles.text}> APLS </AppText>
@@ -146,12 +396,11 @@ const APLSScreen = ({ navigation }) => {
         keyExtractor={pbutton => pbutton.id.toString()}
         renderItem={({ item }) =>
         <ALSFunctionButton
+
         title={item.id}
-        isButtonPressed={item.isButtonPressed}
-        itemTime={item.time}
         logState={logState}
-        reset={reset}
-        setReset={setReset}
+        intervalState={intervalState}
+        resetState={resetState}
         
         />
         } />
@@ -161,12 +410,10 @@ const APLSScreen = ({ navigation }) => {
         keyExtractor={secondaryButton => secondaryButton.id.toString()}
         renderItem={({ item }) =>
         <ALSFunctionButton
-        title={item.id}
-        isButtonPressed={item.isButtonPressed}
-        itemTime={item.time} 
         logState={logState}
-        reset={reset}
-        setReset={setReset}
+        intervalState={intervalState}
+        resetState={resetState}
+        title={item.id}
         
         />
         } />
@@ -175,13 +422,11 @@ const APLSScreen = ({ navigation }) => {
         data={tButtons}
         keyExtractor={tbutton => tbutton.id.toString()}
         renderItem={({ item }) =>
-        <ALSFunctionButton
+        <ALSTertiaryFunctionButton
         title={item.id}
-        isButtonPressed={item.isButtonPressed}
-        itemTime={item.time}
+        intervalState={intervalState}
         logState={logState}
-        reset={reset}
-        setReset={setReset} 
+        resetState={resetState}
         
         />
         } />
@@ -200,16 +445,22 @@ const styles = StyleSheet.create({
     bottomContainer: {
         padding: 20,
         marginBottom: 100,
-        // Need to center content but getting an error message
+        // Need to center content in virtualised listbut getting an error message
 
     },
     button: {
+        alignContent: "center",
+        alignSelf: "center",
         backgroundColor: colors.dark,
         justifyContent: 'center',
         width: '44%',
     },
     buttonPressed: {
-        backgroundColor: colors.light,
+        backgroundColor: colors.primary,
+        flexWrap: "nowrap",
+        height: 90,
+        justifyContent: "center",
+        textAlign: 'center'
       },
     container: {
         flexDirection: "row",
@@ -219,7 +470,9 @@ const styles = StyleSheet.create({
         width: "100%",
     },
     darkButton: {
-        backgroundColor: colors.dark
+        backgroundColor: colors.dark,
+        alignSelf: "center"
+        
     },
     mediumButton: {
         backgroundColor: colors.medium

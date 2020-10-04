@@ -2,13 +2,12 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import ALSToolButton from './buttons/ALSToolButton'
 
-const ALSToolbar = () => {
+const ALSToolbar = ({reset, rip, rosc}) => {
     return (
         <View style={styles.container}>
-        <ALSToolButton name="Undo"/>
-        <ALSToolButton name="Reset"/>
-        <ALSToolButton name="ROSC"/>
-        <ALSToolButton name="RIP"/>
+        <ALSToolButton name="RIP" onPress={rip}/>
+        <ALSToolButton name="Reset" onPress={reset} />
+        <ALSToolButton name="ROSC" onPress={rosc}/>
         </View>
     )
 }

@@ -4,6 +4,7 @@ import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import colors from '../../config/colors'
 import AppText from '../AppText'
 
+
 const ALSDisplayButton = ({ children, style, onPress }) => {
     return (
         <TouchableWithoutFeedback onPress={onPress}>
@@ -24,6 +25,7 @@ const styles = StyleSheet.create({
         color: colors.white,
         flexDirection: "row",
         height: 57,
+        justifyContent: "center",
         margin: 5, 
         padding: 10,
         width: "100%",
