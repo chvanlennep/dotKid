@@ -1,61 +1,52 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, ScrollView } from "react-native";
+import React from "react";
+import { StyleSheet, View, ScrollView } from "react-native";
 
-import colors from "../config/colors";
 import PCalcScreen from "../components/PCalcScreen";
 import AppText from "../components/AppText";
-import InputButton from "../components/buttons/InputButton";
-import Button from "../components/buttons/Button";
 import routes from "../navigation/routes";
-import DateInputButton from "../components/buttons/input/DateInputButton";
+import DobInputButton from "../components/buttons/input/DobInputButton";
 import SexInputButton from "../components/buttons/input/SexInputButton";
+import GestationInputButton from "../components/buttons/input/GestationInputButton";
+import NavigateButton from "../components/buttons/NavigateButton";
+import AppForm from "../components/AppForm";
 
-const PaedsHomepageScreen = ({ navigation }) => {
-  const [dob, setDob] = useState(null);
-  const [sex, setSex] = useState(null);
+import defaultStyles from "../config/styles";
+
+const PaedsHomepageScreen = () => {
   return (
-    <PCalcScreen>
-    <View style={styles.topContainer}>
-    <DateInputButton
-    userLabel="Date of Birth"
-    iconName="calendar-range"
-    dateValue={dob}
-    setDateValue={setDob}
-    />
-    <SexInputButton value={sex} setValue={setSex} />
-    </View>
-    <View style={styles.bottomContainer}>
-    <AppText style={styles.text}> Paediatric </AppText>
-    <ScrollView>
-          <Button onPress={() => navigation.navigate(routes.BLOOD_PRESSURE)}>
-            {" "}
-            Blood Pressure Calculator{" "}
-          </Button>
-          <Button onPress={() => navigation.navigate(routes.BODY_SURFACE_AREA)}>
-            {" "}
-            Body Surface Area Calculator{" "}
-          </Button>
-          <Button
-            onPress={() => navigation.navigate(routes.PAEDIATRIC_CENTILE)}
-          >
-            {" "}
-            Centile Calculator{" "}
-          </Button>
-          <Button onPress={() => navigation.navigate(routes.ECG)}>
-            {" "}
-            ECG Calculator{" "}
-          </Button>
-          <Button onPress={() => navigation.navigate(routes.FLUID_CALCULATOR)}>
-            {" "}
-            IV Fluid Calculator{" "}
-          </Button>
-          <Button onPress={() => navigation.navigate(routes.WETFLAG)}>
-            {" "}
-            WETFLAG{" "}
-          </Button>
-          </ScrollView>
-        </View>
-      </PCalcScreen>
+    <PCalcScreen isHomePage={true} style={{ flex: 2 }}>
+      <View style={styles.topContainer}>
+        <AppForm
+          // dummy AppForm so useFormikContext line in components doesn't throw error here:
+          initialValues={{ dob: null, gestationInDays: null, sex: null }}
+        >
+          <DobInputButton global={true} kind="child" />
+          <GestationInputButton global={true} kind="child" />
+          <SexInputButton global={true} kind="child" />
+        </AppForm>
+      </View>
+      <AppText style={styles.text}> Paediatric </AppText>
+      <View style={styles.bottomContainer}>
+        <ScrollView>
+          <NavigateButton directions={routes.BLOOD_PRESSURE}>
+            Blood Pressure Calculator
+          </NavigateButton>
+          <NavigateButton directions={routes.BODY_SURFACE_AREA}>
+            Body Surface Area Calculator
+          </NavigateButton>
+          <NavigateButton directions={routes.PAEDIATRIC_CENTILE}>
+            Child Centile Calculator
+          </NavigateButton>
+          <NavigateButton directions={routes.ECG}>
+            ECG Calculator
+          </NavigateButton>
+          <NavigateButton directions={routes.FLUID_CALCULATOR}>
+            IV Fluid Calculator
+          </NavigateButton>
+          <NavigateButton directions={routes.WETFLAG}> WETFLAG </NavigateButton>
+        </ScrollView>
+      </View>
+    </PCalcScreen>
   );
 };
 
@@ -63,16 +54,18 @@ export default PaedsHomepageScreen;
 
 const styles = StyleSheet.create({
   bottomContainer: {
-    padding: 20,
-    marginTop: 20,
+    alignItems: "center",
+    flex: 1,
   },
   topContainer: {
     alignSelf: "center",
     alignItems: "center",
+    ...defaultStyles.container,
   },
   text: {
     fontSize: 28,
-    color: colors.black,
     marginBottom: 5,
+    marginTop: 3,
+    marginLeft: 3,
   },
 });

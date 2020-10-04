@@ -1,12 +1,14 @@
-import { Platform, useWindowDimensions } from "react-native";
+import { Platform, Dimensions } from "react-native";
 
 import colors from "./colors";
 
 export default {
   colors,
   text: {
-    color: colors.white,
     fontSize: 18,
-    fontFamily: Platform.OS === "android" ? "Roboto" : "System",
+    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
+  },
+  container: {
+    width: Dimensions.get("window").width - 10,
   },
 };

@@ -1,84 +1,225 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   StyleSheet,
+  Platform,
   View,
   useWindowDimensions,
   TouchableOpacity,
+  useColorScheme,
 } from "react-native";
 import { Picker } from "@react-native-community/picker";
+import { useFormikContext } from "formik";
 
 import AppText from "../../AppText";
 import colors from "../../../config/colors";
 import ButtonIcon from "../ButtonIcon";
+import ErrorMessage from "../../ErrorMessage";
+import { GlobalStateContext } from "../../GlobalStateContext";
+import defaultStyles from "../../../config/styles";
 
-const GestationInputButton = ({ weeksState, daysState }) => {
-  const windowWidth = useWindowDimensions().width;
-  const buttonWidth = windowWidth - 10;
+const GestationInputButton = ({
+  global = false,
+  kind,
+  name = "gestationInDays",
+}) => {
+  let defaultWeeks = 40;
+  let defaultDays = 0;
+  let defaultGestationString = ": Term";
+  let errorMessage;
+  if (kind === "neonate") {
+    defaultWeeks = 0;
+    defaultDays = 0;
+    defaultGestationString = "";
+    errorMessage = true;
+  }
 
-  const [showCancel, setShowCancel] = useState(true);
   const [showPicker, setShowPicker] = useState(false);
-  const [buttonLabel, setButtonLabel] = useState("Birth Gestation: Term");
+  const [buttonLabel, setButtonLabel] = useState(
+    `Birth Gestation${defaultGestationString}`
+  );
+  const [showReset, setShowReset] = useState(false);
+  const [localWeeks, setLocalWeeks] = useState(defaultWeeks);
+  const [localDays, setLocalDays] = useState(defaultDays);
+  const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
+  const { setFieldValue, values, errors, touched } = useFormikContext();
 
-  const gestationWeeks = weeksState.value;
-  const setGestationWeeks = weeksState.setValue;
-  const gestationDays = daysState.value;
-  const setGestationDays = daysState.setValue;
+  const scheme = useColorScheme();
 
-  const toggleGestPicker = (name) => {
+  const manageStats = {
+    read: function (kind, measurementType) {
+      return globalStats[kind][measurementType];
+    },
+    write: function (kind, measurementType, value) {
+      if (kind === "child") {
+        setGlobalStats((globalStats) => {
+          const child = { ...globalStats.child };
+          const neonate = { ...globalStats.neonate };
+          child[measurementType] = value;
+          return { child, neonate };
+        });
+      } else if (kind === "neonate")
+        setGlobalStats((globalStats) => {
+          const child = { ...globalStats.child };
+          const neonate = { ...globalStats.neonate };
+          neonate[measurementType] = value;
+          return { child, neonate };
+        });
+    },
+  };
+
+  const convertGestation = (gestationInDays) => {
+    return [gestationInDays % 7, Math.floor(gestationInDays / 7)];
+  };
+
+  const toggleGestPicker = () => {
     if (showPicker) {
       setShowPicker(false);
-      if (gestationWeeks >= 37 && gestationDays) {
+      manageStats.write(kind, "gestationInDays", localWeeks * 7 + localDays);
+      if (!global) {
+        setFieldValue(name, localWeeks * 7 + localDays);
+      }
+      if (localWeeks === 40 && localDays === 0 && kind === "child") {
         setButtonLabel("Birth Gestation: Term");
-      } else if (!gestationWeeks || !gestationDays) {
-        setButtonLabel("Birth Gestation");
-        setShowCancel(false);
       } else {
-        setButtonLabel(`Birth Gestation: ${gestationWeeks}+${gestationDays}`);
+        setShowReset(true);
+        setButtonLabel(`Birth Gestation: ${localWeeks}+${localDays}`);
       }
     } else {
+      if (!localWeeks) {
+        setLocalWeeks(37);
+        setLocalDays(0);
+      }
       setShowPicker(true);
-      setShowCancel(true);
     }
   };
 
-  const cancelInput = () => {
+  const resetInput = () => {
     setShowPicker(false);
-    setButtonLabel("Birth Gestation");
-    setGestationWeeks(null);
-    setGestationDays(null);
-    setShowCancel(false);
+    setButtonLabel(
+      kind === "neonate" ? "Birth Gestation" : `Birth Gestation: Term`
+    );
+    setLocalWeeks(defaultWeeks);
+    setLocalDays(defaultDays);
+    manageStats.write(kind, "gestationInDays", defaultWeeks * 7 + defaultDays);
+    if (!global) {
+      setFieldValue(name, defaultWeeks * 7 + defaultDays);
+    }
+    setShowReset(false);
   };
+
+  useEffect(() => {
+    const localGestationInDays = localWeeks * 7 + localDays;
+    const defaultGestationInDays = defaultWeeks * 7 + defaultDays;
+    const globalGestation = manageStats.read(kind, "gestationInDays");
+    const [gestationDays, gestationWeeks] = convertGestation(globalGestation);
+    // button has been filled in by user:
+    if (showReset && localGestationInDays !== defaultGestationInDays) {
+      if (!global) {
+        // Reset by formik:
+        if (values[name] === defaultGestationInDays) {
+          setShowPicker(false);
+          setShowReset(false);
+          setButtonLabel(
+            kind === "neonate" ? "Birth Gestation" : `Birth Gestation: Term`
+          );
+          setLocalWeeks(defaultWeeks);
+          setLocalDays(defaultDays);
+          kind === "neonate"
+            ? manageStats.write(kind, "gestationInDays", 0)
+            : manageStats.write(kind, "gestationInDays", 280);
+        }
+      }
+      // Reset via global state:
+      if (globalGestation === defaultGestationInDays) {
+        setShowPicker(false);
+        setShowReset(false);
+        setButtonLabel(
+          kind === "neonate" ? "Birth Gestation" : `Birth Gestation: Term`
+        );
+        setLocalWeeks(defaultWeeks);
+        setLocalDays(defaultDays);
+        if (!global) {
+          kind === "neonate"
+            ? setFieldValue(name, 0)
+            : setFieldValue(name, 280);
+        }
+      }
+      // value changed by global state (must put no show picker otherwise value stuck):
+      if (
+        globalGestation !== localGestationInDays &&
+        globalGestation !== defaultGestationInDays &&
+        !showPicker
+      ) {
+        if (!global) {
+          setFieldValue(name, globalGestation);
+        }
+        if (gestationWeeks === 40 && gestationDays === 0 && kind === "child") {
+          setButtonLabel("Birth Gestation: Term");
+          setShowReset(false);
+        } else {
+          setButtonLabel(`Birth Gestation: ${gestationWeeks}+${gestationDays}`);
+        }
+        setLocalWeeks(gestationWeeks);
+        setLocalDays(gestationDays);
+      }
+    }
+    // button has not been filled in by user:
+    if (!showReset && localGestationInDays === defaultGestationInDays) {
+      // value updated via global state:
+      if (globalGestation !== localGestationInDays) {
+        if (!global) {
+          setFieldValue(name, globalGestation);
+        }
+        setLocalWeeks(gestationWeeks);
+        setLocalDays(gestationDays);
+        if (gestationWeeks === 40 && gestationDays === 0 && kind === "child") {
+          setButtonLabel("Birth Gestation: Term");
+        } else {
+          setButtonLabel(`Birth Gestation: ${gestationWeeks}+${gestationDays}`);
+          setShowReset(true);
+        }
+      }
+    }
+  });
 
   return (
     <>
-      <View style={[styles.button, { width: buttonWidth }]}>
+      <View style={styles.button}>
         <TouchableOpacity onPress={toggleGestPicker}>
-          <View style={[styles.textBox, { width: buttonWidth - 55 }]}>
+          <View style={styles.textBox}>
             <ButtonIcon name="human-pregnant" />
-            <AppText>{buttonLabel}</AppText>
+            <AppText style={{ color: colors.white }}>{buttonLabel}</AppText>
           </View>
         </TouchableOpacity>
-        {showCancel && (
-          <TouchableOpacity onPress={cancelInput}>
-            <ButtonIcon name="delete-forever" />
+        {showReset && (
+          <TouchableOpacity onPress={resetInput}>
+            <ButtonIcon
+              name={kind === "neonate" ? "delete-forever" : "refresh"}
+            />
           </TouchableOpacity>
         )}
       </View>
       {showPicker && (
         <>
           <View
-            style={{
-              alignItems: "center",
-              flexDirection: "row",
-              justifyContent: "center",
-            }}
+            style={
+              Platform.OS === "ios"
+                ? [
+                    styles.iosPickerContainer,
+                    {
+                      backgroundColor:
+                        scheme === "dark" ? colors.light : colors.white,
+                    },
+                  ]
+                : styles.androidPickerContainer
+            }
           >
             <Picker
               style={styles.picker}
               onValueChange={(itemValue, itemIndex) => {
-                setGestationWeeks(itemValue);
+                setLocalWeeks(itemValue);
               }}
-              selectedValue={gestationWeeks}
+              selectedValue={localWeeks}
             >
               <Picker.Item label="23" value={23} />
               <Picker.Item label="24" value={24} />
@@ -100,14 +241,13 @@ const GestationInputButton = ({ weeksState, daysState }) => {
               <Picker.Item label="40" value={40} />
               <Picker.Item label="41" value={41} />
               <Picker.Item label="42" value={42} />
-              <Picker.Item label="Not Selected" value={null} />
             </Picker>
             <Picker
               style={styles.picker}
               onValueChange={(itemValue, itemIndex) => {
-                setGestationDays(itemValue);
+                setLocalDays(itemValue);
               }}
-              selectedValue={gestationDays}
+              selectedValue={localDays}
             >
               <Picker.Item label="0" value={0} />
               <Picker.Item label="1" value={1} />
@@ -116,15 +256,17 @@ const GestationInputButton = ({ weeksState, daysState }) => {
               <Picker.Item label="4" value={4} />
               <Picker.Item label="5" value={5} />
               <Picker.Item label="6" value={6} />
-              <Picker.Item label="Not Selected" value={null} />
             </Picker>
           </View>
           <TouchableOpacity onPress={toggleGestPicker}>
-            <View style={[styles.submitButton, { width: buttonWidth }]}>
-              <AppText>Submit</AppText>
+            <View style={styles.submitButton}>
+              <AppText style={{ color: colors.white }}>Submit</AppText>
             </View>
           </TouchableOpacity>
         </>
+      )}
+      {errorMessage && (
+        <ErrorMessage error={errors[name]} visible={touched[name]} />
       )}
     </>
   );
@@ -134,6 +276,7 @@ export default GestationInputButton;
 
 const styles = StyleSheet.create({
   button: {
+    ...defaultStyles.container,
     alignItems: "center",
     backgroundColor: colors.dark,
     borderRadius: 5,
@@ -147,7 +290,21 @@ const styles = StyleSheet.create({
     height: 200,
     width: 150,
   },
+  androidPickerContainer: {
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  iosPickerContainer: {
+    alignSelf: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    borderRadius: 5,
+    ...defaultStyles.container,
+  },
   submitButton: {
+    ...defaultStyles.container,
     alignItems: "center",
     backgroundColor: colors.medium,
     borderRadius: 5,
@@ -161,5 +318,6 @@ const styles = StyleSheet.create({
   textBox: {
     flexDirection: "row",
     alignItems: "center",
+    width: defaultStyles.container.width - 55,
   },
 });

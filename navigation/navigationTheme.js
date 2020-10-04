@@ -1,12 +1,27 @@
-import { DefaultTheme } from '@react-navigation/native';
+import { DefaultTheme } from "@react-navigation/native";
 
-import colors from '../config/colors';
+import colors from "../config/colors";
 
-export default {
-    ...DefaultTheme,
-    colors: {
-        ...DefaultTheme.colors,
-        primary: colors.primary,
-        background: colors.white,
-    }
+const lightTheme = {
+  dark: false,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: colors.primary,
+    background: colors.white,
+    border: colors.white,
+  },
 };
+
+const darkTheme = {
+  dark: true,
+  colors: {
+    ...DefaultTheme.colors,
+    card: colors.black,
+    border: colors.black,
+    primary: colors.primary,
+    background: colors.black,
+    text: colors.white,
+  },
+};
+
+export { lightTheme, darkTheme };
