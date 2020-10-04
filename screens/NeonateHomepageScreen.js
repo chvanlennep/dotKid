@@ -1,56 +1,49 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, ScrollView } from "react-native";
+import React from "react";
+import { StyleSheet, View, ScrollView } from "react-native";
 
 import NCalcScreen from "../components/NCalcScreen";
-import colors from "../config/colors";
-import Button from "../components/buttons/Button";
 import AppText from "../components/AppText";
 import routes from "../navigation/routes";
-import DateInputButton from "../components/buttons/input/DateInputButton";
+import DobInputButton from "../components/buttons/input/DobInputButton";
+import GestationInputButton from "../components/buttons/input/GestationInputButton";
 import SexInputButton from "../components/buttons/input/SexInputButton";
+import NavigateButton from "../components/buttons/NavigateButton";
+import AppForm from "../components/AppForm";
 
-const NeonateHomepageScreen = ({ navigation }) => {
-  const [dob, setDob] = useState(null);
-  const [sex, setSex] = useState(null);
+const NeonateHomepageScreen = () => {
   return (
-    <ScrollView>
-      <NCalcScreen>
-        <View style={styles.topContainer}>
-          <DateInputButton
-            userLabel="Date of Birth"
-            iconName="calendar-range"
-            dateValue={dob}
-            setDateValue={setDob}
-          />
-          <SexInputButton value={sex} setValue={setSex} />
-        </View>
-        <View style={styles.bottomContainer}>
-          <AppText style={styles.text}> Neonate </AppText>
-          <Button onPress={() => navigation.navigate(routes.BIRTH_CENTILE)}>
-            {" "}
-            Birth Centile Calculator{" "}
-          </Button>
-          <Button onPress={() => navigation.navigate(routes.NEONATE_CENTILE)}>
-            {" "}
-            Centile Calculator{" "}
-          </Button>
-          <Button
-            onPress={() => navigation.navigate(routes.ENDOTRACHEAL_TUBE_LENGTH)}
-          >
-            {" "}
-            Endotracheal Tube Length Calculator{" "}
-          </Button>
-          <Button onPress={() => navigation.navigate(routes.ENTERAL_FEED)}>
-            {" "}
-            Enteral Feed Calculator{" "}
-          </Button>
-          <Button onPress={() => navigation.navigate(routes.JAUNDICE)}>
-            {" "}
-            Jaundice Calculator{" "}
-          </Button>
-        </View>
-      </NCalcScreen>
-    </ScrollView>
+    <NCalcScreen isHomePage={true} style={{ flex: 2 }}>
+      <View style={styles.topContainer}>
+        <AppForm
+          // dummy AppForm so useFormikContext line in components doesn't throw error here:
+          initialValues={{ dob: null, gestationInDays: null, sex: null }}
+        >
+          <DobInputButton global={true} kind="neonate" />
+          <GestationInputButton global={true} kind="neonate" />
+          <SexInputButton global={true} kind="neonate" />
+        </AppForm>
+      </View>
+      <AppText style={styles.text}> Neonatal </AppText>
+      <View style={styles.bottomContainer}>
+        <ScrollView>
+          <NavigateButton directions={routes.BIRTH_CENTILE}>
+            Birth Centile Calculator
+          </NavigateButton>
+          <NavigateButton directions={routes.NEONATE_CENTILE}>
+            Preterm Centile Calculator
+          </NavigateButton>
+          <NavigateButton directions={routes.ENDOTRACHEAL_TUBE_LENGTH}>
+            Endotracheal Tube Length Calculator
+          </NavigateButton>
+          <NavigateButton directions={routes.ENTERAL_FEED}>
+            Enteral Feed Calculator
+          </NavigateButton>
+          <NavigateButton directions={routes.JAUNDICE}>
+            Jaundice Calculator
+          </NavigateButton>
+        </ScrollView>
+      </View>
+    </NCalcScreen>
   );
 };
 
@@ -58,8 +51,8 @@ export default NeonateHomepageScreen;
 
 const styles = StyleSheet.create({
   bottomContainer: {
-    padding: 20,
-    marginTop: 20,
+    alignItems: "center",
+    flex: 1,
   },
   topContainer: {
     alignSelf: "center",
@@ -67,7 +60,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 28,
-    color: colors.black,
     marginBottom: 5,
+    marginTop: 3,
+    marginLeft: 3,
   },
 });
