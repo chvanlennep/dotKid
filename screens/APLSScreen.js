@@ -254,7 +254,7 @@ const APLSScreen = () => {
   };
 
   return (
-    <PCalcScreen style={{ flex: 1 }}>
+    <PCalcScreen isResus={true} style={{ flex: 1 }}>
       <ALSToolbar reset={resetLog} rip={RIPAPLS} rosc={ROSCAPLS} />
       <View style={styles.middleContainer}>
         <ALSDisplayButton style={styles.button}>
