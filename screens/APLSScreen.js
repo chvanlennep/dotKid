@@ -267,7 +267,21 @@ const APLSScreen = () => {
         </ALSDisplayButton>
         <ALSDisplayButton
           style={styles.button}
-          onPress={() => console.log(parseLog(functionButtons))}
+          onPress={() => {
+            console.log(parseLog(functionButtons));
+            Alert.alert(
+              "View the log in the console",
+              "",
+              [
+                {
+                  text: "OK",
+                  onPress: () => "OK",
+                  style: "cancel",
+                },
+              ],
+              { cancelable: true }
+            );
+          }}
         >
           Log
         </ALSDisplayButton>
