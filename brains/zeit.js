@@ -1,7 +1,14 @@
 // Replacing moment.js
 
-export default (dob, units, dom, integer = true, correctDays = 0) => {
-  const untilObject = dom;
+export default (
+  from, // furthest away date / time in the interval
+  units, // units to output, can be outputted as a string
+  until, // closest date / time in the interval
+  integer = true, // if returning as a number, defaults to an integer
+  correctDays = 0, // number of days to take off interval
+  resus = false // if set to true, units must be "string". This outputs string interval for purposes of resus logs
+) => {
+  const untilObject = until;
   let fromObject;
   function addDays(date, days) {
     const result = new Date(date);
@@ -9,9 +16,9 @@ export default (dob, units, dom, integer = true, correctDays = 0) => {
     return result;
   }
   if (correctDays) {
-    fromObject = addDays(dob, correctDays);
+    fromObject = addDays(from, correctDays);
   } else {
-    fromObject = dob;
+    fromObject = from;
   }
   const millisecondDifference = untilObject.getTime() - fromObject.getTime();
   const milliseconds = 1000;
@@ -21,6 +28,7 @@ export default (dob, units, dom, integer = true, correctDays = 0) => {
   const days = 7;
   const months = 365 / 12;
   const exactYears = 365.25;
+  const rawSeconds = millisecondDifference / milliseconds;
   const rawMinutes = millisecondDifference / (milliseconds * seconds);
   const rawHours = millisecondDifference / (milliseconds * seconds * minutes);
   const rawDays =
@@ -61,10 +69,14 @@ export default (dob, units, dom, integer = true, correctDays = 0) => {
     case units === "years":
       rawAnswer = rawYears;
       break;
-    case units === "stringAge":
+    case units === "string":
       const yearBitLeft = rawYears - Math.floor(rawYears);
       const remainderMonths = Math.floor(yearBitLeft * 12);
       const intAges = {
+        seconds: Math.floor(rawSeconds),
+        remainderSeconds: Math.floor(rawSeconds) % 60,
+        minutes: Math.floor(rawMinutes),
+        remainderMinutes: Math.floor(rawMinutes) % 60,
         hours: Math.floor(rawHours),
         remainderHours: Math.floor(rawHours) % 24,
         days: Math.floor(rawDays),
@@ -75,7 +87,28 @@ export default (dob, units, dom, integer = true, correctDays = 0) => {
         remainderMonths: remainderMonths,
         years: Math.floor(rawYears),
       };
+      if (resus) {
+        let outputHours = "";
+        let outputMinutes = "";
+        let outputSeconds = "";
+        intAges.hours < 10
+          ? (outputHours = `0${intAges.hours}`)
+          : (outputHours = `${intAges.hours}`);
+        intAges.remainderMinutes < 10
+          ? (outputMinutes = `0${intAges.remainderMinutes}`)
+          : (outputMinutes = `${intAges.remainderMinutes}`);
+        intAges.remainderSeconds < 10
+          ? (outputSeconds = `0${intAges.remainderSeconds}`)
+          : (outputSeconds = `${intAges.remainderSeconds}`);
+        return `${outputHours}:${outputMinutes}:${outputSeconds}.${
+          Math.floor(millisecondDifference) % 1000
+        }`;
+      }
       const plurals = {
+        seconds: "",
+        remainderSeconds: "",
+        minutes: "",
+        remainderMinutes: "",
         hours: "",
         remainderHours: "",
         days: "",
@@ -109,7 +142,7 @@ export default (dob, units, dom, integer = true, correctDays = 0) => {
     default:
       return "Error: invalid parameter for units";
   }
-  if (integer === true && units !== "stringAge") {
+  if (integer === true) {
     return Math.floor(rawAnswer);
   } else {
     return rawAnswer;
