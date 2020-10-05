@@ -60,8 +60,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 28,
-    marginBottom: 5,
-    marginTop: 3,
+    marginBottom: 10,
+    marginTop: 10,
     marginLeft: 3,
   },
 });

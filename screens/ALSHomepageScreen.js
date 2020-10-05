@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, TouchableHighlight, View } from 'react-native'
+import { StyleSheet, Text, TouchableHighlight, useColorScheme, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import TopIcon from '../components/TopIcon'
 import colors from '../config/colors'
@@ -9,12 +9,13 @@ import routes from '../navigation/routes';
 
 const ALSHomepageScreen = ({ navigation }) => {
 
+    const scheme = useColorScheme();
     return (
         <View style={styles.pageContainer}>
         <TouchableHighlight
         activeOpacity={0.5}
         underlayColor={colors.primary} 
-        style={styles.apls} 
+        style={[styles.apls, {backgroundColor: scheme === "dark" ? colors.black : colors.white }]} 
         onPress={() => navigation.navigate(routes.APLS)}>
         <View style={styles.container}>
         <TopIcon 
@@ -22,7 +23,7 @@ const ALSHomepageScreen = ({ navigation }) => {
         height={50} 
         width={50} 
         borderRadius={20} 
-        backgroundColor={colors.white} 
+        backgroundColor={{backgroundColor: scheme === "dark" ? colors.black : colors.white }} 
         iconColor={colors.primary} 
         style={styles.face}
         />
@@ -32,13 +33,13 @@ const ALSHomepageScreen = ({ navigation }) => {
         <TouchableHighlight 
         activeOpacity={0.5}
         underlayColor={colors.secondary} 
-        style={styles.nls}>
+        style={[styles.nls, {backgroundColor: scheme === "dark" ? colors.black : colors.white }]}>
         <View style={styles.container}>
         <TopIcon name="baby-face-outline" 
         height={50} 
         width={50} 
         borderRadius={20} 
-        backgroundColor={colors.white} 
+        backgroundColor={{backgroundColor: scheme === "dark" ? colors.black : colors.white }} 
         iconColor={colors.secondary} 
         style={styles.face}
         
@@ -98,7 +99,6 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 28,
-        color: colors.black,
         marginBottom: 5,
         marginLeft: 10
     }

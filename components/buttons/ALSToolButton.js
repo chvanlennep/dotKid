@@ -7,7 +7,7 @@ const ALSToolButton = ({ name, onPress }) => {
     return (
         <TouchableOpacity onPress={onPress}>
         <View style={[styles.container, {width: useWindowDimensions().width/3}]}>
-        <AppText>{name}</AppText>
+        <AppText style={{color: colors.white}}>{name}</AppText>
         </View>
         </TouchableOpacity>
     )

@@ -9,7 +9,7 @@ const ALSDisplayButton = ({ children, style, onPress }) => {
     return (
         <TouchableWithoutFeedback onPress={onPress}>
         <View style={[ styles.button, style ]}> 
-        <AppText>{children}</AppText>
+        <AppText style={{color: colors.white}}>{children}</AppText>
         </View>
         </TouchableWithoutFeedback>
     )

@@ -478,8 +478,8 @@ const styles = StyleSheet.create({
         backgroundColor: colors.medium
     },
     text: {
-        color: colors.black,
-        fontSize: 28
+        fontSize: 28,
+        marginBottom: 5
     },
     
 })

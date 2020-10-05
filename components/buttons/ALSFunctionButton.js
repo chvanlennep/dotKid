@@ -125,7 +125,7 @@ const ALSFunctionButton = ({ intervalState, logState, resetState, style, title }
                 title={title}
                 >
                 <View style={styles.content}>
-                <AppText>{title} </AppText>
+                <AppText style={{color: colors.white}}>{title} </AppText>
                 
                 {showUndo && (
                     <TouchableOpacity onPress={handleUndo}>
