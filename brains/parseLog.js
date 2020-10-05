@@ -69,7 +69,7 @@ export default (functionButtons, type = "APLS") => {
     )}`;
     return outputString;
   } else {
-    outputString += `\nResuscitation is ongoing.`;
+    outputString += `\nResuscitation is ongoing`;
     return outputString;
   }
 };
