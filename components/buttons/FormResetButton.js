@@ -18,14 +18,13 @@ const SubmitButton = ({ name = "Reset..." }) => {
   const handleResetAlert = () => {
     Alert.alert("Are you sure you want to reset?", "", [
       {
-        text: "No",
+        text: "Cancel",
         style: "cancel",
       },
       {
         text: "Yes",
         onPress: () => handleReset(),
       },
-      { cancelable: false },
     ]);
   };
 

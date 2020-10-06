@@ -22,7 +22,12 @@ const Stack = createStackNavigator();
 
 const CalcNavigator = () => {
   return (
-    <Stack.Navigator mode="card" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      mode="card"
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
       <Stack.Screen
         name="PaedsHomepage"
         component={PaedsHomepageScreen}

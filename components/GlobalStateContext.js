@@ -6,6 +6,7 @@ const GlobalStateProvider = ({ children }) => {
   const [globalStats, setGlobalStats] = useState({
     child: {
       dob: null,
+      tob: null,
       dom: new Date(new Date().getTime() + 10 * 60000),
       gestationInDays: 280,
       hc: "",
@@ -15,6 +16,7 @@ const GlobalStateProvider = ({ children }) => {
     },
     neonate: {
       dob: null,
+      tob: null,
       dom: new Date(new Date().getTime() + 10 * 60000),
       gestationInDays: 0,
       hc: "",
