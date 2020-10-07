@@ -16,6 +16,7 @@ import routes from '../navigation/routes'
 import ALSTertiaryFunctionButton from '../components/buttons/ALSTertiaryFunctionButton'
 import AdrenalineTimer from '../components/AdrenalineTimer'
 import AnalyseRhythm from '../components/AnalyseRhythm'
+import RhythmModal from '../components/RhythmModal'
 
 
 let primaryButtons = [
@@ -99,50 +100,6 @@ const functionButtons = {
  };
 
 
- const resetButtons = {
-    "Start Time" : [],
-    "Asystole" : [],
-    "Ventricular Fibrillation" : [],
-    "Pulseless VT" : [],
-    "PEA" : [],
-    "Shock Delivered" : [],
-    "Adrenaline Administered" : [],
-    "Rhythm Analysed" : [],
-    "Confirm Cardiac Arrest" :  [],
-    "Call For Help" :  [],
-    "Assign Team Roles" :  [],
-    "Initiate CPR 15:2" :  [],
-    "Bag-Mask Ventilation" :  [],
-    "Get Cardiac Arrest Trolley" :  [],
-    "Attach Defibrillator" :  [],
-    "Gain Vascular Access" :  [],
-    "Take Bloods & Blood Gas" :  [],
-    "Hypoxia" :  [],
-    "Hypovolaemia" :  [],
-    "Hypothermia" :  [],
-    "Hyper/Hypokalaemia" :  [],
-    "Tension Pneumothorax" :  [],
-    "Cardiac Tamponade" :  [],
-    "Toxins" :  [],
-    "Thrombosis" :  [],
-    "Patient Intubated" :  [],
-    "Automatic Compression Device" :  [],
-    "Tension Decompressed" :  [],
-    "Calcium Given" :  [],
-    "Insulin-Dextrose Given" :  [],
-    "Salbutamol IV Given" :  [],
-    "Blood Transfusion Started" :  [],
-    "Tranexamic Acid Given" :  [],
-    "Thrombolysis Given" :  [],
-    "Sodium Bicarbonate Given" :  [],
-    "IV Magnesium Given" :  [],
-    "Repeat Blood Gas" : [],
-    "Repeat Bloods" : [],
-    "ROSC" : [],
-    "RIP" : []
- };
-
-
 const APLSScreen = ({ navigation }) => {
     const [reset, setReset] = useState(false);
 
@@ -152,20 +109,11 @@ const APLSScreen = ({ navigation }) => {
     const [fButtons, setFunctionButtons] = useState(functionButtons);
     const [intervalTime, setIntervalTime] = useState(0)
     const [adrenalineTime, setAdrenalineTime] = useState(0)
-    const [rhythmTime, setRhythmTime] = useState(0);
+
     const [adrenalinePressed, setAdrenalinePressed] = useState(false);
-    const [rhythmPressed, setRhythmPressed] = useState(false);
-
-    const rhythmTimeState = {
-        value: rhythmTime,
-        setValue: setRhythmTime
-    }
 
 
-    const rhythmPressedState = {
-        value: rhythmPressed,
-        setValue: setRhythmPressed
-    }
+
 
     const adrenalineTimeState = {
         value: adrenalineTime,
@@ -226,29 +174,7 @@ const APLSScreen = ({ navigation }) => {
         }
     }
 
-    //analyse rhythm logic
-    const analyse = () => {
-        if (!rhythmPressed){
-            setRhythmPressed(true);
-            handleLogEvent(functionButtons, "Rhythm Analysed")
-            console.log(functionButtons)
-        } else if (rhythmPressed){
-            Alert.alert(
-                'You can only log this every 2 minutes',
-                'Please click undo if you need to cancel this log entry.',
-                [
-                    {
-                        text: 'Undo',
-                        onPress: () => {removeTime("Rhythm Analysed", functionButtons)
-                                        setRhythmPressed(false)},
-                        style: 'cancel'
-                    },
-                    { text: 'OK', onPress: () => console.log('OK Pressed') }
-                ],
-                { cancelable: false }
-                );
-        }
-    }
+
 
         //reset button logic
     const handleReset = () => {
@@ -368,24 +294,18 @@ const handleLogEvent = (newState, title) => {
         style={styles.button}
         onPress={() => navigation.navigate(routes.APLS_LOG)}>Log</ALSDisplayButton>
 
+        <RhythmModal 
+        logState={logState}
+        resetState={resetState} />
+
         <ALSDisplayButton 
         onPress={() => adrenaline()} 
-        style={[styles.button, {paddingHorizontal: 45}, adrenalinePressed && styles.buttonPressed]}>
+        style={[styles.button, adrenalinePressed && styles.buttonPressed]}>
         Adrenaline {"\n"}
         { adrenalinePressed && <AdrenalineTimer 
         adrenalinePressedState={adrenalinePressedState} 
         adrenalineTimeState={adrenalineTimeState}
         resetState={resetState} /> }
-        </ALSDisplayButton>
-
-        <ALSDisplayButton 
-        onPress={() => analyse()} 
-        style={[styles.button, rhythmPressed && styles.buttonPressed]}>
-        Analyse Rhythm {"\n"} 
-        { rhythmPressed && <AnalyseRhythm
-            rhythmPressedState={rhythmPressedState}
-            rhythmTimeState={rhythmTimeState}
-            resetState={resetState} /> }
         </ALSDisplayButton>
 
         </View>
@@ -465,7 +385,8 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
         flexWrap: "wrap",
-        justifyContent: "center",
+        justifyContent: "space-around",
+        paddingHorizontal: 5,
         paddingTop: 10,
         width: "100%",
     },

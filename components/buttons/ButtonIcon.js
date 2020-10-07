@@ -8,6 +8,10 @@ function Icon({
     borderRadius, 
     height = 20,
     iconColor = colors.white,
+    margin = 10,
+    marginBottom,
+    marginRight = 15,
+    marginTop = 12,
     name,
     width = 20
      }) {
@@ -17,9 +21,10 @@ function Icon({
             height,
             borderRadius,
             backgroundColor,
-            margin: 10,
-            marginRight: 15,
-            marginTop: 12,
+            margin: margin,
+            marginBottom: marginBottom,
+            marginRight: marginRight,
+            marginTop: marginTop,
             alignItems: 'center',
             justifyContent: 'center'
         }}>
