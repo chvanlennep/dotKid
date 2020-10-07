@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import {
   StyleSheet,
-  Platform,
   View,
-  useWindowDimensions,
   TouchableOpacity,
   useColorScheme,
 } from "react-native";
@@ -203,15 +201,9 @@ const GestationInputButton = ({
         <>
           <View
             style={
-              Platform.OS === "ios"
-                ? [
-                    styles.iosPickerContainer,
-                    {
-                      backgroundColor:
-                        scheme === "dark" ? colors.light : colors.white,
-                    },
-                  ]
-                : styles.androidPickerContainer
+              scheme === "dark"
+                ? styles.darkPickerContainer
+                : styles.lightPickerContainer
             }
           >
             <Picker
@@ -290,17 +282,18 @@ const styles = StyleSheet.create({
     height: 200,
     width: 150,
   },
-  androidPickerContainer: {
+  lightPickerContainer: {
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "center",
   },
-  iosPickerContainer: {
+  darkPickerContainer: {
     alignSelf: "center",
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "center",
     borderRadius: 5,
+    backgroundColor: colors.light,
     ...defaultStyles.container,
   },
   submitButton: {

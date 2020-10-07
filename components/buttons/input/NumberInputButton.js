@@ -63,11 +63,13 @@ const NumberInputButton = ({
   const toggleTextInput = () => {
     if (showTextInput) {
       if (localNumber) {
-        setButtonText(`${userLabel}: ${localNumber}${unitsOfMeasurement}`);
+        const convertCommas = localNumber.replace(/,/g, ".");
+        const numberToSubmit = convertCommas.replace(/[^0-9.]/g, "");
+        setButtonText(`${userLabel}: ${numberToSubmit}${unitsOfMeasurement}`);
         setShowCancel(true);
-        setFieldValue(name, localNumber);
+        setFieldValue(name, numberToSubmit);
         if (global) {
-          manageStats.write(kind, name, localNumber);
+          manageStats.write(kind, name, numberToSubmit);
         }
       }
       setShowTextInput(false);

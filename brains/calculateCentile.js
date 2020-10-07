@@ -570,7 +570,7 @@ const centileFromLms = (
   let heightCentile = ["N/A", "N/A"];
   let lengthCentile = ["N/A", "N/A"];
   let weightCentile = ["N/A", "N/A"];
-  let ageBeforeCorrection = zeit(object.dob, "stringAge", object.dom);
+  let ageBeforeCorrection = zeit(object.dob, "string", object.dom);
   let ageAfterCorrection = "not corrected";
   let z;
   if (kind === "neonate") {
@@ -612,7 +612,7 @@ const centileFromLms = (
         index = ageInDays - (280 - birthGestationInDays);
         ageAfterCorrection = zeit(
           object.dob,
-          "stringAge",
+          "string",
           object.dom,
           true,
           280 - birthGestationInDays

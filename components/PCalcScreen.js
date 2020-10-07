@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, useColorScheme } from "react-native";
+import { Alert, StyleSheet, View, useColorScheme } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import Screen from "./Screen";
@@ -7,12 +7,39 @@ import TopIcon from "./TopIcon";
 import colors from "../config/colors";
 import routes from "../navigation/routes";
 
-const PCalcScreen = ({ children, style, isHomePage = false }) => {
+const PCalcScreen = ({
+  children,
+  style,
+  isHomePage = false,
+  isResus = false,
+}) => {
   const scheme = useColorScheme();
 
   const navigation = useNavigation();
   let renderBack;
   if (!isHomePage) renderBack = true;
+
+  const handleBackPress = () => {
+    if (isResus) {
+      Alert.alert(
+        "Do you sure you want a different resuscitation screen?",
+        "This will reset your current resuscitation encounter",
+        [
+          {
+            text: "Yes",
+            onPress: () => navigation.goBack(),
+          },
+          {
+            text: "Cancel",
+            onPress: () => "Cancel",
+          },
+        ],
+        { cancelable: false }
+      );
+    } else {
+      navigation.goBack();
+    }
+  };
 
   return (
     <Screen
@@ -29,7 +56,7 @@ const PCalcScreen = ({ children, style, isHomePage = false }) => {
             height={40}
             width={40}
             iconColor={colors.primary}
-            onPress={() => navigation.goBack()}
+            onPress={handleBackPress}
           />
         </View>
       )}

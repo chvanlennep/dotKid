@@ -152,15 +152,9 @@ const SexInputButton = ({ global = false, kind, name = "sex" }) => {
         <>
           <View
             style={
-              Platform.OS === "ios"
-                ? [
-                    styles.iosPickerContainer,
-                    {
-                      backgroundColor:
-                        scheme === "dark" ? colors.light : colors.white,
-                    },
-                  ]
-                : styles.androidPickerContainer
+              scheme === "dark"
+                ? styles.darkPickerContainer
+                : styles.lightPickerContainer
             }
           >
             <Picker
@@ -209,12 +203,12 @@ const styles = StyleSheet.create({
     height: 200,
     width: 280,
   },
-  androidPickerContainer: {
+  lightPickerContainer: {
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "center",
   },
-  iosPickerContainer: {
+  darkPickerContainer: {
     alignSelf: "center",
     alignItems: "center",
     flexDirection: "row",
@@ -222,6 +216,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.light,
     borderRadius: 5,
     ...defaultStyles.container,
+    backgroundColor: colors.light,
   },
   submitButton: {
     alignItems: "center",

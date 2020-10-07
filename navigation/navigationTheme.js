@@ -1,4 +1,5 @@
 import { DefaultTheme } from "@react-navigation/native";
+import { Platform } from "react-native";
 
 import colors from "../config/colors";
 
@@ -16,7 +17,7 @@ const darkTheme = {
   dark: true,
   colors: {
     ...DefaultTheme.colors,
-    card: colors.black,
+    card: Platform.OS === "ios" ? colors.black : colors.dark,
     border: colors.black,
     primary: colors.primary,
     background: colors.black,

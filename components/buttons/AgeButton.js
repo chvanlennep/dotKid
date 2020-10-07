@@ -72,9 +72,9 @@ const SubmitButton = ({
     const pluralSuffix = decidePluralSuffix(pretermAge);
     outputString = `Corrected Gestational Age: ${correctedGestationWeeks}+${correctedGestationDays}`;
     modalHeading = `Birth Gestation: ${birthGestationWeeks}+${birthGestationDays} \n \n ${outputString}`;
-    modalMessage = `${pretermAge} day${pluralSuffix} old \n \n ${addOrdinalSuffix(
+    modalMessage = `${pretermAge} day${pluralSuffix} old (${addOrdinalSuffix(
       pretermAge + 1
-    )} day of life`;
+    )} day of life)`;
   } else {
     const birthGestationWeeks = Math.floor(valueBeforeCorrection / 7);
     const birthGestationDays = valueBeforeCorrection % 7;
@@ -104,7 +104,7 @@ const SubmitButton = ({
         >
           <AppText style={{ color: colors.white }}>{outputString}</AppText>
           <Icon
-            backgroundColor={buttonBackGroundColor}
+            backgroundColor={null}
             height={40}
             width={40}
             name="information-outline"

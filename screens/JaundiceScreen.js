@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import React from "react";
+import { StyleSheet, View, Platform } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import * as Yup from "yup";
 
@@ -22,6 +22,7 @@ const JaundiceScreen = () => {
     sbr: "",
     gestationInDays: 0,
     dob: null,
+    tob: null,
     dom: new Date(new Date().getTime() + 10 * 60000),
     domChanged: false,
   };
@@ -34,8 +35,16 @@ const JaundiceScreen = () => {
       .label("Birth Gestation"),
     dob: Yup.date()
       .nullable()
-      .required("↑ Please enter a date of birth")
+      .required(
+        `↑ Please enter a date ${
+          Platform.OS === "ios" ? "and time" : ""
+        } of birth`
+      )
       .label("Date of Birth"),
+    tob: Yup.date()
+      .nullable()
+      .required("↑ Please enter a time of birth")
+      .label("Time of Birth"),
   });
 
   return (

@@ -10,24 +10,25 @@ import ErrorMessage from "../../ErrorMessage";
 import { GlobalStateContext } from "../../GlobalStateContext";
 import defaultStyles from "../../../config/styles";
 
-const DobInputButton = ({
-  global = false,
-  kind,
-  name = "dob",
-  renderTime = false,
-}) => {
-  let userLabel;
-  if (renderTime) {
-    userLabel = "Date & Time of Birth";
-  } else {
-    userLabel = "Date of Birth";
+const DobInputButton = ({ global = false, kind, renderTime = false }) => {
+  let android = false;
+  let ios = false;
+  Platform.OS === "android" ? (android = true) : (ios = true);
+
+  let userLabel1 = "Date of Birth";
+  let userLabel2 = "Time of Birth";
+  if (renderTime && ios) {
+    userLabel1 = "Date & Time of Birth";
   }
 
   const [date, setDate] = useState(null);
   const [time, setTime] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
-  const [text, setText] = useState(`${userLabel}`);
+  const [showPickerTime, setShowPickerTime] = useState(false);
+  const [text1, setText1] = useState(`${userLabel1}`);
+  const [text2, setText2] = useState(`${userLabel2}`);
   const [showCancel, setShowCancel] = useState(false);
+  const [showCancelTime, setShowCancelTime] = useState(false);
 
   const { setFieldValue, errors, touched, values } = useFormikContext();
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
@@ -69,33 +70,60 @@ const DobInputButton = ({
     let hours = "" + time.getHours();
     let workingMinutes = time.getMinutes();
     let minutes = "" + Math.floor(workingMinutes / 15) * 15;
+    if (android) {
+      minutes = "" + workingMinutes;
+    }
     if (hours.length < 2) hours = "0" + hours;
     if (minutes.length < 2) minutes = "0" + minutes;
     return [hours, minutes].join(":");
   };
 
-  const onChangeDate = (e, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShowPicker(Platform.OS === "ios");
-    setDate(currentDate);
+  const customiseLabel = (inputDate, inputTime) => {
+    if (inputTime && renderTime && ios) {
+      setText1(`DOB: ${formatDate(inputDate)} at ${formatTime(inputTime)}`);
+    } else if (renderTime && android) {
+      if (inputDate) {
+        setText1(`${userLabel1}: ${formatDate(inputDate)}`);
+      }
+      if (inputTime) {
+        setText2(`${userLabel2}: ${formatTime(inputTime)}`);
+      }
+    } else {
+      if (inputDate) {
+        setText1(`${userLabel1}: ${formatDate(inputDate)}`);
+      }
+    }
   };
 
-  const onChangeTime = (e, selectedTime) => {
+  const onChangeDate = (e, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShowPicker(ios);
+    setDate(currentDate);
+    if (android) {
+      manageStats.write(kind, "dob", currentDate);
+      if (!global) {
+        setFieldValue("dob", currentDate);
+      }
+      customiseLabel(currentDate, null);
+      setShowCancel(true);
+    }
+  };
+
+  const onChangeTimeIos = (e, selectedTime) => {
     const currentTime = selectedTime || time;
-    setShowPicker(Platform.OS === "ios");
     setTime(currentTime);
   };
 
-  const customiseLabel = (date, time) => {
-    if (renderTime) {
-      if (userLabel === "Date & Time of Birth") {
-        setText(`DOB: ${formatDate(date)} at ${formatTime(time)}`);
-      } else {
-        setText(`${userLabel}: ${formatDate(date)} at ${formatTime(time)}`);
-      }
-    } else {
-      setText(`${userLabel}: ${formatDate(date)}`);
+  const onChangeTimeAndroid = (e, selectedTime) => {
+    const currentTime = selectedTime || time;
+    setShowPickerTime(false);
+    setTime(currentTime);
+    manageStats.write(kind, "tob", currentTime);
+    if (!global) {
+      setFieldValue("tob", currentTime);
     }
+    customiseLabel(null, currentTime);
+    setShowCancelTime(true);
   };
 
   const togglePicker = () => {
@@ -105,24 +133,17 @@ const DobInputButton = ({
     if (!time) {
       setTime(new Date());
     }
-    if (showPicker) {
+    if (showPicker && ios) {
       if (renderTime) {
-        const years = date.getFullYear();
-        const months = date.getMonth();
-        const days = date.getDate();
-        const hour = time.getHours();
-        const mins = time.getMinutes();
         if (!global) {
-          setFieldValue(name, new Date(years, months, days, hour, mins));
+          setFieldValue("dob", date);
+          setFieldValue("tob", time);
         }
-        manageStats.write(
-          kind,
-          "dob",
-          new Date(years, months, days, hour, mins)
-        );
+        manageStats.write(kind, "dob", date);
+        manageStats.write(kind, "tob", time);
       } else {
         if (!global) {
-          setFieldValue(name, date);
+          setFieldValue("dob", date);
         }
         manageStats.write(kind, "dob", date);
       }
@@ -134,103 +155,184 @@ const DobInputButton = ({
     }
   };
 
+  const openPickerTimeAndroid = () => {
+    if (!time) {
+      setTime(new Date());
+    }
+    setShowPickerTime(true);
+  };
+
   const cancelInput = () => {
     setShowPicker(false);
-    setText(`${userLabel}`);
+    setText1(`${userLabel1}`);
     setDate(null);
     if (renderTime) {
       setTime(null);
     }
     setShowCancel(false);
     if (!global) {
-      setFieldValue(name, null);
+      setFieldValue("dob", null);
+      if (ios && renderTime) {
+        setFieldValue("tob", null);
+      }
     }
     manageStats.write(kind, "dob", null);
+    if (ios && renderTime) {
+      manageStats.write(kind, "tob", null);
+    }
+  };
+
+  const cancelTimeInputAndroid = () => {
+    setText2(`${userLabel2}`);
+    setTime(null);
+    setShowCancelTime(false);
+    if (!global) {
+      setFieldValue("tob", null);
+    }
+    manageStats.write(kind, "tob", null);
   };
 
   useEffect(() => {
     const globalDob = manageStats.read(kind, "dob");
-    // button has been filled in by user:
-    if (showCancel && date) {
-      // Reset by formik:
-      if (!global) {
-        if (!values[name]) {
+    const globalTob = manageStats.read(kind, "tob");
+    if (ios) {
+      // button has been filled in by user:
+      if (showCancel && date) {
+        // Reset by formik:
+        if (!global) {
+          if (!values["dob"] && !values["tob"]) {
+            setShowPicker(false);
+            setText1(`${userLabel1}`);
+            setDate(null);
+            if (renderTime) {
+              setTime(null);
+            }
+            setShowCancel(false);
+            manageStats.write(kind, "dob", null);
+            manageStats.write(kind, "tob", null);
+          }
+        }
+        // Reset via global state:
+        if (!globalDob && !globalTob) {
           setShowPicker(false);
-          setText(`${userLabel}`);
+          setText1(`${userLabel1}`);
           setDate(null);
           if (renderTime) {
             setTime(null);
           }
           setShowCancel(false);
-          manageStats.write(kind, "dob", null);
-        }
-      }
-      // Reset via global state:
-      if (!globalDob) {
-        setShowPicker(false);
-        setText(`${userLabel}`);
-        setDate(null);
-        if (renderTime) {
-          setTime(null);
-        }
-        setShowCancel(false);
-        if (!global) {
-          setFieldValue(name, null);
-        }
-      }
-      // value changed by global state (must put no show picker otherwise value stuck):
-      if (globalDob) {
-        let tempLocalDate;
-        let tempLocalTime;
-        if (date) {
-          tempLocalDate = formatDate(date);
-        }
-        if (time) {
-          tempLocalTime = formatTime(time);
-        }
-        if (
-          (formatDate(globalDob) !== tempLocalDate ||
-            formatTime(globalDob) !== tempLocalTime) &&
-          !showPicker
-        ) {
           if (!global) {
-            if (renderTime) {
-              const years = globalDob.getFullYear();
-              const months = globalDob.getMonth();
-              const days = globalDob.getDate();
-              const hour = globalDob.getHours();
-              const mins = globalDob.getMinutes();
-              setFieldValue(name, new Date(years, months, days, hour, mins));
-            } else {
-              setFieldValue(name, globalDob);
+            setFieldValue("dob", null);
+            setFieldValue("tob", null);
+          }
+        }
+        // value changed by global state (must put no show picker otherwise value stuck):
+        if (globalDob) {
+          let tempLocalDate;
+          if (date) {
+            tempLocalDate = formatDate(date);
+          }
+          if (formatDate(globalDob) !== tempLocalDate && !showPicker) {
+            if (!global) {
+              setFieldValue("dob", globalDob);
+            }
+            setDate(globalDob);
+            customiseLabel(globalDob, renderTime ? new Date() : null);
+          }
+        }
+      }
+      //button has not been filled in by user:
+      if (!showCancel && !showPicker && !date) {
+        // value updated via global state:
+        if (globalDob) {
+          if (!global) {
+            setFieldValue("dob", globalDob);
+            if (renderTime && globalTob) {
+              setFieldValue("tob", globalTob);
             }
           }
           setDate(globalDob);
-          setTime(globalDob);
-          customiseLabel(globalDob, globalDob);
+          setTime(globalTob ? globalTob : globalDob);
+          customiseLabel(globalDob, null);
+          if (renderTime) {
+            globalTob
+              ? customiseLabel(globalDob, globalTob)
+              : customiseLabel(globalDob, new Date());
+          }
+          setShowCancel(true);
         }
       }
     }
-    // button has not been filled in by user:
-    if (!showCancel && !showPicker && !date) {
-      // value updated via global state:
-      if (globalDob) {
+    if (android) {
+      // button has been filled in by user:
+      if (showCancel && date) {
+        // Reset by formik:
         if (!global) {
-          if (renderTime) {
-            const years = globalDob.getFullYear();
-            const months = globalDob.getMonth();
-            const days = globalDob.getDate();
-            const hour = globalDob.getHours();
-            const mins = globalDob.getMinutes();
-            setFieldValue(name, new Date(years, months, days, hour, mins));
-          } else {
-            setFieldValue(name, globalDob);
+          if (!values["dob"] && !values["tob"]) {
+            setText1(`${userLabel1}`);
+            setDate(null);
+            if (renderTime) {
+              setTime(null);
+              setText2(`${userLabel2}`);
+              setShowCancelTime(false);
+            }
+            setShowCancel(false);
+
+            manageStats.write(kind, "dob", null);
+            manageStats.write(kind, "tob", null);
           }
         }
-        setDate(globalDob);
-        setTime(globalDob);
-        customiseLabel(globalDob, globalDob);
-        setShowCancel(true);
+        // Reset via global state:
+        if (!globalDob && !globalTob) {
+          setText1(`${userLabel1}`);
+          setDate(null);
+          if (renderTime) {
+            setTime(null);
+            setText2(`${userLabel2}`);
+            setShowCancelTime(false);
+          }
+          setShowCancel(false);
+          if (!global) {
+            setFieldValue("dob", null);
+            setFieldValue("tob", null);
+          }
+        }
+        // value changed by global state (must put no show picker otherwise value stuck):
+        if (globalDob) {
+          let tempLocalDate;
+          if (date) {
+            tempLocalDate = formatDate(date);
+          }
+          if (formatDate(globalDob) !== tempLocalDate && !showPicker) {
+            if (!global) {
+              setFieldValue("dob", globalDob);
+            }
+            setDate(globalDob);
+            customiseLabel(globalDob, renderTime ? new Date() : null);
+          }
+        }
+      }
+      //button has not been filled in by user:
+      if (!showCancel && !showPicker && !date) {
+        // value updated via global state:
+        if (globalDob) {
+          if (!global) {
+            setFieldValue("dob", globalDob);
+            if (renderTime && globalTob) {
+              setFieldValue("tob", globalTob);
+            }
+          }
+          setDate(globalDob);
+          setTime(globalTob ? globalTob : globalDob);
+          customiseLabel(globalDob, null);
+          if (renderTime) {
+            globalTob
+              ? customiseLabel(globalDob, globalTob)
+              : customiseLabel(globalDob, new Date());
+            setShowCancelTime(true);
+          }
+          setShowCancel(true);
+        }
       }
     }
   });
@@ -242,7 +344,7 @@ const DobInputButton = ({
           <TouchableOpacity onPress={togglePicker}>
             <View style={styles.textBox}>
               <ButtonIcon name="calendar-range" />
-              <AppText style={{ color: colors.white }}>{text}</AppText>
+              <AppText style={{ color: colors.white }}>{text1}</AppText>
             </View>
           </TouchableOpacity>
           {showCancel && (
@@ -256,31 +358,60 @@ const DobInputButton = ({
             testID="datePicker"
             value={date}
             mode="date"
-            display="default"
+            display="spinner"
             onChange={onChangeDate}
             style={[styles.iosPicker]}
           />
         )}
-        {showPicker && renderTime && (
+        {showPicker && ios && renderTime && (
           <DateTimePicker
             testID="timePicker"
             value={time}
             mode="time"
             minuteInterval={15}
             display="default"
-            onChange={onChangeTime}
+            onChange={onChangeTimeIos}
             style={styles.iosPicker}
           />
         )}
-        {showPicker && (
+        {showPickerTime && android && renderTime && (
+          <DateTimePicker
+            testID="timePicker"
+            value={time}
+            mode="time"
+            minuteInterval={5}
+            display="default"
+            onChange={onChangeTimeAndroid}
+            style={styles.iosPicker}
+          />
+        )}
+        {showPicker && ios && (
           <TouchableOpacity onPress={togglePicker}>
             <View style={[styles.submitButton]}>
               <AppText style={{ color: colors.white }}>Submit</AppText>
             </View>
           </TouchableOpacity>
         )}
+        <ErrorMessage error={errors["dob"]} visible={touched["dob"]} />
+        {android && renderTime && (
+          <>
+            <View style={styles.button}>
+              <TouchableOpacity onPress={openPickerTimeAndroid}>
+                <View style={styles.textBox}>
+                  <ButtonIcon name="clock" />
+                  <AppText style={{ color: colors.white }}>{text2}</AppText>
+                </View>
+              </TouchableOpacity>
+              {showCancelTime && (
+                <TouchableOpacity onPress={cancelTimeInputAndroid}>
+                  <ButtonIcon name="delete-forever" />
+                </TouchableOpacity>
+              )}
+            </View>
+            <ErrorMessage error={errors["tob"]} visible={touched["tob"]} />
+          </>
+        )}
       </View>
-      <ErrorMessage error={errors[name]} visible={touched[name]} />
     </>
   );
 };

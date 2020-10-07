@@ -16,7 +16,12 @@ const NeonateHomepageScreen = () => {
       <View style={styles.topContainer}>
         <AppForm
           // dummy AppForm so useFormikContext line in components doesn't throw error here:
-          initialValues={{ dob: null, gestationInDays: null, sex: null }}
+          initialValues={{
+            dob: null,
+            tob: null,
+            gestationInDays: null,
+            sex: null,
+          }}
         >
           <DobInputButton global={true} kind="neonate" />
           <GestationInputButton global={true} kind="neonate" />

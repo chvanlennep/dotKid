@@ -9,7 +9,11 @@ import ButtonIcon from "../ButtonIcon";
 import ErrorMessage from "../../ErrorMessage";
 import defaultStyles from "../../../config/styles";
 
-const DomInputButton = ({ name = "dom", renderTime = false }) => {
+const DomInputButton = ({ renderTime = false }) => {
+  let android = false;
+  let ios = false;
+  Platform.OS === "android" ? (android = true) : (ios = true);
+
   const formatDate = (date) => {
     let month = "" + (date.getMonth() + 1);
     let day = "" + date.getDate();
@@ -24,92 +28,134 @@ const DomInputButton = ({ name = "dom", renderTime = false }) => {
     let hours = "" + time.getHours();
     let workingMinutes = time.getMinutes();
     let minutes = "" + Math.floor(workingMinutes / 15) * 15;
+    if (android) {
+      minutes = "" + workingMinutes;
+    }
     if (hours.length < 2) hours = "0" + hours;
     if (minutes.length < 2) minutes = "0" + minutes;
     return [hours, minutes].join(":");
   };
-  const userLabel = "Measured";
+
   const addedTime = 10 * 60000;
   const overshot = new Date(new Date().getTime() + addedTime);
   const [date, setDate] = useState(overshot);
   const [time, setTime] = useState(overshot);
   const [showPicker, setShowPicker] = useState(false);
-  const [text, setText] = useState(
-    renderTime
-      ? `${userLabel}: ${formatDate(date)} at ${formatTime(time)}`
-      : `${userLabel}: ${formatDate(date)}`
-  );
-  const customiseLabel = (date, time) => {
-    if (renderTime) {
-      setText(`${userLabel}: ${formatDate(date)} at ${formatTime(time)}`);
+  const [showPickerTime, setShowPickerTime] = useState(false);
+  const [showCancelTime, setShowCancelTime] = useState(false);
+  const [showCancel, setShowCancel] = useState(false);
+
+  let startingLabel1 = `Measured on ${formatDate(date)}`;
+  let startingLabel2 = `Measured at ${formatTime(time)}`;
+  if (ios && renderTime) {
+    startingLabel1 = `Measured on ${formatDate(date)} at ${formatTime(time)}`;
+  }
+
+  const [text1, setText1] = useState(startingLabel1);
+  const [text2, setText2] = useState(startingLabel2);
+
+  const customiseLabel = (inputDate, inputTime) => {
+    if (renderTime && ios) {
+      setText1(
+        `Measured on ${formatDate(inputDate)} at ${formatTime(inputTime)}`
+      );
+    } else if (renderTime && android) {
+      if (inputDate) setText1(`Measured on ${formatDate(inputDate)}`);
+      if (inputTime) setText2(`Measured at ${formatTime(inputTime)}`);
     } else {
-      setText(`${userLabel}: ${formatDate(date)}`);
+      if (inputDate) {
+        setText1(`Measured on ${formatDate(inputDate)}`);
+      }
     }
   };
-  const [showReset, setShowReset] = useState(false);
 
   const { setFieldValue, errors, touched, values } = useFormikContext();
 
   const onChangeDate = (e, selectedDate) => {
     const currentDate = selectedDate || date;
-    setShowPicker(Platform.OS === "ios");
+    setShowPicker(ios);
     setDate(currentDate);
+    if (android) {
+      setFieldValue("dom", currentDate);
+      customiseLabel(currentDate, null);
+      setFieldValue("domChanged", true);
+      setShowCancel(true);
+    }
   };
 
-  const onChangeTime = (e, selectedTime) => {
+  const onChangeTimeIos = (e, selectedTime) => {
     const currentTime = selectedTime || time;
-    setShowPicker(Platform.OS === "ios");
     setTime(currentTime);
   };
 
+  const onChangeTimeAndroid = (e, selectedTime) => {
+    const currentTime = selectedTime || time;
+    setShowPickerTime(false);
+    setTime(currentTime);
+    setFieldValue("tom", currentTime);
+    customiseLabel(null, currentTime);
+    setFieldValue("domChanged", true);
+    setShowCancelTime(true);
+  };
+
   const togglePicker = () => {
-    if (showPicker) {
+    if (showPicker && ios) {
       if (renderTime) {
-        const years = date.getFullYear();
-        const months = date.getMonth();
-        const days = date.getDate();
-        const hour = time.getHours();
-        const mins = time.getMinutes();
-        setFieldValue(name, new Date(years, months, days, hour, mins));
+        setFieldValue("dom", date);
+        setFieldValue("tom", time);
       } else {
-        setFieldValue(name, date);
+        setFieldValue("dom", date);
       }
-      setShowPicker(false);
+      setFieldValue("domChanged", true);
       customiseLabel(date, time);
-      if (
-        formatDate(date) !== formatDate(overshot) ||
-        formatTime(time) !== formatTime(overshot)
-      ) {
-        setShowReset(true);
-        setFieldValue("domChanged", true);
-      }
+      setShowPicker(false);
+      setShowCancel(true);
     } else {
       setShowPicker(true);
     }
   };
 
-  const resetInput = () => {
+  const openPickerTimeAndroid = () => {
+    setShowPickerTime(true);
+  };
+
+  const cancelInput = () => {
     setShowPicker(false);
-    customiseLabel(overshot, overshot);
     setDate(overshot);
     if (renderTime) {
       setTime(overshot);
     }
-    setShowReset(false);
-    setFieldValue(name, overshot);
+    setShowCancel(false);
+    setFieldValue("dom", overshot);
+    setFieldValue("domChanged", false);
+    if (ios && renderTime) {
+      setFieldValue("tob", overshot);
+      setText1(
+        `Measured on ${formatDate(overshot)} at ${formatTime(overshot)}`
+      );
+    } else {
+      setText1(`Measured on ${formatDate(overshot)}`);
+    }
+  };
+
+  const cancelTimeInputAndroid = () => {
+    setText2(`Measured at ${formatTime(overshot)}`);
+    setTime(overshot);
+    setShowCancelTime(false);
+    setFieldValue("tom", overshot);
     setFieldValue("domChanged", false);
   };
 
   useEffect(() => {
     // reset by formik, but previously changed by user
-    if (showReset && !values["domChanged"]) {
+    if (showCancel && !values["domChanged"]) {
       setShowPicker(false);
       setDate(overshot);
       if (renderTime) {
         setTime(overshot);
       }
       customiseLabel(overshot, overshot);
-      setShowReset(false);
+      setShowCancel(false);
     }
   });
 
@@ -120,11 +166,11 @@ const DomInputButton = ({ name = "dom", renderTime = false }) => {
           <TouchableOpacity onPress={togglePicker}>
             <View style={styles.textBox}>
               <ButtonIcon name="calendar-range" />
-              <AppText style={{ color: colors.white }}>{text}</AppText>
+              <AppText style={{ color: colors.white }}>{text1}</AppText>
             </View>
           </TouchableOpacity>
-          {showReset && (
-            <TouchableOpacity onPress={resetInput}>
+          {showCancel && (
+            <TouchableOpacity onPress={cancelInput}>
               <ButtonIcon name="refresh" />
             </TouchableOpacity>
           )}
@@ -134,31 +180,58 @@ const DomInputButton = ({ name = "dom", renderTime = false }) => {
             testID="datePicker"
             value={date}
             mode="date"
-            display="default"
+            display="spinner"
             onChange={onChangeDate}
-            style={styles.picker}
+            style={[styles.iosPickerContainer]}
           />
         )}
-        {showPicker && renderTime && (
+        {showPicker && ios && renderTime && (
           <DateTimePicker
             testID="timePicker"
             value={time}
             mode="time"
             minuteInterval={15}
             display="default"
-            onChange={onChangeTime}
-            style={styles.picker}
+            onChange={onChangeTimeIos}
+            style={styles.iosPickerContainer}
           />
         )}
-        {showPicker && (
+        {showPickerTime && android && renderTime && (
+          <DateTimePicker
+            testID="timePicker"
+            value={time}
+            mode="time"
+            minuteInterval={5}
+            display="default"
+            onChange={onChangeTimeAndroid}
+            style={styles.iosPickerContainer}
+          />
+        )}
+        {showPicker && ios && (
           <TouchableOpacity onPress={togglePicker}>
-            <View style={styles.submitButton}>
+            <View style={[styles.submitButton]}>
               <AppText style={{ color: colors.white }}>Submit</AppText>
             </View>
           </TouchableOpacity>
         )}
+        {android && renderTime && (
+          <>
+            <View style={styles.button}>
+              <TouchableOpacity onPress={openPickerTimeAndroid}>
+                <View style={styles.textBox}>
+                  <ButtonIcon name="clock" />
+                  <AppText style={{ color: colors.white }}>{text2}</AppText>
+                </View>
+              </TouchableOpacity>
+              {showCancelTime && (
+                <TouchableOpacity onPress={cancelTimeInputAndroid}>
+                  <ButtonIcon name="refresh" />
+                </TouchableOpacity>
+              )}
+            </View>
+          </>
+        )}
       </View>
-      <ErrorMessage error={errors[name]} visible={touched[name]} />
     </>
   );
 };
@@ -176,11 +249,6 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   iosPickerContainer: {
-    backgroundColor: colors.light,
-    borderRadius: 5,
-    alignSelf: "center",
-  },
-  picker: {
     height: 120,
   },
   submitButton: {
@@ -193,7 +261,6 @@ const styles = StyleSheet.create({
     margin: 5,
     padding: 10,
     justifyContent: "center",
-    ...defaultStyles.container,
   },
   textBox: {
     flexDirection: "row",

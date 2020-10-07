@@ -86,6 +86,7 @@ const PCentileScreen = () => {
     sex: "",
     gestationInDays: 0,
     dob: null,
+    tob: null,
     dom: new Date(new Date().getTime() + 10 * 60000),
     domChanged: false,
   };
