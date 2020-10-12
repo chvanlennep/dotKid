@@ -85,6 +85,7 @@ const PCentileScreen = () => {
     dob: null,
     tob: null,
     dom: new Date(new Date().getTime() + 10 * 60000),
+    tom: new Date(new Date().getTime() + 10 * 60000),
     domChanged: false,
   };
 
@@ -161,16 +162,14 @@ const PCentileScreen = () => {
         Alert.alert(
           "Time Travelling Patient",
           "Please check the dates entered",
-          [{ text: "OK" }],
-          { cancelable: false }
+          [{ text: "OK", onPress: () => null }]
         );
         break;
       case results === "Over 18":
         Alert.alert(
           "Patient Too Old",
           "This calculator can only be used under 18 years of age",
-          { text: "OK" },
-          { cancelable: false }
+          [{ text: "OK", onPress: () => null }]
         );
         break;
       case results.kind === "birth":

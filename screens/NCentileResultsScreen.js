@@ -40,6 +40,7 @@ const NCentileResultsScreen = ({ route, navigation }) => {
           label="← Calculate Again"
           onPress={() => navigation.goBack()}
           style={{ backgroundColor: colors.light }}
+          textStyle={{ color: colors.black }}
         />
       </View>
       <KeyboardAwareScrollView>
