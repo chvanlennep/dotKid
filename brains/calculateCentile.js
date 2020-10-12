@@ -420,16 +420,28 @@ const outputSentences = [
 ];
 
 const outputCentile = (z) => {
-  if (typeof z == "number") {
+  if (typeof z === "number") {
     switch (true) {
       case z < -4:
-        return ["<0.04th", "More than 4 SDs below the mean"];
+        return [
+          "Significantly below 0.4th",
+          "<0.04th, more than 4 SDs below the mean",
+        ];
       case z >= -4 && z < -3:
-        return ["<0.1st", "Between 3 and 4 SDs below the mean"];
+        return [
+          "Well below 0.4th",
+          "<0.1st, between 3 and 4 SDs below the mean",
+        ];
       case z > 3 && z <= 4:
-        return [">99.9th", "Between 3 and 4 SDs above the mean"];
+        return [
+          "Well above 99.6th",
+          ">99.9th, between 3 and 4 SDs above the mean",
+        ];
       case z > 4:
-        return [">99.96th", "More than 4 SDs above the mean"];
+        return [
+          "Significantly above 99.6th",
+          ">99.96th, more than 4 SDs above the mean",
+        ];
       default:
         let factK = 1;
         let sum = 0;
