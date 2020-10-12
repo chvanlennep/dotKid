@@ -15,6 +15,7 @@ export default Object.freeze({
   ENDOTRACHEAL_TUBE_LENGTH: "EndotrachealTube",
   ENTERAL_FEED: "EnteralFeed",
   JAUNDICE: "Jaundice",
+  JAUNDICE_RESULTS: "JaundiceResults",
   APLS_LOG: "APLSLog",
   APLS: "APLSScreen",
 });

@@ -16,6 +16,7 @@ import BirthCentileResultsScreen from "../screens/BirthCentileResultsScreen";
 import NCentileScreen from "../screens/NCentileScreen";
 import EnteralFeedScreen from "../screens/EnteralFeedScreen";
 import JaundiceScreen from "../screens/JaundiceScreen";
+import JaundiceResultsScreen from "../screens/JaundiceResultsScreen";
 import NCentileResultsScreen from "../screens/NCentileResultsScreen";
 
 const Stack = createStackNavigator();
@@ -53,6 +54,7 @@ const CalcNavigator = () => {
       <Stack.Screen name="NCentileResults" component={NCentileResultsScreen} />
       <Stack.Screen name="EnteralFeed" component={EnteralFeedScreen} />
       <Stack.Screen name="Jaundice" component={JaundiceScreen} />
+      <Stack.Screen name="JaundiceResults" component={JaundiceResultsScreen} />
     </Stack.Navigator>
   );
 };
