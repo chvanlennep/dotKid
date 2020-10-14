@@ -66,7 +66,7 @@ const RhythmButton = ( { logState, modalState, rhythmPressedState, resetState, s
                 'Shock Advised',
                 '',
                 [
-                    { text: 'Deliver Shock', onPress: () => {setModalVisible(false); setRhythmPressed(true); updateTime(title, functionButtons);  } },
+                    { text: 'Deliver Shock', onPress: () => {setModalVisible(false); setRhythmPressed(true); updateTime("Shock Delivered", functionButtons);  } },
                     { text: 'No Shock', onPress: () => {setModalVisible(false); setRhythmPressed(true); updateTime(title, functionButtons);} },
                     { text: 'Cancel', onPress: () => {setModalVisible(false); setRhythmPressed(true);} }
 

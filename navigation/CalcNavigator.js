@@ -17,6 +17,8 @@ import NCentileScreen from "../screens/NCentileScreen";
 import EnteralFeedScreen from "../screens/EnteralFeedScreen";
 import JaundiceScreen from "../screens/JaundiceScreen";
 import NCentileResultsScreen from "../screens/NCentileResultsScreen";
+import BPResultsScreen from "../screens/BPResultsScreen";
+import ECGResultsScreen from "../screens/ECGResultsScreen";
 
 const Stack = createStackNavigator();
 
@@ -34,6 +36,7 @@ const CalcNavigator = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen name="BloodPressure" component={BPScreen} />
+      <Stack.Screen name="BPResults" component={BPResultsScreen} />
       <Stack.Screen name="BSA" component={BSAScreen} />
       <Stack.Screen name="PCentile" component={PCentileScreen} />
       <Stack.Screen
@@ -41,6 +44,7 @@ const CalcNavigator = () => {
         component={PCentileResultsScreen}
       />
       <Stack.Screen name="ECG" component={ECGScreen} />
+      <Stack.Screen name="ECGResults" component={ECGResultsScreen} />
       <Stack.Screen name="FluidCalculator" component={FluidCalculatorScreen} />
       <Stack.Screen name="WETFLAG" component={WETFLAGScreen} />
       <Stack.Screen name="NeonateHomepage" component={NeonateHomepageScreen} />

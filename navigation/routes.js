@@ -1,4 +1,6 @@
 export default Object.freeze({
+  BLOOD_PRESSURE_RESULTS: "BPResults",
+  ECG_RESULTS: "ECGResults",
   PAEDS_HOMEPAGE: "PaedsHomepage",
   BLOOD_PRESSURE: "BloodPressure",
   BODY_SURFACE_AREA: "BSA",

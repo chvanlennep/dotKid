@@ -1,42 +1,133 @@
 import React, { useContext, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { Alert, StyleSheet, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import * as Yup from "yup";
 
 import PCalcScreen from "../components/PCalcScreen";
-import DOBButton from "../components/buttons/DOBButton";
-import InputButton from "../components/buttons/InputButton";
-import AppText from "../components/AppText";
 import colors from "../config/colors";
+import { GlobalStateContext } from "../components/GlobalStateContext";
+import DobInputButton from "../components/buttons/input/DobInputButton";
+import AppForm from "../components/AppForm";
+import DomInputButton from "../components/buttons/input/DomInputButton";
+import zeit from "../brains/zeit";
+import NumberInputButton from "../components/buttons/input/NumberInputButton";
+import FormResetButton from "../components/buttons/FormResetButton";
+import FormSubmitButton from "../components/buttons/FormSubmitButton";
+import routes from "../navigation/routes";
+import calculateQTC from "../brains/calculateQTC";
+import ageChecker from "../brains/ageChecker";
+import calculateCentile from "../brains/calculateCentile";
 
 const ECGScreen = () => {
+  const navigation = useNavigation();
+
+  const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
+
+  const oneMeasurementNeeded = "↑ We'll need this measurement too";
+  const wrongUnitsMessage = (units) => {
+    return `↑ Are you sure your input is in ${units}?`;
+  };
+
+  const validationSchema = Yup.object().shape({
+    dob: Yup.date()
+      .nullable()
+      .required("↑ Please enter a date of Birth")
+      .label("Date of Birth"),
+    qtinterval: Yup.number()
+      .min(0.6, wrongUnitsMessage("seconds"))
+      .max(20, wrongUnitsMessage("seconds"))
+      .label("QT Interval")
+      .required(oneMeasurementNeeded),
+    rrinterval: Yup.number()
+      .min(0.01, wrongUnitsMessage("seconds"))
+      .max(3, wrongUnitsMessage("seconds"))
+      .label("R-R Interval")
+      .required(oneMeasurementNeeded),
+  });
+
+  const initialValues = {
+    rrinterval: "",
+    qtinterval: "",
+    gestationInDays: 280,
+    dob: null,
+    tob: null,
+    dom: new Date(new Date().getTime() + 10 * 60000),
+    domChanged: false,
+  };
+
+  const handleFormikSubmit = (values) => {
+    const age = zeit(values.dob, "months", values.dom, true, correctDays);
+    const ageCheck = ageChecker(values);
+    const centileObject = calculateCentile(values);
+
+    let correctDays = 0;
+    switch (true) {
+      case ageCheck === "Negative age":
+        Alert.alert(
+          "Time Travelling Patient",
+          "Please check the dates entered",
+          [{ text: "OK" }],
+          { cancelable: false }
+        );
+        break;
+      case ageCheck === "Over 18":
+        Alert.alert(
+          "Patient Too Old",
+          "This calculator can only be used under 18 years of age",
+          { text: "OK" },
+          { cancelable: false }
+        );
+        break;
+      default:
+        const measurements = values;
+        const QTCOutput = calculateQTC(
+          age,
+          values.qtinterval,
+          values.rrinterval
+        );
+        const serialisedObject = JSON.stringify({
+          QTCOutput,
+          centileObject,
+          measurements,
+        });
+        navigation.navigate(routes.ECG_RESULTS, serialisedObject);
+    }
+  };
+
   return (
     <PCalcScreen>
-      <ScrollView>
+      <KeyboardAwareScrollView>
         <View style={styles.topContainer}>
-          <DOBButton></DOBButton>
-          <InputButton name="all-inclusive">Sex</InputButton>
-          <InputButton name="heart-flash">QT Interval</InputButton>
-          <InputButton name="heart-pulse">R-R Interval</InputButton>
+          <AppForm
+            initialValues={initialValues}
+            onSubmit={handleFormikSubmit}
+            validationSchema={validationSchema}
+          >
+            <DobInputButton name="dob" kind="child" />
+            <NumberInputButton
+              name="qtinterval"
+              userLabel="QT Interval"
+              iconName="heart-flash"
+              unitsOfMeasurement=" seconds"
+              kind="child"
+            />
+            <NumberInputButton
+              name="rrinterval"
+              userLabel="R-R Interval"
+              iconName="heart-pulse"
+              unitsOfMeasurement=" seconds"
+              kind="child"
+            />
+            <DomInputButton name="dom" kind="child" />
+            <FormResetButton />
+            <FormSubmitButton
+              name="Calculate Blood Pressure Centiles"
+              kind="child"
+            />
+          </AppForm>
         </View>
-        <View style={styles.bottomContainer}>
-          <View style={styles.outputContainer}>
-            <View style={styles.title}>
-              <AppText style={styles.text}>QTc Interval: </AppText>
-            </View>
-            <View style={styles.output}>
-              <AppText style={styles.outputText}>Output here</AppText>
-            </View>
-          </View>
-          <View style={styles.outputContainer}>
-            <View style={styles.title}>
-              <AppText style={styles.text}>ECG Normal Ranges: </AppText>
-            </View>
-            <View style={styles.output}>
-              <AppText style={styles.outputText}>Output here </AppText>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </PCalcScreen>
   );
 };

@@ -19,7 +19,7 @@ const InputButton = ({ name, children }) => {
         <TouchableOpacity onPress={() => console.log("Boom")}>
           <View style={[styles.textBox, { width: buttonWidth - 55 }]}>
             <ButtonIcon name={name} />
-            <AppText>{children}</AppText>
+            <AppText style={styles.text}>{children}</AppText>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => console.log("Boom")}>
@@ -42,6 +42,9 @@ const styles = StyleSheet.create({
     height: 57,
     margin: 5,
     padding: 10,
+  },
+  text: {
+    color: colors.white
   },
   textBox: {
     flexDirection: "row",

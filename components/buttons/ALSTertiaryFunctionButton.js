@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   StyleSheet,
   TouchableHighlight,
   TouchableOpacity,
@@ -11,14 +12,22 @@ import AppText from "../AppText";
 import ButtonIcon from "../buttons/ButtonIcon";
 
 const ALSTeriaryFunctionButton = ({
+  encounterState,
   intervalState,
   logState,
   resetState,
   style,
+  timerState,
   title,
 }) => {
   const reset = resetState.value;
   const setReset = resetState.setValue;
+  
+  const endEncounter = encounterState.value;
+  const setEndEncounter = encounterState.setValue;
+
+  const isTimerActive = timerState.value;
+  const setIsTimerActive = timerState.setValue;
 
   const functionButtons = logState.value;
   const setFunctionButtons = logState.setValue;
@@ -34,14 +43,17 @@ const ALSTeriaryFunctionButton = ({
 
   // logs time with event button
   const updateTime = (title, oldState) => {
-    const timeStamp = new Date();
-    const oldButtonArray = oldState[title];
-    const newButtonArray = oldButtonArray.concat(timeStamp);
-    setFunctionButtons((oldState) => {
-      const updatingState = oldState;
-      updatingState[title] = newButtonArray;
-      return updatingState;
-    });
+    if (!endEncounter) {
+      setIsTimerActive(true);
+      const timeStamp = new Date();
+      const oldButtonArray = oldState[title];
+      const newButtonArray = oldButtonArray.concat(timeStamp);
+      setFunctionButtons((oldState) => {
+        const updatingState = oldState;
+        updatingState[title] = newButtonArray;
+        return updatingState;
+      });
+    } else {resetLog()}
   };
 
   //uses state to change background button color after selected
@@ -101,6 +113,51 @@ const ALSTeriaryFunctionButton = ({
       setShowUndo(false);
     }
   });
+
+  //reset button logic
+  const handleReset = () => {
+    setFunctionButtons(resetLogTimes(functionButtons));
+    setReset(true);
+    !isTimerActive ? setIsTimerActive(true) : setIsTimerActive(false);
+    setEndEncounter(false)
+    Alert.alert(
+      "Your APLS Log has been reset.",
+      "",
+      [
+        {
+          text: "OK",
+          onPress: () => "OK",
+          style: "cancel",
+        },
+      ],
+      { cancelable: true }
+    );
+    setReset(false);
+  };
+
+  //reset button alert
+  const resetLog = () => {
+    Alert.alert(
+      "Do you wish to reset your APLS Log?",
+      "",
+      [
+        { text: "Reset", onPress: () => handleReset() },
+        {
+          text: "Cancel",
+          onPress: () => "Cancel",
+          style: "cancel",
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const resetLogTimes = (functionButtons) => {
+    for (let value in functionButtons) {
+    functionButtons[value] = [];
+    }
+    return functionButtons;
+};
 
   return (
     <TouchableHighlight

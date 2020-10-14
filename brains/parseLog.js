@@ -38,7 +38,7 @@ export default (functionButtons, type = "APLS") => {
     if (hours.length < 2) hours = "0" + hours;
     if (minutes.length < 2) minutes = "0" + minutes;
     if (seconds.length < 2) seconds = "0" + seconds;
-    return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+    return `${hours}:${minutes}:${seconds}`; //removed .${milliseconds}
   };
   const formatDate = (date) => {
     let month = "" + (date.getMonth() + 1);
@@ -51,13 +51,13 @@ export default (functionButtons, type = "APLS") => {
   if (objectAsArray[0] === undefined) return "No entries found in log";
   let outputString = `Log of ${type} encounter on ${formatDate(
     objectAsArray[0][0]
-  )}:\n${formatTime(objectAsArray[0][0])}: Resuscitation Encounter Started`;
+  )}:\n\n${formatTime(objectAsArray[0][0])}: Resuscitation Encounter Started`;
   for (let i = 1; i < objectAsArray.length; i++) {
     const newLine = `\n${formatTime(objectAsArray[i][0])}: ${
       objectAsArray[i][1]
     }`;
     outputString += newLine;
-  }
+  } //need to get rid of milliseconds output from total elapsed time of resuscitation
   if (functionButtons.RIP.length === 1 || functionButtons.ROSC.length === 1) {
     outputString += `\nTotal elapsed time of resuscitation encounter: ${zeit(
       objectAsArray[0][0],
