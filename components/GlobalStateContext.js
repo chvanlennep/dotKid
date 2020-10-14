@@ -7,7 +7,6 @@ const GlobalStateProvider = ({ children }) => {
     child: {
       dob: null,
       tob: null,
-      dom: new Date(new Date().getTime() + 10 * 60000),
       gestationInDays: 280,
       hc: "",
       height: "",
@@ -17,7 +16,6 @@ const GlobalStateProvider = ({ children }) => {
     neonate: {
       dob: null,
       tob: null,
-      dom: new Date(new Date().getTime() + 10 * 60000),
       gestationInDays: 0,
       hc: "",
       length: "",

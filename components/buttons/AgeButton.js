@@ -1,25 +1,20 @@
 import React, { useState } from "react";
-import {
-  Alert,
-  Modal,
-  StyleSheet,
-  View,
-  useWindowDimensions,
-  TouchableOpacity,
-} from "react-native";
+import { Alert, Modal, StyleSheet, View, TouchableOpacity } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import AppText from "../AppText";
 import colors from "../../config/colors";
+import defaultStyle from "../../config/styles";
 import Icon from "../Icon";
 
 const SubmitButton = ({
+  gestationWeeks,
+  kind,
   valueBeforeCorrection,
   valueAfterCorrection,
-  kind,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const buttonWidth = useWindowDimensions().width - 10;
+  const buttonWidth = defaultStyle.container.width;
   let outputString;
   let modalHeading;
   let modalMessage;
@@ -75,10 +70,14 @@ const SubmitButton = ({
     modalMessage = `${pretermAge} day${pluralSuffix} old (${addOrdinalSuffix(
       pretermAge + 1
     )} day of life)`;
+  } else if (kind === "jaundice") {
+    let outputGestation = gestationWeeks;
+    if (gestationWeeks >= 38) outputGestation = "38+";
+    outputString = `${valueBeforeCorrection} old, ${outputGestation} week chart`;
   } else {
     const birthGestationWeeks = Math.floor(valueBeforeCorrection / 7);
     const birthGestationDays = valueBeforeCorrection % 7;
-    outputString = `Birth Gestation: ${birthGestationWeeks}+${birthGestationDays}`;
+    outputString = `Gestation: ${birthGestationWeeks}+${birthGestationDays}`;
     modalHeading = outputString;
     modalMessage = `As per RCPCH guidelines, infants born at term (37 weeks and higher) are compared against all term infants and not just infants born at their gestation.\n 
       Preterm infants are compared against infants born at their specific gestation.`;
@@ -86,80 +85,92 @@ const SubmitButton = ({
   const buttonBackGroundColor =
     kind === "child" ? colors.primary : colors.secondary;
 
-  return (
-    <>
-      <TouchableOpacity
-        onPress={() => {
-          setModalVisible(true);
-        }}
-      >
-        <View
-          style={[
-            styles.submitButton,
-            { width: buttonWidth },
-            {
-              backgroundColor: buttonBackGroundColor,
-            },
-          ]}
-        >
-          <AppText style={{ color: colors.white }}>{outputString}</AppText>
-          <Icon
-            backgroundColor={null}
-            height={40}
-            width={40}
-            name="information-outline"
-          />
-        </View>
-      </TouchableOpacity>
-      <View style={styles.centeredView}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert("Window has been closed.");
+  if (kind !== "jaundice")
+    return (
+      <React.Fragment>
+        <TouchableOpacity
+          onPress={() => {
+            setModalVisible(true);
           }}
         >
-          <View style={styles.centeredView}>
-            <View
-              style={[
-                styles.modalView,
-                {
-                  width: buttonWidth - 10,
-                  height:
-                    kind === "neonate"
-                      ? (buttonWidth - 10) / 1.2
-                      : buttonWidth - 10,
-                },
-              ]}
-            >
-              <TouchableOpacity
-                onPress={() => {
-                  setModalVisible(!modalVisible);
-                }}
+          <View
+            style={[
+              styles.submitButton,
+              {
+                backgroundColor: buttonBackGroundColor,
+              },
+            ]}
+          >
+            <AppText style={{ color: colors.white }}>{outputString}</AppText>
+            <Icon
+              backgroundColor={null}
+              height={40}
+              width={40}
+              name="information-outline"
+            />
+          </View>
+        </TouchableOpacity>
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              Alert.alert("Window has been closed.");
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View
+                style={[
+                  styles.modalView,
+                  {
+                    height:
+                      kind === "neonate"
+                        ? (buttonWidth - 10) / 1.2
+                        : buttonWidth - 10,
+                  },
+                ]}
               >
-                <View style={styles.closeIcon}>
-                  <MaterialCommunityIcons
-                    name="close-circle"
-                    color={colors.white}
-                    size={30}
-                  />
+                <TouchableOpacity
+                  onPress={() => {
+                    setModalVisible(!modalVisible);
+                  }}
+                >
+                  <View style={styles.closeIcon}>
+                    <MaterialCommunityIcons
+                      name="close-circle"
+                      color={colors.white}
+                      size={30}
+                    />
+                  </View>
+                </TouchableOpacity>
+                <View style={styles.modalTextHeadingWrapper}>
+                  <AppText style={styles.modalTextHeadings}>
+                    {modalHeading}
+                  </AppText>
                 </View>
-              </TouchableOpacity>
-              <View style={styles.modalTextHeadingWrapper}>
-                <AppText style={styles.modalTextHeadings}>
-                  {modalHeading}
+                <AppText style={styles.modalTextParagraph}>
+                  {modalMessage}
                 </AppText>
               </View>
-              <AppText style={styles.modalTextParagraph}>
-                {modalMessage}
-              </AppText>
             </View>
-          </View>
-        </Modal>
+          </Modal>
+        </View>
+      </React.Fragment>
+    );
+  else
+    return (
+      <View
+        style={[
+          styles.submitButton,
+          {
+            backgroundColor: buttonBackGroundColor,
+          },
+        ]}
+      >
+        <AppText style={{ color: colors.white }}>{outputString}</AppText>
       </View>
-    </>
-  );
+    );
 };
 
 export default SubmitButton;
@@ -182,6 +193,7 @@ const styles = StyleSheet.create({
     margin: 5,
     padding: 10,
     justifyContent: "center",
+    width: defaultStyle.container.width,
   },
   centeredView: {
     flex: 1,
@@ -200,8 +212,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.7,
     shadowRadius: 4,
     elevation: 5,
-    height: 150,
-    width: 150,
+    width: defaultStyle.container.width - 10,
     backgroundColor: colors.medium,
   },
   openButton: {

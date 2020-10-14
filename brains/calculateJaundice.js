@@ -51,10 +51,10 @@ const calculateThreshold38Exchange = (hours) => {
 
 const calculateFinalThresholds = (hours, gestationWeeks) => {
   if (gestationWeeks >= 38) {
-    return [
-      Math.round(calculateThreshold38Photo(hours)),
-      Math.round(calculateThreshold38Exchange(hours)),
-    ];
+    return {
+      phototherapy: Math.round(calculateThreshold38Photo(hours)),
+      exchange: Math.round(calculateThreshold38Exchange(hours)),
+    };
   } else {
     let arrayIndex = gestationWeeks - 23;
     let yInterceptPhoto = under38Data[arrayIndex][1];
@@ -63,8 +63,8 @@ const calculateFinalThresholds = (hours, gestationWeeks) => {
     let yInterceptExchange = under38Data[arrayIndex][4];
     let plateauThresholdExchange = under38Data[arrayIndex][5];
     let mValueExchange = under38Data[arrayIndex][6];
-    return [
-      Math.round(
+    return {
+      phototherapy: Math.round(
         calculateThresholdUnder38(
           hours,
           yInterceptPhoto,
@@ -72,7 +72,7 @@ const calculateFinalThresholds = (hours, gestationWeeks) => {
           mValuePhoto
         )
       ),
-      Math.round(
+      exchange: Math.round(
         calculateThresholdUnder38(
           hours,
           yInterceptExchange,
@@ -80,81 +80,90 @@ const calculateFinalThresholds = (hours, gestationWeeks) => {
           mValueExchange
         )
       ),
-    ];
-  }
-};
-
-const outputResult = (floatHours, gestationWeeks, sbr) => {
-  let thresholds = calculateFinalThresholds(floatHours, gestationWeeks);
-  const hours = Math.floor(floatHours);
-  const phototherapyThreshold = thresholds[0];
-  const exchangeThreshold = thresholds[1];
-  function lessThan24HoursWarning(hours) {
-    if (hours < 24) {
-      return "Warning: This baby is less than 24 hours old \n\n";
-    } else {
-      return "";
-    }
-  }
-  const lessThan24HoursAlert = lessThan24HoursWarning(hours);
-  function giveEasyToReadAge(hours) {
-    const daysOld = Math.floor(hours / 24);
-    const hoursOld = hours - daysOld * 24;
-    function addPluralSuffix() {
-      switch (true) {
-        case daysOld === 1 && hoursOld === 1:
-          return ["", ""];
-        case daysOld === 1 && hoursOld != 1:
-          return ["", "s"];
-        case daysOld != 1 && hoursOld === 1:
-          return ["s", ""];
-        case daysOld != 1 && hoursOld != 1:
-          return ["s", "s"];
-      }
-    }
-    let suffices = addPluralSuffix();
-    const [first, second] = suffices;
-    return `This baby was ${daysOld} day${first} and ${
-      hoursOld % 24
-    } hour${second} old at the time of calculation`;
-  }
-  const easyToReadAge = giveEasyToReadAge(hours);
-  switch (true) {
-    case sbr >= exchangeThreshold:
-      return `Warning: Exchange transfusion threshold reached (${
-        sbr - exchangeThreshold
-      } above) \n\n Thresholds: \n Phototherapy: ${phototherapyThreshold} \n Exchange transfusion: ${exchangeThreshold} \n\n ${easyToReadAge}`;
-    case exchangeThreshold - sbr <
-      (exchangeThreshold - phototherapyThreshold) / 4:
-      return `Warning: Above phototherapy threshold and close to exchange transfusion threshold (${
-        exchangeThreshold - sbr
-      } below exchange transfusion threshold) \n\n Thresholds: \n Phototherapy: ${phototherapyThreshold} \n Exchange transfusion: ${exchangeThreshold} \n\n ${easyToReadAge}`;
-    case sbr >= phototherapyThreshold:
-      return `${lessThan24HoursAlert}Phototherapy threshold reached (${
-        sbr - phototherapyThreshold
-      } above) \n\n Thresholds: \n Phototherapy: ${phototherapyThreshold} \n Exchange transfusion: ${exchangeThreshold} \n\n ${easyToReadAge}`;
-    case phototherapyThreshold - sbr <= 10:
-      return `${lessThan24HoursAlert}Close to phototherapy threshold (${
-        phototherapyThreshold - sbr
-      } below) \n\n Thresholds: \n Phototherapy: ${phototherapyThreshold} \n Exchange transfusion: ${exchangeThreshold} \n\n ${easyToReadAge}`;
-    case phototherapyThreshold - sbr < 50:
-      return `${lessThan24HoursAlert}Less than 50 below phototherapy threshold (${
-        phototherapyThreshold - sbr
-      } below) \n\n Thresholds: \n Phototherapy: ${phototherapyThreshold} \n Exchange transfusion: ${exchangeThreshold} \n\n ${easyToReadAge}`;
-    default:
-      return `50 or more below phototherapy threshold (${
-        phototherapyThreshold - sbr
-      } below) \n\n Thresholds: \n Phototherapy: ${phototherapyThreshold} \n Exchange transfusion: ${exchangeThreshold} \n\n ${easyToReadAge}`;
+    };
   }
 };
 
 const calculateJaundice = (object) => {
-  const dob = object.dob;
-  const dom = object.dom;
+  const justDob = object.dob;
+  const justTob = object.tob;
+  const justDom = object.dom;
+  const justTom = object.tom;
+  const dob = new Date(
+    justDob.getFullYear(),
+    justDob.getMonth(),
+    justDob.getDate(),
+    justTob.getHours(),
+    justTob.getMinutes()
+  );
+  const dom = new Date(
+    justDom.getFullYear(),
+    justDom.getMonth(),
+    justDom.getDate(),
+    justTom.getHours(),
+    justTom.getMinutes()
+  );
   const sbr = object.sbr;
   const gestationWeeks = Math.floor(object.gestationInDays / 7);
   const floatHours = zeit(dob, "hours", dom, false);
-  return outputResult(floatHours, gestationWeeks, sbr);
+  if (floatHours < 0) {
+    return "Negative age";
+  }
+  if (floatHours > 336) {
+    return "Too old";
+  }
+  const stringAge = zeit(dob, "string", dom);
+  const { phototherapy, exchange } = calculateFinalThresholds(
+    floatHours,
+    gestationWeeks
+  );
+  let mainConclusion = "";
+  let activateYoungWarning = false;
+  let exchangeWarning = false;
+  let makeBlue = false;
+  switch (true) {
+    case phototherapy - sbr < 50 && phototherapy - sbr > 10:
+      mainConclusion = "Below phototherapy threshold, but less than 50 below";
+      break;
+    case phototherapy - sbr <= 10 && phototherapy - sbr > 0:
+      mainConclusion = "Close to phototherapy threshold";
+      activateYoungWarning = true;
+      makeBlue = true;
+      break;
+    case sbr >= phototherapy && sbr < exchange:
+      mainConclusion = "Threshold for phototherapy reached";
+      makeBlue = true;
+      activateYoungWarning = true;
+      if (exchange - sbr < (exchange - phototherapy) / 4) {
+        mainConclusion = "Warning: close to exchange transfusion threshold";
+        exchangeWarning = true;
+        activateYoungWarning = true;
+      }
+      break;
+    case sbr >= exchange:
+      mainConclusion = "Warning: threshold for exchange transfusion reached";
+      activateYoungWarning = true;
+      exchangeWarning = true;
+      break;
+    default:
+      mainConclusion = "50 or more below phototherapy threshold";
+  }
+  let youngWarning = "";
+  if (floatHours < 24 && activateYoungWarning)
+    youngWarning =
+      "Warning: this baby was less than 24 hours old when SBR taken";
+  return {
+    stringAge: stringAge,
+    phototherapy: phototherapy,
+    exchange: exchange,
+    exchangeWarning: exchangeWarning,
+    youngWarning: youngWarning,
+    makeBlue: makeBlue,
+    mainConclusion: mainConclusion,
+    sbr: sbr,
+    ageInHours: Math.floor(floatHours),
+    gestationWeeks: gestationWeeks,
+  };
 };
 
 export default calculateJaundice;

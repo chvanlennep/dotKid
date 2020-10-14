@@ -1,49 +1,18 @@
-Object {
-  "BPOutput": Object {
-    "diastolicOutput": "No measurement recorded",
-    "outputReferenceValues": "{}Reference values: 
-Systolic 90th centile: 106, 
- Systolic 95th centile: 110, 
- Systolic 99th centile: 117  
 
- Diastolic 90th centile: 70, 
- Diastolic 95th centile: 74, 
- Diastolic 99th centile: 82",
-    "systolicOutput": "Systolic BP <90th centile. Normotensive",
-  },
-  "centileObject": Object {
-    "ageAfterCorrection": "not corrected",
-    "ageBeforeCorrection": "7 years and 0 months",
-    "centiles": Object {
-      "bmi": Array [
-        "N/A",
-        "N/A",
-      ],
-      "hc": Array [
-        "N/A",
-        "N/A",
-      ],
-      "height": Array [
-        "<0.04th",
-        "More than 4 SDs below the mean",
-      ],
-      "weight": Array [
-        "N/A",
-        "N/A",
-      ],
-    },
-    "kind": "child",
-    "under2": false,
-  },
-  "measurements": Object {
-    "diastolic": "",
-    "dob": "2013-10-11T10:50:01.000Z",
-    "dom": "2020-10-11T11:00:01.134Z",
-    "domChanged": false,
-    "gestationInDays": 280,
-    "height": "100",
-    "sex": "Male",
-    "systolic": "100",
-    "tob": null,
-  },
-}
+Dependencies to install to a fresh expo project:
+
+npm install react-native-picker-select
+npm install react-native-elements
+expo install expo-constants
+npm install @react-navigation/native
+expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view
+npm install @react-navigation/stack
+npm install @react-navigation/bottom-tabs
+expo install @react-native-community/datetimepicker
+expo install @react-native-community/picker
+npm install react-native-keyboard-aware-scroll-view
+expo install formik
+expo install yup
+npm install regression
+expo install react-native-svg
+npm install react-native-svg-charts

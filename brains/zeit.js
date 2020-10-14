@@ -128,6 +128,8 @@ export default (
       }
       const wholeWeeks = Math.floor(rawWeeks);
       switch (true) {
+        case rawDays < 1:
+          return `${intAges.remainderHours} hour${plurals.remainderHours}`;
         case wholeWeeks <= 2:
           return `${intAges.days} day${plurals.days} and ${intAges.remainderHours} hour${plurals.remainderHours}`;
         case wholeWeeks > 2 && wholeWeeks <= 8:

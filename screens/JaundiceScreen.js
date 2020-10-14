@@ -1,7 +1,8 @@
 import React from "react";
-import { StyleSheet, View, Platform } from "react-native";
+import { Alert, StyleSheet, View, Platform } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import * as Yup from "yup";
+import { useNavigation } from "@react-navigation/native";
 
 import AppForm from "../components/AppForm";
 import NCalcScreen from "../components/NCalcScreen";
@@ -11,19 +12,20 @@ import NumberInputButton from "../components/buttons/input/NumberInputButton";
 import DomInputButton from "../components/buttons/input/DomInputButton";
 import FormSubmitButton from "../components/buttons/FormSubmitButton";
 import FormResetButton from "../components/buttons/FormResetButton";
-import AppText from "../components/AppText";
 import colors from "../config/colors";
-import SmallButton from "../components/buttons/SmallButton";
+import routes from "../navigation/routes";
 
 import calculateJaundice from "../brains/calculateJaundice";
 
 const JaundiceScreen = () => {
+  const navigation = useNavigation();
   const initialValues = {
     sbr: "",
     gestationInDays: 0,
     dob: null,
     tob: null,
     dom: new Date(new Date().getTime() + 10 * 60000),
+    tom: new Date(new Date().getTime() + 10 * 60000),
     domChanged: false,
   };
 
@@ -47,13 +49,33 @@ const JaundiceScreen = () => {
       .label("Time of Birth"),
   });
 
+  const handleFormikSubmit = (values) => {
+    if (calculateJaundice(values) === "Negative age") {
+      Alert.alert(
+        "Time Travelling Patient",
+        "Please check the dates entered",
+        [{ text: "OK" }],
+        { cancelable: false }
+      );
+    } else if (calculateJaundice(values) === "Too old") {
+      Alert.alert(
+        "Patient Too Old",
+        "This calculator can only be used until 14 days of age",
+        [{ text: "OK", onPress: () => null }]
+      );
+    } else {
+      const serialisedObject = JSON.stringify(calculateJaundice(values));
+      navigation.navigate(routes.JAUNDICE_RESULTS, serialisedObject);
+    }
+  };
+
   return (
-    <NCalcScreen>
+    <NCalcScreen style={{ flex: 1 }}>
       <KeyboardAwareScrollView>
         <View style={styles.topContainer}>
           <AppForm
             initialValues={initialValues}
-            onSubmit={(values) => alert(calculateJaundice(values))}
+            onSubmit={handleFormikSubmit}
             validationSchema={validationSchema}
           >
             <DobInputButton kind="neonate" renderTime={true} />
@@ -74,17 +96,6 @@ const JaundiceScreen = () => {
               kind="neonate"
             />
           </AppForm>
-        </View>
-        <View style={styles.bottomContainer}>
-          <View style={styles.outputContainer}>
-            <View style={styles.title}>
-              <AppText style={styles.text}>Jaundice Treatment: </AppText>
-            </View>
-            <View style={styles.buttons}>
-              <SmallButton name="information-outline" />
-              <SmallButton name="chart-line" />
-            </View>
-          </View>
         </View>
       </KeyboardAwareScrollView>
     </NCalcScreen>

@@ -7,7 +7,7 @@ const lightTheme = {
   dark: false,
   colors: {
     ...DefaultTheme.colors,
-    primary: colors.primary,
+    primary: colors.black,
     background: colors.white,
     border: colors.white,
   },
@@ -19,7 +19,7 @@ const darkTheme = {
     ...DefaultTheme.colors,
     card: Platform.OS === "ios" ? colors.black : colors.dark,
     border: colors.black,
-    primary: colors.primary,
+    primary: colors.white,
     background: colors.black,
     text: colors.white,
   },
