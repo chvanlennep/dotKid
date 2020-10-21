@@ -6,7 +6,6 @@ import * as Yup from 'yup';
 
 import PCalcScreen from '../components/PCalcScreen';
 import colors from '../config/colors';
-import DobInputButton from '../components/buttons/input/DobInputButton';
 import AppForm from '../components/AppForm';
 import zeit from '../brains/zeit';
 import NumberInputButton from '../components/buttons/input/NumberInputButton';
@@ -32,12 +31,12 @@ const ECGScreen = () => {
       .required('↑ Please enter a date of Birth')
       .label('Date of Birth'),
     qtinterval: Yup.number()
-      .min(0.6, wrongUnitsMessage('seconds'))
+      .min(0.1, wrongUnitsMessage('seconds'))
       .max(20, wrongUnitsMessage('seconds'))
       .label('QT Interval')
       .required(oneMeasurementNeeded),
     rrinterval: Yup.number()
-      .min(0.01, wrongUnitsMessage('seconds'))
+      .min(0.15, wrongUnitsMessage('seconds'))
       .max(3, wrongUnitsMessage('seconds'))
       .label('R-R Interval')
       .required(oneMeasurementNeeded),
@@ -93,7 +92,7 @@ const ECGScreen = () => {
   };
 
   return (
-    <PCalcScreen>
+    <PCalcScreen style={{ flex: 1 }}>
       <KeyboardAwareScrollView>
         <View style={styles.topContainer}>
           <AppForm
@@ -102,7 +101,6 @@ const ECGScreen = () => {
             validationSchema={validationSchema}
           >
             <DateTimeInputButton kind="child" type="birth" />
-            <DobInputButton name="dob" kind="child" />
             <NumberInputButton
               name="qtinterval"
               userLabel="QT Interval"

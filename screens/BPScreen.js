@@ -1,5 +1,5 @@
-import React,  from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Yup from 'yup';
@@ -15,6 +15,7 @@ import NumberInputButton from '../components/buttons/input/NumberInputButton';
 import FormResetButton from '../components/buttons/FormResetButton';
 import FormSubmitButton from '../components/buttons/FormSubmitButton';
 import routes from '../navigation/routes';
+import zeit from '../brains/zeit';
 import ageChecker from '../brains/ageChecker';
 import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
 
@@ -112,6 +113,7 @@ const BPScreen = () => {
         }
         const measurements = values;
         const heightCentile = Math.round(centileString.replace(/[^0-9.]/g, ''));
+        const age = zeit(values.dob, 'years', values.dom);
         const BPOutput = calculateBP(
           heightCentile,
           age,

@@ -27,6 +27,11 @@ const NumberInputButton = ({
 
   const { setFieldValue, errors, touched, values } = useFormikContext();
 
+  const placeHolderText =
+    unitsOfMeasurement.charAt(0) === ' '
+      ? `Enter here (in${unitsOfMeasurement})`
+      : `Enter here (in ${unitsOfMeasurement})`;
+
   const manageStats = {
     read: function (kind, measurementType) {
       return globalStats[kind][measurementType];
@@ -154,7 +159,7 @@ const NumberInputButton = ({
             value={localNumber}
             clearTextOnFocus={false}
             keyboardType={'decimal-pad'}
-            placeholder={`Enter here (in ${unitsOfMeasurement})`}
+            placeholder={placeHolderText}
             placeholderTextColor={colors.white}
             multiline={false}
             textAlignVertical="top"
