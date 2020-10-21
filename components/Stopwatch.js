@@ -4,7 +4,7 @@ import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import colors from '../config/colors';
 import AppText from './AppText';
 
-const Stopwatch = ({ intervalState, logState, resetState }) => {
+const Stopwatch = ({ intervalState, logState, resetState, timerState }) => {
   const [time, setTime] = useState(new Date().toLocaleTimeString());
   const secondsPassed = useRef(0);
 
@@ -13,6 +13,9 @@ const Stopwatch = ({ intervalState, logState, resetState }) => {
 
   const functionButtons = logState.value;
   const setFunctionButtons = logState.setValue;
+
+  const isTimerActive = timerState.value;
+  const setIsTimerActive = timerState.setValue;
 
   const reset = resetState.value
 

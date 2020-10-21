@@ -96,7 +96,7 @@ const AdrenalineTimer = ({
   // }
   // )
 
-  return <AppText style={styles.text}>{adrenalineTime}</AppText>;
+  return <AppText style={styles.text}>Adrenaline {"\n"}{adrenalineTime}</AppText>;
 };
 
 export default AdrenalineTimer;

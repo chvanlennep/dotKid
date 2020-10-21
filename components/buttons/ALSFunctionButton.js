@@ -18,14 +18,20 @@ import colors from "../../config/colors";
 import AppText from "../AppText";
 import ButtonIcon from "../buttons/ButtonIcon";
 
-const ALSFunctionButton = ({ logState, resetState, style, title }) => {
+const ALSFunctionButton = ({ encounterState, logState, resetState, style, timerState, title }) => {
   const reset = resetState.value;
   const setReset = resetState.setValue;
 
   const functionButtons = logState.value;
   const setFunctionButtons = logState.setValue;
 
+  const endEncounter = encounterState.value;
+  const setEndEncounter = encounterState.setValue;
+
   const [changeBackground, setChangeBackground] = useState(false);
+
+  const isTimerActive = timerState.value;
+  const setIsTimerActive = timerState.setValue;
 
   const [showUndo, setShowUndo] = useState(false);
 
@@ -34,16 +40,63 @@ const ALSFunctionButton = ({ logState, resetState, style, title }) => {
 
   // logs time with event button
   const updateTime = (title, oldState) => {
-    const timeStamp = new Date();
-    const oldButtonArray = oldState[title];
-    const newButtonArray = oldButtonArray.concat(timeStamp);
-    setFunctionButtons((oldState) => {
-      const updatingState = oldState;
-      updatingState[title] = newButtonArray;
-      return updatingState;
-    });
+    if (!endEncounter) {
+      setIsTimerActive(true);
+      const timeStamp = new Date();
+      const oldButtonArray = oldState[title];
+      const newButtonArray = oldButtonArray.concat(timeStamp);
+      setFunctionButtons((oldState) => {
+        const updatingState = oldState;
+        updatingState[title] = newButtonArray;
+        return updatingState;
+      });
+    } else {resetLog()}
+  }
+
+  //reset button logic
+  const handleReset = () => {
+    setFunctionButtons(resetLogTimes(functionButtons));
+    setReset(true);
+    !isTimerActive ? setIsTimerActive(true) : setIsTimerActive(false);
+    setEndEncounter(false)
+    Alert.alert(
+      "Your APLS Log has been reset.",
+      "",
+      [
+        {
+          text: "OK",
+          onPress: () => "OK",
+          style: "cancel",
+        },
+      ],
+      { cancelable: true }
+    );
+    setReset(false);
   };
 
+  //reset button alert
+  const resetLog = () => {
+    Alert.alert(
+      "Do you wish to reset your APLS Log?",
+      "",
+      [
+        { text: "Reset", onPress: () => handleReset() },
+        {
+          text: "Cancel",
+          onPress: () => "Cancel",
+          style: "cancel",
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const resetLogTimes = (functionButtons) => {
+    for (let value in functionButtons) {
+    functionButtons[value] = [];
+    }
+    return functionButtons;
+};
   //uses state to change background button color after selected
   const handleChangeBackground = (changeBackground, oldState, title) => {
     const oldButtonArray = oldState[title];
@@ -56,7 +109,6 @@ const ALSFunctionButton = ({ logState, resetState, style, title }) => {
   };
 
   const handlePress = () => {
-    //some logic to prevent double pressing may need to go here
     if (clicks < 1) {
       setChangeBackground(true);
       updateTime(title, functionButtons);

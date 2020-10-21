@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, FlatList, StyleSheet, View } from "react-native";
+import { Alert, FlatList, StyleSheet, useWindowDimensions, View } from "react-native";
 
 import PCalcScreen from "../components/PCalcScreen";
 import ALSToolbar from "../components/ALSToolbar";
@@ -20,87 +20,96 @@ import {
   tertiaryButtons,
 } from "../brains/aplsObjects";
 import parseLog from "../brains/parseLog";
+import RhythmModal from "../components/RhythmModal";
+import LogModal from "../components/LogModal"
+
 
 const APLSScreen = () => {
-  const [reset, setReset] = useState(false);
+    const [reset, setReset] = useState(false);
+    const [fButtons, setFunctionButtons] = useState(functionButtons);
+    const [intervalTime, setIntervalTime] = useState(0);
+    const [adrenalineTime, setAdrenalineTime] = useState(0);
+    const [adrenalinePressed, setAdrenalinePressed] = useState(false);
+    const [logVisible, setLogVisible] = useState(false);
+    const [isTimerActive, setIsTimerActive] = useState(false);
+    const [endEncounter, setEndEncouter] = useState(false);
 
-  const [fButtons, setFunctionButtons] = useState(functionButtons);
-  const [intervalTime, setIntervalTime] = useState(0);
-  const [adrenalineTime, setAdrenalineTime] = useState(0);
-  const [rhythmTime, setRhythmTime] = useState(0);
-  const [adrenalinePressed, setAdrenalinePressed] = useState(false);
-  const [rhythmPressed, setRhythmPressed] = useState(false);
-
-  const rhythmTimeState = {
-    value: rhythmTime,
-    setValue: setRhythmTime,
+    const adrenalineTimeState = {
+        value: adrenalineTime,
+        setValue: setAdrenalineTime,
   };
 
-  const rhythmPressedState = {
-    value: rhythmPressed,
-    setValue: setRhythmPressed,
-  };
+    const adrenalinePressedState = {
+        value: adrenalinePressed,
+        setValue: setAdrenalinePressed,
+    };
 
-  const adrenalineTimeState = {
-    value: adrenalineTime,
-    setValue: setAdrenalineTime,
-  };
+    const encounterState = {
+        value: endEncounter,
+        setValue: setEndEncouter
+    };
 
-  const adrenalinePressedState = {
-    value: adrenalinePressed,
-    setValue: setAdrenalinePressed,
-  };
+    const intervalState = {
+        value: intervalTime,
+        setValue: setIntervalTime,
+      };
 
-  const intervalState = {
-    value: intervalTime,
-    setValue: setIntervalTime,
-  };
+      const logState = {
+        value: functionButtons,
+        setValue: setFunctionButtons,
+      };
+    
+      const resetState = {
+        value: reset,
+        setValue: setReset,
+      };
 
-  const logState = {
-    value: functionButtons,
-    setValue: setFunctionButtons,
-  };
+      const logVisibleState = {
+          value: logVisible,
+          setValue: setLogVisible
+      }
 
-  const resetState = {
-    value: reset,
-    setValue: setReset,
-  };
+      const timerState = {
+          value: isTimerActive,
+          setValue: setIsTimerActive
+      }
 
-  //clears functionButtons object
-  const resetLogTimes = (functionButtons) => {
-    for (let value in functionButtons) {
-      functionButtons[value] = [];
-    }
-    return functionButtons;
-  };
+        //clears functionButtons object
+    const resetLogTimes = (functionButtons) => {
+        for (let value in functionButtons) {
+        functionButtons[value] = [];
+        }
+        return functionButtons;
+    };
 
-  //Adrenaline logic
-  const adrenaline = () => {
-    if (!adrenalinePressed) {
-      setAdrenalinePressed(true);
-      handleLogEvent(functionButtons, "Adrenaline Administered");
-    } else if (adrenalinePressed) {
-      Alert.alert(
-        "You can only log this every 3 minutes",
-        "Please click undo if you need to cancel this log entry.",
-        [
-          {
-            text: "Undo",
-            onPress: () => {
-              removeTime("Adrenaline Administered", functionButtons);
-              setAdrenalinePressed(false);
-            },
-            style: "cancel",
-          },
-          { text: "OK", onPress: () => "OK" },
-        ],
-        { cancelable: false }
-      );
-    }
-  };
+    const adrenaline = () => {
+        setIsTimerActive(true)
+        if (!adrenalinePressed){
+            setAdrenalinePressed(true);
+            handleLogEvent(functionButtons, "Adrenaline Administered");
+        } else if (adrenalinePressed) {
+            Alert.alert(
+                "You can only log this every 3 minutes",
+                "Please click undo if you need to cancel this log entry.",
+                [
+                  {
+                    text: "Undo",
+                    onPress: () => {
+                      removeTime("Adrenaline Administered", functionButtons);
+                      setAdrenalinePressed(false);
+                    },
+                    style: "cancel",
+                  },
+                  { text: "OK", onPress: () => "OK" },
+                ],
+                { cancelable: false }
+              );
+            }
+        }
 
-  //analyse rhythm logic
+    //analyse rhythm logic
   const analyse = () => {
+      setIsTimerActive(true)
     if (!rhythmPressed) {
       setRhythmPressed(true);
       handleLogEvent(functionButtons, "Rhythm Analysed");
@@ -128,6 +137,8 @@ const APLSScreen = () => {
   const handleReset = () => {
     setFunctionButtons(resetLogTimes(functionButtons));
     setReset(true);
+    !isTimerActive ? setIsTimerActive(true) : setIsTimerActive(false);
+    setEndEncounter(false)
     Alert.alert(
       "Your APLS Log has been reset.",
       "",
@@ -168,7 +179,7 @@ const APLSScreen = () => {
       [
         {
           text: "Yes - confirm patient as RIP",
-          onPress: () => handleLogEvent(functionButtons, "RIP"),
+          onPress: () => {handleLogEvent(functionButtons, "RIP"); setLogVisible(true); setIsTimerActive(false); setEndEncouter(true) },
         },
         {
           text: "Cancel",
@@ -186,7 +197,7 @@ const APLSScreen = () => {
       [
         {
           text: "Yes - confirm patient as ROSC",
-          onPress: () => handleLogEvent(functionButtons, "ROSC"),
+          onPress: () => {handleLogEvent(functionButtons, "ROSC"); setLogVisible(true); setIsTimerActive(false); setEndEncouter(true) },
         },
         {
           text: "Cancel",
@@ -218,6 +229,7 @@ const APLSScreen = () => {
 
   // adds time to log object
   const handleLogEvent = (newState, title) => {
+    setIsTimerActive(true)
     const newTime = new Date();
     const oldLogArray = newState[title];
     const newLogArray = oldLogArray.concat(newTime);
@@ -234,8 +246,10 @@ const APLSScreen = () => {
         <ALSFunctionButton
           title={item.id}
           logState={logState}
+          encounterState={encounterState}
           intervalState={intervalState}
           resetState={resetState}
+          timerState={timerState}
         />
       );
     }
@@ -246,148 +260,142 @@ const APLSScreen = () => {
         <ALSTertiaryFunctionButton
           title={item.id}
           intervalState={intervalState}
+          encounterState={encounterState}
           logState={logState}
+          timerState={timerState}
           resetState={resetState}
         />
       );
     }
   };
 
+
   return (
     <PCalcScreen isResus={true} style={{ flex: 1 }}>
-      <ALSToolbar reset={resetLog} rip={RIPAPLS} rosc={ROSCAPLS} />
-      <View style={styles.middleContainer}>
-        <ALSDisplayButton style={styles.button}>
-          {" "}
-          <Stopwatch
-            intervalState={intervalState}
-            logState={logState}
-            resetState={resetState}
-          />
+    <ALSToolbar reset={resetLog} rip={RIPAPLS} rosc={ROSCAPLS} />
+    <View style={styles.middleContainer}>
+   
+    <ALSDisplayButton onPress={() => !reset ? resetLog() : setIsTimerActive(true)} style={styles.button}>
+    { !isTimerActive && "Start Timer"}
+    { isTimerActive && <Stopwatch
+    intervalState={intervalState}
+    logState={logState}
+    resetState={resetState}
+    timerState={timerState}
+    /> }
+    </ALSDisplayButton>
+   
+    
+    <LogModal logInput={functionButtons} logVisibleState={logVisibleState} />
+    
+    
+    <ALSDisplayButton
+    onPress={() => adrenaline()}
+    style={[styles.button, adrenalinePressed && styles.buttonPressed]}
+    >
+    {!adrenalinePressed && "Adrenaline"}
+    {adrenalinePressed && (
+        <AdrenalineTimer
+        adrenalinePressedState={adrenalinePressedState}
+        adrenalineTimeState={adrenalineTimeState}
+        resetState={resetState} />) }
         </ALSDisplayButton>
-        <ALSDisplayButton
-          style={styles.button}
-          onPress={() => {
-            console.log(parseLog(functionButtons));
-            Alert.alert(
-              "View the log in the console",
-              "",
-              [
-                {
-                  text: "OK",
-                  onPress: () => "OK",
-                  style: "cancel",
-                },
-              ],
-              { cancelable: true }
-            );
-          }}
-        >
-          Log
-        </ALSDisplayButton>
-        <ALSDisplayButton
-          onPress={() => adrenaline()}
-          style={[styles.button, adrenalinePressed && styles.buttonPressed]}
-        >
-          Adrenaline {"\n"}
-          {adrenalinePressed && (
-            <AdrenalineTimer
-              adrenalinePressedState={adrenalinePressedState}
-              adrenalineTimeState={adrenalineTimeState}
-              resetState={resetState}
-            />
-          )}
-        </ALSDisplayButton>
-        <ALSDisplayButton
-          onPress={() => analyse()}
-          style={[styles.button, rhythmPressed && styles.buttonPressed]}
-        >
-          Analyse Rhythm {"\n"}
-          {rhythmPressed && (
-            <AnalyseRhythm
-              rhythmPressedState={rhythmPressedState}
-              rhythmTimeState={rhythmTimeState}
-              resetState={resetState}
-            />
-          )}
-        </ALSDisplayButton>
-      </View>
-      <View style={styles.textContainer}>
+        
+        
+        <RhythmModal 
+        logState={logState}
+        resetState={resetState} />
+        </View>
+       
+        <View style={styles.textContainer}>
         <AppText style={styles.text}>APLS</AppText>
-      </View>
-      <View style={styles.bottomContainer}>
-        <FlatList
-          data={flatListData}
-          keyExtractor={(flatListData) => flatListData.id.toString()}
-          renderItem={renderListItem}
-          ListHeaderComponent={
-            <ALSFunctionButton
-              title={primaryButtons[0]["id"]}
-              logState={logState}
-              intervalState={intervalState}
-              resetState={resetState}
-            />
-          }
-          ListFooterComponent={
-            <ALSTertiaryFunctionButton
-              title={tertiaryButtons[tertiaryButtons.length - 1]["id"]}
-              intervalState={intervalState}
-              logState={logState}
-              resetState={resetState}
-            />
-          }
-        />
-      </View>
-    </PCalcScreen>
-  );
-};
+              </View>
+              <View style={styles.bottomContainer}>
+              <FlatList
+              data={flatListData}
+              keyExtractor={(flatListData) => flatListData.id.toString()}
+              renderItem={renderListItem}
+              ListHeaderComponent={
+                  <ALSFunctionButton
+                    title={primaryButtons[0]["id"]}
+                    timerState={timerState}
+                    logState={logState}
+                    encounterState={encounterState}
+                    intervalState={intervalState}
+                    resetState={resetState}
+                />
+            }
+            ListFooterComponent={
+                <ALSTertiaryFunctionButton
+                title={tertiaryButtons[tertiaryButtons.length - 1]["id"]}
+                intervalState={intervalState}
+                logState={logState}
+                encounterState={encounterState}
+                timerState={timerState}
+                resetState={resetState}
+                
+              />
+            }
+          />
+        </View>
+      </PCalcScreen>
+    );
+  };
 
-export default APLSScreen;
+  
+  export default APLSScreen;
+  
+  const styles = StyleSheet.create({
+    bottomButton: {
+      backgroundColor: colors.medium,
+      marginBottom: 200,
+    },
+    bottomContainer: {
+      padding: 15,
+      paddingTop: 5,
+      flex: 1,
+    },
+    button: {
+        alignContent: "center",
+        backgroundColor: colors.dark,
+        justifyContent: 'center',
+        textAlign: 'center',
+        width: '44%',
+    },
 
-const styles = StyleSheet.create({
-  bottomButton: {
-    backgroundColor: colors.medium,
-    marginBottom: 200,
-  },
-  bottomContainer: {
-    padding: 15,
-    paddingTop: 5,
-    flex: 1,
-  },
-  button: {
-    alignContent: "center",
-    alignSelf: "center",
-    backgroundColor: colors.dark,
-    justifyContent: "center",
-    width: "44%",
-  },
-  buttonPressed: {
-    backgroundColor: colors.primary,
-    flexWrap: "nowrap",
-    height: 90,
-    justifyContent: "center",
-    textAlign: "center",
-  },
-  middleContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    paddingTop: 10,
-    width: "100%",
-  },
-  darkButton: {
-    backgroundColor: colors.dark,
-    alignSelf: "center",
-  },
-  mediumButton: {
-    backgroundColor: colors.medium,
-  },
-  text: {
-    fontSize: 28,
-    marginBottom: 5,
-  },
-  textContainer: {
-    marginLeft: 15,
-    marginTop: 5,
-  },
-});
+    buttonPressed: {
+      backgroundColor: colors.primary,
+      flexWrap: "nowrap",
+      height: 90,
+      justifyContent: "center",
+      textAlign: "center",
+    },
+    middleContainer: {
+    //     alignContent: "center",
+        alignSelf: "center",
+        alignItems: "center",
+        // backgroundColor: colors.primary,
+     flexDirection: "row",
+      flexWrap: "wrap",
+      justifyContent: "center",
+      paddingTop: 10,
+    //   width: "80%"
+    },
+    darkButton: {
+      backgroundColor: colors.dark,
+      alignSelf: "center",
+    },
+    mediumButton: {
+      backgroundColor: colors.medium,
+    },
+
+    text: {
+      fontSize: 28,
+      marginBottom: 5,
+    },
+    textContainer: {
+      marginLeft: 15,
+      marginTop: 5,
+    },
+
+  });

@@ -20,16 +20,14 @@ export default ALSDisplayButton
 const styles = StyleSheet.create({
     button: {
         alignItems: "center",
-        backgroundColor: colors.light,
         borderRadius: 5,
-        color: colors.white,
-        flexDirection: "row",
+        // color: colors.white,
         height: 57,
         justifyContent: "center",
-        margin: 5, 
+        marginVertical: 5,
+        marginHorizontal: 5,
         padding: 10,
-        width: "100%",
-        
+        width: "100%"
     },
 
 })
