@@ -1,7 +1,7 @@
-import regression from "regression";
+import regression from 'regression';
 
-import centileData from "./centileData";
-import zeit from "./zeit";
+import centileData from './centileData';
+import zeit from './zeit';
 
 // kept separate for simplicity
 const calculateBMI = (weight, heightInCm) => {
@@ -15,29 +15,27 @@ const addOrdinalSuffix = (inputNumber) => {
   if (Number.isInteger(inputNumber) === false) {
     inputNumber *= 10;
     if (Number.isInteger(inputNumber) === false) {
-      return "Error: only integers or numbers to 1 decimal place are supported";
+      return 'Error: only integers or numbers to 1 decimal place are supported';
     }
   }
   let remainder10 = inputNumber % 10;
   let remainder100 = inputNumber % 100;
-  if (remainder10 === 1 && remainder100 != 11) {
+  if (remainder10 === 1 && remainder100 !== 11) {
     return `${answerNumber}st`;
   }
-  if (remainder10 === 2 && remainder100 != 12) {
+  if (remainder10 === 2 && remainder100 !== 12) {
     return `${answerNumber}nd`;
   }
-  if (remainder10 === 3 && remainder100 != 13) {
+  if (remainder10 === 3 && remainder100 !== 13) {
     return `${answerNumber}rd`;
   } else {
     return `${answerNumber}th`;
   }
 };
 
-// Z Scores for RCPCH centile lines: [-2.6521,-2.0537,-1.3408,-0.6745,0,0.6745,1.3408,2.0537,2.6521];
-
 /*
- * If preterm centile cannot be calculated from LMS data directly (as data only given for whole week gestations), this function below
- * calculates relevant measurements for each centile.
+ * If preterm centile cannot be calculated from LMS data directly (as data only given for whole week gestations), this function
+ * below calculates relevant measurements for each centile.
  * Example:
  * Preterm baby, corrected gestation 27+3
  * Relevant whole week gestation LMS data extracted (in this case 26, 27 and 28)
@@ -46,7 +44,37 @@ const addOrdinalSuffix = (inputNumber) => {
  * Equation is in standard form y = ax^2 + bx + c, constants are saved to an array
  * Equation is used to generate measurements for each inputted centile line at inputted gestation
  */
-const outputPretermMeasurements = (workingLMSData, gestWeeks, zArray) => {
+const outputPretermMeasurements = (
+  object,
+  measurementType,
+  floatWeeks,
+  zArray
+) => {
+  const sex = object.sex;
+  const lmsArray = centileData.neonate[sex][measurementType];
+  const gestWeeksRoundedDown = Math.floor(floatWeeks);
+  let startingGestation;
+  let workingLMSData = [];
+  let dataPoint1;
+  let dataPoint2;
+  let dataPoint3;
+  if (measurementType === 'length') {
+    startingGestation = 25;
+  } else {
+    startingGestation = 23;
+  }
+  if (gestWeeksRoundedDown === startingGestation) {
+    dataPoint1 = gestWeeksRoundedDown;
+    dataPoint2 = gestWeeksRoundedDown + 1;
+    dataPoint3 = gestWeeksRoundedDown + 2;
+  } else {
+    dataPoint1 = gestWeeksRoundedDown - 1;
+    dataPoint2 = gestWeeksRoundedDown;
+    dataPoint3 = gestWeeksRoundedDown + 1;
+  }
+  workingLMSData.push(lmsArray[dataPoint1 - startingGestation]);
+  workingLMSData.push(lmsArray[dataPoint2 - startingGestation]);
+  workingLMSData.push(lmsArray[dataPoint3 - startingGestation]);
   let measurementArray = [];
   let measurementSubArray = [];
   let arrayLength = zArray.length;
@@ -64,9 +92,9 @@ const outputPretermMeasurements = (workingLMSData, gestWeeks, zArray) => {
     measurementSubArray = [];
   }
   let measurementLimitsEquations = [];
-  let dataPoint1 = workingLMSData[0][0];
-  let dataPoint2 = workingLMSData[1][0];
-  let dataPoint3 = workingLMSData[2][0];
+  dataPoint1 = workingLMSData[0][0];
+  dataPoint2 = workingLMSData[1][0];
+  dataPoint3 = workingLMSData[2][0];
   arrayLength = measurementArray.length;
   for (let i = 0; i < arrayLength; i++) {
     let dataset = [
@@ -82,66 +110,37 @@ const outputPretermMeasurements = (workingLMSData, gestWeeks, zArray) => {
   }
   let finalMeasurementLimitsArray = [];
   arrayLength = measurementLimitsEquations.length;
-  finalMeasurementLimitsArray.push(Math.round(gestWeeks * 7));
+  finalMeasurementLimitsArray.push(Math.round(floatWeeks * 7));
   for (let i = 0; i < arrayLength; i++) {
     finalMeasurementLimitsArray.push(
-      measurementLimitsEquations[i][0] * Math.pow(gestWeeks, 2) +
-        measurementLimitsEquations[i][1] * gestWeeks +
+      measurementLimitsEquations[i][0] * Math.pow(floatWeeks, 2) +
+        measurementLimitsEquations[i][1] * floatWeeks +
         measurementLimitsEquations[i][2]
     );
   }
   return finalMeasurementLimitsArray;
 };
 
+// regression route
 const outputCentileFromMeasurementsPreterm = (
   object,
-  gestWeeks,
+  floatWeeks,
   measurementType
 ) => {
   const wholeCentileZLimitsPart1 = centileData.neonate.wholeCentileZLimitsPart1;
   const wholeCentileZLimitsPart2 = centileData.neonate.wholeCentileZLimitsPart2;
-  const sex = object.sex;
-  let measurement = object[measurementType];
-  measurementType === "weight" ? (measurement /= 1000) : measurement;
 
-  const lmsArray = centileData.neonate[sex][measurementType];
-  const gestWeeksRoundedDown = Math.floor(gestWeeks);
-  if (gestWeeksRoundedDown < 25 && measurementType === "length") {
-    return "Gestation out of range";
-  } else if (
-    (gestWeeksRoundedDown >= 23 && gestWeeksRoundedDown <= 42) === false
-  ) {
-    return "Gestation out of range";
+  let measurement = object[measurementType];
+  if (measurement > 250 && measurementType === 'weight') {
+    measurement /= 1000;
   }
-  let startingGestation;
-  let workingLMSData = [];
-  let dataPoint1;
-  let dataPoint2;
-  let dataPoint3;
-  if (measurementType === "length") {
-    startingGestation = 25;
-  } else {
-    startingGestation = 23;
-  }
-  if (gestWeeksRoundedDown === startingGestation) {
-    dataPoint1 = gestWeeksRoundedDown;
-    dataPoint2 = gestWeeksRoundedDown + 1;
-    dataPoint3 = gestWeeksRoundedDown + 2;
-  } else {
-    dataPoint1 = gestWeeksRoundedDown - 1;
-    dataPoint2 = gestWeeksRoundedDown;
-    dataPoint3 = gestWeeksRoundedDown + 1;
-  }
-  workingLMSData.push(lmsArray[dataPoint1 - startingGestation]);
-  workingLMSData.push(lmsArray[dataPoint2 - startingGestation]);
-  workingLMSData.push(lmsArray[dataPoint3 - startingGestation]);
   const extremeThresholdsZ = [
-    [-2.43238, "0.7th"],
-    [2.43238, "99.2nd"],
+    [-2.43238, '0.7th'],
+    [2.43238, '99.2nd'],
   ];
   const lowerTiny = [
-    [-4, "-4SD"],
-    [-3, "-3SD"],
+    [-4, '-4SD'],
+    [-3, '-3SD'],
     [-2.96774, 0.1],
     [-2.80703, 0.2],
     [-2.69684, 0.3],
@@ -159,17 +158,19 @@ const outputCentileFromMeasurementsPreterm = (
     [2.80703, 99.7],
     [2.96774, 99.8],
     [3, 99.9],
-    [4, "+3SD"],
+    [4, '+3SD'],
   ];
   const meanMeasurementArray = outputPretermMeasurements(
-    workingLMSData,
-    gestWeeks,
+    object,
+    measurementType,
+    floatWeeks,
     [[0, 50]]
   );
   const meanMeasurement = meanMeasurementArray[1];
   const measurementExtremeThresholds = outputPretermMeasurements(
-    workingLMSData,
-    gestWeeks,
+    object,
+    measurementType,
+    floatWeeks,
     extremeThresholdsZ
   );
   let finalThresholds = [];
@@ -196,8 +197,9 @@ const outputCentileFromMeasurementsPreterm = (
   switch (true) {
     case belowMean === true && veryLow === true:
       finalThresholds = outputPretermMeasurements(
-        workingLMSData,
-        gestWeeks,
+        object,
+        measurementType,
+        floatWeeks,
         lowerTiny
       );
       arrayLength = finalThresholds.length;
@@ -206,11 +208,12 @@ const outputCentileFromMeasurementsPreterm = (
           return lowerTiny[i - 1][1];
         }
       }
-      return "Error: Not picked up by loop for low values";
+      return 'Error: Not picked up by loop for low values';
     case belowMean === true && veryLow === false:
       finalThresholds = outputPretermMeasurements(
-        workingLMSData,
-        gestWeeks,
+        object,
+        measurementType,
+        floatWeeks,
         wholeCentileZLimitsPart1
       );
       arrayLength = finalThresholds.length;
@@ -219,15 +222,16 @@ const outputCentileFromMeasurementsPreterm = (
           return i - 1;
         }
       }
-      return "Error: Not picked up by main loop for below mean values";
+      return 'Error: Not picked up by main loop for below mean values';
     case aboveMean === true && veryHigh === true:
       finalThresholds = outputPretermMeasurements(
-        workingLMSData,
-        gestWeeks,
+        object,
+        measurementType,
+        floatWeeks,
         upperTiny
       );
       if (measurement >= finalThresholds[finalThresholds.length - 1]) {
-        return "+4SD";
+        return '+4SD';
       } else {
         arrayLength = finalThresholds.length;
         for (let i = 1; i < arrayLength; i++) {
@@ -236,11 +240,12 @@ const outputCentileFromMeasurementsPreterm = (
           }
         }
       }
-      return "Not picked up by loop for high values";
+      return 'Not picked up by loop for high values';
     case aboveMean === true && veryHigh === false:
       finalThresholds = outputPretermMeasurements(
-        workingLMSData,
-        gestWeeks,
+        object,
+        measurementType,
+        floatWeeks,
         wholeCentileZLimitsPart2
       );
       arrayLength = finalThresholds.length;
@@ -249,101 +254,192 @@ const outputCentileFromMeasurementsPreterm = (
           return i + 49;
         }
       }
-      return "Not picked up by main loop for above mean values";
+      return 'Not picked up by main loop for above mean values';
     default:
-      return "Error: Measurement not picked up by range detectors";
+      return 'Error: Measurement not picked up by range detectors';
   }
 };
 
-const outputCentileRangePreterm = (centile) => {
-  if ((typeof centile === "number") === false) {
+// LMS route
+const computeChildMeasurement = (zScore, workingLMSData) => {
+  return (
+    workingLMSData[2] *
+    Math.pow(
+      zScore * workingLMSData[1] * workingLMSData[3] + 1,
+      1 / workingLMSData[1]
+    )
+  );
+};
+
+// Gives range according to RCPCH major centile lines, both LMS and regression route
+const giveRange = (
+  workingLMSData, // only for LMS centile route
+  object,
+  measurementType,
+  floatWeeks // only for regression route
+) => {
+  let childMeasurement;
+  if (measurementType === 'bmi') {
+    childMeasurement = calculateBMI(object.weight, object.height);
+  } else {
+    if (!object[measurementType]) {
+      childMeasurement = object.length || object.height;
+    } else {
+      childMeasurement = object[measurementType];
+    }
+  }
+  if (
+    childMeasurement > 100 &&
+    measurementType === 'weight' &&
+    typeof object.length === 'string'
+  ) {
+    childMeasurement /= 1000;
+  }
+  const majorCentileLines = [
+    [-2.6521, '0.4th'],
+    [-2.0537, '2nd'],
+    [-1.3408, '9th'],
+    [-0.6745, '25th'],
+    [0, '50th'],
+    [0.6745, '75th'],
+    [1.3408, '91st'],
+    [2.0537, '98th'],
+    [2.6521, '99.6th'],
+  ];
+  const zFor03 = -2.69684;
+  const zFor997 = 2.69684;
+  const measurementArray = [];
+  for (let i = 0; i < majorCentileLines.length; i++) {
+    let miniArray;
+    if (floatWeeks) {
+      let zArray = [majorCentileLines[i]];
+      const [discard, tempMeasurement] = outputPretermMeasurements(
+        object,
+        measurementType,
+        floatWeeks,
+        zArray
+      );
+      miniArray = [tempMeasurement, majorCentileLines[i][1]];
+    } else {
+      const tempMeasurement = computeChildMeasurement(
+        majorCentileLines[i][0],
+        workingLMSData
+      );
+      miniArray = [tempMeasurement, majorCentileLines[i][1]];
+    }
+    measurementArray.push(miniArray);
+  }
+  measurementArray.push([childMeasurement, 'childMeasurement']);
+  measurementArray.sort((a, b) => a[0] - b[0]);
+  const isChildMeasurement = (element) => element[0] === childMeasurement;
+  const measurementPosition = measurementArray.findIndex(isChildMeasurement);
+  if (measurementPosition === 0) {
+    let measurementFor03;
+    if (floatWeeks) {
+      const [discard, tempMeasurementFor03] = outputPretermMeasurements(
+        object,
+        measurementType,
+        floatWeeks,
+        [[zFor03, '0.03']]
+      );
+      measurementFor03 = tempMeasurementFor03;
+    } else {
+      const tempMeasurementFor03 = computeChildMeasurement(
+        zFor03,
+        workingLMSData
+      );
+      measurementFor03 = tempMeasurementFor03;
+    }
+    if (childMeasurement < measurementFor03) {
+      return 'Less than the 0.4th Centile';
+    } else {
+      return 'On the 0.4th Centile';
+    }
+  } else if (measurementPosition === 9) {
+    let measurementFor997;
+    if (floatWeeks) {
+      const [discard, tempMeasurementFor997] = outputPretermMeasurements(
+        object,
+        measurementType,
+        floatWeeks,
+        [[zFor997, '99.7']]
+      );
+      measurementFor997 = tempMeasurementFor997;
+    } else {
+      const tempMeasurementFor997 = computeChildMeasurement(
+        zFor997,
+        workingLMSData
+      );
+      measurementFor997 = tempMeasurementFor997;
+    }
+    if (childMeasurement > measurementFor997) {
+      return 'Greater than the 99.6th Centile';
+    } else {
+      return 'On the 99.6th Centile';
+    }
+  } else if (measurementPosition === undefined) {
+    return 'Error with array search';
+  } else {
+    const lower = measurementArray[measurementPosition - 1][0];
+    const upper = measurementArray[measurementPosition + 1][0];
+    if (childMeasurement - lower < (upper - lower) / 4) {
+      return `On the ${measurementArray[measurementPosition - 1][1]} Centile`;
+    }
+    if (upper - childMeasurement < (upper - lower) / 4) {
+      return `On the ${measurementArray[measurementPosition + 1][1]} Centile`;
+    } else {
+      return `Between the ${
+        measurementArray[measurementPosition - 1][1]
+      } and the ${measurementArray[measurementPosition + 1][1]} Centile`;
+    }
+  }
+};
+
+// regression route
+const outputCentileFloatGest = (
+  centile,
+  measurementType,
+  floatWeeks,
+  object
+) => {
+  if ((typeof centile === 'number') === false) {
     switch (true) {
-      case centile === "-4SD":
-        return ["<0.04th", ">4 SDs below the mean"];
-      case centile === "-3SD":
-        return ["<0.1st", "3 to 4 SDs below the mean"];
-      case centile === "+3SD":
-        return [">99.9th", "3 to 4 SDs above the mean"];
-      case centile === "+4SD":
-        return [">99.96th", "> 4 SDs above the mean"];
+      case centile === '-4SD':
+        return [
+          'Significantly below the 0.4th Centile',
+          '<0.04th, More than 4 SDs below the mean',
+        ];
+      case centile === '-3SD':
+        return [
+          'Well below the 0.4th Centile',
+          '<0.1st, Between 3 and 4 SDs below the mean',
+        ];
+      case centile === '+3SD':
+        return [
+          'Well above the 99.6th Centile',
+          '>99.9th, between 3 and 4 SDs above the mean',
+        ];
+      case centile === '+4SD':
+        return [
+          'Significantly above the 99.6th Centile',
+          '>99.96th, more than 4 SDs above the mean',
+        ];
       default:
-        return centile;
+        return [centile, 'N/A'];
     }
   } else {
-    const allCentileLimits = [
-      0.3,
-      0.4,
-      0.8,
-      1.6,
-      2,
-      3.75,
-      7.25,
-      9,
-      13,
-      21,
-      25,
-      31.25,
-      43.75,
-      50,
-      56.25,
-      68.75,
-      75,
-      79,
-      87,
-      91,
-      92.75,
-      96.25,
-      98,
-      98.4,
-      99.2,
-      99.6,
-      99.7,
-      99.7,
-    ];
-    const outputSentences = [
-      "Less than the 0.4th Centile",
-      "On the 0.4th Centile",
-      "On the 0.4th Centile",
-      "Between the 0.4th and 2nd Centile",
-      "On the 2nd Centile",
-      "On the 2nd Centile",
-      "Between the 2nd and 9th Centile",
-      "On the 9th Centile",
-      "On the 9th Centile",
-      "Between the 9th and 25th Centile",
-      "On the 25th Centile",
-      "On the 25th Centile",
-      "Between the 25th and 50th Centile",
-      "On the 50th Centile",
-      "On the 50th Centile",
-      "Between the 50th and 75th Centile",
-      "On the 75th Centile",
-      "On the 75th Centile",
-      "Between the 75th and 91st Centile",
-      "On the 91st Centile",
-      "On the 91st Centile",
-      "Between the 91st and 98th Centile",
-      "On the 98th Centile",
-      "On the 98th Centile",
-      "Between the 98th and 99.6th Centile",
-      "On the 99.6th Centile",
-      "On the 99.6th Centile",
-      "Greater than the 99.6th Centile",
-    ];
-    if (centile >= allCentileLimits[27]) {
-      return [outputSentences[27], addOrdinalSuffix(centile)];
-    } else if (centile < allCentileLimits[27]) {
-      for (let i = 0; i < outputSentences.length; i++) {
-        if (centile < allCentileLimits[i]) {
-          return [outputSentences[i], addOrdinalSuffix(centile)];
-        }
-      }
-    } else {
-      return "Error: answer not picked up by loop in Centile Range";
-    }
+    const workingLMSData = null;
+    const range = giveRange(
+      workingLMSData,
+      object,
+      measurementType,
+      floatWeeks
+    );
+    return [range, addOrdinalSuffix(centile)];
   }
 };
 
+// LMS route
 const calculateZ = (childMeasurement, array) => {
   if (Array.isArray(array)) {
     const constantL = array[1];
@@ -358,89 +454,28 @@ const calculateZ = (childMeasurement, array) => {
   }
 };
 
-const allCentileLimits = [
-  0.3,
-  0.4,
-  0.8,
-  1.6,
-  2,
-  3.75,
-  7.25,
-  9,
-  13,
-  21,
-  25,
-  31.25,
-  43.75,
-  50,
-  56.25,
-  68.75,
-  75,
-  79,
-  87,
-  91,
-  92.75,
-  96.25,
-  98,
-  98.4,
-  99.2,
-  99.6,
-  99.7,
-  99.7,
-];
-const outputSentences = [
-  "Less than the 0.4th Centile",
-  "On the 0.4th Centile",
-  "On the 0.4th Centile",
-  "Between the 0.4th and 2nd Centile",
-  "On the 2nd Centile",
-  "On the 2nd Centile",
-  "Between the 2nd and 9th Centile",
-  "On the 9th Centile",
-  "On the 9th Centile",
-  "Between the 9th and 25th Centile",
-  "On the 25th Centile",
-  "On the 25th Centile",
-  "Between the 25th and 50th Centile",
-  "On the 50th Centile",
-  "On the 50th Centile",
-  "Between the 50th and 75th Centile",
-  "On the 75th Centile",
-  "On the 75th Centile",
-  "Between the 75th and 91st Centile",
-  "On the 91st Centile",
-  "On the 91st Centile",
-  "Between the 91st and 98th Centile",
-  "On the 98th Centile",
-  "On the 98th Centile",
-  "Between the 98th and 99.6th Centile",
-  "On the 99.6th Centile",
-  "On the 99.6th Centile",
-  "Greater than the 99.6th Centile",
-];
-
-const outputCentile = (z) => {
-  if (typeof z === "number") {
+const outputCentile = (z, object, measurementType, workingLMSData) => {
+  if (typeof z === 'number') {
     switch (true) {
       case z < -4:
         return [
-          "Significantly below 0.4th",
-          "<0.04th, more than 4 SDs below the mean",
+          'Significantly below the 0.4th Centile',
+          '<0.04th, more than 4 SDs below the mean',
         ];
       case z >= -4 && z < -3:
         return [
-          "Well below 0.4th",
-          "<0.1st, between 3 and 4 SDs below the mean",
+          'Well below the 0.4th Centile',
+          '<0.1st, between 3 and 4 SDs below the mean',
         ];
       case z > 3 && z <= 4:
         return [
-          "Well above 99.6th",
-          ">99.9th, between 3 and 4 SDs above the mean",
+          'Well above the 99.6th Centile',
+          '>99.9th, between 3 and 4 SDs above the mean',
         ];
       case z > 4:
         return [
-          "Significantly above 99.6th",
-          ">99.96th, more than 4 SDs above the mean",
+          'Significantly above the 99.6th Centile',
+          '>99.96th, more than 4 SDs above the mean',
         ];
       default:
         let factK = 1;
@@ -463,25 +498,13 @@ const outputCentile = (z) => {
         let rawCentile = sum * 100;
         let integerCentile = Math.round(rawCentile);
         let oneDecimalCentile = Number(rawCentile.toFixed(1));
-        let sentence;
-        if (rawCentile >= allCentileLimits[27]) {
-          sentence = outputSentences[27];
-        } else if (rawCentile < allCentileLimits[27]) {
-          for (let i = 0; i < outputSentences.length; i++) {
-            if (rawCentile < allCentileLimits[i]) {
-              sentence = outputSentences[i];
-              break;
-            }
-          }
-        } else {
-          return "Error: answer not picked up by the loop";
-        }
+        const range = giveRange(workingLMSData, object, measurementType);
         if (oneDecimalCentile < 0.8 || oneDecimalCentile > 99.2) {
-          let ordinalOneDecimalCentile = addOrdinalSuffix(oneDecimalCentile);
-          return [sentence, ordinalOneDecimalCentile];
+          const ordinalOneDecimalCentile = addOrdinalSuffix(oneDecimalCentile);
+          return [range, ordinalOneDecimalCentile];
         } else {
-          let ordinalCentile = addOrdinalSuffix(integerCentile);
-          return [sentence, ordinalCentile];
+          const ordinalCentile = addOrdinalSuffix(integerCentile);
+          return [range, ordinalCentile];
         }
     }
   } else {
@@ -489,23 +512,23 @@ const outputCentile = (z) => {
   }
 };
 
-const outputBMICentile = (z) => {
-  if (typeof z === "number") {
+const outputBMICentile = (z, object, workingLMSData) => {
+  if (typeof z === 'number') {
     switch (true) {
       case z > 4:
-        return ["Morbidly Obese (>99.9th)", "> 4 SDs above the mean"];
+        return ['Morbidly Obese (>99.9th)', '> 4 SDs above the mean'];
       case z > 3.66:
-        return ["Morbidly Obese (>99.9th)", "3.66 to 4 SDs above the mean"];
+        return ['Morbidly Obese (>99.9th)', '3.66 to 4 SDs above the mean'];
       case z > 3.33:
-        return ["Morbidly Obese (>99.9th)", "3.33 to 3.66 SDs above the mean"];
+        return ['Morbidly Obese (>99.9th)', '3.33 to 3.66 SDs above the mean'];
       case z >= 3:
-        return ["Severely Obese (>99.9th)", "3 to 3.33 SDs above the mean"];
+        return ['Severely Obese (>99.9th)', '3 to 3.33 SDs above the mean'];
       case z < -5:
-        return ["Very thin (<0.1st)", ">5 SDs below the mean"];
+        return ['Very thin (<0.1st)', '>5 SDs below the mean'];
       case z < -4:
-        return ["Very thin (<0.1st)", "4 to 5 SDs below the mean"];
+        return ['Very thin (<0.1st)', '4 to 5 SDs below the mean'];
       case z < -3:
-        return ["Very thin (<0.1st)", "3 to 4 SDs below the mean"];
+        return ['Very thin (<0.1st)', '3 to 4 SDs below the mean'];
       default:
         let factK = 1;
         let sum = 0;
@@ -527,38 +550,26 @@ const outputBMICentile = (z) => {
         let rawCentile = sum * 100;
         let integerCentile = Math.round(rawCentile);
         let oneDecimalCentile = Number(rawCentile.toFixed(1));
-        let sentence;
-        if (rawCentile >= allCentileLimits[27]) {
-          sentence = outputSentences[27];
-        } else if (rawCentile < allCentileLimits[27]) {
-          for (let i = 0; i < outputSentences.length; i++) {
-            if (rawCentile < allCentileLimits[i]) {
-              sentence = outputSentences[i];
-              break;
-            }
-          }
-        } else {
-          return "Error: answer not picked up by the loop";
-        }
         let outputExactCentile;
         if (oneDecimalCentile < 0.8 || oneDecimalCentile > 99.2) {
           outputExactCentile = addOrdinalSuffix(oneDecimalCentile);
         } else {
           outputExactCentile = addOrdinalSuffix(integerCentile);
         }
+        const range = giveRange(workingLMSData, object, 'bmi');
         switch (true) {
           case rawCentile < 0.4:
-            return [`Very thin (${sentence})`, outputExactCentile];
+            return [`Very thin (${range})`, outputExactCentile];
           case rawCentile >= 0.4 && rawCentile <= 2:
-            return [`Low BMI (${sentence})`, outputExactCentile];
+            return [`Low BMI (${range})`, outputExactCentile];
           case rawCentile > 2 && rawCentile < 91:
-            return [`Normal BMI (${sentence})`, outputExactCentile];
+            return [`Normal BMI (${range})`, outputExactCentile];
           case rawCentile >= 91 && rawCentile < 98:
-            return [`Overweight (${sentence})`, outputExactCentile];
+            return [`Overweight (${range})`, outputExactCentile];
           case rawCentile >= 98 && rawCentile < 99.6:
-            return [`Obese (${sentence})`, outputExactCentile];
+            return [`Obese (${range})`, outputExactCentile];
           case rawCentile >= 99.6 && z < 3:
-            return [`Severely obese (${sentence})`, outputExactCentile];
+            return [`Severely obese (${range})`, outputExactCentile];
         }
     }
   } else {
@@ -577,43 +588,45 @@ const centileFromLms = (
   let array;
   const sex = object.sex;
   let bmi;
-  let bmiCentile = ["N/A", "N/A"];
-  let hcCentile = ["N/A", "N/A"];
-  let heightCentile = ["N/A", "N/A"];
-  let lengthCentile = ["N/A", "N/A"];
-  let weightCentile = ["N/A", "N/A"];
-  let ageBeforeCorrection = zeit(object.dob, "string", object.dom);
-  let ageAfterCorrection = "not corrected";
+  let bmiCentile = ['N/A', 'N/A'];
+  let hcCentile = ['N/A', 'N/A'];
+  let heightCentile = ['N/A', 'N/A'];
+  let lengthCentile = ['N/A', 'N/A'];
+  let weightCentile = ['N/A', 'N/A'];
+  let ageBeforeCorrection = zeit(object.dob, 'string', object.dom);
+  let ageAfterCorrection = 'not corrected';
   let z;
-  if (kind === "neonate") {
+  if (kind === 'neonate') {
     const gestWeeks = correctedGestationInDays / 7;
     if (object.hc) {
-      array = centileData[kind][sex]["hc"][gestWeeks - 23];
+      array = centileData[kind][sex]['hc'][gestWeeks - 23];
       z = calculateZ(object.hc, array);
-      hcCentile = outputCentile(z);
+      hcCentile = outputCentile(z, object, 'hc', array);
     }
     if (object.length) {
       if (correctedGestationInDays >= 175) {
-        array = centileData[kind][sex]["length"][gestWeeks - 25];
+        array = centileData[kind][sex]['length'][gestWeeks - 25];
         z = calculateZ(object.length, array);
-        lengthCentile = outputCentile(z);
+        lengthCentile = outputCentile(z, object, 'length', array);
       } else {
-        lengthCentile = ["Cannot plot length when under 25 weeks CGA", "N/A"];
+        lengthCentile = ['Cannot plot length when under 25 weeks', 'N/A'];
       }
     }
     if (object.weight) {
-      array = centileData[kind][sex]["weight"][gestWeeks - 23];
+      array = centileData[kind][sex]['weight'][gestWeeks - 23];
       const newWeight = object.weight / 1000;
       z = calculateZ(newWeight, array);
-      weightCentile = outputCentile(z);
+      weightCentile = outputCentile(z, object, 'weight', array);
     }
     return {
       hc: hcCentile,
       length: lengthCentile,
       weight: weightCentile,
     };
-  } else if (kind === "child") {
+  } else if (kind === 'child') {
     let index;
+    const monthAgeForChart = ageInMonths;
+    let dayAgeForChart = ageInDays;
     if (ageInDays <= 1459) {
       if (
         (birthGestationInDays < 259 &&
@@ -624,7 +637,14 @@ const centileFromLms = (
         index = ageInDays - (280 - birthGestationInDays);
         ageAfterCorrection = zeit(
           object.dob,
-          "string",
+          'string',
+          object.dom,
+          true,
+          280 - birthGestationInDays
+        );
+        dayAgeForChart = zeit(
+          object.dob,
+          'days',
           object.dom,
           true,
           280 - birthGestationInDays
@@ -637,39 +657,41 @@ const centileFromLms = (
     }
     if (object.hc) {
       if (index <= 730) {
-        array = centileData[kind][sex]["hc"][index];
+        array = centileData[kind][sex]['hc'][index];
         z = calculateZ(object.hc, array);
-        hcCentile = outputCentile(z);
+        hcCentile = outputCentile(z, object, 'hc', array);
       } else {
         hcCentile = [
-          "HC can only be plotted until 2 years corrected age",
-          "N/A",
+          'HC can only be plotted until 2 years corrected age',
+          'N/A',
         ];
       }
     }
     if (object.height || object.length) {
-      array = centileData[kind][sex]["height"][index];
+      array = centileData[kind][sex]['height'][index];
       z = calculateZ(object.height || object.length, array);
-      heightCentile = outputCentile(z);
+      heightCentile = outputCentile(z, object, 'height', array);
     }
     if (object.weight) {
       let weight;
       ageInDays === 0
         ? (weight = object.weight / 1000)
         : (weight = object.weight);
-      array = centileData[kind][sex]["weight"][index];
+      array = centileData[kind][sex]['weight'][index];
       z = calculateZ(weight, array);
-      weightCentile = outputCentile(z);
+      weightCentile = outputCentile(z, object, 'weight', array);
       if (object.height && ageInDays !== 0) {
-        array = centileData[kind][sex]["bmi"][index];
+        array = centileData[kind][sex]['bmi'][index];
         bmi = calculateBMI(object.weight, object.height);
         z = calculateZ(bmi, array);
-        bmiCentile = outputBMICentile(z);
+        bmiCentile = outputBMICentile(z, object, array);
       }
     }
     return {
       ageAfterCorrection: ageAfterCorrection,
       ageBeforeCorrection: ageBeforeCorrection,
+      monthAgeForChart: dayAgeForChart > 1459 ? monthAgeForChart : null,
+      dayAgeForChart: dayAgeForChart > 1459 ? null : dayAgeForChart,
       centiles: {
         bmi: bmiCentile,
         hc: hcCentile,
@@ -683,30 +705,30 @@ const centileFromLms = (
 const calculateCentile = (object) => {
   const dob = object.dob;
   const dom = object.dom;
-  let ageInDays = zeit(dob, "days", dom);
+  let ageInDays = zeit(dob, 'days', dom);
   let lessThan14;
   let kind;
   if (ageInDays < 0) {
-    return "Negative age";
+    return 'Negative age';
   }
   if (ageInDays > 6574) {
-    return "Over 18";
+    return 'Over 18';
   }
   if (ageInDays < 14) {
     lessThan14 = true;
   }
-  const ageInMonths = zeit(dob, "months", dom);
+  const ageInMonths = zeit(dob, 'months', dom);
   const birthGestationInDays = object.gestationInDays;
   const correctedGestationInDays = birthGestationInDays + ageInDays;
   // access birth centile data, which is in "child" if 37+:
   if (ageInDays === 0 && birthGestationInDays >= 259) {
-    kind = "birth";
+    kind = 'birth';
     const results = centileFromLms(
       ageInDays,
       ageInMonths,
       birthGestationInDays,
       correctedGestationInDays,
-      "child",
+      'child',
       object
     );
     return {
@@ -720,14 +742,14 @@ const calculateCentile = (object) => {
     };
   }
   if (correctedGestationInDays <= 294 && birthGestationInDays < 259) {
-    ageInDays === 0 ? (kind = "birth") : (kind = "neonate");
+    ageInDays === 0 ? (kind = 'birth') : (kind = 'neonate');
     if (correctedGestationInDays % 7 === 0) {
       const calculatedValues = centileFromLms(
         ageInDays,
         ageInMonths,
         birthGestationInDays,
         correctedGestationInDays,
-        "neonate",
+        'neonate',
         object
       );
       return {
@@ -740,36 +762,53 @@ const calculateCentile = (object) => {
       };
     } else {
       let workingCentile;
-      let hcCentile = ["N/A", "N/A"];
-      let lengthCentile = ["N/A", "N/A"];
-      let weightCentile = ["N/A", "N/A"];
+      let hcCentile = ['N/A', 'N/A'];
+      let lengthCentile = ['N/A', 'N/A'];
+      let weightCentile = ['N/A', 'N/A'];
+      let floatWeeks = correctedGestationInDays / 7;
       if (object.hc) {
         workingCentile = outputCentileFromMeasurementsPreterm(
           object,
-          correctedGestationInDays / 7,
-          "hc"
+          floatWeeks,
+          'hc'
         );
-        hcCentile = outputCentileRangePreterm(workingCentile);
+
+        hcCentile = outputCentileFloatGest(
+          workingCentile,
+          'hc',
+          floatWeeks,
+          object
+        );
       }
       if (object.length) {
         if (correctedGestationInDays >= 175) {
           workingCentile = outputCentileFromMeasurementsPreterm(
             object,
-            correctedGestationInDays / 7,
-            "length"
+            floatWeeks,
+            'length'
           );
-          lengthCentile = outputCentileRangePreterm(workingCentile);
+          lengthCentile = outputCentileFloatGest(
+            workingCentile,
+            'length',
+            floatWeeks,
+            object
+          );
         } else {
-          lengthCentile = ["Cannot plot length when under 25 weeks CGA", "N/A"];
+          lengthCentile = ['Cannot plot length when under 25 weeks', 'N/A'];
         }
       }
       if (object.weight) {
         workingCentile = outputCentileFromMeasurementsPreterm(
           object,
-          correctedGestationInDays / 7,
-          "weight"
+          floatWeeks,
+          'weight'
         );
-        weightCentile = outputCentileRangePreterm(workingCentile);
+        weightCentile = outputCentileFloatGest(
+          workingCentile,
+          'weight',
+          floatWeeks,
+          object
+        );
       }
       return {
         centiles: {
@@ -785,7 +824,7 @@ const calculateCentile = (object) => {
       };
     }
   } else {
-    kind = "child";
+    kind = 'child';
     const calculatedValues = centileFromLms(
       ageInDays,
       ageInMonths,
@@ -800,6 +839,8 @@ const calculateCentile = (object) => {
       lessThan14: lessThan14,
       ageAfterCorrection: calculatedValues.ageAfterCorrection,
       ageBeforeCorrection: calculatedValues.ageBeforeCorrection,
+      monthAgeForChart: calculatedValues.monthAgeForChart,
+      dayAgeForChart: calculatedValues.dayAgeForChart,
       under2: ageInDays < 730 ? true : false,
     };
   }

@@ -1,3 +1,13 @@
+/* 
+All centile data in an object
+For child data, sourced from WHO 1 day old until 1 day before 4th birthday (day increments)
+From 4th birthday, sourced from UK data in monthly increments
+Day 0 of child data is birth data (all 37+ infants) from UK data
+Preterm data is from UK in weekly increments
+
+Note capitals for Male and Female (I passed the input from the picker directly and was lazy, could've done toLowerCase)
+*/
+
 export default {
   child: {
     Female: {
