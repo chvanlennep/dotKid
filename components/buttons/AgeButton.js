@@ -1,11 +1,14 @@
-import React, { useState } from "react";
-import { Alert, Modal, StyleSheet, View, TouchableOpacity } from "react-native";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import React, { useState } from 'react';
+import { Alert, Modal, StyleSheet, View, TouchableOpacity } from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-import AppText from "../AppText";
-import colors from "../../config/colors";
-import defaultStyle from "../../config/styles";
-import Icon from "../Icon";
+import AppText from '../AppText';
+import colors from '../../config/colors';
+import defaultStyles from '../../config/styles';
+import Icon from '../Icon';
+
+const modalWidth =
+  defaultStyles.container.width > 400 ? 400 : defaultStyles.container.width;
 
 const SubmitButton = ({
   gestationWeeks,
@@ -14,7 +17,7 @@ const SubmitButton = ({
   valueAfterCorrection,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const buttonWidth = defaultStyle.container.width;
+  const buttonWidth = defaultStyles.container.width;
   let outputString;
   let modalHeading;
   let modalMessage;
@@ -23,7 +26,7 @@ const SubmitButton = ({
     if (Number.isInteger(inputNumber) === false) {
       inputNumber *= 10;
       if (Number.isInteger(inputNumber) === false) {
-        return "Error: only integers or numbers to 1 decimal place are supported";
+        return 'Error: only integers or numbers to 1 decimal place are supported';
       }
     }
     let remainder10 = inputNumber % 10;
@@ -42,13 +45,13 @@ const SubmitButton = ({
   };
   const decidePluralSuffix = (inputNumber) => {
     if (inputNumber === 1) {
-      return "";
+      return '';
     } else {
-      return "s";
+      return 's';
     }
   };
-  if (kind === "child") {
-    if (valueAfterCorrection !== "not corrected") {
+  if (kind === 'child') {
+    if (valueAfterCorrection !== 'not corrected') {
       outputString = `Age: ${valueAfterCorrection}`;
     } else {
       outputString = `Age: ${valueBeforeCorrection}`;
@@ -58,7 +61,7 @@ const SubmitButton = ({
     modalMessage = `Ages are corrected for gestation according to RCPCH guidelines:\n
     Until 1 year of chronological age for children born 32+0 to 36+6 weeks gestation.\n
     Until 2 years of chronological age for children born before 32 weeks gestation.`;
-  } else if (kind === "neonate") {
+  } else if (kind === 'neonate') {
     const pretermAge = valueAfterCorrection - valueBeforeCorrection;
     const birthGestationWeeks = Math.floor(valueBeforeCorrection / 7);
     const birthGestationDays = valueBeforeCorrection % 7;
@@ -70,22 +73,21 @@ const SubmitButton = ({
     modalMessage = `${pretermAge} day${pluralSuffix} old (${addOrdinalSuffix(
       pretermAge + 1
     )} day of life)`;
-  } else if (kind === "jaundice") {
+  } else if (kind === 'jaundice') {
     let outputGestation = gestationWeeks;
-    if (gestationWeeks >= 38) outputGestation = "38+";
+    if (gestationWeeks >= 38) outputGestation = '38+';
     outputString = `${valueBeforeCorrection} old, ${outputGestation} week chart`;
   } else {
     const birthGestationWeeks = Math.floor(valueBeforeCorrection / 7);
     const birthGestationDays = valueBeforeCorrection % 7;
-    outputString = `Gestation: ${birthGestationWeeks}+${birthGestationDays}`;
+    outputString = `Birth Gestation: ${birthGestationWeeks}+${birthGestationDays}`;
     modalHeading = outputString;
-    modalMessage = `As per RCPCH guidelines, infants born at term (37 weeks and higher) are compared against all term infants and not just infants born at their gestation.\n 
-      Preterm infants are compared against infants born at their specific gestation.`;
+    modalMessage = `As per RCPCH guidelines, infants born at term (37 weeks and higher) are compared against all term infants and not just infants born at their gestation.\n\nPreterm infants are compared against infants born at their specific gestation.`;
   }
   const buttonBackGroundColor =
-    kind === "child" ? colors.primary : colors.secondary;
+    kind === 'child' ? colors.primary : colors.secondary;
 
-  if (kind !== "jaundice")
+  if (kind !== 'jaundice')
     return (
       <React.Fragment>
         <TouchableOpacity
@@ -116,21 +118,11 @@ const SubmitButton = ({
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {
-              Alert.alert("Window has been closed.");
+              Alert.alert('Window has been closed.');
             }}
           >
             <View style={styles.centeredView}>
-              <View
-                style={[
-                  styles.modalView,
-                  {
-                    height:
-                      kind === "neonate"
-                        ? (buttonWidth - 10) / 1.2
-                        : buttonWidth - 10,
-                  },
-                ]}
-              >
+              <View style={styles.modalView}>
                 <TouchableOpacity
                   onPress={() => {
                     setModalVisible(!modalVisible);
@@ -139,7 +131,7 @@ const SubmitButton = ({
                   <View style={styles.closeIcon}>
                     <MaterialCommunityIcons
                       name="close-circle"
-                      color={colors.white}
+                      color={colors.black}
                       size={30}
                     />
                   </View>
@@ -179,32 +171,31 @@ const styles = StyleSheet.create({
   closeIcon: {
     height: 50,
     width: 50,
-    backgroundColor: colors.medium,
     borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   submitButton: {
-    alignItems: "center",
+    alignItems: 'center',
     borderRadius: 5,
     color: colors.white,
-    flexDirection: "row",
+    flexDirection: 'row',
     height: 57,
     margin: 5,
     padding: 10,
-    justifyContent: "center",
-    width: defaultStyle.container.width,
+    justifyContent: 'center',
+    width: defaultStyles.container.width,
   },
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 10,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -212,47 +203,46 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.7,
     shadowRadius: 4,
     elevation: 5,
-    width: defaultStyle.container.width - 10,
-    backgroundColor: colors.medium,
+    width: modalWidth,
+    backgroundColor: colors.light,
   },
   openButton: {
-    backgroundColor: "#F194FF",
+    backgroundColor: '#F194FF',
     borderRadius: 20,
     padding: 10,
     elevation: 2,
   },
   textStyle: {
-    color: "white",
-    textAlign: "center",
+    color: 'white',
+    textAlign: 'center',
   },
   modalTextHeadings: {
-    textAlign: "center",
-    flexWrap: "wrap",
+    textAlign: 'center',
+    flexWrap: 'wrap',
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: '500',
     color: colors.white,
   },
   modalTextHeadingWrapper: {
     borderRadius: 5,
     marginTop: 0,
     marginBottom: 20,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: colors.dark,
-    flex: 1,
-    padding: 8,
+    padding: 10,
     margin: 10,
   },
   modalTextParagraph: {
-    color: colors.white,
+    color: colors.black,
     marginBottom: 5,
-    textAlign: "center",
-    flex: 2,
-    flexWrap: "wrap",
-    fontSize: 15,
+    textAlign: 'center',
+    flexWrap: 'wrap',
+    fontSize: 16,
     marginLeft: 15,
     marginRight: 15,
-    fontWeight: "400",
+    fontWeight: '400',
+    paddingBottom: 30,
     // backgroundColor: "green",
   },
 });

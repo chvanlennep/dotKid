@@ -1,16 +1,16 @@
-import React from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
+import React from 'react';
+import { StyleSheet, View, ScrollView } from 'react-native';
 
-import PCalcScreen from "../components/PCalcScreen";
-import AppText from "../components/AppText";
-import routes from "../navigation/routes";
-import DobInputButton from "../components/buttons/input/DobInputButton";
-import SexInputButton from "../components/buttons/input/SexInputButton";
-import GestationInputButton from "../components/buttons/input/GestationInputButton";
-import NavigateButton from "../components/buttons/NavigateButton";
-import AppForm from "../components/AppForm";
+import PCalcScreen from '../components/PCalcScreen';
+import AppText from '../components/AppText';
+import routes from '../navigation/routes';
+import SexInputButton from '../components/buttons/input/SexInputButton';
+import GestationInputButton from '../components/buttons/input/GestationInputButton';
+import NavigateButton from '../components/buttons/NavigateButton';
+import AppForm from '../components/AppForm';
 
-import defaultStyles from "../config/styles";
+import defaultStyles from '../config/styles';
+import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
 
 const PaedsHomepageScreen = () => {
   return (
@@ -25,7 +25,7 @@ const PaedsHomepageScreen = () => {
             sex: null,
           }}
         >
-          <DobInputButton global={true} kind="child" />
+          <DateTimeInputButton global={true} kind="child" type="birth" />
           <GestationInputButton global={true} kind="child" />
           <SexInputButton global={true} kind="child" />
         </AppForm>
@@ -59,12 +59,12 @@ export default PaedsHomepageScreen;
 
 const styles = StyleSheet.create({
   bottomContainer: {
-    alignItems: "center",
+    alignItems: 'center',
     flex: 1,
   },
   topContainer: {
-    alignSelf: "center",
-    alignItems: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
     ...defaultStyles.container,
   },
   text: {

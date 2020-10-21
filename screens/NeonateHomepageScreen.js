@@ -1,18 +1,20 @@
-import React from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
+import React from 'react';
+import { StyleSheet, View, ScrollView } from 'react-native';
 
-import NCalcScreen from "../components/NCalcScreen";
-import AppText from "../components/AppText";
-import routes from "../navigation/routes";
-import DobInputButton from "../components/buttons/input/DobInputButton";
-import GestationInputButton from "../components/buttons/input/GestationInputButton";
-import SexInputButton from "../components/buttons/input/SexInputButton";
-import NavigateButton from "../components/buttons/NavigateButton";
-import AppForm from "../components/AppForm";
+import NCalcScreen from '../components/NCalcScreen';
+import AppText from '../components/AppText';
+import routes from '../navigation/routes';
+import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
+import GestationInputButton from '../components/buttons/input/GestationInputButton';
+import SexInputButton from '../components/buttons/input/SexInputButton';
+import NavigateButton from '../components/buttons/NavigateButton';
+import AppForm from '../components/AppForm';
+
+import defaultStyles from '../config/styles';
 
 const NeonateHomepageScreen = () => {
   return (
-    <NCalcScreen isHomePage={true} style={{ flex: 2 }}>
+    <NCalcScreen isHomePage={true} style={{ flex: 1 }}>
       <View style={styles.topContainer}>
         <AppForm
           // dummy AppForm so useFormikContext line in components doesn't throw error here:
@@ -23,7 +25,7 @@ const NeonateHomepageScreen = () => {
             sex: null,
           }}
         >
-          <DobInputButton global={true} kind="neonate" />
+          <DateTimeInputButton global={true} kind="neonate" type="birth" />
           <GestationInputButton global={true} kind="neonate" />
           <SexInputButton global={true} kind="neonate" />
         </AppForm>
@@ -56,12 +58,13 @@ export default NeonateHomepageScreen;
 
 const styles = StyleSheet.create({
   bottomContainer: {
-    alignItems: "center",
+    alignItems: 'center',
     flex: 1,
   },
   topContainer: {
-    alignSelf: "center",
-    alignItems: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
+    ...defaultStyles.container,
   },
   text: {
     fontSize: 28,

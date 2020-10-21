@@ -1,13 +1,17 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-import NCalcScreen from "../components/NCalcScreen";
-import AppText from "../components/AppText";
-import colors from "../config/colors";
-import AgeButton from "../components/buttons/AgeButton";
-import Button from "../components/buttons/Button";
-import MoreCentileInfo from "../components/buttons/MoreCentileInfo";
+import NCalcScreen from '../components/NCalcScreen';
+import AppText from '../components/AppText';
+import colors from '../config/colors';
+import defaultStyles from '../config/styles';
+import AgeButton from '../components/buttons/AgeButton';
+import Button from '../components/buttons/Button';
+import MoreCentileInfo from '../components/buttons/MoreCentileInfo';
+import CentileChartModal from '../components/CentileChartModal';
+
+const flexDirection = defaultStyles.container.width > 500 ? 'row' : 'column';
 
 const BirthCentileResultsScreen = ({ route, navigation }) => {
   const parameters = JSON.parse(route.params);
@@ -20,11 +24,11 @@ const BirthCentileResultsScreen = ({ route, navigation }) => {
   const [length, exactLength] = results.centiles.length;
   const [hc, exactHc] = results.centiles.hc;
 
-  let weightTitle = "Weight:";
+  let weightTitle = 'Weight:';
   if (measurements.weight) weightTitle = `Weight (${measurements.weight}g):`;
-  let lengthTitle = "Length:";
+  let lengthTitle = 'Length:';
   if (measurements.length) lengthTitle = `Length (${measurements.length}cm):`;
-  let hcTitle = "Head Circumference:";
+  let hcTitle = 'Head Circumference:';
   if (measurements.hc) hcTitle = `Head Circumference (${measurements.hc}cm):`;
 
   return (
@@ -34,8 +38,8 @@ const BirthCentileResultsScreen = ({ route, navigation }) => {
         <Button
           label="← Calculate Again"
           onPress={() => navigation.goBack()}
-          style={{ backgroundColor: colors.light }}
-          textStyle={{ color: colors.black }}
+          style={{ backgroundColor: colors.medium }}
+          textStyle={{ color: colors.white }}
         />
       </View>
       <KeyboardAwareScrollView>
@@ -49,7 +53,16 @@ const BirthCentileResultsScreen = ({ route, navigation }) => {
                 <AppText style={styles.outputText}>{weight}</AppText>
               </View>
             </View>
-            <MoreCentileInfo exactCentile={exactWeight} />
+            <View style={styles.buttonContainer}>
+              <MoreCentileInfo exactCentile={exactWeight} />
+              <CentileChartModal
+                measurementType="weight"
+                measurement={parameters.measurements.weight / 1000}
+                kind="birth"
+                gestationInDays={birthGestationInDays}
+                sex={parameters.measurements.sex}
+              />
+            </View>
           </View>
           <View style={styles.outputContainer}>
             <View style={styles.outputTextBox}>
@@ -60,7 +73,16 @@ const BirthCentileResultsScreen = ({ route, navigation }) => {
                 <AppText style={styles.outputText}>{length}</AppText>
               </View>
             </View>
-            <MoreCentileInfo exactCentile={exactLength} />
+            <View style={styles.buttonContainer}>
+              <MoreCentileInfo exactCentile={exactLength} />
+              <CentileChartModal
+                measurementType="length"
+                measurement={parameters.measurements.length}
+                kind="birth"
+                gestationInDays={birthGestationInDays}
+                sex={parameters.measurements.sex}
+              />
+            </View>
           </View>
           <View style={styles.outputContainer}>
             <View style={styles.outputTextBox}>
@@ -71,7 +93,16 @@ const BirthCentileResultsScreen = ({ route, navigation }) => {
                 <AppText style={styles.outputText}>{hc}</AppText>
               </View>
             </View>
-            <MoreCentileInfo exactCentile={exactHc} />
+            <View style={styles.buttonContainer}>
+              <MoreCentileInfo exactCentile={exactHc} />
+              <CentileChartModal
+                measurementType="hc"
+                measurement={parameters.measurements.hc}
+                kind="birth"
+                gestationInDays={birthGestationInDays}
+                sex={parameters.measurements.sex}
+              />
+            </View>
           </View>
         </View>
       </KeyboardAwareScrollView>
@@ -83,45 +114,54 @@ export default BirthCentileResultsScreen;
 
 const styles = StyleSheet.create({
   bottomContainer: {
-    alignSelf: "center",
-    alignItems: "center",
-    // backgroundColor: "dodgerblue",
-    paddingHorizontal: 20,
-    width: "100%",
-    marginBottom: 75,
+    alignSelf: 'center',
+    alignItems: 'center',
+    //backgroundColor: 'dodgerblue',
+    paddingHorizontal: 10,
+    width: '100%',
   },
   outputContainer: {
-    // backgroundColor: "orangered",
-    alignSelf: "center",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    backgroundColor: colors.medium,
+    borderRadius: 10,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
     marginHorizontal: 10,
     marginBottom: 10,
     marginTop: 10,
-    height: 80,
-    width: "100%",
+    height: 110,
+    width: '100%',
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 2,
+    //backgroundColor: 'white',
+    flexDirection: flexDirection,
+    flex: 2,
   },
   outputTextBox: {
-    paddingLeft: 10,
-    paddingRight: 20,
-    //backgroundColor: "limegreen",
-    textAlign: "left",
-    justifyContent: "center",
-    height: "100%",
-    width: "85%",
+    paddingLeft: 20,
+    paddingRight: 10,
+    //backgroundColor: 'limegreen',
+    textAlign: 'left',
+    justifyContent: 'center',
+    flex: 8,
   },
   outputText: {
     fontSize: 16,
-    textAlign: "left",
+    textAlign: 'left',
+    color: colors.white,
+    flexWrap: 'wrap',
   },
   topContainer: {
     marginTop: 5,
   },
   text: {
     fontSize: 18,
-    textAlign: "left",
-    fontWeight: "500",
-    paddingBottom: 5,
+    textAlign: 'left',
+    fontWeight: '500',
+    paddingBottom: 10,
+    color: colors.white,
   },
 });
