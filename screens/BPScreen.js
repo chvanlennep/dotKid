@@ -1,33 +1,27 @@
-import React, { useContext, useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import * as Yup from "yup";
+import React,  from 'react';
+import { Alert, StyleSheet, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import * as Yup from 'yup';
 
-import PCalcScreen from "../components/PCalcScreen";
-import colors from "../config/colors";
-import { GlobalStateContext } from "../components/GlobalStateContext";
-import DobInputButton from "../components/buttons/input/DobInputButton";
-import GestationInputButton from "../components/buttons/input/GestationInputButton";
-import SexInputButton from "../components/buttons/input/SexInputButton";
-import AppForm from "../components/AppForm";
-import DomInputButton from "../components/buttons/input/DomInputButton";
-import calculateCentile from "../brains/calculateCentile";
-import calculateBP from "../brains/calculateBP";
-import zeit from "../brains/zeit";
-import NumberInputButton from "../components/buttons/input/NumberInputButton";
-import FormResetButton from "../components/buttons/FormResetButton";
-import FormSubmitButton from "../components/buttons/FormSubmitButton";
-import routes from "../navigation/routes";
+import PCalcScreen from '../components/PCalcScreen';
+import colors from '../config/colors';
+import GestationInputButton from '../components/buttons/input/GestationInputButton';
+import SexInputButton from '../components/buttons/input/SexInputButton';
+import AppForm from '../components/AppForm';
+import calculateCentile from '../brains/calculateCentile';
+import calculateBP from '../brains/calculateBP';
+import NumberInputButton from '../components/buttons/input/NumberInputButton';
+import FormResetButton from '../components/buttons/FormResetButton';
+import FormSubmitButton from '../components/buttons/FormSubmitButton';
+import routes from '../navigation/routes';
+import ageChecker from '../brains/ageChecker';
+import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
 
 const BPScreen = () => {
   const navigation = useNavigation();
 
-  const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
-
   const oneMeasurementNeeded = "↑ We'll need this measurement too";
-
-  let BPOutput;
 
   const wrongUnitsMessage = (units) => {
     return `↑ Are you sure your input is in ${units}?`;
@@ -35,88 +29,89 @@ const BPScreen = () => {
 
   const validationSchema = Yup.object().shape({
     height: Yup.number()
-      .min(30, wrongUnitsMessage("cm"))
-      .max(220, wrongUnitsMessage("cm"))
+      .min(30, wrongUnitsMessage('cm'))
+      .max(220, wrongUnitsMessage('cm'))
       .required(oneMeasurementNeeded),
     systolic: Yup.number()
-      .min(30, wrongUnitsMessage("mmHg"))
-      .max(250, wrongUnitsMessage("mmHg"))
+      .min(30, wrongUnitsMessage('mmHg'))
+      .max(250, wrongUnitsMessage('mmHg'))
       .required(oneMeasurementNeeded),
     diastolic: Yup.number()
-      .min(10, wrongUnitsMessage("mmHg"))
-      .max(180, wrongUnitsMessage("mmHg"))
-      .when("systolic", {
+      .min(10, wrongUnitsMessage('mmHg'))
+      .max(180, wrongUnitsMessage('mmHg'))
+      .when('systolic', {
         is: (systolic) => !systolic,
         then: Yup.number()
-          .label("Diastolic")
-          .min(10, wrongUnitsMessage("mmHg"))
-          .max(180, wrongUnitsMessage("mmHg"))
+          .label('Diastolic')
+          .min(10, wrongUnitsMessage('mmHg'))
+          .max(180, wrongUnitsMessage('mmHg'))
           .required(oneMeasurementNeeded),
       }),
-    sex: Yup.string().required("↑ Please select a sex").label("Sex"),
+    sex: Yup.string().required('↑ Please select a sex').label('Sex'),
     dob: Yup.date()
       .nullable()
-      .required("↑ Please enter a date of Birth")
-      .label("Date of Birth"),
+      .required('↑ Please enter a date of Birth')
+      .label('Date of Birth'),
   });
 
   const initialValues = {
-    height: "", //
-    sex: "",
+    height: '', //
+    sex: '',
     gestationInDays: 280,
     dob: null,
     tob: null,
-    systolic: "",
-    diastolic: "",
+    systolic: '',
+    diastolic: '',
     dom: new Date(new Date().getTime() + 10 * 60000),
     domChanged: false,
   };
 
   const handleFormikSubmit = (values) => {
-    const centileObject = calculateCentile(values);
     let correctDays = 0;
     if (values.gestationInDays < 224) {
       correctDays = 280 - values.gestationInDays;
     }
-    const age = zeit(values.dob, "years", values.dom, true, correctDays);
+    const ageCheck = ageChecker(values, 6574, 365);
     switch (true) {
-      case centileObject === "Negative age":
+      case ageCheck === 'Negative age':
         Alert.alert(
-          "Time Travelling Patient",
-          "Please check the dates entered",
-          [{ text: "OK" }],
+          'Time Travelling Patient',
+          'Please check the dates entered',
+          [{ text: 'OK', onPress: () => 'OK' }],
           { cancelable: false }
         );
         break;
-      case centileObject === "Over 18":
+      case ageCheck === 'Too old':
         Alert.alert(
-          "Patient Too Old",
-          "This calculator can only be used under 18 years of age",
-          { text: "OK" },
+          'Patient Too Old',
+          'This calculator can only be used under 18 years of age',
+          { text: 'OK', onPress: () => 'OK' },
+
           { cancelable: false }
         );
         break;
-      case age < 1:
+      case ageCheck === 'Too young':
         Alert.alert(
-          "Patient must be at least 1 year old.",
-          "",
+          'Patient must be at least 1 year old.',
+          '',
           [
             {
-              text: "OK",
-              onPress: () => "OK",
-              style: "cancel",
+              text: 'OK',
+              onPress: () => 'OK',
+              style: 'cancel',
             },
           ],
           { cancelable: true }
         );
         break;
       default:
+        const centileObject = calculateCentile(values);
         let centileString = centileObject.centiles.height[1];
         if (centileString.length > 10) {
           centileString = centileObject.centiles.height[0];
         }
         const measurements = values;
-        const heightCentile = Math.round(centileString.replace(/[^0-9.]/g, ""));
+        const heightCentile = Math.round(centileString.replace(/[^0-9.]/g, ''));
         const BPOutput = calculateBP(
           heightCentile,
           age,
@@ -142,7 +137,7 @@ const BPScreen = () => {
             onSubmit={handleFormikSubmit}
             validationSchema={validationSchema}
           >
-            <DobInputButton name="dob" kind="child" />
+            <DateTimeInputButton kind="child" type="birth" />
             <GestationInputButton name="gestationInDays" kind="child" />
             <SexInputButton name="sex" kind="child" />
             <NumberInputButton
@@ -166,7 +161,7 @@ const BPScreen = () => {
               unitsOfMeasurement="mmHg"
               kind="child"
             />
-            <DomInputButton name="dom" kind="child" />
+            <DateTimeInputButton kind="child" type="measured" />
             <FormResetButton />
             <FormSubmitButton
               name="Calculate Blood Pressure Centiles"
@@ -183,28 +178,28 @@ export default BPScreen;
 
 const styles = StyleSheet.create({
   bottomContainer: {
-    alignSelf: "center",
+    alignSelf: 'center',
     paddingHorizontal: 50,
     marginTop: 20,
-    width: "100%",
+    width: '100%',
     marginBottom: 75,
   },
   buttons: {
     //backgroundColor: "dodgerblue",
-    flexDirection: "row",
+    flexDirection: 'row',
     width: 96,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
   outputContainer: {
     //backgroundColor: "orangered",
-    alignSelf: "center",
-    flexDirection: "row",
+    alignSelf: 'center',
+    flexDirection: 'row',
     flex: 2,
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
     marginHorizontal: 20,
     marginBottom: 10,
-    width: "100%",
+    width: '100%',
   },
   outputText: {
     //backgroundColor: "limegreen",
@@ -213,9 +208,9 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   title: {
-    alignContent: "center", //backgroundColor: "goldenrod",
+    alignContent: 'center', //backgroundColor: "goldenrod",
     flexGrow: 2,
-    justifyContent: "center",
+    justifyContent: 'center',
     width: 150,
   },
   text: {
@@ -223,7 +218,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   topContainer: {
-    alignSelf: "center",
-    alignItems: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
   },
 });

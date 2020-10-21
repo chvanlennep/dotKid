@@ -16,13 +16,14 @@ import AppForm from '../components/AppForm';
 import calculateCentile from '../brains/calculateCentile';
 import routes from '../navigation/routes';
 import { GlobalStateContext } from '../components/GlobalStateContext';
+import ageChecker from '../brains/ageChecker';
 
 const PCentileScreen = () => {
   const navigation = useNavigation();
 
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
 
-  const oneMeasurementNeeded = '↑ At least one patient measurement needed';
+  const oneMeasurementNeeded = "↑ We'll at least one of these measurements";
   const wrongUnitsMessage = (units) => {
     return `↑ Are you sure your input is in ${units}?`;
   };
@@ -121,6 +122,7 @@ const PCentileScreen = () => {
 
   const handleFormikSubmit = (values) => {
     const results = calculateCentile(values);
+    const ageCheck = ageChecker(values);
     switch (true) {
       case results.kind === 'child' && results.lessThan14:
         Alert.alert(
@@ -157,14 +159,14 @@ const PCentileScreen = () => {
           serialisedObject
         );
         break;
-      case results === 'Negative age':
+      case ageCheck === 'Negative age':
         Alert.alert(
           'Time Travelling Patient',
           'Please check the dates entered',
           [{ text: 'OK', onPress: () => null }]
         );
         break;
-      case results === 'Over 18':
+      case ageCheck === 'Too old':
         Alert.alert(
           'Patient Too Old',
           'This calculator can only be used under 18 years of age',

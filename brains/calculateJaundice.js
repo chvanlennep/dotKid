@@ -106,12 +106,6 @@ const calculateJaundice = (object) => {
   const sbr = object.sbr;
   const gestationWeeks = Math.floor(object.gestationInDays / 7);
   const floatHours = zeit(dob, 'hours', dom, false);
-  if (floatHours < 0) {
-    return 'Negative age';
-  }
-  if (floatHours > 336) {
-    return 'Too old';
-  }
   const stringAge = zeit(dob, 'string', dom);
   const { phototherapy, exchange } = calculateFinalThresholds(
     floatHours,

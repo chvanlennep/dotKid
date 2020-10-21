@@ -19,7 +19,7 @@ import calculateCentile from '../brains/calculateCentile';
 const BirthCentileScreen = () => {
   const navigation = useNavigation();
 
-  const oneMeasurementNeeded = '↑ At least one patient measurement needed';
+  const oneMeasurementNeeded = "↑ We'll at least one of these measurements";
   const wrongUnitsMessage = (units) => {
     return `↑ Are you sure this is a neonatal measurement (in ${units})?`;
   };

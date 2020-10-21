@@ -15,6 +15,7 @@ import colors from '../config/colors';
 import routes from '../navigation/routes';
 
 import calculateJaundice from '../brains/calculateJaundice';
+import ageChecker from '../brains/ageChecker';
 
 const JaundiceScreen = () => {
   const navigation = useNavigation();
@@ -49,21 +50,23 @@ const JaundiceScreen = () => {
   });
 
   const handleFormikSubmit = (values) => {
-    if (calculateJaundice(values) === 'Negative age') {
+    const checkAge = ageChecker(values, 14);
+    if (checkAge === 'Negative age') {
       Alert.alert(
         'Time Travelling Patient',
         'Please check the dates entered',
-        [{ text: 'OK' }],
+        [{ text: 'OK', onPress: () => null }],
         { cancelable: false }
       );
-    } else if (calculateJaundice(values) === 'Too old') {
+    } else if (checkAge === 'Too old') {
       Alert.alert(
         'Patient Too Old',
         'This calculator can only be used until 14 days of age',
         [{ text: 'OK', onPress: () => null }]
       );
     } else {
-      const serialisedObject = JSON.stringify(calculateJaundice(values));
+      const results = calculateJaundice(values);
+      const serialisedObject = JSON.stringify(results);
       navigation.navigate(routes.JAUNDICE_RESULTS, serialisedObject);
     }
   };
