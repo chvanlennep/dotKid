@@ -1,20 +1,20 @@
-import zeit from "./zeit";
+import zeit from './zeit';
 
 // functionButtons is object from the resus page logic
-export default (functionButtons, type = "APLS") => {
+export default (functionButtons, type = 'APLS') => {
   const objectAsArray = [];
   for (const [key, value] of Object.entries(functionButtons)) {
     if (Array.isArray(value) && value.length > 0) {
       let newKey = key;
       if (
-        key === "Hypoxia" ||
-        key === "Hypovolaemia" ||
-        key === "Hypothermia" ||
-        key === "Hyper/Hypokalaemia" ||
-        key === "Tension Pneumothorax" ||
-        key === "Cardiac Tamponade" ||
-        key === "Toxins" ||
-        key === "Thrombosis"
+        key === 'Hypoxia' ||
+        key === 'Hypovolaemia' ||
+        key === 'Hypothermia' ||
+        key === 'Hyper/Hypokalaemia' ||
+        key === 'Tension Pneumothorax' ||
+        key === 'Cardiac Tamponade' ||
+        key === 'Toxins' ||
+        key === 'Thrombosis'
       ) {
         newKey = `${key} Considered`;
       }
@@ -31,24 +31,23 @@ export default (functionButtons, type = "APLS") => {
     }
   });
   const formatTime = (time) => {
-    let hours = "" + time.getHours();
-    let minutes = "" + time.getMinutes();
-    let seconds = "" + time.getSeconds();
-    const milliseconds = time.getMilliseconds();
-    if (hours.length < 2) hours = "0" + hours;
-    if (minutes.length < 2) minutes = "0" + minutes;
-    if (seconds.length < 2) seconds = "0" + seconds;
+    let hours = '' + time.getHours();
+    let minutes = '' + time.getMinutes();
+    let seconds = '' + time.getSeconds();
+    if (hours.length < 2) hours = '0' + hours;
+    if (minutes.length < 2) minutes = '0' + minutes;
+    if (seconds.length < 2) seconds = '0' + seconds;
     return `${hours}:${minutes}:${seconds}`; //removed .${milliseconds}
   };
   const formatDate = (date) => {
-    let month = "" + (date.getMonth() + 1);
-    let day = "" + date.getDate();
-    const year = "" + date.getFullYear();
-    if (month.length < 2) month = "0" + month;
-    if (day.length < 2) day = "0" + day;
-    return [day, month, year].join("/");
+    let month = '' + (date.getMonth() + 1);
+    let day = '' + date.getDate();
+    const year = '' + date.getFullYear();
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+    return [day, month, year].join('/');
   };
-  if (objectAsArray[0] === undefined) return "No entries found in log";
+  if (objectAsArray[0] === undefined) return 'No entries found in log';
   let outputString = `Log of ${type} encounter on ${formatDate(
     objectAsArray[0][0]
   )}:\n\n${formatTime(objectAsArray[0][0])}: Resuscitation Encounter Started`;
@@ -57,11 +56,11 @@ export default (functionButtons, type = "APLS") => {
       objectAsArray[i][1]
     }`;
     outputString += newLine;
-  } //need to get rid of milliseconds output from total elapsed time of resuscitation
+  }
   if (functionButtons.RIP.length === 1 || functionButtons.ROSC.length === 1) {
     outputString += `\nTotal elapsed time of resuscitation encounter: ${zeit(
       objectAsArray[0][0],
-      "string",
+      'string',
       objectAsArray[objectAsArray.length - 1][0],
       true,
       0,

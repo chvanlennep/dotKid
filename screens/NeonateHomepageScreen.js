@@ -39,11 +39,8 @@ const NeonateHomepageScreen = () => {
           <NavigateButton directions={routes.NEONATE_CENTILE}>
             Preterm Centile Calculator
           </NavigateButton>
-          <NavigateButton directions={routes.ENDOTRACHEAL_TUBE_LENGTH}>
-            Endotracheal Tube Length Calculator
-          </NavigateButton>
-          <NavigateButton directions={routes.ENTERAL_FEED}>
-            Enteral Feed Calculator
+          <NavigateButton directions={routes.NEONATE_FLUID}>
+            Fluid Requirement Calculator
           </NavigateButton>
           <NavigateButton directions={routes.JAUNDICE}>
             Jaundice Calculator
