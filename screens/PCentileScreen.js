@@ -23,7 +23,8 @@ const PCentileScreen = () => {
 
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
 
-  const oneMeasurementNeeded = "↑ We'll at least one of these measurements";
+  const oneMeasurementNeeded =
+    "↑ We'll need at least one of these measurements";
   const wrongUnitsMessage = (units) => {
     return `↑ Are you sure your input is in ${units}?`;
   };
@@ -66,7 +67,7 @@ const PCentileScreen = () => {
       sex: Yup.string().required('↑ Please select a sex').label('Sex'),
       dob: Yup.date()
         .nullable()
-        .required('↑ Please enter a date of Birth')
+        .required('↑ Please enter a date of birth')
         .label('Date of Birth'),
     },
     [
@@ -84,9 +85,8 @@ const PCentileScreen = () => {
     gestationInDays: 280,
     dob: null,
     tob: null,
-    dom: new Date(new Date().getTime() + 10 * 60000),
-    tom: new Date(new Date().getTime() + 10 * 60000),
-    domChanged: false,
+    dom: null,
+    tom: null,
   };
 
   const moveDataAcrossGlobal = (movingTo, values) => {

@@ -18,9 +18,9 @@ const SubmitButton = ({
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const buttonWidth = defaultStyles.container.width;
-  let outputString;
-  let modalHeading;
-  let modalMessage;
+  let outputString = '';
+  let modalHeading = '';
+  let modalMessage = '';
   const addOrdinalSuffix = (inputNumber) => {
     let answerNumber = inputNumber;
     if (Number.isInteger(inputNumber) === false) {
@@ -50,39 +50,53 @@ const SubmitButton = ({
       return 's';
     }
   };
-  if (kind === 'child') {
-    if (valueAfterCorrection !== 'not corrected') {
-      outputString = `Age: ${valueAfterCorrection}`;
-    } else {
+
+  switch (kind) {
+    case 'child':
+      if (valueAfterCorrection !== 'not corrected') {
+        outputString = `Age: ${valueAfterCorrection}`;
+      } else {
+        outputString = `Age: ${valueBeforeCorrection}`;
+      }
+      modalHeading = `Age before correction: ${valueBeforeCorrection}\n
+      Age after correction: ${valueAfterCorrection}`;
+      modalMessage = `Ages are corrected for gestation according to RCPCH guidelines:\n
+      Until 1 year of chronological age for children born 32+0 to 36+6 weeks gestation.\n
+      Until 2 years of chronological age for children born before 32 weeks gestation.`;
+      break;
+    case 'neonate':
+      const pretermAge = valueAfterCorrection - valueBeforeCorrection;
+      let birthGestationWeeks = Math.floor(valueBeforeCorrection / 7);
+      let birthGestationDays = valueBeforeCorrection % 7;
+      const correctedGestationWeeks = Math.floor(valueAfterCorrection / 7);
+      const correctedGestationDays = valueAfterCorrection % 7;
+      const pluralSuffix = decidePluralSuffix(pretermAge);
+      outputString = `Corrected Gestational Age: ${correctedGestationWeeks}+${correctedGestationDays}`;
+      modalHeading = `Birth Gestation: ${birthGestationWeeks}+${birthGestationDays} \n \n ${outputString}`;
+      modalMessage = `${pretermAge} day${pluralSuffix} old (${addOrdinalSuffix(
+        pretermAge + 1
+      )} day of life)`;
+      break;
+    case 'jaundice':
+      let outputGestation = gestationWeeks;
+      if (gestationWeeks >= 38) outputGestation = '38+';
+      outputString = `${valueBeforeCorrection} old, ${outputGestation} week chart`;
+      break;
+    case 'nFluid':
       outputString = `Age: ${valueBeforeCorrection}`;
-    }
-    modalHeading = `Age before correction: ${valueBeforeCorrection}\n
-    Age after correction: ${valueAfterCorrection}`;
-    modalMessage = `Ages are corrected for gestation according to RCPCH guidelines:\n
-    Until 1 year of chronological age for children born 32+0 to 36+6 weeks gestation.\n
-    Until 2 years of chronological age for children born before 32 weeks gestation.`;
-  } else if (kind === 'neonate') {
-    const pretermAge = valueAfterCorrection - valueBeforeCorrection;
-    const birthGestationWeeks = Math.floor(valueBeforeCorrection / 7);
-    const birthGestationDays = valueBeforeCorrection % 7;
-    const correctedGestationWeeks = Math.floor(valueAfterCorrection / 7);
-    const correctedGestationDays = valueAfterCorrection % 7;
-    const pluralSuffix = decidePluralSuffix(pretermAge);
-    outputString = `Corrected Gestational Age: ${correctedGestationWeeks}+${correctedGestationDays}`;
-    modalHeading = `Birth Gestation: ${birthGestationWeeks}+${birthGestationDays} \n \n ${outputString}`;
-    modalMessage = `${pretermAge} day${pluralSuffix} old (${addOrdinalSuffix(
-      pretermAge + 1
-    )} day of life)`;
-  } else if (kind === 'jaundice') {
-    let outputGestation = gestationWeeks;
-    if (gestationWeeks >= 38) outputGestation = '38+';
-    outputString = `${valueBeforeCorrection} old, ${outputGestation} week chart`;
-  } else {
-    const birthGestationWeeks = Math.floor(valueBeforeCorrection / 7);
-    const birthGestationDays = valueBeforeCorrection % 7;
-    outputString = `Birth Gestation: ${birthGestationWeeks}+${birthGestationDays}`;
-    modalHeading = outputString;
-    modalMessage = `As per RCPCH guidelines, infants born at term (37 weeks and higher) are compared against all term infants and not just infants born at their gestation.\n\nPreterm infants are compared against infants born at their specific gestation.`;
+      modalHeading = `Age: ${valueBeforeCorrection}\n(${addOrdinalSuffix(
+        valueAfterCorrection + 1
+      )} day of life)`;
+      break;
+    case 'birth':
+      birthGestationWeeks = Math.floor(valueBeforeCorrection / 7);
+      birthGestationDays = valueBeforeCorrection % 7;
+      outputString = `Birth Gestation: ${birthGestationWeeks}+${birthGestationDays}`;
+      modalHeading = outputString;
+      modalMessage = `As per RCPCH guidelines, infants born at term (37 weeks and higher) are compared against all term infants and not just infants born at their gestation.\n\nPreterm infants are compared against infants born at their specific gestation.`;
+      break;
+    default:
+      console.log('error in AgeButton switch');
   }
   const buttonBackGroundColor =
     kind === 'child' ? colors.primary : colors.secondary;
@@ -142,7 +156,7 @@ const SubmitButton = ({
                   </AppText>
                 </View>
                 <AppText style={styles.modalTextParagraph}>
-                  {modalMessage}
+                  {kind !== 'nFluid' && modalMessage}
                 </AppText>
               </View>
             </View>

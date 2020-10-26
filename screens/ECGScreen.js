@@ -48,12 +48,12 @@ const ECGScreen = () => {
     gestationInDays: 280,
     dob: null,
     tob: null,
-    dom: new Date(new Date().getTime() + 10 * 60000),
-    domChanged: false,
+    dom: null,
   };
 
   const handleFormikSubmit = (values) => {
-    const age = zeit(values.dob, 'months', values.dom, true, correctDays);
+    const dom = values.dom ? values.dom : new Date();
+    const age = zeit(values.dob, 'months', dom, true, correctDays);
     const ageCheck = ageChecker(values);
     const centileObject = calculateCentile(values);
 

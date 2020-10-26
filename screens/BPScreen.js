@@ -63,8 +63,7 @@ const BPScreen = () => {
     tob: null,
     systolic: '',
     diastolic: '',
-    dom: new Date(new Date().getTime() + 10 * 60000),
-    domChanged: false,
+    dom: null,
   };
 
   const handleFormikSubmit = (values) => {

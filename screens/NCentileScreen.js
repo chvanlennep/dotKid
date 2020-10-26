@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Yup from 'yup';
@@ -22,7 +22,8 @@ const PCentileScreen = () => {
   const navigation = useNavigation();
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
 
-  const oneMeasurementNeeded = "↑ We'll at least one of these measurements";
+  const oneMeasurementNeeded =
+    "↑ We'll need at least one of these measurements";
   const wrongUnitsMessage = (units) => {
     return `↑ Are you sure this is a neonatal measurement (in ${units})?`;
   };
@@ -69,7 +70,7 @@ const PCentileScreen = () => {
         .label('Birth Gestation'),
       dob: Yup.date()
         .nullable()
-        .required('↑ Please enter a date of Birth')
+        .required('↑ Please enter a date of birth')
         .label('Date of Birth'),
     },
     [
@@ -87,9 +88,8 @@ const PCentileScreen = () => {
     gestationInDays: 0,
     dob: null,
     tob: null,
-    dom: new Date(new Date().getTime() + 10 * 60000),
-    tom: new Date(new Date().getTime() + 10 * 60000),
-    domChanged: false,
+    dom: null,
+    tom: null,
   };
 
   const moveDataAcrossGlobal = (movingTo, values) => {

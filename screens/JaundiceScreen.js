@@ -24,9 +24,8 @@ const JaundiceScreen = () => {
     gestationInDays: 0,
     dob: null,
     tob: null,
-    dom: new Date(new Date().getTime() + 10 * 60000),
-    tom: new Date(new Date().getTime() + 10 * 60000),
-    domChanged: false,
+    dom: null,
+    tom: null,
   };
 
   const validationSchema = Yup.object().shape({
