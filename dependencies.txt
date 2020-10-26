@@ -18,3 +18,4 @@ expo install yup
 npm install regression
 expo install react-native-svg
 npm install react-native-svg-charts
+npm install @react-native-community/slider

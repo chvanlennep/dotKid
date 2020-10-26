@@ -25,56 +25,59 @@ const RhythmModal = ({ logState, resetState }) => {
   const functionButtons = logState.value;
   const setFunctionButtons = logState.setValue;
 
-  const modalState= {
-      value: modalVisible,
-      setValue: setModalVisible
-  }
+  const modalState = {
+    value: modalVisible,
+    setValue: setModalVisible,
+  };
 
   const rhythmPressedState = {
-      value: rhythmPressed,
-      setValue: setRhythmPressed
-  }
+    value: rhythmPressed,
+    setValue: setRhythmPressed,
+  };
 
   const rhythmTimeState = {
-      value: rhythmTime,
-      setValue: setRhythmTime
-  }
-  
+    value: rhythmTime,
+    setValue: setRhythmTime,
+  };
 
-    //analyse rhythm logic
-    const analyse = () => {
-        if (!rhythmPressed){
-            setModalVisible(true)
-        } else if (rhythmPressed){
-            Alert.alert(
-                'You can only log this every 2 minutes',
-                'Please click undo if you need to cancel this log entry.',
-                [
-                    {
-                        text: 'Undo',
-                        onPress: () => {setModalVisible(true)
-                                        },
-                        style: 'cancel'
-                    },
-                    { text: 'OK', onPress: () => console.log('OK Pressed') }
-                ],
-                { cancelable: false }
-                );
-        }
+  //analyse rhythm logic
+  const analyse = () => {
+    if (!rhythmPressed) {
+      setModalVisible(true);
+    } else if (rhythmPressed) {
+      Alert.alert(
+        "You can only log this every 2 minutes",
+        "Please click undo if you need to cancel this log entry.",
+        [
+          {
+            text: "Undo",
+            onPress: () => {
+              setModalVisible(true);
+            },
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") },
+        ],
+        { cancelable: false }
+      );
     }
-
+  };
 
   return (
     <React.Fragment>
-    <ALSDisplayButton 
-    onPress={() => analyse()} 
-    style={[styles.button, rhythmPressed && styles.buttonPressed]}>
-    Analyse Rhythm {"\n"} 
-    { rhythmPressed && <AnalyseRhythm
-        rhythmPressedState={rhythmPressedState}
-        rhythmTimeState={rhythmTimeState}
-        resetState={resetState} /> }
-    </ALSDisplayButton>
+      <ALSDisplayButton
+        onPress={() => analyse()}
+        style={[styles.button, rhythmPressed && styles.buttonPressed]}
+      >
+        Analyse Rhythm {"\n"}
+        {rhythmPressed && (
+          <AnalyseRhythm
+            rhythmPressedState={rhythmPressedState}
+            rhythmTimeState={rhythmTimeState}
+            resetState={resetState}
+          />
+        )}
+      </ALSDisplayButton>
       <View style={styles.centeredView}>
         <Modal
           animationType="slide"
@@ -85,9 +88,9 @@ const RhythmModal = ({ logState, resetState }) => {
           }}
         >
           <View style={styles.centeredView}>
-          <View style={styles.modalView}>
+            <View style={styles.modalView}>
               <TouchableOpacity
-              style={styles.touchable}
+                style={styles.touchable}
                 onPress={() => {
                   setModalVisible(!modalVisible);
                 }}
@@ -97,28 +100,47 @@ const RhythmModal = ({ logState, resetState }) => {
                     name="close-circle"
                     color={colors.white}
                     size={30}
-                    
                   />
                 </View>
               </TouchableOpacity>
               <AppText style={styles.heading}>Rhythm Analysis</AppText>
               <View style={styles.shocks}>
-              <AppText style={styles.text}>Shockable:</AppText>
-              <View style={styles.options}>
-              <RhythmButton logState={logState} modalState={modalState}
-              resetState={resetState} rhythmPressedState={rhythmPressedState} title={"Ventricular Fibrillation"}></RhythmButton>
-              <RhythmButton logState={logState} modalState={modalState}
-              resetState={resetState} rhythmPressedState={rhythmPressedState} title={"Pulseless VT"}></RhythmButton>
-              </View>
+                <AppText style={styles.text}>Shockable:</AppText>
+                <View style={styles.options}>
+                  <RhythmButton
+                    logState={logState}
+                    modalState={modalState}
+                    resetState={resetState}
+                    rhythmPressedState={rhythmPressedState}
+                    title={"Ventricular Fibrillation"}
+                  ></RhythmButton>
+                  <RhythmButton
+                    logState={logState}
+                    modalState={modalState}
+                    resetState={resetState}
+                    rhythmPressedState={rhythmPressedState}
+                    title={"Pulseless VT"}
+                  ></RhythmButton>
+                </View>
               </View>
               <View style={styles.shocks}>
-              <AppText style={styles.text}>Non-Shockable:</AppText>
-              <View style={styles.options}>
-              <RhythmButton logState={logState} modalState={modalState}
-              resetState={resetState} rhythmPressedState={rhythmPressedState} title={"Asystole"}></RhythmButton>
-              <RhythmButton logState={logState} modalState={modalState}
-              resetState={resetState} rhythmPressedState={rhythmPressedState} title={"PEA"}></RhythmButton>
-              </View>
+                <AppText style={styles.text}>Non-Shockable:</AppText>
+                <View style={styles.options}>
+                  <RhythmButton
+                    logState={logState}
+                    modalState={modalState}
+                    resetState={resetState}
+                    rhythmPressedState={rhythmPressedState}
+                    title={"Asystole"}
+                  ></RhythmButton>
+                  <RhythmButton
+                    logState={logState}
+                    modalState={modalState}
+                    resetState={resetState}
+                    rhythmPressedState={rhythmPressedState}
+                    title={"PEA"}
+                  ></RhythmButton>
+                </View>
               </View>
             </View>
           </View>
@@ -131,20 +153,20 @@ const RhythmModal = ({ logState, resetState }) => {
 export default RhythmModal;
 
 const styles = StyleSheet.create({
-    button: {
-        alignContent: "center",
-        backgroundColor: colors.dark,
-        justifyContent: 'center',
-        textAlign: 'center',
-        width: '44%',
-    },
-    buttonPressed: {
-        backgroundColor: colors.primary,
-        flexWrap: "nowrap",
-        height: 90,
-        justifyContent: "center",
-        textAlign: 'center'
-      },
+  button: {
+    alignContent: "center",
+    backgroundColor: colors.dark,
+    justifyContent: "center",
+    textAlign: "center",
+    width: "44%",
+  },
+  buttonPressed: {
+    backgroundColor: colors.primary,
+    flexWrap: "nowrap",
+    height: 90,
+    justifyContent: "center",
+    textAlign: "center",
+  },
 
   centeredView: {
     flex: 1,
@@ -160,11 +182,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   heading: {
-      alignSelf: "center",
-      color: colors.white,
-      fontSize: 20,
-      marginTop: -30,
-      marginBottom: 5
+    alignSelf: "center",
+    color: colors.white,
+    fontSize: 20,
+    marginTop: -30,
+    marginBottom: 5,
   },
   icon: {
     alignItems: "center",
@@ -190,18 +212,17 @@ const styles = StyleSheet.create({
   options: {
     flexDirection: "row",
     paddingBottom: 10,
-
   },
   shocks: {
-      alignContent: "center",
-      justifyContent: "center",
-     backgroundColor: colors.medium,
-     borderRadius: 5,
-     flex: 1,
-      flexDirection: "column",
-      flexWrap: "nowrap",
-      margin: 10,
-      padding: 5,
+    alignContent: "center",
+    justifyContent: "center",
+    backgroundColor: colors.medium,
+    borderRadius: 5,
+    flex: 1,
+    flexDirection: "column",
+    flexWrap: "nowrap",
+    margin: 10,
+    padding: 5,
   },
   text: {
     fontSize: 18,
@@ -209,13 +230,10 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     alignSelf: "center",
     margin: 10,
-    color: colors.white
+    color: colors.white,
   },
   touchable: {
-      alignSelf: "flex-start",
-      //backgroundColor: "blue",
-      
-  }
+    alignSelf: "flex-start",
+    //backgroundColor: "blue",
+  },
 });
-
-

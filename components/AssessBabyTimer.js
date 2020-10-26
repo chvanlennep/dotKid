@@ -1,20 +1,24 @@
-import React, { useState, useRef, useEffect } from "react";
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet } from "react-native";
 import colors from "../config/colors";
 import AppText from "./AppText";
 
-const AnalyseRhythm = ({ rhythmPressedState, rhythmTimeState, resetState }) => {
+const AssessBabyTimer = ({ assessmentState, assessmentTime, resetState }) => {
   const [time, setTime] = useState(new Date().toLocaleTimeString());
-  const repeatTime = 120;
+
+  const repeatTime = 30;
   const secondsPassed = useRef(0);
 
-  const rhythmTime = rhythmTimeState.value;
-  const setRhythmTime = rhythmTimeState.setValue;
-  const rhythmPressed = rhythmPressedState.value;
-  const setRhythmPressed = rhythmPressedState.setValue;
+  const assessBaby = assessmentState.value;
+  const setAssessBaby = assessmentState.setValue;
+
+  const assessTime = assessmentTime.value;
+  const setAssessTime = assessmentTime.setValue;
+
   const reset = resetState.value;
   const setReset = resetState.setValue;
 
+  //timer logic
   const start = useRef(new Date());
   let date;
   let secDiff;
@@ -48,7 +52,7 @@ const AnalyseRhythm = ({ rhythmPressedState, rhythmTimeState, resetState }) => {
   }
 
   useEffect(() => {
-    if (rhythmPressed) {
+    if (assessBaby) {
       start.current = new Date();
       return () => start.current;
     }
@@ -56,7 +60,7 @@ const AnalyseRhythm = ({ rhythmPressedState, rhythmTimeState, resetState }) => {
 
   useEffect(() => {
     if (reset) {
-      setRhythmPressed(false);
+      setAssessBaby(false);
     }
   });
 
@@ -66,9 +70,8 @@ const AnalyseRhythm = ({ rhythmPressedState, rhythmTimeState, resetState }) => {
       secDiff = Math.floor((date - start.current) / 1000);
       secondsPassed.current = repeatTime - secDiff;
       setTime(date.toLocaleTimeString());
-      console.log(secDiff);
       if (secondsPassed.current < 1) {
-        setRhythmPressed(false);
+        setAssessBaby(false);
       }
     }, 1000);
     return () => {
@@ -77,24 +80,22 @@ const AnalyseRhythm = ({ rhythmPressedState, rhythmTimeState, resetState }) => {
   }, [time]);
 
   useEffect(() => {
-    const displayInterval = setRhythmTime(secondsToHms(secondsPassed.current));
+    const displayInterval = setAssessTime(secondsToHms(secondsPassed.current));
 
     return () => {
-      rhythmTime;
+      assessTime;
     };
   });
 
-  //   useEffect(() => {
-  //     if (reset == true){
-  //         secondsPassed.current = 0;
-  //     };
-  // }
-  // )
-
-  return <AppText style={styles.text}>{rhythmTime}</AppText>;
+  return (
+    <AppText style={styles.text}>
+      {"\n"}
+      {assessTime}
+    </AppText>
+  );
 };
 
-export default AnalyseRhythm;
+export default AssessBabyTimer;
 
 // <div>{secondsPassed.current}</div>
 

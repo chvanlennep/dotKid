@@ -1,9 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Alert,
   StyleSheet,
   TouchableHighlight,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from "react-native";
 
@@ -11,9 +18,10 @@ import colors from "../../config/colors";
 import AppText from "../AppText";
 import ButtonIcon from "../buttons/ButtonIcon";
 
-const ALSTeriaryFunctionButton = ({
+const EndEncounterButton = ({
   encounterState,
   logState,
+  modalState,
   resetState,
   style,
   timerState,
@@ -22,16 +30,19 @@ const ALSTeriaryFunctionButton = ({
   const reset = resetState.value;
   const setReset = resetState.setValue;
 
-  const endEncounter = encounterState.value;
-  const setEndEncounter = encounterState.setValue;
-
-  const isTimerActive = timerState.value;
-  const setIsTimerActive = timerState.setValue;
-
   const functionButtons = logState.value;
   const setFunctionButtons = logState.setValue;
 
+  const endEncounter = encounterState.value;
+  const setEndEncounter = encounterState.setValue;
+
+  const modal = modalState.value;
+  const setModal = modalState.setValue;
+
   const [changeBackground, setChangeBackground] = useState(false);
+
+  const isTimerActive = timerState.value;
+  const setIsTimerActive = timerState.setValue;
 
   const [showUndo, setShowUndo] = useState(false);
 
@@ -54,64 +65,6 @@ const ALSTeriaryFunctionButton = ({
       resetLog();
     }
   };
-
-  //uses state to change background button color after selected
-  const handleChangeBackground = (changeBackground, oldState, title) => {
-    const oldButtonArray = oldState[title];
-    if (oldButtonArray.length < 2) {
-      setChangeBackground(false);
-      return changeBackground;
-    } else {
-      return changeBackground;
-    }
-  };
-
-  const handlePress = () => {
-    //some logic to prevent double pressing may need to go here
-    setClicks(clicks + 1);
-    setChangeBackground(true);
-    updateTime(title, functionButtons);
-    setShowUndo(true);
-  };
-
-  // handles undo click - changes background if appropriate and removes last added time
-  const removeTime = (title, oldState) => {
-    const oldButtonArray = oldState[title];
-    if (oldButtonArray.length < 2) {
-      setFunctionButtons((oldState) => {
-        const updatingState = oldState;
-        updatingState[title] = [];
-        setShowUndo(false);
-        return updatingState;
-      });
-    } else {
-      const newButtonArray = oldButtonArray.slice(0, -1);
-      setFunctionButtons((oldState) => {
-        const updatingState = oldState;
-        updatingState[title] = newButtonArray;
-        setShowUndo(true);
-        return updatingState;
-      });
-    }
-  };
-
-  // global undo click handling
-  const handleUndo = () => {
-    handleChangeBackground(changeBackground, functionButtons, title);
-    removeTime(title, functionButtons);
-    console.log(functionButtons);
-    setClicks(clicks - 1);
-  };
-
-  // reset button logic
-
-  useEffect(() => {
-    if (reset == true) {
-      setChangeBackground(false);
-      setClicks(0);
-      setShowUndo(false);
-    }
-  });
 
   //reset button logic
   const handleReset = () => {
@@ -157,34 +110,125 @@ const ALSTeriaryFunctionButton = ({
     }
     return functionButtons;
   };
+  //uses state to change background button color after selected
+  const handleChangeBackground = (changeBackground, oldState, title) => {
+    const oldButtonArray = oldState[title];
+    if (oldButtonArray.length < 2) {
+      setChangeBackground(false);
+      return changeBackground;
+    } else {
+      return changeBackground;
+    }
+  };
+
+  const handlePress = () => {
+    if (clicks < 1) {
+      setChangeBackground(true);
+      updateTime(title, functionButtons);
+      setShowUndo(true);
+      setClicks(clicks + 1);
+      setEndEncounter(true);
+      setModal(false);
+    } else {
+      Alert.alert(
+        "You can only select this once",
+        "Please click undo if you need to cancel this log entry.",
+        [
+          {
+            text: "Undo",
+            onPress: () => handleUndo(),
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => "OK Pressed" },
+        ],
+        { cancelable: false }
+      );
+    }
+  };
+
+  // handles undo click - changes background if appropriate and removes last added time
+  const removeTime = (title, oldState) => {
+    const oldButtonArray = oldState[title];
+    if (oldButtonArray.length < 2) {
+      setFunctionButtons((oldState) => {
+        const updatingState = oldState;
+        updatingState[title] = [];
+        setShowUndo(false);
+        return updatingState;
+      });
+    } else {
+      const newButtonArray = oldButtonArray.slice(0, -1);
+      setFunctionButtons((oldState) => {
+        const updatingState = oldState;
+        updatingState[title] = newButtonArray;
+        setShowUndo(true);
+        return updatingState;
+      });
+    }
+  };
+
+  // global undo click handling
+  const handleUndo = () => {
+    handleChangeBackground(changeBackground, functionButtons, title);
+    removeTime(title, functionButtons);
+    setClicks(clicks - 1);
+  };
+
+  // reset button logic
+
+  useEffect(() => {
+    if (reset == true) {
+      setChangeBackground(false);
+      setClicks(0);
+      setShowUndo(false);
+    }
+  });
 
   return (
     <TouchableHighlight
       activeOpacity={0.5}
       underlayColor={colors.light}
       onPress={handlePress}
-      style={[styles.button, style, changeBackground && styles.buttonPressed]}
+      style={[
+        styles.button,
+        style,
+        changeBackground && [
+          styles.buttonPressed,
+          {
+            backgroundColor:
+              kind === "child" ? colors.primary : colors.secondary,
+          },
+        ],
+      ]}
       pressed={changeBackground}
       title={title}
     >
-      <View style={styles.content}>
-        <AppText style={{ color: colors.white }}>{`${title} ${
-          clicks ? "x" + clicks : ""
-        }`}</AppText>
+      <View
+        style={[
+          styles.button,
+          style,
+          changeBackground && [
+            styles.buttonPressed,
+            {
+              backgroundColor:
+                kind === "child" ? colors.primary : colors.secondary,
+            },
+          ],
+        ]}
+      >
+        <AppText style={{ color: colors.white }}>{title}</AppText>
 
         {showUndo && (
-          <React.Fragment>
-            <TouchableOpacity onPress={handleUndo}>
-              <ButtonIcon name="refresh" backgroundColor={null} />
-            </TouchableOpacity>
-          </React.Fragment>
+          <TouchableOpacity onPress={handleUndo}>
+            <ButtonIcon name="refresh" backgroundColor={null} />
+          </TouchableOpacity>
         )}
       </View>
     </TouchableHighlight>
   );
 };
 
-export default ALSTeriaryFunctionButton;
+export default EndEncounterButton;
 
 const styles = StyleSheet.create({
   button: {
@@ -199,8 +243,11 @@ const styles = StyleSheet.create({
     width: "98%",
   },
   buttonPressed: {
+    alignItems: "center",
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
     backgroundColor: colors.primary,
-    flexWrap: "nowrap",
   },
   content: {
     alignItems: "center",

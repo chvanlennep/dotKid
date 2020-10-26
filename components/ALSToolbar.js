@@ -1,23 +1,33 @@
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import ALSToolButton from './buttons/ALSToolButton'
+import React from "react";
+import { StyleSheet, useWindowDimensions, View } from "react-native";
+import ALSToolButton from "./buttons/ALSToolButton";
 
-const ALSToolbar = ({reset, rip, rosc}) => {
-    return (
-        <View style={styles.container}>
-        <ALSToolButton name="RIP" onPress={rip}/>
-        <ALSToolButton name="Reset" onPress={reset} />
-        <ALSToolButton name="ROSC" onPress={rosc}/>
-        </View>
-    )
-}
+const ALSToolbar = ({ reset, rip, rosc }) => {
+  return (
+    <View style={styles.container}>
+      <ALSToolButton
+        name="RIP"
+        onPress={rip}
+        style={{ width: useWindowDimensions().width / 3 }}
+      />
+      <ALSToolButton
+        name="Reset"
+        onPress={reset}
+        style={{ width: useWindowDimensions().width / 3 }}
+      />
+      <ALSToolButton
+        name="ROSC"
+        onPress={rosc}
+        style={{ width: useWindowDimensions().width / 3 }}
+      />
+    </View>
+  );
+};
 
-export default ALSToolbar
+export default ALSToolbar;
 
 const styles = StyleSheet.create({
-    container: {
-        flexDirection: "row",
-        
-    },
-
-})
+  container: {
+    flexDirection: "row",
+  },
+});
