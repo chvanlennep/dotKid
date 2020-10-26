@@ -1,51 +1,57 @@
-import React, { useState } from "react";
-import {
-  Alert,
-  FlatList,
-  StyleSheet,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Alert, FlatList, ScrollView, StyleSheet, View } from "react-native";
+import { useScrollToTop } from "@react-navigation/native";
 
-import PCalcScreen from "../components/PCalcScreen";
-import ALSToolbar from "../components/ALSToolbar";
+import NCalcScreen from "../components/NCalcScreen";
+import NLSToolbar from "../components/NLSToolbar";
 import colors from "../config/colors";
-import AppText from "../components/AppText";
 import ALSDisplayButton from "../components/buttons/ALSDisplayButton";
 import ALSFunctionButton from "../components/buttons/ALSFunctionButton";
 import ALSListHeader from "../components/buttons/ALSListHeader";
 import Stopwatch from "../components/Stopwatch";
 
-import ALSTertiaryFunctionButton from "../components/buttons/ALSTertiaryFunctionButton";
-import AdrenalineTimer from "../components/AdrenalineTimer";
-import AnalyseRhythm from "../components/AnalyseRhythm";
+import AppText from "../components/AppText";
+import AssessBabyModal from "../components/AssessBabyModal";
 import {
-  flatListData,
+  afterChestRise,
+  afterChestRiseFlatList,
+  flatListOneData,
+  flatListTwoData,
   functionButtons,
-  primaryButtons,
-  tertiaryButtons,
-} from "../brains/aplsObjects";
-import RhythmModal from "../components/RhythmModal";
+  preResusChecklist,
+  resusRequired,
+} from "../brains/nlsObjects";
 import LogModal from "../components/LogModal";
+import NoChestRiseModal from "../components/NoChestRiseModal";
+import InitialAssessmentModal from "../components/InitialAssessmentModal";
 
-const APLSScreen = () => {
+const NLSScreen = () => {
   const [reset, setReset] = useState(false);
   const [fButtons, setFunctionButtons] = useState(functionButtons);
   const [intervalTime, setIntervalTime] = useState(0);
-  const [adrenalineTime, setAdrenalineTime] = useState(0);
-  const [adrenalinePressed, setAdrenalinePressed] = useState(false);
   const [logVisible, setLogVisible] = useState(false);
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [endEncounter, setEndEncounter] = useState(false);
+  const [resuscitationRequired, setResuscitationRequired] = useState(false);
+  const [initialAssessmentComplete, setInitialAssessmentComplete] = useState(
+    false
+  );
+  const [assessBaby, setAssessBaby] = useState(false);
+  const [assessTime, setAssessTime] = useState(0);
 
-  const adrenalineTimeState = {
-    value: adrenalineTime,
-    setValue: setAdrenalineTime,
+  const assessmentState = {
+    value: assessBaby,
+    setValue: setAssessBaby,
   };
 
-  const adrenalinePressedState = {
-    value: adrenalinePressed,
-    setValue: setAdrenalinePressed,
+  const assessmentTime = {
+    value: assessTime,
+    setValue: setAssessTime,
+  };
+
+  const initialAssessmentState = {
+    value: initialAssessmentComplete,
+    setValue: setInitialAssessmentComplete,
   };
 
   const encounterState = {
@@ -78,63 +84,17 @@ const APLSScreen = () => {
     setValue: setIsTimerActive,
   };
 
+  const resusState = {
+    value: resuscitationRequired,
+    setValue: setResuscitationRequired,
+  };
+
   //clears functionButtons object
   const resetLogTimes = (functionButtons) => {
     for (let value in functionButtons) {
       functionButtons[value] = [];
     }
     return functionButtons;
-  };
-
-  const adrenaline = () => {
-    setIsTimerActive(true);
-    if (!adrenalinePressed) {
-      setAdrenalinePressed(true);
-      handleLogEvent(functionButtons, "Adrenaline Administered");
-    } else if (adrenalinePressed) {
-      Alert.alert(
-        "You can only log this every 3 minutes",
-        "Please click undo if you need to cancel this log entry.",
-        [
-          {
-            text: "Undo",
-            onPress: () => {
-              removeTime("Adrenaline Administered", functionButtons);
-              setAdrenalinePressed(false);
-            },
-            style: "cancel",
-          },
-          { text: "OK", onPress: () => "OK" },
-        ],
-        { cancelable: false }
-      );
-    }
-  };
-
-  //analyse rhythm logic
-  const analyse = () => {
-    setIsTimerActive(true);
-    if (!rhythmPressed) {
-      setRhythmPressed(true);
-      handleLogEvent(functionButtons, "Rhythm Analysed");
-    } else if (rhythmPressed) {
-      Alert.alert(
-        "You can only log this every 2 minutes",
-        "Please click undo if you need to cancel this log entry.",
-        [
-          {
-            text: "Undo",
-            onPress: () => {
-              removeTime("Rhythm Analysed", functionButtons);
-              setRhythmPressed(false);
-            },
-            style: "cancel",
-          },
-          { text: "OK", onPress: () => "OK" },
-        ],
-        { cancelable: false }
-      );
-    }
   };
 
   //reset button logic
@@ -144,7 +104,7 @@ const APLSScreen = () => {
     setIsTimerActive(false);
     setEndEncounter(false);
     Alert.alert(
-      "Your APLS Log has been reset.",
+      "Your NLS Log has been reset.",
       "",
       [
         {
@@ -161,7 +121,7 @@ const APLSScreen = () => {
   //reset button alert
   const resetLog = () => {
     Alert.alert(
-      "Do you wish to reset your APLS Log?",
+      "Do you wish to reset your NLS Log?",
       "",
       [
         { text: "Reset", onPress: () => handleReset() },
@@ -169,53 +129,6 @@ const APLSScreen = () => {
           text: "Cancel",
           onPress: () => "Cancel",
           style: "cancel",
-        },
-      ],
-      { cancelable: false }
-    );
-  };
-
-  // RIP Alert window
-  const RIPAPLS = () => {
-    Alert.alert(
-      "Do you wish to terminate this APLS encounter?",
-      "",
-      [
-        {
-          text: "Yes - confirm patient as RIP",
-          onPress: () => {
-            handleLogEvent(functionButtons, "RIP");
-            setLogVisible(true);
-            setIsTimerActive(false);
-            setEndEncounter(true);
-          },
-        },
-        {
-          text: "Cancel",
-          onPress: () => "Cancel",
-        },
-      ],
-      { cancelable: false }
-    );
-  };
-  // ROSC alert window
-  const ROSCAPLS = () => {
-    Alert.alert(
-      "Do you wish to terminate this APLS encounter?",
-      "",
-      [
-        {
-          text: "Yes - confirm patient as ROSC",
-          onPress: () => {
-            handleLogEvent(functionButtons, "ROSC");
-            setLogVisible(true);
-            setIsTimerActive(false);
-            setEndEncounter(true);
-          },
-        },
-        {
-          text: "Cancel",
-          onPress: () => "Cancel",
         },
       ],
       { cancelable: false }
@@ -254,10 +167,33 @@ const APLSScreen = () => {
     });
   };
 
+  useEffect(() => {
+    if (endEncounter == true) {
+      setLogVisible(true);
+      setIsTimerActive(false);
+    }
+  });
+
   const renderListItem = ({ item }) => {
-    if (item.type === "primaryButton" || item.type === "secondaryButton") {
+    if (item.type === "preResusChecklist") {
       return (
         <ALSFunctionButton
+          kind="neonate"
+          title={item.id}
+          logState={logState}
+          encounterState={encounterState}
+          resetState={resetState}
+          timerState={timerState}
+          type="checklist"
+        />
+      );
+    } else if (
+      item.type === "resusRequired" ||
+      item.type === "afterChestRise"
+    ) {
+      return (
+        <ALSFunctionButton
+          kind="neonate"
           title={item.id}
           logState={logState}
           encounterState={encounterState}
@@ -265,25 +201,47 @@ const APLSScreen = () => {
           timerState={timerState}
         />
       );
-    }
-    if (item.type === "listHeader") {
-      return <ALSListHeader isList={false} title={item.id} />;
-    } else {
+    } else if (item.type === "listHeader") {
       return (
-        <ALSTertiaryFunctionButton
+        <ALSListHeader
           title={item.id}
+          downArrow={item.downArrow}
+          onDownPress={() => scrollMe(item.onDownPress)}
+          upArrow={item.upArrow}
+          onUpPress={() => scrollMe(item.onUpPress)}
+        />
+      );
+    } else if (item.type === "modal") {
+      return (
+        <InitialAssessmentModal
           encounterState={encounterState}
+          initialAssessmentState={initialAssessmentState}
           logState={logState}
-          timerState={timerState}
           resetState={resetState}
+          timerState={timerState}
         />
       );
     }
   };
 
+  const scrollRef = useRef();
+
+  const scrollMe = (coordinate) => {
+    scrollRef.current?.scrollToOffset({
+      offset: coordinate,
+      animated: true,
+    });
+  };
+
   return (
-    <PCalcScreen isResus={true} style={{ flex: 1 }}>
-      <ALSToolbar reset={resetLog} rip={RIPAPLS} rosc={ROSCAPLS} />
+    <NCalcScreen isResus={true} style={{ flex: 1 }}>
+      <NLSToolbar
+        reset={resetLog}
+        logState={logState}
+        encounterState={encounterState}
+        resetState={resetState}
+        timerState={timerState}
+      />
       <View style={styles.middleContainer}>
         <ALSDisplayButton
           onPress={() => setIsTimerActive(true)}
@@ -301,48 +259,47 @@ const APLSScreen = () => {
         </ALSDisplayButton>
 
         <LogModal
+          kind="neonate"
           encounterState={encounterState}
           logInput={functionButtons}
           logVisibleState={logVisibleState}
         />
-
-        <ALSDisplayButton
-          onPress={() => adrenaline()}
-          style={[styles.button, adrenalinePressed && styles.buttonPressed]}
-        >
-          {!adrenalinePressed && "Adrenaline"}
-          {adrenalinePressed && (
-            <AdrenalineTimer
-              adrenalinePressedState={adrenalinePressedState}
-              adrenalineTimeState={adrenalineTimeState}
-              resetState={resetState}
-            />
-          )}
-        </ALSDisplayButton>
-
-        <RhythmModal logState={logState} resetState={resetState} />
+        <AssessBabyModal
+          assessmentState={assessmentState}
+          assessmentTime={assessmentTime}
+          encounterState={encounterState}
+          logState={logState}
+          resetState={resetState}
+          timerState={timerState}
+        />
+        <NoChestRiseModal
+          afterClose={() => scrollMe(1750)}
+          encounterState={encounterState}
+          logState={logState}
+          resetState={resetState}
+          timerState={timerState}
+        />
       </View>
-
       <View style={styles.textContainer}>
-        <AppText style={styles.text}>APLS</AppText>
+        <AppText style={styles.text}>NLS</AppText>
       </View>
       <View style={styles.bottomContainer}>
         <FlatList
-          data={flatListData}
-          keyExtractor={(flatListData) => flatListData.id.toString()}
+          data={flatListOneData}
+          keyExtractor={(flatListOneData) => flatListOneData.id.toString()}
           renderItem={renderListItem}
+          ref={scrollRef}
           ListHeaderComponent={
-            <ALSFunctionButton
-              title={primaryButtons[0]["id"]}
-              timerState={timerState}
-              logState={logState}
-              encounterState={encounterState}
-              resetState={resetState}
+            <ALSListHeader
+              onDownPress={() => scrollMe(1070)}
+              downArrow={true}
+              title={"Pre-Resus Checklist:"}
             />
           }
           ListFooterComponent={
-            <ALSTertiaryFunctionButton
-              title={tertiaryButtons[tertiaryButtons.length - 1]["id"]}
+            <ALSFunctionButton
+              kind="neonate"
+              title={afterChestRise[afterChestRise.length - 1]["id"]}
               logState={logState}
               encounterState={encounterState}
               timerState={timerState}
@@ -351,11 +308,11 @@ const APLSScreen = () => {
           }
         />
       </View>
-    </PCalcScreen>
+    </NCalcScreen>
   );
 };
 
-export default APLSScreen;
+export default NLSScreen;
 
 const styles = StyleSheet.create({
   bottomButton: {
@@ -363,6 +320,7 @@ const styles = StyleSheet.create({
     marginBottom: 200,
   },
   bottomContainer: {
+    flexDirection: "column",
     padding: 15,
     paddingTop: 5,
     flex: 1,

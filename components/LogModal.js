@@ -15,16 +15,22 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import colors from "../../app/config/colors";
 import defaultStyles from "../../app/config/styles";
 import AppText from "./AppText";
-
-import RhythmButton from "./buttons/RhythmButton";
 import ALSDisplayButton from "./buttons/ALSDisplayButton";
-import AnalyseRhythm from "./AnalyseRhythm";
 import parseLog from "../brains/parseLog";
 
-const RhythmModal = ({ logInput, logVisibleState }) => {
+const LogModal = ({
+  encounterState,
+  logInput,
+  logVisibleState,
+  kind = "child",
+}) => {
   const scheme = useColorScheme();
+
   const modalVisible = logVisibleState.value;
   const setModalVisible = logVisibleState.setValue;
+
+  const endEncounter = encounterState.value;
+  const setEndEncounter = encounterState.setValue;
 
   // const onShare = async () => {
   //     try {
@@ -64,12 +70,24 @@ const RhythmModal = ({ logInput, logVisibleState }) => {
           }}
         >
           <View style={styles.centeredView}>
-            <View style={styles.modalView}>
+            <View
+              style={[
+                styles.modalView,
+                {
+                  backgroundColor:
+                    kind === "child"
+                      ? colors.darkPrimary
+                      : colors.darkSecondary,
+                },
+              ]}
+            >
               <View style={styles.headers}>
                 <TouchableOpacity
                   style={styles.touchable}
                   onPress={() => {
-                    setModalVisible(!modalVisible);
+                    endEncounter
+                      ? setEndEncounter(false) && setModalVisible(!modalVisible)
+                      : setModalVisible(!modalVisible);
                   }}
                 >
                   <View style={styles.closeIcon}>
@@ -127,7 +145,7 @@ const RhythmModal = ({ logInput, logVisibleState }) => {
   );
 };
 
-export default RhythmModal;
+export default LogModal;
 
 const styles = StyleSheet.create({
   button: {
@@ -187,7 +205,6 @@ const styles = StyleSheet.create({
     elevation: 5,
     height: defaultStyles.container.width + 20,
     width: defaultStyles.container.width - 10,
-    backgroundColor: "#B32425",
   },
   log: {
     alignContent: "flex-start",

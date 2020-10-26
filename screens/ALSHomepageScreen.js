@@ -47,6 +47,7 @@ const ALSHomepageScreen = ({ navigation }) => {
           styles.nls,
           { backgroundColor: scheme === "dark" ? colors.black : colors.white },
         ]}
+        onPress={() => navigation.navigate(routes.NLS)}
       >
         <View style={styles.container}>
           <TopIcon

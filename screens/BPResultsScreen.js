@@ -5,7 +5,6 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import PCalcScreen from "../components/PCalcScreen";
 import AppText from "../components/AppText";
 import colors from "../config/colors";
-import SmallButton from "../components/buttons/SmallButton";
 import AgeButton from "../components/buttons/AgeButton";
 import Button from "../components/buttons/Button";
 import MoreBPInfo from "../components/buttons/MoreBPInfo";
@@ -16,7 +15,6 @@ const BPResultsScreen = ({ route, navigation }) => {
   const measurements = parameters.measurements;
   const centileResults = parameters.centileObject;
   const BPResults = parameters.BPOutput;
-  console.log(parameters.BPOutput);
 
   let systolicTitle;
   let diastolicTitle;

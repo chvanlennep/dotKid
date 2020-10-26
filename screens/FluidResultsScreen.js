@@ -5,20 +5,20 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import PCalcScreen from "../components/PCalcScreen";
 import AppText from "../components/AppText";
 import colors from "../config/colors";
-import SmallButton from "../components/buttons/SmallButton";
 import AgeButton from "../components/buttons/AgeButton";
 import Button from "../components/buttons/Button";
 import MoreCentileInfo from "../components/buttons/MoreCentileInfo";
-
-const BPResultsScreen = ({ route, navigation }) => {
+const FluidResultsScreen = ({ route, navigation }) => {
   const parameters = JSON.parse(route.params);
   const measurements = parameters.measurements;
+  const centileResults = parameters.centileObject;
 
-  let QTcTitle = `QT (${parameters.measurements.qtinterval} seconds)`;
-  let referenceTitle;
+  let fluidTitle = `Calculated Fluid Requirements:`;
+  let fluidReference = `...`;
+
+  const [fluid, fluidText] = parameters.results;
   const ageBeforeCorrection = parameters.centileObject.ageBeforeCorrection;
   const ageAfterCorrection = parameters.centileObject.ageAfterCorrection;
-  const [QTc, reference] = parameters.QTCOutput;
 
   return (
     <PCalcScreen style={{ flex: 1 }}>
@@ -40,22 +40,16 @@ const BPResultsScreen = ({ route, navigation }) => {
           <View style={styles.outputContainer}>
             <View style={styles.outputTextBox}>
               <View style={styles.title}>
-                <AppText style={styles.text}>{QTcTitle}</AppText>
+                <AppText style={styles.text}>{fluidTitle}</AppText>
               </View>
               <View style={styles.output}>
                 <AppText style={styles.outputText}>
-                  {QTc}
-                  {"\n"}
-                  {"\n"}
+                  {fluid} ml/hour{"\n"}
                 </AppText>
-                <AppText style={styles.reference}>
-                  Reference values:
-                  {"\n"}
-                </AppText>
-                <AppText style={styles.outputText}>{reference}</AppText>
+                <AppText style={styles.outputText}>{fluidText}</AppText>
               </View>
             </View>
-            <MoreCentileInfo exactCentile={reference} />
+            <MoreCentileInfo exactCentile={fluidReference} />
           </View>
         </View>
       </KeyboardAwareScrollView>
@@ -63,20 +57,20 @@ const BPResultsScreen = ({ route, navigation }) => {
   );
 };
 
-export default BPResultsScreen;
+export default FluidResultsScreen;
 
 const styles = StyleSheet.create({
   bottomContainer: {
     alignSelf: "center",
     alignItems: "center",
-    //backgroundColor: "dodgerblue",
+    // backgroundColor: "dodgerblue",
     paddingHorizontal: 20,
     width: "100%",
     marginBottom: 75,
-    height: "100%",
+    marginTop: 40,
   },
   outputContainer: {
-    //backgroundColor: "orangered",
+    // backgroundColor: "orangered",
     alignSelf: "center",
     flexDirection: "row",
     justifyContent: "space-between",
@@ -84,23 +78,23 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     marginBottom: 10,
     marginTop: 10,
-    height: "100%",
+    height: 80,
     width: "100%",
   },
   outputTextBox: {
-    padding: 10,
     paddingLeft: 10,
     paddingRight: 20,
-    //backgroundColor: "limegreen",
-    height: "100%",
+    // backgroundColor: "limegreen",
     textAlign: "left",
+    justifyContent: "center",
+    height: "100%",
     width: "85%",
   },
   outputText: {
     fontSize: 16,
+    lineHeight: 25,
     textAlign: "left",
   },
-  reference: {},
   topContainer: {
     marginTop: 5,
   },

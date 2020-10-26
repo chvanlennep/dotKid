@@ -1,4 +1,5 @@
 export default Object.freeze({
+  BSA_RESULTS: "BSAResults",
   BLOOD_PRESSURE_RESULTS: "BPResults",
   ECG_RESULTS: "ECGResults",
   PAEDS_HOMEPAGE: "PaedsHomepage",
@@ -8,7 +9,7 @@ export default Object.freeze({
   PAEDIATRIC_CENTILE_RESULTS: "PCentileResultsScreen",
   ECG: "ECG",
   FLUID_CALCULATOR: "FluidCalculator",
-  WETFLAG: "WETFLAG",
+  WETFLAG: "WETFLAGScreen",
   NEONATE_HOMEPAGE: "NeonateHomepage",
   BIRTH_CENTILE: "BirthCentile",
   BIRTH_CENTILE_RESULTS: "BirthCentileResults",
@@ -20,4 +21,7 @@ export default Object.freeze({
   JAUNDICE_RESULTS: "JaundiceResults",
   APLS_LOG: "APLSLog",
   APLS: "APLSScreen",
+  FLUID_RESULTS: "FluidResults",
+  WETFLAG_RESULTS: "WETFLAGResults",
+  NLS: "NLSScreen",
 });

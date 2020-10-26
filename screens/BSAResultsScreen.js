@@ -5,29 +5,17 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import PCalcScreen from "../components/PCalcScreen";
 import AppText from "../components/AppText";
 import colors from "../config/colors";
-import SmallButton from "../components/buttons/SmallButton";
-import AgeButton from "../components/buttons/AgeButton";
 import Button from "../components/buttons/Button";
-import MoreCentileInfo from "../components/buttons/MoreCentileInfo";
 
-const BPResultsScreen = ({ route, navigation }) => {
+const BSAResultsScreen = ({ route, navigation }) => {
   const parameters = JSON.parse(route.params);
   const measurements = parameters.measurements;
 
-  let QTcTitle = `QT (${parameters.measurements.qtinterval} seconds)`;
-  let referenceTitle;
-  const ageBeforeCorrection = parameters.centileObject.ageBeforeCorrection;
-  const ageAfterCorrection = parameters.centileObject.ageAfterCorrection;
-  const [QTc, reference] = parameters.QTCOutput;
+  const BSA = parameters.output;
 
   return (
     <PCalcScreen style={{ flex: 1 }}>
       <View style={styles.topContainer}>
-        <AgeButton
-          kind="child"
-          valueBeforeCorrection={ageBeforeCorrection}
-          valueAfterCorrection={ageAfterCorrection}
-        />
         <Button
           label="← Calculate Again"
           onPress={() => navigation.goBack()}
@@ -40,30 +28,26 @@ const BPResultsScreen = ({ route, navigation }) => {
           <View style={styles.outputContainer}>
             <View style={styles.outputTextBox}>
               <View style={styles.title}>
-                <AppText style={styles.text}>{QTcTitle}</AppText>
+                <AppText style={styles.text}>Body Surface Area:</AppText>
               </View>
               <View style={styles.output}>
-                <AppText style={styles.outputText}>
-                  {QTc}
-                  {"\n"}
-                  {"\n"}
-                </AppText>
+                <AppText style={styles.outputText}>{output}m</AppText>
+                <AppText style={{ fontSize: 12, lineHeight: 14 }}>2</AppText>
+              </View>
+              <View style={styles.referenceOutput}>
                 <AppText style={styles.reference}>
-                  Reference values:
-                  {"\n"}
+                  Body surface area calculated according to the Mosteller
+                  formula: {"\n"}BSA = sqrt ((height (cm) x weight (kg)/3600))
                 </AppText>
-                <AppText style={styles.outputText}>{reference}</AppText>
               </View>
             </View>
-            <MoreCentileInfo exactCentile={reference} />
           </View>
         </View>
       </KeyboardAwareScrollView>
     </PCalcScreen>
   );
 };
-
-export default BPResultsScreen;
+export default BSAResultsScreen;
 
 const styles = StyleSheet.create({
   bottomContainer: {
@@ -96,11 +80,19 @@ const styles = StyleSheet.create({
     textAlign: "left",
     width: "85%",
   },
+  output: {
+    flexDirection: "row",
+  },
   outputText: {
     fontSize: 16,
     textAlign: "left",
   },
-  reference: {},
+  reference: {
+    fontSize: 16,
+  },
+  referenceOutput: {
+    marginTop: 10,
+  },
   topContainer: {
     marginTop: 5,
   },
