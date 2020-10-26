@@ -8,18 +8,17 @@ export default (
   correctDays = 0, // number of days to take off interval
   resus = false // if set to true, units must be "string". This outputs string interval for purposes of resus logs
 ) => {
-  const untilObject = until;
-  let fromObject;
-  function addDays(date, days) {
+  const untilObject = until || new Date();
+  if (!from) {
+    console.log('No date given to Zeit');
+    return null;
+  }
+  const addDays = (date, days) => {
     const result = new Date(date);
     result.setDate(result.getDate() + days);
     return result;
-  }
-  if (correctDays) {
-    fromObject = addDays(from, correctDays);
-  } else {
-    fromObject = from;
-  }
+  };
+  const fromObject = correctDays ? addDays(from, correctDays) : from;
   const millisecondDifference = untilObject.getTime() - fromObject.getTime();
   const milliseconds = 1000;
   const seconds = 60;
@@ -51,25 +50,25 @@ export default (
   }
   let rawAnswer;
   switch (true) {
-    case units === "minutes":
+    case units === 'minutes':
       rawAnswer = rawMinutes;
       break;
-    case units === "hours":
+    case units === 'hours':
       rawAnswer = rawHours;
       break;
-    case units === "days":
+    case units === 'days':
       rawAnswer = rawDays;
       break;
-    case units === "weeks":
+    case units === 'weeks':
       rawAnswer = rawWeeks;
       break;
-    case units === "months":
+    case units === 'months':
       rawAnswer = rawMonths;
       break;
-    case units === "years":
+    case units === 'years':
       rawAnswer = rawYears;
       break;
-    case units === "string":
+    case units === 'string':
       const yearBitLeft = rawYears - Math.floor(rawYears);
       const remainderMonths = Math.floor(yearBitLeft * 12);
       const intAges = {
@@ -88,9 +87,9 @@ export default (
         years: Math.floor(rawYears),
       };
       if (resus) {
-        let outputHours = "";
-        let outputMinutes = "";
-        let outputSeconds = "";
+        let outputHours = '';
+        let outputMinutes = '';
+        let outputSeconds = '';
         intAges.hours < 10
           ? (outputHours = `0${intAges.hours}`)
           : (outputHours = `${intAges.hours}`);
@@ -100,30 +99,28 @@ export default (
         intAges.remainderSeconds < 10
           ? (outputSeconds = `0${intAges.remainderSeconds}`)
           : (outputSeconds = `${intAges.remainderSeconds}`);
-        return `${outputHours}:${outputMinutes}:${outputSeconds}.${
-          Math.floor(millisecondDifference) % 1000
-        }`;
+        return `${outputHours}:${outputMinutes}:${outputSeconds}`;
       }
       const plurals = {
-        seconds: "",
-        remainderSeconds: "",
-        minutes: "",
-        remainderMinutes: "",
-        hours: "",
-        remainderHours: "",
-        days: "",
-        remainderDays: "",
-        weeks: "",
-        remainderWeeks: "",
-        months: "",
-        remainderMonths: "",
-        years: "",
+        seconds: '',
+        remainderSeconds: '',
+        minutes: '',
+        remainderMinutes: '',
+        hours: '',
+        remainderHours: '',
+        days: '',
+        remainderDays: '',
+        weeks: '',
+        remainderWeeks: '',
+        months: '',
+        remainderMonths: '',
+        years: '',
       };
       for (const [key, value] of Object.entries(intAges)) {
         if (value === 1) {
-          plurals[key] = "";
+          plurals[key] = '';
         } else {
-          plurals[key] = "s";
+          plurals[key] = 's';
         }
       }
       const wholeWeeks = Math.floor(rawWeeks);
@@ -140,9 +137,9 @@ export default (
           return `${intAges.years} year${plurals.years} and ${intAges.remainderMonths} month${plurals.remainderMonths}`;
       }
     case units === undefined:
-      return "Error: please specify units for output";
+      return 'Error: please specify units for output';
     default:
-      return "Error: invalid parameter for units";
+      return 'Error: invalid parameter for units';
   }
   if (integer === true) {
     return Math.floor(rawAnswer);

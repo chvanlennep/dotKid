@@ -85,23 +85,23 @@ const calculateFinalThresholds = (hours, gestationWeeks) => {
 };
 
 const calculateJaundice = (object) => {
-  const justDob = object.dob;
-  const justTob = object.tob;
-  const justDom = object.dom;
-  const justTom = object.tom;
+  const tempDob = object.dob;
+  const tempDom = object.dom ? object.dom : new Date();
+  const tempTob = object.tob ? object.tob : new Date();
+  const tempTom = object.tom ? object.tom : new Date();
   const dob = new Date(
-    justDob.getFullYear(),
-    justDob.getMonth(),
-    justDob.getDate(),
-    justTob.getHours(),
-    justTob.getMinutes()
+    tempDob.getFullYear(),
+    tempDob.getMonth(),
+    tempDob.getDate(),
+    tempTob.getHours(),
+    tempTob.getMinutes()
   );
   const dom = new Date(
-    justDom.getFullYear(),
-    justDom.getMonth(),
-    justDom.getDate(),
-    justTom.getHours(),
-    justTom.getMinutes()
+    tempDom.getFullYear(),
+    tempDom.getMonth(),
+    tempDom.getDate(),
+    tempTom.getHours(),
+    tempTom.getMinutes()
   );
   const sbr = object.sbr;
   const gestationWeeks = Math.floor(object.gestationInDays / 7);

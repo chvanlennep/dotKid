@@ -704,7 +704,7 @@ const centileFromLms = (
 
 const calculateCentile = (object) => {
   const dob = object.dob;
-  const dom = object.dom;
+  const dom = object.dom || new Date();
   let ageInDays = zeit(dob, 'days', dom);
   let lessThan14;
   let kind;
