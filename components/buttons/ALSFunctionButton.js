@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   StyleSheet,
@@ -18,7 +12,16 @@ import colors from "../../config/colors";
 import AppText from "../AppText";
 import ButtonIcon from "../buttons/ButtonIcon";
 
-const ALSFunctionButton = ({ encounterState, logState, resetState, style, timerState, title }) => {
+const ALSFunctionButton = ({
+  encounterState,
+  kind = "child",
+  logState,
+  resetState,
+  style,
+  timerState,
+  title,
+  type = "function",
+}) => {
   const reset = resetState.value;
   const setReset = resetState.setValue;
 
@@ -40,7 +43,7 @@ const ALSFunctionButton = ({ encounterState, logState, resetState, style, timerS
 
   // logs time with event button
   const updateTime = (title, oldState) => {
-    if (!endEncounter) {
+    if (type === "function" && !endEncounter) {
       setIsTimerActive(true);
       const timeStamp = new Date();
       const oldButtonArray = oldState[title];
@@ -50,15 +53,25 @@ const ALSFunctionButton = ({ encounterState, logState, resetState, style, timerS
         updatingState[title] = newButtonArray;
         return updatingState;
       });
-    } else {resetLog()}
-  }
-
+    } else if (!endEncounter && type === "checklist") {
+      const timeStamp = new Date();
+      const oldButtonArray = oldState[title];
+      const newButtonArray = oldButtonArray.concat(timeStamp);
+      setFunctionButtons((oldState) => {
+        const updatingState = oldState;
+        updatingState[title] = newButtonArray;
+        return updatingState;
+      });
+    } else {
+      resetLog();
+    }
+  };
   //reset button logic
   const handleReset = () => {
     setFunctionButtons(resetLogTimes(functionButtons));
     setReset(true);
     !isTimerActive ? setIsTimerActive(true) : setIsTimerActive(false);
-    setEndEncounter(false)
+    setEndEncounter(false);
     Alert.alert(
       "Your APLS Log has been reset.",
       "",
@@ -93,10 +106,10 @@ const ALSFunctionButton = ({ encounterState, logState, resetState, style, timerS
 
   const resetLogTimes = (functionButtons) => {
     for (let value in functionButtons) {
-    functionButtons[value] = [];
+      functionButtons[value] = [];
     }
     return functionButtons;
-};
+  };
   //uses state to change background button color after selected
   const handleChangeBackground = (changeBackground, oldState, title) => {
     const oldButtonArray = oldState[title];
@@ -174,12 +187,34 @@ const ALSFunctionButton = ({ encounterState, logState, resetState, style, timerS
       activeOpacity={0.5}
       underlayColor={colors.light}
       onPress={handlePress}
-      style={[styles.button, style, changeBackground && styles.buttonPressed]}
+      style={[
+        styles.button,
+        style,
+        changeBackground && [
+          styles.buttonPressed,
+          {
+            backgroundColor:
+              kind === "child" ? colors.primary : colors.secondary,
+          },
+        ],
+      ]}
       pressed={changeBackground}
       title={title}
     >
-      <View style={styles.content}>
-        <AppText style={{ color: colors.white }}>{title} </AppText>
+      <View
+        style={[
+          styles.button,
+          style,
+          changeBackground && [
+            styles.buttonPressed,
+            {
+              backgroundColor:
+                kind === "child" ? colors.primary : colors.secondary,
+            },
+          ],
+        ]}
+      >
+        <AppText style={{ color: colors.white }}>{title}</AppText>
 
         {showUndo && (
           <TouchableOpacity onPress={handleUndo}>
@@ -206,8 +241,11 @@ const styles = StyleSheet.create({
     width: "98%",
   },
   buttonPressed: {
+    alignItems: "center",
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
     backgroundColor: colors.primary,
-    flexWrap: "nowrap",
   },
   content: {
     alignItems: "center",

@@ -40,15 +40,18 @@ const CalcNavigator = () => {
       <Stack.Screen name="BloodPressure" component={BPScreen} />
       <Stack.Screen name="BPResults" component={BPResultsScreen} />
       <Stack.Screen name="BSA" component={BSAScreen} />
+      <Stack.Screen name="BSAResults" component={BSAResultsScreen} />
       <Stack.Screen name="PCentile" component={PCentileScreen} />
       <Stack.Screen
         name="PCentileResultsScreen"
         component={PCentileResultsScreen}
       />
+      <Stack.Screen name="FluidResults" component={FluidResultsScreen} />
       <Stack.Screen name="ECG" component={ECGScreen} />
       <Stack.Screen name="ECGResults" component={ECGResultsScreen} />
       <Stack.Screen name="FluidCalculator" component={FluidCalculatorScreen} />
-      <Stack.Screen name="WETFLAG" component={WETFLAGScreen} />
+      <Stack.Screen name="WETFLAGScreen" component={WETFLAGScreen} />
+      <Stack.Screen name="WETFLAGResults" component={WETFLAGResultsScreen} />
       <Stack.Screen name="NeonateHomepage" component={NeonateHomepageScreen} />
       <Stack.Screen name="BirthCentile" component={BirthCentileScreen} />
       <Stack.Screen

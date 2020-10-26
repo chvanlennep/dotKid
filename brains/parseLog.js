@@ -18,6 +18,9 @@ export default (functionButtons, type = 'APLS') => {
       ) {
         newKey = `${key} Considered`;
       }
+      if (key === '<60' || key === '60-100' || key === '>100') {
+        newKey = `Heart Rate: ${key}bpm`;
+      }
       for (let i = 0; i < value.length; i++) {
         objectAsArray.push([value[i], newKey]);
       }
@@ -56,8 +59,27 @@ export default (functionButtons, type = 'APLS') => {
       objectAsArray[i][1]
     }`;
     outputString += newLine;
-  }
-  if (functionButtons.RIP.length === 1 || functionButtons.ROSC.length === 1) {
+  } //need to get rid of milliseconds output from total elapsed time of resuscitation
+
+  if (
+    functionButtons.ROSC &&
+    (functionButtons.RIP.length === 1 || functionButtons.ROSC.length === 1)
+  ) {
+    outputString += `\nTotal elapsed time of resuscitation encounter: ${zeit(
+      objectAsArray[0][0],
+      'string',
+      objectAsArray[objectAsArray.length - 1][0],
+      true,
+      0,
+      true
+    )}`;
+    return outputString;
+  } else if (
+    functionButtons['Resuscitation not required'] &&
+    (functionButtons.RIP.length === 1 ||
+      functionButtons['Resuscitation not required'].length === 1 ||
+      functionButtons['Transferred to NICU'].length === 1)
+  ) {
     outputString += `\nTotal elapsed time of resuscitation encounter: ${zeit(
       objectAsArray[0][0],
       'string',

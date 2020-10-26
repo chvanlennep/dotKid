@@ -6,7 +6,7 @@ import AppText from "../AppText";
 import colors from "../../config/colors";
 import defaultStyles from "../../config/styles";
 
-const SubmitButton = ({ name = "Submit", kind }) => {
+const SubmitButton = ({ name = "Submit", kind, style }) => {
   const { handleSubmit } = useFormikContext();
   return (
     <TouchableOpacity onPress={handleSubmit}>
@@ -17,6 +17,7 @@ const SubmitButton = ({ name = "Submit", kind }) => {
             backgroundColor:
               kind === "child" ? colors.primary : colors.secondary,
           },
+          style,
         ]}
       >
         <AppText style={{ color: colors.white }}>{name}</AppText>

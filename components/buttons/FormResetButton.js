@@ -12,7 +12,7 @@ import AppText from "../AppText";
 import colors from "../../config/colors";
 import defaultStyles from "../../config/styles";
 
-const SubmitButton = ({ name = "Reset..." }) => {
+const SubmitButton = ({ name = "Reset...", style }) => {
   const { handleReset } = useFormikContext();
 
   const handleResetAlert = () => {
@@ -30,7 +30,7 @@ const SubmitButton = ({ name = "Reset..." }) => {
 
   return (
     <TouchableOpacity onPress={handleResetAlert}>
-      <View style={styles.submitButton}>
+      <View style={[styles.submitButton, style]}>
         <AppText style={{ color: colors.white }}>{name}</AppText>
       </View>
     </TouchableOpacity>
