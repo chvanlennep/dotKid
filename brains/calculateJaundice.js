@@ -1,4 +1,4 @@
-import zeit from "./zeit";
+import zeit from './zeit';
 
 const under38Data = [
   [23, 40, 130, 1.25, 80, 230, 2.083333333],
@@ -105,53 +105,47 @@ const calculateJaundice = (object) => {
   );
   const sbr = object.sbr;
   const gestationWeeks = Math.floor(object.gestationInDays / 7);
-  const floatHours = zeit(dob, "hours", dom, false);
-  if (floatHours < 0) {
-    return "Negative age";
-  }
-  if (floatHours > 336) {
-    return "Too old";
-  }
-  const stringAge = zeit(dob, "string", dom);
+  const floatHours = zeit(dob, 'hours', dom, false);
+  const stringAge = zeit(dob, 'string', dom);
   const { phototherapy, exchange } = calculateFinalThresholds(
     floatHours,
     gestationWeeks
   );
-  let mainConclusion = "";
+  let mainConclusion = '';
   let activateYoungWarning = false;
   let exchangeWarning = false;
   let makeBlue = false;
   switch (true) {
     case phototherapy - sbr < 50 && phototherapy - sbr > 10:
-      mainConclusion = "Below phototherapy threshold, but less than 50 below";
+      mainConclusion = 'Below phototherapy threshold, but less than 50 below';
       break;
     case phototherapy - sbr <= 10 && phototherapy - sbr > 0:
-      mainConclusion = "Close to phototherapy threshold";
+      mainConclusion = 'Close to phototherapy threshold';
       activateYoungWarning = true;
       makeBlue = true;
       break;
     case sbr >= phototherapy && sbr < exchange:
-      mainConclusion = "Threshold for phototherapy reached";
+      mainConclusion = 'Threshold for phototherapy reached';
       makeBlue = true;
       activateYoungWarning = true;
-      if (exchange - sbr < (exchange - phototherapy) / 4) {
-        mainConclusion = "Warning: close to exchange transfusion threshold";
+      if (exchange - sbr < (exchange - phototherapy) / 3) {
+        mainConclusion = 'Warning: close to exchange transfusion threshold';
         exchangeWarning = true;
         activateYoungWarning = true;
       }
       break;
     case sbr >= exchange:
-      mainConclusion = "Warning: threshold for exchange transfusion reached";
+      mainConclusion = 'Warning: threshold for exchange transfusion reached';
       activateYoungWarning = true;
       exchangeWarning = true;
       break;
     default:
-      mainConclusion = "50 or more below phototherapy threshold";
+      mainConclusion = '50 or more below phototherapy threshold';
   }
-  let youngWarning = "";
+  let youngWarning = '';
   if (floatHours < 24 && activateYoungWarning)
     youngWarning =
-      "Warning: this baby was less than 24 hours old when SBR taken";
+      'Warning: this baby was less than 24 hours old when SBR taken';
   return {
     stringAge: stringAge,
     phototherapy: phototherapy,

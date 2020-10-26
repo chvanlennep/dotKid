@@ -1,25 +1,25 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import * as Yup from "yup";
-import { useNavigation } from "@react-navigation/native";
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import * as Yup from 'yup';
+import { useNavigation } from '@react-navigation/native';
 
-import AppForm from "../components/AppForm";
-import colors from "../config/colors";
-import NCalcScreen from "../components/NCalcScreen";
-import SexInputButton from "../components/buttons/input/SexInputButton";
-import NumberInputButton from "../components/buttons/input/NumberInputButton";
-import GestationInputButton from "../components/buttons/input/GestationInputButton";
-import FormSubmitButton from "../components/buttons/FormSubmitButton";
-import FormResetButton from "../components/buttons/FormResetButton";
-import routes from "../navigation/routes";
+import AppForm from '../components/AppForm';
+import colors from '../config/colors';
+import NCalcScreen from '../components/NCalcScreen';
+import SexInputButton from '../components/buttons/input/SexInputButton';
+import NumberInputButton from '../components/buttons/input/NumberInputButton';
+import GestationInputButton from '../components/buttons/input/GestationInputButton';
+import FormSubmitButton from '../components/buttons/FormSubmitButton';
+import FormResetButton from '../components/buttons/FormResetButton';
+import routes from '../navigation/routes';
 
-import calculateCentile from "../brains/calculateCentile";
+import calculateCentile from '../brains/calculateCentile';
 
 const BirthCentileScreen = () => {
   const navigation = useNavigation();
 
-  const oneMeasurementNeeded = "↑ At least one patient measurement needed";
+  const oneMeasurementNeeded = "↑ We'll at least one of these measurements";
   const wrongUnitsMessage = (units) => {
     return `↑ Are you sure this is a neonatal measurement (in ${units})?`;
   };
@@ -27,56 +27,56 @@ const BirthCentileScreen = () => {
   const validationSchema = Yup.object().shape(
     {
       length: Yup.number()
-        .min(30, wrongUnitsMessage("cm"))
-        .max(70, wrongUnitsMessage("cm"))
-        .when(["weight", "hc"], {
+        .min(30, wrongUnitsMessage('cm'))
+        .max(70, wrongUnitsMessage('cm'))
+        .when(['weight', 'hc'], {
           is: (weight, hc) => !weight && !hc,
           then: Yup.number()
-            .label("length")
-            .min(30, wrongUnitsMessage("cm"))
-            .max(70, wrongUnitsMessage("cm"))
+            .label('length')
+            .min(30, wrongUnitsMessage('cm'))
+            .max(70, wrongUnitsMessage('cm'))
             .required(oneMeasurementNeeded),
         }),
       weight: Yup.number()
-        .min(100, wrongUnitsMessage("g"))
-        .max(8000, wrongUnitsMessage("g"))
-        .when(["length", "hc"], {
+        .min(100, wrongUnitsMessage('g'))
+        .max(8000, wrongUnitsMessage('g'))
+        .when(['length', 'hc'], {
           is: (length, hc) => !length && !hc,
           then: Yup.number()
-            .label("Weight")
-            .min(100, wrongUnitsMessage("g"))
-            .max(8000, wrongUnitsMessage("g"))
+            .label('Weight')
+            .min(100, wrongUnitsMessage('g'))
+            .max(8000, wrongUnitsMessage('g'))
             .required(oneMeasurementNeeded),
         }),
       hc: Yup.number()
-        .min(10, wrongUnitsMessage("cm"))
-        .max(100, wrongUnitsMessage("cm"))
-        .when(["length", "weight"], {
+        .min(10, wrongUnitsMessage('cm'))
+        .max(100, wrongUnitsMessage('cm'))
+        .when(['length', 'weight'], {
           is: (length, weight) => !length && !weight,
           then: Yup.number()
-            .label("Head Circumference")
-            .min(10, wrongUnitsMessage("cm"))
-            .max(100, wrongUnitsMessage("cm"))
+            .label('Head Circumference')
+            .min(10, wrongUnitsMessage('cm'))
+            .max(100, wrongUnitsMessage('cm'))
             .required(oneMeasurementNeeded),
         }),
-      sex: Yup.string().required("↑ Please select a sex").label("Sex"),
+      sex: Yup.string().required('↑ Please select a sex').label('Sex'),
       gestationInDays: Yup.number()
-        .min(161, "↑ Please select a birth gestation")
+        .min(161, '↑ Please select a birth gestation')
         .required()
-        .label("Birth Gestation"),
+        .label('Birth Gestation'),
     },
     [
-      ["length", "weight"],
-      ["length", "hc"],
-      ["weight", "hc"],
+      ['length', 'weight'],
+      ['length', 'hc'],
+      ['weight', 'hc'],
     ]
   );
 
   const initialValues = {
-    length: "",
-    weight: "",
-    hc: "",
-    sex: "",
+    length: '',
+    weight: '',
+    hc: '',
+    sex: '',
     gestationInDays: 0,
     dob: new Date(1989, 0, 16),
     dom: new Date(1989, 0, 16),
@@ -90,7 +90,7 @@ const BirthCentileScreen = () => {
   };
 
   return (
-    <NCalcScreen>
+    <NCalcScreen style={{ flex: 1 }}>
       <KeyboardAwareScrollView>
         <View style={styles.topContainer}>
           <AppForm
@@ -134,28 +134,28 @@ export default BirthCentileScreen;
 
 const styles = StyleSheet.create({
   bottomContainer: {
-    alignSelf: "center",
+    alignSelf: 'center',
     paddingHorizontal: 50,
     marginTop: 20,
-    width: "100%",
+    width: '100%',
     marginBottom: 75,
   },
   buttons: {
     //backgroundColor: "dodgerblue",
-    flexDirection: "row",
+    flexDirection: 'row',
     width: 96,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
   outputContainer: {
     //backgroundColor: "orangered",
-    alignSelf: "center",
-    flexDirection: "row",
+    alignSelf: 'center',
+    flexDirection: 'row',
     flex: 2,
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
     marginHorizontal: 20,
     marginBottom: 10,
-    width: "100%",
+    width: '100%',
   },
   outputText: {
     //backgroundColor: "limegreen",
@@ -164,9 +164,9 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   title: {
-    alignContent: "center", //backgroundColor: "goldenrod",
+    alignContent: 'center', //backgroundColor: "goldenrod",
     flexGrow: 2,
-    justifyContent: "center",
+    justifyContent: 'center',
     width: 150,
   },
   text: {
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   topContainer: {
-    alignSelf: "center",
-    alignItems: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
   },
 });

@@ -1,3 +1,5 @@
+MINIMUM EXPO SDK: 39
+NPM command: npm install --cache /tmp/empty-cache
 
 Dependencies to install to a fresh expo project:
 

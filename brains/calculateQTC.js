@@ -17,26 +17,26 @@ export default calculateQTc = (age, inputQT, inputRR) => {
         let truncOutputQTC = outputQTc.toFixed(3);
         reference = under6Ref;
         return [
-          `${truncOutputQTC}milliseconds - no QTc prolongation`,
+          `${truncOutputQTC} milliseconds - no QTc prolongation`,
           reference,
         ];
       } else if (outputQTc > 0.49) {
         let truncOutputQTC = outputQTc.toFixed(3);
         reference = under6Ref;
-        return [`${truncOutputQTC}milliseconds - prolonged QTc`, reference];
+        return [`${truncOutputQTC} milliseconds - prolonged QTc`, reference];
       }
     } else {
       if (outputQTc <= 0.44) {
         let truncOutputQTC = outputQTc.toFixed(3);
-        reference = over6ref;
+        reference = over6Ref;
         return [
-          `${truncOutputQTC}milliseconds - no QTc prolongation`,
+          `${truncOutputQTC} milliseconds - no QTc prolongation`,
           reference,
         ];
       } else if (outputQTc > 0.44) {
         let truncOutputQTC = outputQTc.toFixed(3);
         reference = over6Ref;
-        return [`${truncOutputQTC}ms - prolonged QTc`, reference];
+        return [`${truncOutputQTC} milliseconds - prolonged QTc`, reference];
       }
     }
   }

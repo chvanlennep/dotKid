@@ -1,36 +1,40 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
-  Appearance,
   Dimensions,
   LogBox,
   Modal,
   StyleSheet,
   TouchableOpacity,
   View,
-} from "react-native";
-import { LineChart, YAxis } from "react-native-svg-charts";
-import * as shape from "d3-shape";
-import { Circle, G } from "react-native-svg";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+  useColorScheme,
+} from 'react-native';
+import { LineChart, XAxis, YAxis } from 'react-native-svg-charts';
+import * as shape from 'd3-shape';
+import { Circle, G } from 'react-native-svg';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-import makeDataObject from "../brains/makeJaundiceChartData";
-import defaultStyle from "../config/styles";
-import colors from "../config/colors";
-import AppText from "../components/AppText";
+import makeDataObject from '../brains/makeJaundiceChartData';
+import defaultStyle from '../config/styles';
+import colors from '../config/colors';
+import AppText from '../components/AppText';
 
-LogBox.ignoreLogs(["Warning: Failed prop type:"]);
-
-const { height, width } = Dimensions.get("window");
+const { height, width } = Dimensions.get('window');
 const aspectRatio = height / width;
 const chartWidth =
   aspectRatio > 1.6
     ? defaultStyle.container.width - 90
     : defaultStyle.container.width - 250;
 const chartHeight = chartWidth * 1.6;
-const scheme = Appearance.getColorScheme();
+
+LogBox.ignoreLogs(['Warning: Failed prop type:']);
 
 const JaundiceChart = ({ ageInHours, gestationWeeks, sbr }) => {
   const [modalVisible, setModalVisible] = useState(false);
+
+  const scheme = useColorScheme();
+  const dark = scheme === 'dark' ? true : false;
+  const chartBackgroundColor = dark ? colors.black : colors.white;
+  const chartForegroundColor = dark ? colors.white : colors.black;
 
   let index = ageInHours;
   if (ageInHours > 36 && ageInHours < 301) {
@@ -39,25 +43,25 @@ const JaundiceChart = ({ ageInHours, gestationWeeks, sbr }) => {
     index = 36 + (36 - (336 - ageInHours));
   }
 
-  const { data, topLimit } = makeDataObject(gestationWeeks, ageInHours, sbr);
+  const { data, topLimit, finalXLabels } = makeDataObject(
+    gestationWeeks,
+    ageInHours,
+    sbr
+  );
 
-  const ExtraDot = ({ x, y }) => {
-    let color;
-
-    return (
-      <G>
-        <G x={x(index)}>
-          <Circle
-            cy={y(data[2]["data"][index])}
-            r={3}
-            stroke={colors.black}
-            strokeWidth={1}
-            fill={colors.black}
-          />
-        </G>
+  const ExtraDot = ({ x, y }) => (
+    <G>
+      <G x={x(index)}>
+        <Circle
+          cy={y(data[2]['data'][index])}
+          r={3}
+          stroke={colors.black}
+          strokeWidth={1}
+          fill={colors.black}
+        />
       </G>
-    );
-  };
+    </G>
+  );
 
   return (
     <React.Fragment>
@@ -70,8 +74,8 @@ const JaundiceChart = ({ ageInHours, gestationWeeks, sbr }) => {
           <AppText
             style={{
               color: colors.white,
-              fontWeight: "500",
-              textAlign: "center",
+              fontWeight: '500',
+              textAlign: 'center',
             }}
           >
             View Chart
@@ -84,47 +88,63 @@ const JaundiceChart = ({ ageInHours, gestationWeeks, sbr }) => {
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            console.log("Window closed");
+            console.log('Window closed');
           }}
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <TouchableOpacity
-                onPress={() => {
-                  setModalVisible(!modalVisible);
-                }}
-              >
-                <View style={styles.closeIcon}>
+              <View style={styles.closeIcon}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setModalVisible(!modalVisible);
+                  }}
+                >
                   <MaterialCommunityIcons
                     name="close-circle"
-                    color={scheme === "dark" ? colors.black : colors.white}
+                    color={colors.black}
                     size={30}
                   />
-                </View>
-              </TouchableOpacity>
-              <View style={styles.chartContainer}>
-                <YAxis
-                  data={[0, topLimit]}
-                  contentInset={{ top: 10, bottom: 10 }}
-                  svg={{
-                    fill: colors.black,
-                    fontSize: 9,
-                    fontWeight: "500",
-                  }}
-                  numberOfTicks={10}
-                  formatLabel={(value) => `${value}`}
-                  style={styles.axis}
-                />
-                <LineChart
-                  data={data}
-                  style={styles.chart}
-                  svg={{ strokeWidth: 4 }}
-                  contentInset={{ top: 10, bottom: 10 }}
-                  curve={shape.curveLinear}
-                >
-                  <ExtraDot />
-                </LineChart>
+                </TouchableOpacity>
               </View>
+              <AppText style={styles.modalHeading}>SBR Chart</AppText>
+              <View
+                style={[
+                  styles.bigChartContainer,
+                  { backgroundColor: chartBackgroundColor },
+                ]}
+              >
+                <View style={styles.smallChartContainer}>
+                  <YAxis
+                    data={[0, topLimit]}
+                    contentInset={{ top: 10, bottom: 10 }}
+                    svg={{
+                      fill: chartForegroundColor,
+                      fontSize: 9,
+                      fontWeight: '500',
+                    }}
+                    numberOfTicks={10}
+                    formatLabel={(value) => `${value}`}
+                    style={styles.axis}
+                  />
+                  <LineChart
+                    data={data}
+                    style={styles.chart}
+                    svg={{ strokeWidth: 4 }}
+                    contentInset={{ top: 10, bottom: 10 }}
+                    curve={shape.curveLinear}
+                  >
+                    <ExtraDot />
+                  </LineChart>
+                </View>
+                <XAxis
+                  style={styles.xAxis}
+                  data={finalXLabels}
+                  formatLabel={(value, index) => finalXLabels[index]}
+                  contentInset={{ left: 10, right: 10 }}
+                  svg={{ fill: chartForegroundColor, fontSize: 10 }}
+                />
+              </View>
+              <AppText style={styles.xAxisKey}>Age (days)</AppText>
             </View>
           </View>
         </Modal>
@@ -140,37 +160,53 @@ const styles = StyleSheet.create({
     paddingLeft: 1,
     paddingRight: 1,
   },
+  xAxis: {
+    paddingTop: 2,
+    width: chartWidth,
+    //backgroundColor: 'yellow',
+    alignSelf: 'center',
+    marginLeft: 8,
+  },
   chart: {
     height: chartHeight,
     width: chartWidth,
     borderTopRightRadius: 10,
     borderBottomRightRadius: 10,
-    backgroundColor: colors.white,
   },
-  chartContainer: {
-    alignSelf: "center",
-    flexDirection: "row",
-    backgroundColor: colors.light,
+  bigChartContainer: {
+    alignSelf: 'center',
     borderRadius: 10,
-    width: chartWidth + 16,
+    width: chartWidth + 20,
+    paddingLeft: 2,
+    paddingBottom: 2,
+  },
+  smallChartContainer: {
+    flexDirection: 'row',
+    alignSelf: 'center',
   },
   closeIcon: {
     height: 40,
     width: 40,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.medium,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalHeading: {
+    alignSelf: 'center',
+    color: colors.black,
+    marginTop: -25,
+    marginBottom: 10,
+    marginLeft: -5,
+    fontWeight: '500',
   },
   modalView: {
     margin: 20,
     borderRadius: 10,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -179,25 +215,32 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: chartWidth + 70,
-    height: chartHeight + 70,
-    backgroundColor: colors.medium,
+    backgroundColor: colors.light,
+    paddingBottom: 5,
   },
   openButton: {
-    backgroundColor: "#F194FF",
+    backgroundColor: '#F194FF',
     borderRadius: 20,
     padding: 10,
     elevation: 2,
   },
   textStyle: {
-    color: "white",
-    textAlign: "center",
+    color: 'white',
+    textAlign: 'center',
   },
   viewChartButton: {
     backgroundColor: colors.dark,
     marginBottom: 20,
     padding: 10,
     borderRadius: 5,
-    width: "30%",
-    alignSelf: "center",
+    width: '30%',
+    alignSelf: 'center',
+  },
+  xAxisKey: {
+    fontSize: 13,
+    color: colors.black,
+    alignSelf: 'center',
+    fontWeight: '500',
+    padding: 5,
   },
 });

@@ -92,12 +92,17 @@ const makeDataObject = (gestationWeeks, ageInHours, sbr) => {
     topValue = 336;
     bottomValue = ageInHours - 36 - (ageInHours + 36 - 336); // add on extra hours to range so a 72 hour window is always displayed
   }
+  const xLabels = [];
+  const finalXLabels = [];
   const photoArray = [];
   const exchangeArray = [];
   const dotArray = [];
+  const xLabelDivisor = 24;
+  const xLoopChopper = 12;
   for (let i = bottomValue; i < topValue + 1; i++) {
     photoArray.push(generatePhototherapyData(i, gestationWeeks));
     exchangeArray.push(generateExchangeData(i, gestationWeeks));
+    xLabels.push(Number((i / xLabelDivisor).toFixed(1)));
     if (i === ageInHours) {
       dotArray.push(sbr);
     } else {
@@ -107,15 +112,22 @@ const makeDataObject = (gestationWeeks, ageInHours, sbr) => {
   const highestLineReach = Math.round(
     generateExchangeData(topValue, gestationWeeks)
   );
+
+  for (let t = 0; t < xLabels.length; t++) {
+    if (t % xLoopChopper === 0) {
+      finalXLabels.push(xLabels[t]);
+    }
+  }
+
   return {
     data: [
       {
         data: photoArray,
-        svg: { stroke: "dodgerblue" },
+        svg: { stroke: 'dodgerblue' },
       },
       {
         data: exchangeArray,
-        svg: { stroke: "red" },
+        svg: { stroke: 'red' },
       },
       {
         data: dotArray,
@@ -123,6 +135,7 @@ const makeDataObject = (gestationWeeks, ageInHours, sbr) => {
       },
     ],
     topLimit: sbr > highestLineReach ? sbr : highestLineReach,
+    finalXLabels: finalXLabels,
   };
 };
 

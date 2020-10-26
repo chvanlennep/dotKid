@@ -34,8 +34,9 @@ const NumberInputButton = ({
 
   const [showTextInput, setShowTextInput] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
-  const [buttonText, setButtonText] = useState(firstButtonText);
-  const [localNumber, setLocalNumber] = useState(firstValue);
+
+  const [buttonText, setButtonText] = useState(`${userLabel}`);
+  const [localNumber, setLocalNumber] = useState('');
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
 
   const { setFieldValue, errors, touched, values } = useFormikContext();
@@ -71,11 +72,12 @@ const NumberInputButton = ({
     setShowTextInput(false);
     setButtonText(firstButtonText);
     setShowCancel(false);
-    setFieldValue(name, defaultValue);
+
+    setFieldValue(name, '');
     if (global) {
-      manageStats.write(kind, name, defaultValue);
+      manageStats.write(kind, name, '');
     }
-    setLocalNumber(defaultValue);
+    setLocalNumber('');
   };
 
   const toggleTextInput = () => {
@@ -99,19 +101,25 @@ const NumberInputButton = ({
   };
 
   useEffect(() => {
-    if (!defaultValue) {
-      let globalNumber;
-      // button has been filled in by user:
-      if (showCancel && localNumber && !showTextInput) {
-        // Reset by formik:
-        if (!values[name]) {
-          setShowTextInput(false);
+    let globalNumber;
+    // button has been filled in by user:
+    if (showCancel && localNumber && !showTextInput) {
+      // Reset by formik:
+      if (!values[name]) {
+        setShowTextInput(false);
+        setShowCancel(false);
+        setButtonText(`${userLabel}`);
+        manageStats.write(kind, name, '');
+        setLocalNumber('');
+      }
+      if (global) {
+        globalNumber = manageStats.read(kind, name);
+        // Reset via global state:
+        if (!globalNumber) {
           setShowCancel(false);
           setButtonText(`${userLabel}`);
-          if (global) {
-            manageStats.write(kind, name, '');
-          }
           setLocalNumber('');
+          setFieldValue(name, '');
         }
         if (global) {
           globalNumber = manageStats.read(kind, name);
