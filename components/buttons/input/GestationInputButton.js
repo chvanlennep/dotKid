@@ -49,8 +49,12 @@ const GestationInputButton = ({
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
   const { setFieldValue, values, errors, touched } = useFormikContext();
 
+  const resetIcon = kind === 'child' ? 'refresh' : 'delete-forever';
+
   const scheme = useColorScheme();
   const dark = scheme === 'dark' ? true : false;
+  const darkBackgroundColor =
+    kind === 'child' ? colors.darkPrimary : colors.darkSecondary;
 
   const manageStats = {
     read: function (kind, measurementType) {
@@ -228,9 +232,7 @@ const GestationInputButton = ({
         </TouchableOpacity>
         {showReset && (
           <TouchableOpacity onPress={resetInput}>
-            <ButtonIcon
-              name={kind === 'neonate' ? 'delete-forever' : 'refresh'}
-            />
+            <ButtonIcon name={resetIcon} />
           </TouchableOpacity>
         )}
       </View>
@@ -247,7 +249,10 @@ const GestationInputButton = ({
             <View
               style={[
                 styles.modalView,
-                { backgroundColor: dark && ios ? colors.black : colors.light },
+                {
+                  backgroundColor:
+                    dark && ios ? darkBackgroundColor : colors.light,
+                },
               ]}
             >
               <View style={styles.pickerContainer}>

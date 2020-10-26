@@ -31,6 +31,8 @@ const DateTimeInputButton = ({
   const ios = Platform.OS === 'ios' ? true : false;
   scheme = useColorScheme();
   const dark = scheme === 'dark' ? true : false;
+  const darkBackgroundColor =
+    kind === 'child' ? colors.darkPrimary : colors.darkSecondary;
 
   const formatDate = (date) => {
     if (!date) return null;
@@ -54,28 +56,24 @@ const DateTimeInputButton = ({
     return [hours, minutes].join(':');
   };
 
-  const addedTime = 10 * 60000;
-  const overshot = new Date(new Date().getTime() + addedTime);
-  let userLabel1 =
-    type === 'birth' ? 'Date of Birth' : `Measured on ${formatDate(overshot)}`;
-  let userLabel2 =
-    type === 'birth' ? 'Time of Birth' : `Measured at ${formatTime(overshot)}`;
+  let userLabel1 = type === 'birth' ? 'Date of Birth' : `Measured: Today`;
+  let userLabel2 = type === 'birth' ? 'Time of Birth' : `Measured: Now`;
 
   if (renderTime && ios && type === 'birth') {
     userLabel1 = `Date & Time of Birth`;
   }
   if (renderTime && ios && type === 'measured') {
-    userLabel1 = `Measured: ${formatDate(overshot)} at ${formatTime(overshot)}`;
+    userLabel1 = `Measured: Now`;
   }
 
   const dateName = type === 'birth' ? 'dob' : 'dom';
   const timeName = type === 'birth' ? 'tob' : 'tom';
-  const resetValue = type === 'measured' ? overshot : null;
+  const resetValue = null;
   const cancelIcon = type === 'birth' ? 'delete-forever' : 'refresh';
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [date, setDate] = useState(resetValue);
-  const [time, setTime] = useState(resetValue);
+  const [date, setDate] = useState(null);
+  const [time, setTime] = useState(null);
   const [showPickerDateAndroid, setShowPickerDateAndroid] = useState(false);
   const [showPickerTimeAndroid, setShowPickerTimeAndroid] = useState(false);
   const [text1, setText1] = useState(`${userLabel1}`);
@@ -109,50 +107,91 @@ const DateTimeInputButton = ({
   };
 
   const customiseLabel = (inputDate, inputTime) => {
-    if (inputTime && renderTime && ios && type === 'birth') {
-      setText1(`DOB: ${formatDate(inputDate)} at ${formatTime(inputTime)}`);
-    } else if (inputTime && renderTime && ios && type === 'measured') {
-      setText1(
-        `Measured: ${formatDate(inputDate)} at ${formatTime(inputTime)}`
-      );
-    } else if (renderTime && android) {
-      if (inputDate) {
-        setText1(
-          type === 'birth'
-            ? `${userLabel1}: ${formatDate(inputDate)}`
-            : `Measured on ${formatDate(inputDate)}`
-        );
+    if (android) {
+      if (inputDate && !inputTime) {
+        if (type === 'measured') {
+          if (formatDate(inputDate) === formatDate(new Date())) {
+            setText1(`Measured: Today`);
+          } else {
+            setText1(`Measured on ${formatDate(inputDate)}`);
+          }
+        } else {
+          setText1(`${userLabel1}: ${formatDate(inputDate)}`);
+        }
       }
-      if (inputTime) {
-        setText2(
-          type === 'birth'
-            ? `${userLabel2}: ${formatTime(inputTime)}`
-            : `Measured at ${formatTime(inputTime)}`
-        );
+      if (inputTime && !inputDate) {
+        if (type === 'measured') {
+          if (formatTime(inputTime) === formatTime(new Date())) {
+            setText2('Measured: Now');
+          } else {
+            setText2(`Measured at ${formatTime(inputTime)}`);
+          }
+        } else {
+          setText2(`Time of Birth: ${formatTime(inputTime)}`);
+        }
       }
-    } else {
-      if (inputDate) {
-        setText1(
-          type === 'birth'
-            ? `${userLabel1}: ${formatDate(inputDate)}`
-            : `Measured on ${formatDate(inputDate)}`
-        );
+    }
+    if (ios) {
+      if (renderTime) {
+        if (type === 'birth') {
+          setText1(
+            `DOB: ${formatDate(inputDate)} at ${formatTime(
+              inputTime || new Date()
+            )}`
+          );
+        } else if (type === 'measured') {
+          if (
+            formatDate(inputDate) === formatDate(new Date()) &&
+            formatTime(inputTime) === formatTime(new Date())
+          ) {
+            setText1(`Measured: Now`);
+          } else {
+            setText1(
+              `Measured: ${formatDate(inputDate)} at ${formatTime(inputTime)}`
+            );
+          }
+        }
+      } else {
+        if (type === 'birth') {
+          setText1(`${userLabel1}: ${formatDate(inputDate)}`);
+        } else {
+          if (formatDate(inputDate) === formatDate(new Date())) {
+            setText1(`Measured: Now`);
+          } else {
+            setText1(`Measured on ${formatDate(inputDate)}`);
+          }
+        }
       }
     }
   };
 
   const onChangeDate = (e, selectedDate) => {
-    const currentDate = selectedDate || date;
     setShowPickerDateAndroid(false);
+    const currentDate = selectedDate || date;
     setDate(currentDate);
-    if (!global) {
-      setFieldValue(dateName, currentDate);
+    if (ios) {
+      if (!global) {
+        setFieldValue(dateName, currentDate);
+      }
     }
     if (android) {
-      manageStats.write(kind, dateName, currentDate);
-      if (type === 'measured') setFieldValue('domChanged', true);
-      customiseLabel(currentDate, null);
-      setShowCancel(true);
+      if (
+        type === 'measured' &&
+        formatDate(currentDate) === formatDate(new Date())
+      ) {
+        setShowCancel(false);
+        if (!global) {
+          setFieldValue(dateName, null);
+        }
+        manageStats.write(kind, dateName, null);
+      } else {
+        customiseLabel(currentDate, null);
+        setShowCancel(true);
+        manageStats.write(kind, dateName, currentDate);
+        if (!global) {
+          setFieldValue(dateName, currentDate);
+        }
+      }
     }
   };
 
@@ -165,50 +204,61 @@ const DateTimeInputButton = ({
   };
 
   const onChangeTimeAndroid = (e, selectedTime) => {
-    const currentTime = selectedTime || time;
     setShowPickerTimeAndroid(false);
-    setTime(currentTime);
-    manageStats.write(kind, timeName, currentTime);
-    if (!global) {
-      setFieldValue(timeName, currentTime);
+    const currentTime = selectedTime || time;
+    if (
+      type === 'measured' &&
+      formatTime(currentTime) === formatTime(new Date())
+    ) {
+      setShowCancelTime(false);
+      if (!global) {
+        setFieldValue(timeName, null);
+      }
+      manageStats.write(kind, timeName, null);
+    } else {
+      customiseLabel(null, currentTime);
+      setShowCancelTime(true);
+      manageStats.write(kind, timeName, currentTime);
+      if (!global) {
+        setFieldValue(timeName, currentTime);
+      }
     }
-    customiseLabel(null, currentTime);
-    setShowCancelTime(true);
-    if (type === 'measured') setFieldValue('domChanged', true);
   };
 
   const togglePicker = () => {
     if (ios && modalVisible) {
-      if (renderTime) {
-        manageStats.write(kind, dateName, date);
-        manageStats.write(kind, timeName, time);
-      } else {
-        manageStats.write(kind, dateName, date);
-      }
-      if (type === 'measured') {
-        if (formatDate(date) !== formatDate(overshot)) {
+      customiseLabel(date, time);
+      if (type === 'birth') {
+        if (renderTime) {
+          manageStats.write(kind, dateName, date);
+          manageStats.write(kind, timeName, time);
+        } else {
+          manageStats.write(kind, dateName, date);
+        }
+        setShowCancel(true);
+      } else if (type === 'measured') {
+        if (formatDate(date) !== formatDate(new Date())) {
           setShowCancel(true);
-          setFieldValue('domChanged', true);
+        } else {
+          setFieldValue(dateName, null);
         }
         if (renderTime) {
-          if (formatTime(time) !== formatTime(overshot)) {
+          if (formatTime(time) !== formatTime(new Date())) {
             setShowCancel(true);
-            setFieldValue('domChanged', true);
+          } else {
+            setFieldValue(timeName, null);
           }
         }
-      } else {
-        setShowCancel(true);
       }
-      customiseLabel(date, time);
       setModalVisible(false);
-    } else {
+    } else if (!modalVisible || !showPickerDateAndroid) {
       if (!date) {
         setDate(new Date());
-        setFieldValue(dateName, new Date());
+        if (!global) setFieldValue(dateName, new Date());
       }
-      if (!time) {
+      if (!time && renderTime) {
         setTime(new Date());
-        setFieldValue(timeName, new Date());
+        if (!global) setFieldValue(timeName, new Date());
       }
       ios ? setModalVisible(true) : setShowPickerDateAndroid(true);
     }
@@ -249,7 +299,6 @@ const DateTimeInputButton = ({
       if (ios && renderTime) {
         manageStats.write(kind, timeName, resetValue);
       }
-      if (type === 'measured') setFieldValue('domChanged', false);
     }
   };
 
@@ -279,7 +328,15 @@ const DateTimeInputButton = ({
   useEffect(() => {
     if (type === 'measured') {
       // reset by formik, but previously changed by user
-      if (showCancel && !values['domChanged']) localReset();
+      if (
+        showCancel &&
+        !values[dateName] &&
+        !values[timeName] &&
+        !modalVisible &&
+        !showPickerTimeAndroid &&
+        !showPickerDateAndroid
+      )
+        localReset();
     }
   });
 
@@ -293,11 +350,11 @@ const DateTimeInputButton = ({
         !modalVisible &&
         !showPickerDateAndroid &&
         !showPickerTimeAndroid &&
-        (date !== resetValue || time !== resetValue)
+        (date || time)
       ) {
         // // reset by formik:
         if (!global) {
-          if (!values[dateName] && !values[timeName]) {
+          if (!values[dateName]) {
             localReset();
             manageStats.write(kind, dateName, resetValue);
             manageStats.write(kind, timeName, resetValue);
@@ -313,13 +370,9 @@ const DateTimeInputButton = ({
         }
         // value changed by global state:
         if (globalDob) {
-          const tempLocalDate = formatDate(date);
-          const tempLocalTime = formatTime(time);
-          const tempGlobalDate = formatDate(globalDob);
-          const tempGlobalTime = formatTime(globalTob);
           if (
-            tempGlobalDate !== tempLocalDate ||
-            tempGlobalTime !== tempLocalTime
+            formatDate(globalDob) !== formatDate(date) ||
+            formatTime(globalTob) !== formatTime(time)
           ) {
             if (!global) {
               setFieldValue(dateName, globalDob);
@@ -327,7 +380,7 @@ const DateTimeInputButton = ({
             }
             setDate(globalDob);
             setTime(globalTob);
-            customiseLabel(globalDob, renderTime ? new Date() : null);
+            customiseLabel(globalDob, renderTime ? globalTob : null);
           }
         }
       }
@@ -349,15 +402,16 @@ const DateTimeInputButton = ({
             }
           }
           setDate(globalDob);
-          setTime(globalTob ? globalTob : globalDob);
-          customiseLabel(globalDob, null);
-          if (renderTime) {
-            globalTob
-              ? customiseLabel(globalDob, globalTob)
-              : customiseLabel(globalDob, new Date());
+          setTime(globalTob ? globalTob : new Date());
+          if (ios) {
+            customiseLabel(globalDob, globalTob ? globalTob : new Date());
+          } else if (android) {
+            customiseLabel(globalDob, globalTob ? globalTob : null);
           }
           setShowCancel(true);
-          setShowCancelTime(true);
+          if (globalTob) {
+            setShowCancelTime(true);
+          }
         }
       }
     }
@@ -410,7 +464,7 @@ const DateTimeInputButton = ({
             <View
               style={[
                 styles.modalView,
-                { backgroundColor: dark ? colors.black : colors.light },
+                { backgroundColor: dark ? darkBackgroundColor : colors.light },
               ]}
             >
               {ios && (

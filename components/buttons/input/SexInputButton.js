@@ -33,6 +33,8 @@ const SexInputButton = ({ global = false, kind, name = 'sex' }) => {
   const { setFieldValue, errors, touched, values } = useFormikContext();
   const scheme = useColorScheme();
   const dark = scheme === 'dark' ? true : false;
+  const darkBackgroundColor =
+    kind === 'child' ? colors.darkPrimary : colors.darkSecondary;
 
   const manageStats = {
     read: function (kind, measurementType) {
@@ -175,7 +177,10 @@ const SexInputButton = ({ global = false, kind, name = 'sex' }) => {
             <View
               style={[
                 styles.modalView,
-                { backgroundColor: dark && ios ? colors.black : colors.light },
+                {
+                  backgroundColor:
+                    dark && ios ? darkBackgroundColor : colors.light,
+                },
               ]}
             >
               <View style={styles.pickerContainer}>
