@@ -59,7 +59,7 @@ const NCalcScreen = ({
         { cancelable: false }
       );
     } else {
-      navigation.navigate(routes.NEONATE_HOMEPAGE);
+      navigation.navigate(routes.PAEDS_HOMEPAGE);
     }
   };
 
@@ -92,7 +92,7 @@ const NCalcScreen = ({
           iconColor={colors.secondary}
           style={styles.face}
           onPress={() =>
-            isResus ? null : navigation.navigate(routes.NEONATE_HOMEPAGE)
+            isResus ? null : navigation.navigate(routes.PAEDS_HOMEPAGE)
           }
         />
       </View>

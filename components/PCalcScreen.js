@@ -59,7 +59,7 @@ const PCalcScreen = ({
         { cancelable: false }
       );
     } else {
-      navigation.navigate(routes.PAEDS_HOMEPAGE);
+      navigation.navigate(routes.NEONATE_HOMEPAGE);
     }
   };
 
