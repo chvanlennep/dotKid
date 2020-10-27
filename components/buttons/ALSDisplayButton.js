@@ -24,9 +24,9 @@ const styles = StyleSheet.create({
     // color: colors.white,
     height: 57,
     justifyContent: 'center',
-    marginVertical: 3,
+    marginVertical: 5,
     marginHorizontal: 3,
-    width: defaultStyles.container.width * 0.49,
+    width: defaultStyles.container.width * 0.48,
   },
   text: {
     alignItems: 'center',
