@@ -1,17 +1,9 @@
 import zeit from './zeit';
 
-export default (measurementValues, referenceValues) => {
+export default (measurementValues, referenceValues, gestation) => {
   const { day1, day2, day3, day4, day5 } = referenceValues;
   const referenceArray = [day1, day2, day3, day4, day5];
-  const {
-    weight,
-    correction,
-    gestation,
-    dob,
-    tob,
-    dom,
-    tom,
-  } = measurementValues;
+  const { weight, correction, dob, tob, dom, tom } = measurementValues;
   const kgWeight = weight / 1000;
   const tempDob = dob;
   const tempDom = dom || new Date();

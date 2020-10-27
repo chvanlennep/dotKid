@@ -1,29 +1,59 @@
-import React, { useContext, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import * as Yup from "yup";
+import React, { useContext } from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import * as Yup from 'yup';
+import { useNavigation } from '@react-navigation/native';
 
-import PCalcScreen from "../components/PCalcScreen";
-import colors from "../config/colors";
-import calculateCentile from "../brains/calculateCentile";
-import ageChecker from "../brains/ageChecker";
-import calculateFluid from "../brains/calculateFluid";
-import DobInputButton from "../components/buttons/input/DobInputButton";
-import GestationInputButton from "../components/buttons/input/GestationInputButton";
-import SexInputButton from "../components/buttons/input/SexInputButton";
-import NumberInputButton from "../components/buttons/input/NumberInputButton";
-import FormResetButton from "../components/buttons/FormResetButton";
-import AppForm from "../components/AppForm";
-import routes from "../navigation/routes";
-import { GlobalStateContext } from "../components/GlobalStateContext";
-import { useNavigation } from "@react-navigation/native";
-import FormSubmitButton from "../components/buttons/FormSubmitButton";
-import zeit from "../brains/zeit";
+import PCalcScreen from '../components/PCalcScreen';
+import colors from '../config/colors';
+import calculateCentile from '../brains/calculateCentile';
+import ageChecker from '../brains/ageChecker';
+import calculateFluid from '../brains/calculateFluid';
+import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
+import GestationInputButton from '../components/buttons/input/GestationInputButton';
+import SexInputButton from '../components/buttons/input/SexInputButton';
+import NumberInputButton from '../components/buttons/input/NumberInputButton';
+import FormResetButton from '../components/buttons/FormResetButton';
+import AppForm from '../components/AppForm';
+import routes from '../navigation/routes';
+import { GlobalStateContext } from '../components/GlobalStateContext';
+
+import FormSubmitButton from '../components/buttons/FormSubmitButton';
+import zeit from '../brains/zeit';
 
 const FluidCalculatorScreen = () => {
   const navigation = useNavigation();
 
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
+
+  const moveDataAcrossGlobal = (movingTo, values) => {
+    setGlobalStats((globalStats) => {
+      const child = { ...globalStats.child };
+      const neonate = { ...globalStats.neonate };
+      for (const [key, value] of Object.entries(values)) {
+        let newKey = key;
+        let newValue = value;
+        if (movingTo === 'neonate') {
+          if (key === 'height') {
+            newKey = 'length';
+          }
+          if (key === 'weight') {
+            newValue = value * 1000;
+          }
+          neonate[newKey] = newValue;
+        } else {
+          if (key === 'length') {
+            newKey = 'height';
+          }
+          if (key === 'weight') {
+            newValue = value / 1000;
+          }
+          child[newKey] = newValue;
+        }
+      }
+      return { child, neonate };
+    });
+  };
 
   const oneMeasurementNeeded = "↑ We'll need this measurement too";
   const wrongUnitsMessage = (units) => {
@@ -32,59 +62,76 @@ const FluidCalculatorScreen = () => {
 
   const validationSchema = Yup.object().shape({
     weight: Yup.number()
-      .min(0.1, wrongUnitsMessage("kg"))
-      .max(250, wrongUnitsMessage("kg"))
+      .min(0.1, wrongUnitsMessage('kg'))
+      .max(250, wrongUnitsMessage('kg'))
       .required(oneMeasurementNeeded),
     percentage: Yup.number()
-      .min(50, "Minimum calculator correction = 50% of normal")
-      .max(150, "Maximum calculator correction = 150% of normal")
+      .min(50, 'Minimum calculator correction = 50% of normal')
+      .max(150, 'Maximum calculator correction = 150% of normal')
       .required(oneMeasurementNeeded),
-    sex: Yup.string().required("↑ Please select a sex").label("Sex"),
+    sex: Yup.string().required('↑ Please select a sex').label('Sex'),
     dob: Yup.date()
       .nullable()
-      .required("↑ Please enter a date of Birth")
-      .label("Date of Birth"),
+      .required('↑ Please enter a date of Birth')
+      .label('Date of Birth'),
   });
 
   const initialValues = {
-    weight: "",
-    sex: "",
+    weight: '',
+    sex: '',
     gestationInDays: 280,
     dob: null,
     tob: null,
-    percentage: "100",
-    dom: new Date(new Date().getTime() + 10 * 60000),
+    percentage: '100',
+    dom: null,
   };
 
   const handleFormikSubmit = (values) => {
-    let correctDays = 0;
-    const age = zeit(values.dob, "days", values.dom, true, correctDays);
+    const { gestationInDays } = values;
+    const correctedGestation =
+      gestationInDays + zeit(values.dob, 'days', values.dom);
     const centileObject = calculateCentile(values);
-    const ageCheck = ageChecker(values);
-
+    const ageCheck = ageChecker(values, 6575, 28);
     switch (true) {
-      case ageCheck === "Negative age":
+      case ageCheck === 'Negative age':
         Alert.alert(
-          "Time Travelling Patient",
-          "Please check the dates entered",
-          [{ text: "OK" }],
+          'Time Travelling Patient',
+          'Please check the dates entered',
+          [{ text: 'OK', onPress: () => null }],
           { cancelable: false }
         );
         break;
-      case ageCheck === "Over 18":
+      case ageCheck === 'Over 18':
         Alert.alert(
-          "Patient Too Old",
-          "This calculator can only be used under 18 years of age",
-          { text: "OK" },
+          'Patient Too Old',
+          'This calculator can only be used under 18 years of age',
+          { text: 'OK', onPress: () => null },
           { cancelable: false }
+        );
+        break;
+      case ageCheck === 'Too young' ||
+        (gestationInDays < 259 && correctedGestation < 295):
+        Alert.alert(
+          'Neonatal Patient',
+          'This calculator can only be used for non-neonatal fluid calculations. Do you want to be taken to the correct calculator?',
+          [
+            {
+              text: 'Cancel',
+              style: 'cancel',
+            },
+            {
+              text: 'OK',
+              onPress: () => {
+                moveDataAcrossGlobal('neonate', values);
+                navigation.navigate(routes.NEONATE_FLUID);
+              },
+            },
+          ]
         );
         break;
       default:
         const measurements = values;
         const results = calculateFluid(
-          values.dob,
-          values.dom,
-          values.gestationInDays,
           values.weight,
           values.percentage,
           values.sex
@@ -99,7 +146,7 @@ const FluidCalculatorScreen = () => {
   };
 
   return (
-    <PCalcScreen>
+    <PCalcScreen style={{ flex: 1 }}>
       <KeyboardAwareScrollView>
         <View style={styles.topContainer}>
           <AppForm
@@ -107,7 +154,7 @@ const FluidCalculatorScreen = () => {
             onSubmit={handleFormikSubmit}
             validationSchema={validationSchema}
           >
-            <DobInputButton name="dob" kind="child" />
+            <DateTimeInputButton kind="child" type="birth" />
             <GestationInputButton name="gestationInDays" kind="child" />
             <SexInputButton name="sex" kind="child" />
             <NumberInputButton
@@ -147,7 +194,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   topContainer: {
-    alignSelf: "center",
-    alignItems: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
   },
 });

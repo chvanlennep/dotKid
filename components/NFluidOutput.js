@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Modal, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Modal,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import { useFormikContext } from 'formik';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
@@ -65,6 +71,8 @@ const NFluidOutput = ({ results }) => {
 
   const modalParagraph = `Requirements for age have been calculated based on an increasing requirement until 5th day of life. If your local guidelines differ from the default values, please change them on the previous screen.\n\n`;
 
+  const gestationExplanation = `Fluid rates for infants born before 37 weeks gestation will be calculated on preterm values until 40 weeks corrected gestation is reached.\n\n`;
+
   const modalParagraph2 = `${gestation} infant values used:\n\n${requirementsUsed}Correction applied: ${correction}%${isCorrected}\n\nThe fluid requirement calculated is a combined total for intravenous and enteral fluids. The proportions are dependent on clinical needs at the time.`;
 
   useEffect(() => {
@@ -128,10 +136,13 @@ const NFluidOutput = ({ results }) => {
                     {modalTitle}
                   </AppText>
                 </View>
-                <AppText style={styles.modalTextParagraph}>
-                  {modalParagraph}
-                  {modalParagraph2}
-                </AppText>
+                <ScrollView>
+                  <AppText style={styles.modalTextParagraph}>
+                    {modalParagraph}
+                    {gestationExplanation}
+                    {modalParagraph2}
+                  </AppText>
+                </ScrollView>
               </View>
             </View>
           </Modal>
@@ -205,6 +216,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: modalWidth,
+    height: modalWidth * 1.4,
     backgroundColor: colors.light,
   },
   modalTextHeadings: {
@@ -218,7 +230,7 @@ const styles = StyleSheet.create({
   modalTextHeadingWrapper: {
     borderRadius: 5,
     marginTop: 0,
-    marginBottom: 20,
+    marginBottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.dark,
@@ -238,6 +250,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginLeft: 15,
     marginRight: 15,
+    marginTop: 20,
     fontWeight: '400',
     paddingBottom: 20,
     // backgroundColor: "green",

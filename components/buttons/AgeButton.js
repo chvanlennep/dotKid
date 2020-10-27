@@ -87,6 +87,7 @@ const SubmitButton = ({
       modalHeading = `Age: ${valueBeforeCorrection}\n(${addOrdinalSuffix(
         valueAfterCorrection + 1
       )} day of life)`;
+      modalMessage = 'Chronological age used for calculation';
       break;
     case 'birth':
       birthGestationWeeks = Math.floor(valueBeforeCorrection / 7);
@@ -156,7 +157,7 @@ const SubmitButton = ({
                   </AppText>
                 </View>
                 <AppText style={styles.modalTextParagraph}>
-                  {kind !== 'nFluid' && modalMessage}
+                  {modalMessage}
                 </AppText>
               </View>
             </View>

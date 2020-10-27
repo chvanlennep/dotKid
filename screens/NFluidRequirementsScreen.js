@@ -14,10 +14,11 @@ import FormSubmitButton from '../components/buttons/FormSubmitButton';
 import FormResetButton from '../components/buttons/FormResetButton';
 import routes from '../navigation/routes';
 import NFluidInputButton from '../components/buttons/NFluidInputButton';
-import FluidGestationInputButton from '../components/buttons/input/FluidGestationInputButton';
+import GestationInputButton from '../components/buttons/input/GestationInputButton';
 import ageChecker from '../brains/ageChecker';
 import nFluidCalculator from '../brains/nFluidCalculator';
 import { GlobalStateContext } from '../components/GlobalStateContext';
+import zeit from '../brains/zeit';
 
 const NFluidRequirementsScreen = () => {
   const navigation = useNavigation();
@@ -29,26 +30,24 @@ const NFluidRequirementsScreen = () => {
       const child = { ...globalStats.child };
       const neonate = { ...globalStats.neonate };
       for (const [key, value] of Object.entries(values)) {
-        if (key !== 'gestation') {
-          let newKey = key;
-          let newValue = value;
-          if (movingTo === 'neonate') {
-            if (key === 'height') {
-              newKey = 'length';
-            }
-            if (key === 'weight') {
-              newValue = value * 1000;
-            }
-            neonate[newKey] = newValue;
-          } else {
-            if (key === 'length') {
-              newKey = 'height';
-            }
-            if (key === 'weight') {
-              newValue = value / 1000;
-            }
-            child[newKey] = newValue;
+        let newKey = key;
+        let newValue = value;
+        if (movingTo === 'neonate') {
+          if (key === 'height') {
+            newKey = 'length';
           }
+          if (key === 'weight') {
+            newValue = value * 1000;
+          }
+          neonate[newKey] = newValue;
+        } else {
+          if (key === 'length') {
+            newKey = 'height';
+          }
+          if (key === 'weight') {
+            newValue = value / 1000;
+          }
+          child[newKey] = newValue;
         }
       }
       return { child, neonate };
@@ -71,24 +70,41 @@ const NFluidRequirementsScreen = () => {
       .min(100, wrongUnitsMessage('g'))
       .max(8000, wrongUnitsMessage('g'))
       .required(measurementNeeded),
+    gestationInDays: Yup.number()
+      .min(161, '↑ Please select a birth gestation')
+      .required()
+      .label('Birth Gestation'),
   });
 
   const initialValues = {
     correction: '100',
     weight: '',
-    gestation: 'Term',
+    gestationInDays: 0,
     dob: null,
     tob: null,
     dom: null,
     tom: null,
   };
 
+  const defaults = {
+    day1: '60',
+    day2: '80',
+    day3: '100',
+    day4: '120',
+    day5: '150',
+  };
+
   const handleFormikSubmit = async (values) => {
     let referenceValues;
     let parsedReferenceValues;
+    const { gestationInDays } = values;
+    const correctedGestation =
+      gestationInDays + zeit(values.dob, 'days', values.dom);
+    const termEtc =
+      correctedGestation < 280 && gestationInDays < 259 ? 'Preterm' : 'Term';
     try {
       referenceValues = await AsyncStorage.getItem(
-        `${values.gestation.toLowerCase()}_fluid_requirements`
+        `${termEtc.toLowerCase()}_fluid_requirements`
       );
     } catch (error) {
       console.log(`Error reading item: ${error}`);
@@ -98,10 +114,13 @@ const NFluidRequirementsScreen = () => {
       Alert.alert('Time Travelling Patient', 'Please check the dates entered', [
         { text: 'OK', onPress: () => null },
       ]);
-    } else if (checkAge === 'Too old') {
+    } else if (
+      (gestationInDays >= 259 && checkAge === 'Too old') ||
+      (gestationInDays < 259 && correctedGestation > 294)
+    ) {
       Alert.alert(
         'Patient Too Old',
-        'This calculator can only be used until 28 days of age. Do you want to be taken to the correct calculator?',
+        'This calculator can only be used in preterm infants or term infants until 28 days of age. Do you want to be taken to the correct calculator?',
         [
           {
             text: 'Cancel',
@@ -118,7 +137,8 @@ const NFluidRequirementsScreen = () => {
       );
     } else {
       parsedReferenceValues = JSON.parse(referenceValues);
-      const results = nFluidCalculator(values, parsedReferenceValues);
+      const finalReferenceValues = parsedReferenceValues || defaults;
+      const results = nFluidCalculator(values, finalReferenceValues, termEtc);
       const serialisedObject = JSON.stringify(results);
       navigation.navigate(routes.NEONATE_FLUID_RESULTS, serialisedObject);
     }
@@ -138,7 +158,7 @@ const NFluidRequirementsScreen = () => {
               type="birth"
               renderTime={true}
             />
-            <FluidGestationInputButton />
+            <GestationInputButton kind="neonate" />
             <NumberInputButton
               name="weight"
               userLabel="Weight"

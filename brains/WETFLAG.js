@@ -1,9 +1,9 @@
-import specificCentile from "./specificCentile";
-import zeit from "./zeit";
+import weightOn50th from './weightOn50th';
+import zeit from './zeit';
 
 export default WETFLAG = (dob, dom, sex, weight) => {
-  let ageInDays = zeit(dob, "days", dom, true);
-  let ageInMonths = zeit(dob, "months", dom, true);
+  let ageInDays = zeit(dob, 'days', dom);
+  let ageInMonths = zeit(dob, 'months', dom);
 
   // rounds in 0.5 intervals for ETTube
   function round(value, step) {
@@ -14,25 +14,22 @@ export default WETFLAG = (dob, dom, sex, weight) => {
 
   // allows user to input weight if known
   let finalWeight;
-  isNaN(weight)
-    ? (finalWeight = specificCentile(
-        ageInDays,
-        ageInMonths,
-        280,
-        280,
-        "child",
-        sex
-      ))
-    : (finalWeight = weight);
+  let weightIsEstimated = false;
+  if (isNaN(weight)) {
+    finalWeight = weightOn50th(ageInDays, ageInMonths, sex);
+    weightIsEstimated = true;
+  } else {
+    finalWeight = Number(weight);
+  }
 
   // limits defibrillator energy output based on APLS guidelines https://www.resus.org.uk/sites/default/files/2020-03/PETchart-18-05-16.pdf
   let energy;
   if (ageInMonths >= 168) {
-    energy = "120 - 150";
+    energy = '120 - 150';
   } else if (finalWeight > 30) {
     energy = 120;
   } else {
-    energy = 4 * finalWeight;
+    energy = Math.round((4 * finalWeight) / 5) * 5;
   }
 
   // Max ET Tube = 8, rounds to half measures
@@ -45,7 +42,7 @@ export default WETFLAG = (dob, dom, sex, weight) => {
   let fluid = 20 * finalWeight;
   fluid > 500 ? (fluid = 500) : fluid;
 
-  let adrenaline = 0.1 * finalWeight;
+  const adrenaline = 0.1 * finalWeight;
 
   // Max glucose bolus = 50ml
   let glucose = 2 * finalWeight;
@@ -60,8 +57,9 @@ export default WETFLAG = (dob, dom, sex, weight) => {
   }
 
   return {
-    weight: finalWeight,
-    energy: Math.round(energy / 10) * 10,
+    weight: finalWeight.toFixed(2),
+    weightIsEstimated: weightIsEstimated,
+    energy: energy,
     ETtube: ETtube,
     fluid: fluid.toFixed(0),
     adrenaline: adrenaline.toFixed(2),
