@@ -41,28 +41,6 @@ const PCalcScreen = ({
     }
   };
 
-  const handleBabyPress = () => {
-    if (isResus) {
-      Alert.alert(
-        'Do you sure you want a different resuscitation screen?',
-        'This will reset your current resuscitation encounter',
-        [
-          {
-            text: 'Yes',
-            onPress: () => navigation.navigate(routes.NLS),
-          },
-          {
-            text: 'Cancel',
-            onPress: () => 'Cancel',
-          },
-        ],
-        { cancelable: false }
-      );
-    } else {
-      navigation.navigate(routes.NEONATE_HOMEPAGE);
-    }
-  };
-
   return (
     <Screen
       style={[
@@ -103,7 +81,11 @@ const PCalcScreen = ({
           width={40}
           backgroundColor={scheme === 'dark' ? colors.black : colors.white}
           iconColor={colors.medium}
-          onPress={handleBabyPress}
+          onPress={() =>
+            isResus
+              ? navigation.navigate(routes.NLS)
+              : navigation.navigate(routes.NEONATE_HOMEPAGE)
+          }
         />
       </View>
       <View style={style}>{children}</View>

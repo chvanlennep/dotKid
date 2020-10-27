@@ -41,28 +41,6 @@ const NCalcScreen = ({
     }
   };
 
-  const handleChildPress = () => {
-    if (isResus) {
-      Alert.alert(
-        'Do you sure you want a different resuscitation screen?',
-        'This will reset your current resuscitation encounter',
-        [
-          {
-            text: 'Yes',
-            onPress: () => navigation.navigate(routes.APLS),
-          },
-          {
-            text: 'Cancel',
-            onPress: () => 'Cancel',
-          },
-        ],
-        { cancelable: false }
-      );
-    } else {
-      navigation.navigate(routes.PAEDS_HOMEPAGE);
-    }
-  };
-
   return (
     <Screen
       style={[
@@ -103,7 +81,11 @@ const NCalcScreen = ({
           width={40}
           backgroundColor={scheme === 'dark' ? colors.black : colors.white}
           iconColor={colors.medium}
-          onPress={handleChildPress}
+          onPress={() =>
+            isResus
+              ? navigation.navigate(routes.APLS)
+              : navigation.navigate(routes.PAEDS_HOMEPAGE)
+          }
         />
       </View>
       <View style={style}>{children}</View>
