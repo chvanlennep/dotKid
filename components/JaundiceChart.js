@@ -55,9 +55,9 @@ const JaundiceChart = ({ ageInHours, gestationWeeks, sbr }) => {
         <Circle
           cy={y(data[2]['data'][index])}
           r={3}
-          stroke={colors.black}
+          stroke={chartForegroundColor}
           strokeWidth={1}
-          fill={colors.black}
+          fill={chartForegroundColor}
         />
       </G>
     </G>
