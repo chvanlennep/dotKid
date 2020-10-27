@@ -1,19 +1,19 @@
-import React, { useContext } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import * as Yup from "yup";
+import React, { useContext } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import * as Yup from 'yup';
 
-import PCalcScreen from "../components/PCalcScreen";
-import colors from "../config/colors";
-import ageChecker from "../brains/ageChecker";
-import NumberInputButton from "../components/buttons/input/NumberInputButton";
-import FormSubmitButton from "../components/buttons/FormSubmitButton";
-import FormResetButton from "../components/buttons/FormResetButton";
-import AppForm from "../components/AppForm";
-import routes from "../navigation/routes";
-import { GlobalStateContext } from "../components/GlobalStateContext";
-import BodySurfaceArea from "../brains/BodySurfaceArea";
+import PCalcScreen from '../components/PCalcScreen';
+import colors from '../config/colors';
+import ageChecker from '../brains/ageChecker';
+import NumberInputButton from '../components/buttons/input/NumberInputButton';
+import FormSubmitButton from '../components/buttons/FormSubmitButton';
+import FormResetButton from '../components/buttons/FormResetButton';
+import AppForm from '../components/AppForm';
+import routes from '../navigation/routes';
+import { GlobalStateContext } from '../components/GlobalStateContext';
+import BodySurfaceArea from '../brains/BodySurfaceArea';
 
 const BSAScreen = () => {
   navigation = useNavigation();
@@ -27,18 +27,18 @@ const BSAScreen = () => {
 
   const validationSchema = Yup.object().shape({
     height: Yup.number()
-      .min(30, wrongUnitsMessage("cm"))
-      .max(220, wrongUnitsMessage("cm"))
+      .min(30, wrongUnitsMessage('cm'))
+      .max(220, wrongUnitsMessage('cm'))
       .required(oneMeasurementNeeded),
     weight: Yup.number()
-      .min(0.1, wrongUnitsMessage("kg"))
-      .max(250, wrongUnitsMessage("kg"))
+      .min(0.1, wrongUnitsMessage('kg'))
+      .max(250, wrongUnitsMessage('kg'))
       .required(oneMeasurementNeeded),
   });
 
   const initialValues = {
-    height: "",
-    weight: "",
+    height: '',
+    weight: '',
   };
 
   const handleFormikSubmit = (values) => {
@@ -52,7 +52,7 @@ const BSAScreen = () => {
   };
 
   return (
-    <PCalcScreen>
+    <PCalcScreen style={{ flex: 1 }}>
       <ScrollView>
         <View style={styles.topContainer}>
           <AppForm
@@ -88,23 +88,23 @@ export default BSAScreen;
 
 const styles = StyleSheet.create({
   bottomContainer: {
-    alignSelf: "center",
+    alignSelf: 'center',
     paddingHorizontal: 50,
     marginTop: 20,
-    width: "100%",
+    width: '100%',
     marginBottom: 75,
   },
 
   outputContainer: {
     //backgroundColor: "orangered",
-    alignSelf: "center",
-    flexDirection: "row",
+    alignSelf: 'center',
+    flexDirection: 'row',
     flex: 2,
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
     marginHorizontal: 20,
     marginBottom: 10,
-    width: "100%",
+    width: '100%',
   },
   outputText: {
     //backgroundColor: "limegreen",
@@ -113,9 +113,9 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   title: {
-    alignContent: "center", //backgroundColor: "goldenrod",
+    alignContent: 'center', //backgroundColor: "goldenrod",
     flexGrow: 2,
-    justifyContent: "center",
+    justifyContent: 'center',
     width: 250,
   },
   text: {
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   topContainer: {
-    alignSelf: "center",
-    alignItems: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
   },
 });

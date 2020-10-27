@@ -1,21 +1,22 @@
-import React, { useContext } from "react";
-import { StyleSheet, View, Alert } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { useNavigation } from "@react-navigation/native";
-import * as Yup from "yup";
+import React, { useContext } from 'react';
+import { StyleSheet, View, Alert } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useNavigation } from '@react-navigation/native';
+import * as Yup from 'yup';
 
-import PCalcScreen from "../components/PCalcScreen";
-import WETFLAG from "../brains/WETFLAG";
-import colors from "../config/colors";
-import DobInputButton from "../components/buttons/input/DobInputButton";
-import SexInputButton from "../components/buttons/input/SexInputButton";
-import NumberInputButton from "../components/buttons/input/NumberInputButton";
-import FormSubmitButton from "../components/buttons/FormSubmitButton";
-import FormResetButton from "../components/buttons/FormResetButton";
-import AppForm from "../components/AppForm";
-import calculateCentile from "../brains/calculateCentile";
-import routes from "../navigation/routes";
-import { GlobalStateContext } from "../components/GlobalStateContext";
+import PCalcScreen from '../components/PCalcScreen';
+import WETFLAG from '../brains/WETFLAG';
+import colors from '../config/colors';
+import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
+import SexInputButton from '../components/buttons/input/SexInputButton';
+import NumberInputButton from '../components/buttons/input/NumberInputButton';
+import FormSubmitButton from '../components/buttons/FormSubmitButton';
+import FormResetButton from '../components/buttons/FormResetButton';
+import AppForm from '../components/AppForm';
+import calculateCentile from '../brains/calculateCentile';
+import routes from '../navigation/routes';
+import { GlobalStateContext } from '../components/GlobalStateContext';
+import ageChecker from '../brains/ageChecker';
 
 const WETFLAGScreen = () => {
   const navigation = useNavigation();
@@ -30,42 +31,42 @@ const WETFLAGScreen = () => {
   const validationSchema = Yup.object().shape({
     dob: Yup.date()
       .nullable()
-      .required("↑ Please enter a date of Birth")
-      .label("Date of Birth"),
-    sex: Yup.string().required("↑ Please select a sex").label("Sex"),
+      .required('↑ Please enter a date of Birth')
+      .label('Date of Birth'),
+    sex: Yup.string().required('↑ Please select a sex').label('Sex'),
   });
 
   const initialValues = {
     dob: null,
-    sex: "",
+    sex: '',
     weight: Yup.number()
-      .min(0.1, wrongUnitsMessage("kg"))
-      .max(150, wrongUnitsMessage("kg")),
-    dom: new Date(new Date().getTime() + 10 * 60000),
+      .min(0.1, wrongUnitsMessage('kg'))
+      .max(150, wrongUnitsMessage('kg')),
+    dom: null,
   };
 
   const handleFormikSubmit = (values) => {
+    const checkAge = ageChecker(values);
     const centileObject = calculateCentile(values);
-    console.log(values);
-    let correctDays = 0;
-    switch (true) {
-      case centileObject === "Negative age":
+    switch (checkAge) {
+      case 'Negative age':
         Alert.alert(
-          "Time Travelling Patient",
-          "Please check the dates entered",
-          [{ text: "OK" }],
+          'Time Travelling Patient',
+          'Please check the dates entered',
+          [{ text: 'OK' }],
           { cancelable: false }
         );
         break;
-      case centileObject === "Over 18":
+      case 'Too old':
         Alert.alert(
-          "Patient Too Old",
-          "This calculator can only be used under 18 years of age",
-          { text: "OK" },
+          'Patient Too Old',
+          'This calculator can only be used under 18 years of age',
+          { text: 'OK' },
           { cancelable: false }
         );
         break;
       default:
+        const centileObject = calculateCentile(values);
         const measurements = values;
         const output = WETFLAG(
           values.dob,
@@ -73,7 +74,6 @@ const WETFLAGScreen = () => {
           values.sex,
           values.weight
         );
-        console.log(output);
         const serialisedObject = JSON.stringify({
           output,
           centileObject,
@@ -92,7 +92,7 @@ const WETFLAGScreen = () => {
             onSubmit={handleFormikSubmit}
             validationSchema={validationSchema}
           >
-            <DobInputButton name="dob" kind="child" />
+            <DateTimeInputButton kind="child" type="birth" />
             <SexInputButton name="sex" kind="child" />
             <NumberInputButton
               name="weight"
@@ -115,23 +115,23 @@ export default WETFLAGScreen;
 
 const styles = StyleSheet.create({
   bottomContainer: {
-    alignSelf: "center",
+    alignSelf: 'center',
     paddingHorizontal: 50,
     marginTop: 20,
-    width: "100%",
+    width: '100%',
     marginBottom: 75,
   },
 
   outputContainer: {
     //backgroundColor: "orangered",
-    alignSelf: "center",
-    flexDirection: "row",
+    alignSelf: 'center',
+    flexDirection: 'row',
     flex: 2,
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
     marginHorizontal: 20,
     marginBottom: 10,
-    width: "100%",
+    width: '100%',
   },
   outputText: {
     //backgroundColor: "limegreen",
@@ -140,9 +140,9 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   title: {
-    alignContent: "center", //backgroundColor: "goldenrod",
+    alignContent: 'center', //backgroundColor: "goldenrod",
     flexGrow: 2,
-    justifyContent: "center",
+    justifyContent: 'center',
     width: 250,
   },
   text: {
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   topContainer: {
-    alignSelf: "center",
-    alignItems: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
   },
 });
