@@ -17,12 +17,8 @@ import defaultStyle from '../config/styles';
 import colors from '../config/colors';
 import AppText from './AppText';
 
-const { height, width } = Dimensions.get('window');
-const aspectRatio = height / width;
 const chartWidth =
-  aspectRatio > 1.6
-    ? defaultStyle.container.width - 90
-    : defaultStyle.container.width - 250;
+  defaultStyle.container.width > 350 ? 280 : defaultStyle.container.width - 70;
 const chartHeight = chartWidth * 1.6;
 
 LogBox.ignoreLogs(['Warning: Failed prop type:']);
@@ -176,12 +172,13 @@ const styles = StyleSheet.create({
     //backgroundColor: 'yellow',
     marginBottom: -2,
     marginRight: -4,
-    width: 15,
+    width: 19,
   },
   xAxis: {
     width: chartWidth + 10,
     //backgroundColor: 'yellow',
     paddingTop: 2,
+    marginLeft: 4,
   },
   fullChartContainer: {
     //width: chartWidth + 20,

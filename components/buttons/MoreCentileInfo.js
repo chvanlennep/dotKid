@@ -15,7 +15,7 @@ const MoreCentileInfo = ({ exactCentile }) => {
   const modalHeading = `Exact centile: ${exactCentile}`;
   const modalMessage = `The default answer follows RCPCH guidelines based on major centile lines (50th, 75th etc.): \n
   If a centile measurement is within 1/4 of the distance between 2 major centile lines, the measurement is considered to lie 'on' the nearest major centile line. Otherwise it is either considered to lie between, above or below.\n
-    This may lead to some confusion when viewing the exact centile calculated, as for example a reading on the 56th centile will be categorised as 'on' the 50th centile line.`;
+    This may lead to some confusion when viewing the graph or exact centile, as for example a reading on the 56th centile will be categorised as 'on' the 50th centile line.`;
   return (
     <React.Fragment>
       <View style={styles.mainContainer}>
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '500',
     color: colors.white,
-    textAlign: 'center',
+    //backgroundColor: 'yellow',
   },
   modalTextHeadingWrapper: {
     borderRadius: 5,
@@ -122,8 +122,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.dark,
-    flex: 2,
-    flexWrap: "wrap",
     padding: 5,
     paddingLeft: 5,
     paddingRight: 5,
@@ -133,7 +131,6 @@ const styles = StyleSheet.create({
     color: colors.black,
     marginBottom: 5,
     textAlign: 'center',
-    //flex: 9,
     flexWrap: 'wrap',
     fontSize: 15,
     marginLeft: 15,

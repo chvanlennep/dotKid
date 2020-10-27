@@ -23,7 +23,6 @@ export default ageChecker = (object, maximumAgeInDays, minimumAgeInDays) => {
   );
   const max = maximumAgeInDays ? maximumAgeInDays : 6574;
   const ageInDays = zeit(finalDob, 'days', finalDom);
-  console.log(finalDob);
   if (ageInDays < 0) {
     return 'Negative age';
   } else if (minimumAgeInDays) {
