@@ -3,10 +3,13 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import BPScreen from '../screens/BPScreen';
 import BSAScreen from '../screens/BSAScreen';
+import BSAResultsScreen from '../screens/BSAResultsScreen';
 import PCentileScreen from '../screens/PCentileScreen';
 import ECGScreen from '../screens/ECGScreen';
 import FluidCalculatorScreen from '../screens/FluidCalculatorScreen';
+import FluidResultsScreen from '../screens/FluidResultsScreen';
 import WETFLAGScreen from '../screens/WETFLAGScreen';
+import WETFLAGResultsScreen from '../screens/WETFLAGResultsScreen';
 import NeonateHomepageScreen from '../screens/NeonateHomepageScreen';
 import PaedsHomepageScreen from '../screens/PaedsHomepageScreen';
 import PCentileResultsScreen from '../screens/PCentileResultsScreen';

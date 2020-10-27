@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Alert,
   Modal,
@@ -9,20 +9,21 @@ import {
   useColorScheme,
   useWindowDimensions,
   View,
-} from "react-native";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+} from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-import colors from "../../app/config/colors";
-import defaultStyles from "../../app/config/styles";
-import AppText from "./AppText";
-import ALSDisplayButton from "./buttons/ALSDisplayButton";
-import parseLog from "../brains/parseLog";
+import colors from '../../app/config/colors';
+import defaultStyles from '../../app/config/styles';
+import AppText from './AppText';
+import ALSDisplayButton from './buttons/ALSDisplayButton';
+import parseLog from '../brains/parseLog';
 
 const LogModal = ({
   encounterState,
   logInput,
   logVisibleState,
-  kind = "child",
+  kind = 'child',
+  style,
 }) => {
   const scheme = useColorScheme();
 
@@ -54,10 +55,7 @@ const LogModal = ({
 
   return (
     <React.Fragment>
-      <ALSDisplayButton
-        onPress={() => setModalVisible(true)}
-        style={[styles.button]}
-      >
+      <ALSDisplayButton onPress={() => setModalVisible(true)} style={style}>
         Log
       </ALSDisplayButton>
       <View style={styles.centeredView}>
@@ -66,7 +64,7 @@ const LogModal = ({
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            Alert.alert("Window has been closed.");
+            Alert.alert('Window has been closed.');
           }}
         >
           <View style={styles.centeredView}>
@@ -75,7 +73,7 @@ const LogModal = ({
                 styles.modalView,
                 {
                   backgroundColor:
-                    kind === "child"
+                    kind === 'child'
                       ? colors.darkPrimary
                       : colors.darkSecondary,
                 },
@@ -120,7 +118,7 @@ const LogModal = ({
                   styles.log,
                   {
                     backgroundColor:
-                      scheme === "dark" ? colors.black : colors.white,
+                      scheme === 'dark' ? colors.black : colors.white,
                   },
                 ]}
               >
@@ -129,7 +127,7 @@ const LogModal = ({
                     style={[
                       styles.text,
                       {
-                        color: scheme === "dark" ? colors.white : colors.black,
+                        color: scheme === 'dark' ? colors.white : colors.black,
                       },
                     ]}
                   >
@@ -149,52 +147,52 @@ export default LogModal;
 
 const styles = StyleSheet.create({
   button: {
-    alignContent: "center",
+    alignContent: 'center',
     backgroundColor: colors.dark,
-    justifyContent: "center",
-    textAlign: "center",
-    width: "44%",
+    justifyContent: 'center',
+    textAlign: 'center',
+    width: '44%',
   },
 
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   closeIcon: {
     height: 50,
     width: 50,
     //backgroundColor: colors.primary,
     borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   exportIcon: {
-    alignItems: "center",
+    alignItems: 'center',
     height: 50,
-    justifyContent: "center",
+    justifyContent: 'center',
     width: 50,
   },
   heading: {
-    alignSelf: "center",
+    alignSelf: 'center',
     color: colors.white,
     fontSize: 20,
     marginBottom: 5,
   },
   headers: {
-    flexDirection: "row",
+    flexDirection: 'row',
     padding: 5,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
   icon: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 10,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -207,25 +205,25 @@ const styles = StyleSheet.create({
     width: defaultStyles.container.width - 10,
   },
   log: {
-    alignContent: "flex-start",
-    justifyContent: "flex-start",
+    alignContent: 'flex-start',
+    justifyContent: 'flex-start',
     backgroundColor: colors.white,
     borderRadius: 5,
     flex: 1,
-    flexDirection: "column",
+    flexDirection: 'column',
     margin: 10,
     padding: 5,
   },
   text: {
-    alignSelf: "center",
+    alignSelf: 'center',
     color: colors.black,
     fontSize: 18,
     lineHeight: 25,
     margin: 10,
-    textAlignVertical: "center",
+    textAlignVertical: 'center',
   },
   touchable: {
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
     //backgroundColor: "blue",
   },
 });

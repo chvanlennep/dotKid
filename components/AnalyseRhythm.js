@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
-import colors from "../config/colors";
-import AppText from "./AppText";
+import React, { useState, useRef, useEffect } from 'react';
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import colors from '../config/colors';
+import AppText from './AppText';
 
 const AnalyseRhythm = ({ rhythmPressedState, rhythmTimeState, resetState }) => {
   const [time, setTime] = useState(new Date().toLocaleTimeString());
@@ -20,7 +20,7 @@ const AnalyseRhythm = ({ rhythmPressedState, rhythmTimeState, resetState }) => {
   let secDiff;
 
   function secondsToHms(seconds) {
-    if (!seconds) return "";
+    if (!seconds) return '';
 
     let duration = seconds;
     let hours = duration / 3600;
@@ -91,7 +91,7 @@ const AnalyseRhythm = ({ rhythmPressedState, rhythmTimeState, resetState }) => {
   // }
   // )
 
-  return <AppText style={styles.text}>{rhythmTime}</AppText>;
+  return <AppText style={styles.text}>{`\n${rhythmTime}`}</AppText>;
 };
 
 export default AnalyseRhythm;
@@ -100,7 +100,8 @@ export default AnalyseRhythm;
 
 const styles = StyleSheet.create({
   text: {
-    textAlign: "center",
+    //textAlign: 'center',
     color: colors.white,
+    //textAlignVertical: 'center',
   },
 });

@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
-import { StyleSheet } from "react-native";
-import colors from "../config/colors";
-import AppText from "./AppText";
+import React, { useEffect, useRef, useState } from 'react';
+import { StyleSheet } from 'react-native';
+import colors from '../config/colors';
+import AppText from './AppText';
 
 const AssessBabyTimer = ({ assessmentState, assessmentTime, resetState }) => {
   const [time, setTime] = useState(new Date().toLocaleTimeString());
@@ -24,7 +24,7 @@ const AssessBabyTimer = ({ assessmentState, assessmentTime, resetState }) => {
   let secDiff;
 
   function secondsToHms(seconds) {
-    if (!seconds) return "";
+    if (!seconds) return '';
 
     let duration = seconds;
     let hours = duration / 3600;
@@ -87,12 +87,7 @@ const AssessBabyTimer = ({ assessmentState, assessmentTime, resetState }) => {
     };
   });
 
-  return (
-    <AppText style={styles.text}>
-      {"\n"}
-      {assessTime}
-    </AppText>
-  );
+  return <AppText style={styles.text}>{`\n${assessTime}`}</AppText>;
 };
 
 export default AssessBabyTimer;
@@ -101,7 +96,7 @@ export default AssessBabyTimer;
 
 const styles = StyleSheet.create({
   text: {
-    textAlign: "center",
     color: colors.white,
+    alignSelf: 'center',
   },
 });

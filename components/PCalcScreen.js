@@ -1,11 +1,11 @@
-import React from "react";
-import { Alert, StyleSheet, View, useColorScheme } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import React from 'react';
+import { Alert, StyleSheet, View, useColorScheme } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-import Screen from "./Screen";
-import TopIcon from "./TopIcon";
-import colors from "../config/colors";
-import routes from "../navigation/routes";
+import Screen from './Screen';
+import TopIcon from './TopIcon';
+import colors from '../config/colors';
+import routes from '../navigation/routes';
 
 const PCalcScreen = ({
   children,
@@ -22,16 +22,16 @@ const PCalcScreen = ({
   const handleBackPress = () => {
     if (isResus) {
       Alert.alert(
-        "Do you sure you want a different resuscitation screen?",
-        "This will reset your current resuscitation encounter",
+        'Do you sure you want a different resuscitation screen?',
+        'This will reset your current resuscitation encounter',
         [
           {
-            text: "Yes",
+            text: 'Yes',
             onPress: () => navigation.goBack(),
           },
           {
-            text: "Cancel",
-            onPress: () => "Cancel",
+            text: 'Cancel',
+            onPress: () => 'Cancel',
           },
         ],
         { cancelable: false }
@@ -41,18 +41,40 @@ const PCalcScreen = ({
     }
   };
 
+  const handleBabyPress = () => {
+    if (isResus) {
+      Alert.alert(
+        'Do you sure you want a different resuscitation screen?',
+        'This will reset your current resuscitation encounter',
+        [
+          {
+            text: 'Yes',
+            onPress: () => navigation.navigate(routes.NLS),
+          },
+          {
+            text: 'Cancel',
+            onPress: () => 'Cancel',
+          },
+        ],
+        { cancelable: false }
+      );
+    } else {
+      navigation.navigate(routes.PAEDS_HOMEPAGE);
+    }
+  };
+
   return (
     <Screen
       style={[
         styles.container,
-        { backgroundColor: scheme === "dark" ? colors.black : colors.white },
+        { backgroundColor: scheme === 'dark' ? colors.black : colors.white },
       ]}
     >
       {renderBack && (
         <View style={styles.back}>
           <TopIcon
             name="chevron-left"
-            backgroundColor={scheme === "dark" ? colors.black : colors.white}
+            backgroundColor={scheme === 'dark' ? colors.black : colors.white}
             height={40}
             width={40}
             iconColor={colors.primary}
@@ -66,9 +88,11 @@ const PCalcScreen = ({
           height={50}
           width={50}
           borderRadius={20}
-          backgroundColor={scheme === "dark" ? colors.black : colors.white}
+          backgroundColor={scheme === 'dark' ? colors.black : colors.white}
           iconColor={colors.primary}
-          onPress={() => navigation.navigate(routes.PAEDS_HOMEPAGE)}
+          onPress={() =>
+            isResus ? null : navigation.navigate(routes.PAEDS_HOMEPAGE)
+          }
           style={styles.face}
         />
       </View>
@@ -77,9 +101,9 @@ const PCalcScreen = ({
           name="baby-face-outline"
           height={40}
           width={40}
-          backgroundColor={scheme === "dark" ? colors.black : colors.white}
+          backgroundColor={scheme === 'dark' ? colors.black : colors.white}
           iconColor={colors.medium}
-          onPress={() => navigation.navigate(routes.NEONATE_HOMEPAGE)}
+          onPress={handleBabyPress}
         />
       </View>
       <View style={style}>{children}</View>
@@ -91,12 +115,12 @@ export default PCalcScreen;
 
 const styles = StyleSheet.create({
   baby: {
-    position: "absolute",
+    position: 'absolute',
     right: 30,
     top: 10,
   },
   back: {
-    position: "absolute",
+    position: 'absolute',
     left: 30,
     top: 10,
   },
@@ -105,9 +129,9 @@ const styles = StyleSheet.create({
   },
 
   topContainer: {
-    alignSelf: "center",
-    flexDirection: "row",
-    alignItems: "center",
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 15,
   },
 });

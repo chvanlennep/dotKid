@@ -1,15 +1,15 @@
-import React from "react";
-import { useColorScheme } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React from 'react';
+import { useColorScheme } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import APLSScreen from "../screens/APLSScreen";
-import PaedsHomepageScreen from "../screens/PaedsHomepageScreen";
-import ReferenceScreen from "../screens/ReferenceScreen";
-import SettingsScreen from "../screens/SettingsScreen";
-import CalcNavigator from "./CalcNavigator";
-import colors from "../config/colors";
-import ALSNavigator from "./ALSNavigator";
+import APLSScreen from '../screens/APLSScreen';
+import PaedsHomepageScreen from '../screens/PaedsHomepageScreen';
+import ReferenceScreen from '../screens/ReferenceScreen';
+import SettingsScreen from '../screens/SettingsScreen';
+import CalcNavigator from './CalcNavigator';
+import colors from '../config/colors';
+import ALSNavigator from './ALSNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -52,15 +52,6 @@ const AppNavigator = () => {
               color={color}
               size={size}
             />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="settings" color={color} size={size} />
           ),
         }}
       />

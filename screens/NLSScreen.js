@@ -1,17 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Alert, FlatList, ScrollView, StyleSheet, View } from "react-native";
-import { useScrollToTop } from "@react-navigation/native";
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, FlatList, ScrollView, StyleSheet, View } from 'react-native';
+import { useScrollToTop } from '@react-navigation/native';
 
-import NCalcScreen from "../components/NCalcScreen";
-import NLSToolbar from "../components/NLSToolbar";
-import colors from "../config/colors";
-import ALSDisplayButton from "../components/buttons/ALSDisplayButton";
-import ALSFunctionButton from "../components/buttons/ALSFunctionButton";
-import ALSListHeader from "../components/buttons/ALSListHeader";
-import Stopwatch from "../components/Stopwatch";
+import NCalcScreen from '../components/NCalcScreen';
+import NLSToolbar from '../components/NLSToolbar';
+import colors from '../config/colors';
+import ALSDisplayButton from '../components/buttons/ALSDisplayButton';
+import ALSFunctionButton from '../components/buttons/ALSFunctionButton';
+import ALSListHeader from '../components/buttons/ALSListHeader';
+import Stopwatch from '../components/Stopwatch';
 
-import AppText from "../components/AppText";
-import AssessBabyModal from "../components/AssessBabyModal";
+import AppText from '../components/AppText';
+import AssessBabyModal from '../components/AssessBabyModal';
 import {
   afterChestRise,
   afterChestRiseFlatList,
@@ -20,10 +20,10 @@ import {
   functionButtons,
   preResusChecklist,
   resusRequired,
-} from "../brains/nlsObjects";
-import LogModal from "../components/LogModal";
-import NoChestRiseModal from "../components/NoChestRiseModal";
-import InitialAssessmentModal from "../components/InitialAssessmentModal";
+} from '../brains/nlsObjects';
+import LogModal from '../components/LogModal';
+import NoChestRiseModal from '../components/NoChestRiseModal';
+import InitialAssessmentModal from '../components/InitialAssessmentModal';
 
 const NLSScreen = () => {
   const [reset, setReset] = useState(false);
@@ -104,13 +104,13 @@ const NLSScreen = () => {
     setIsTimerActive(false);
     setEndEncounter(false);
     Alert.alert(
-      "Your NLS Log has been reset.",
-      "",
+      'Your NLS Log has been reset.',
+      '',
       [
         {
-          text: "OK",
-          onPress: () => "OK",
-          style: "cancel",
+          text: 'OK',
+          onPress: () => 'OK',
+          style: 'cancel',
         },
       ],
       { cancelable: true }
@@ -121,14 +121,14 @@ const NLSScreen = () => {
   //reset button alert
   const resetLog = () => {
     Alert.alert(
-      "Do you wish to reset your NLS Log?",
-      "",
+      'Do you wish to reset your NLS Log?',
+      '',
       [
-        { text: "Reset", onPress: () => handleReset() },
+        { text: 'Reset', onPress: () => handleReset() },
         {
-          text: "Cancel",
-          onPress: () => "Cancel",
-          style: "cancel",
+          text: 'Cancel',
+          onPress: () => 'Cancel',
+          style: 'cancel',
         },
       ],
       { cancelable: false }
@@ -175,7 +175,7 @@ const NLSScreen = () => {
   });
 
   const renderListItem = ({ item }) => {
-    if (item.type === "preResusChecklist") {
+    if (item.type === 'preResusChecklist') {
       return (
         <ALSFunctionButton
           kind="neonate"
@@ -188,8 +188,8 @@ const NLSScreen = () => {
         />
       );
     } else if (
-      item.type === "resusRequired" ||
-      item.type === "afterChestRise"
+      item.type === 'resusRequired' ||
+      item.type === 'afterChestRise'
     ) {
       return (
         <ALSFunctionButton
@@ -201,7 +201,7 @@ const NLSScreen = () => {
           timerState={timerState}
         />
       );
-    } else if (item.type === "listHeader") {
+    } else if (item.type === 'listHeader') {
       return (
         <ALSListHeader
           title={item.id}
@@ -211,7 +211,7 @@ const NLSScreen = () => {
           onUpPress={() => scrollMe(item.onUpPress)}
         />
       );
-    } else if (item.type === "modal") {
+    } else if (item.type === 'modal') {
       return (
         <InitialAssessmentModal
           encounterState={encounterState}
@@ -243,42 +243,49 @@ const NLSScreen = () => {
         timerState={timerState}
       />
       <View style={styles.middleContainer}>
-        <ALSDisplayButton
-          onPress={() => setIsTimerActive(true)}
-          style={styles.button}
-        >
-          {!isTimerActive && "Start Timer"}
-          {isTimerActive && (
-            <Stopwatch
-              intervalState={intervalState}
-              logState={logState}
-              resetState={resetState}
-              timerState={timerState}
-            />
-          )}
-        </ALSDisplayButton>
+        <View style={styles.verticalButtonContainer}>
+          <ALSDisplayButton
+            onPress={() => setIsTimerActive(true)}
+            style={styles.button}
+          >
+            {!isTimerActive && 'Start Timer'}
+            {isTimerActive && (
+              <Stopwatch
+                intervalState={intervalState}
+                logState={logState}
+                resetState={resetState}
+                timerState={timerState}
+              />
+            )}
+          </ALSDisplayButton>
+          <AssessBabyModal
+            assessmentState={assessmentState}
+            assessmentTime={assessmentTime}
+            encounterState={encounterState}
+            logState={logState}
+            resetState={resetState}
+            timerState={timerState}
+            style={styles.button}
+          />
+        </View>
+        <View style={styles.verticalButtonContainer}>
+          <LogModal
+            kind="neonate"
+            encounterState={encounterState}
+            logInput={functionButtons}
+            logVisibleState={logVisibleState}
+            style={styles.button}
+          />
 
-        <LogModal
-          kind="neonate"
-          encounterState={encounterState}
-          logInput={functionButtons}
-          logVisibleState={logVisibleState}
-        />
-        <AssessBabyModal
-          assessmentState={assessmentState}
-          assessmentTime={assessmentTime}
-          encounterState={encounterState}
-          logState={logState}
-          resetState={resetState}
-          timerState={timerState}
-        />
-        <NoChestRiseModal
-          afterClose={() => scrollMe(1750)}
-          encounterState={encounterState}
-          logState={logState}
-          resetState={resetState}
-          timerState={timerState}
-        />
+          <NoChestRiseModal
+            afterClose={() => scrollMe(1750)}
+            encounterState={encounterState}
+            logState={logState}
+            resetState={resetState}
+            timerState={timerState}
+            style={styles.button}
+          />
+        </View>
       </View>
       <View style={styles.textContainer}>
         <AppText style={styles.text}>NLS</AppText>
@@ -293,13 +300,13 @@ const NLSScreen = () => {
             <ALSListHeader
               onDownPress={() => scrollMe(1070)}
               downArrow={true}
-              title={"Pre-Resus Checklist:"}
+              title={'Pre-Resus Checklist:'}
             />
           }
           ListFooterComponent={
             <ALSFunctionButton
               kind="neonate"
-              title={afterChestRise[afterChestRise.length - 1]["id"]}
+              title={afterChestRise[afterChestRise.length - 1]['id']}
               logState={logState}
               encounterState={encounterState}
               timerState={timerState}
@@ -320,50 +327,50 @@ const styles = StyleSheet.create({
     marginBottom: 200,
   },
   bottomContainer: {
-    flexDirection: "column",
+    flexDirection: 'column',
     padding: 15,
     paddingTop: 5,
     flex: 1,
   },
   button: {
-    alignContent: "center",
+    alignContent: 'center',
     backgroundColor: colors.dark,
-    justifyContent: "center",
-    textAlign: "center",
-    width: "44%",
+    justifyContent: 'center',
+    textAlign: 'center',
   },
 
   buttonPressed: {
     backgroundColor: colors.primary,
-    flexWrap: "nowrap",
+    flexWrap: 'nowrap',
     height: 90,
-    justifyContent: "center",
-    textAlign: "center",
+    justifyContent: 'center',
+    textAlign: 'center',
   },
   middleContainer: {
-    //     alignContent: "center",
-    alignSelf: "center",
-    alignItems: "center",
-    // backgroundColor: colors.primary,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    paddingTop: 10,
+    alignSelf: 'center',
+    alignItems: 'center',
+    //backgroundColor: colors.primary,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 3,
+    marginBottom: 3,
+  },
+  verticalButtonContainer: {
+    alignItems: 'center',
+    flex: 1,
+    //backgroundColor: 'yellow',
   },
   darkButton: {
     backgroundColor: colors.dark,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   mediumButton: {
     backgroundColor: colors.medium,
   },
-
   text: {
     fontSize: 28,
-    marginBottom: 5,
   },
   textContainer: {
     marginLeft: 15,
-    marginTop: 5,
   },
 });

@@ -121,10 +121,58 @@ const PCentileScreen = () => {
   };
 
   const handleFormikSubmit = (values) => {
-    const results = calculateCentile(values);
     const ageCheck = ageChecker(values);
-    switch (true) {
-      case results.kind === 'child' && results.lessThan14:
+    if (ageCheck === 'Negative age') {
+      Alert.alert('Time Travelling Patient', 'Please check the dates entered', [
+        { text: 'OK', onPress: () => null },
+      ]);
+    } else if (ageCheck === 'Too old') {
+      Alert.alert(
+        'Patient Too Old',
+        'This calculator can only be used under 18 years of age',
+        [{ text: 'OK', onPress: () => null }]
+      );
+    } else {
+      const results = calculateCentile(values);
+      if (results.kind === 'birth') {
+        Alert.alert(
+          'Birth Centile Measurements Entered',
+          'Do you want to be taken to the correct calculator? Your measurements will be copied across.',
+          [
+            {
+              text: 'Cancel',
+              style: 'cancel',
+            },
+            {
+              text: 'OK',
+              onPress: () => {
+                moveDataAcrossGlobal('neonate', values);
+                navigation.navigate(routes.BIRTH_CENTILE);
+              },
+            },
+          ],
+          { cancelable: false }
+        );
+      } else if (results.kind === 'neonate') {
+        Alert.alert(
+          'Preterm Centile Measurements Entered',
+          'Do you want to be taken to the correct calculator? Your measurements will be copied across.',
+          [
+            {
+              text: 'Cancel',
+              style: 'cancel',
+            },
+            {
+              text: 'OK',
+              onPress: () => {
+                moveDataAcrossGlobal('neonate', values);
+                navigation.navigate(routes.NEONATE_CENTILE);
+              },
+            },
+          ],
+          { cancelable: false }
+        );
+      } else if (results.kind === 'child' && results.lessThan14) {
         Alert.alert(
           'Infant Less Than 2 Weeks Old',
           'Centile measurements in infants less than 2 weeks of age can be difficult to interpret. Are you sure you want to continue?',
@@ -150,71 +198,14 @@ const PCentileScreen = () => {
           ],
           { cancelable: false }
         );
-        break;
-      case results.kind === 'child':
+      } else {
         const measurements = values;
         const serialisedObject = JSON.stringify({ measurements, results });
         navigation.navigate(
           routes.PAEDIATRIC_CENTILE_RESULTS,
           serialisedObject
         );
-        break;
-      case ageCheck === 'Negative age':
-        Alert.alert(
-          'Time Travelling Patient',
-          'Please check the dates entered',
-          [{ text: 'OK', onPress: () => null }]
-        );
-        break;
-      case ageCheck === 'Too old':
-        Alert.alert(
-          'Patient Too Old',
-          'This calculator can only be used under 18 years of age',
-          [{ text: 'OK', onPress: () => null }]
-        );
-        break;
-      case results.kind === 'birth':
-        Alert.alert(
-          'Birth Centile Measurements Entered',
-          'Do you want to be taken to the correct calculator? Your measurements will be copied across.',
-          [
-            {
-              text: 'Cancel',
-              style: 'cancel',
-            },
-            {
-              text: 'OK',
-              onPress: () => {
-                moveDataAcrossGlobal('neonate', values);
-                navigation.navigate(routes.BIRTH_CENTILE);
-              },
-            },
-          ],
-          { cancelable: false }
-        );
-        break;
-      case results.kind === 'neonate':
-        Alert.alert(
-          'Preterm Centile Measurements Entered',
-          'Do you want to be taken to the correct calculator? Your measurements will be copied across.',
-          [
-            {
-              text: 'Cancel',
-              style: 'cancel',
-            },
-            {
-              text: 'OK',
-              onPress: () => {
-                moveDataAcrossGlobal('neonate', values);
-                navigation.navigate(routes.NEONATE_CENTILE);
-              },
-            },
-          ],
-          { cancelable: false }
-        );
-        break;
-      default:
-        console.log(['Error', results]);
+      }
     }
   };
 
