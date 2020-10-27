@@ -76,7 +76,7 @@ const SexInputButton = ({ global = false, kind, name = 'sex' }) => {
       setModalVisible(false);
     } else {
       if (!localSex) {
-        setLocalSex('Male');
+        setLocalSex('Female');
       }
       setModalVisible(true);
     }
@@ -192,8 +192,8 @@ const SexInputButton = ({ global = false, kind, name = 'sex' }) => {
                   }}
                   selectedValue={localSex}
                 >
-                  <Picker.Item label="Male" value="Male" />
                   <Picker.Item label="Female" value="Female" />
+                  <Picker.Item label="Male" value="Male" />
                 </Picker>
               </View>
               <View style={styles.buttonContainer}>
