@@ -52,7 +52,6 @@ const PCalcScreen = ({
         <View style={styles.back}>
           <TopIcon
             name="chevron-left"
-            backgroundColor={scheme === 'dark' ? colors.black : colors.white}
             height={40}
             width={40}
             iconColor={colors.primary}
@@ -65,8 +64,6 @@ const PCalcScreen = ({
           name="face"
           height={50}
           width={50}
-          borderRadius={20}
-          backgroundColor={scheme === 'dark' ? colors.black : colors.white}
           iconColor={colors.primary}
           onPress={() =>
             isResus ? null : navigation.navigate(routes.PAEDS_HOMEPAGE)
@@ -79,7 +76,6 @@ const PCalcScreen = ({
           name="baby-face-outline"
           height={40}
           width={40}
-          backgroundColor={scheme === 'dark' ? colors.black : colors.white}
           iconColor={colors.medium}
           onPress={() =>
             isResus
@@ -109,11 +105,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
   topContainer: {
     alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 5,
   },
 });

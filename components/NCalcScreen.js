@@ -54,7 +54,6 @@ const NCalcScreen = ({
             name="chevron-left"
             height={40}
             width={40}
-            backgroundColor={scheme === 'dark' ? colors.black : colors.white}
             iconColor={colors.secondary}
             onPress={handleBackPress}
           />
@@ -65,8 +64,6 @@ const NCalcScreen = ({
           name="baby-face-outline"
           height={50}
           width={50}
-          borderRadius={20}
-          backgroundColor={scheme === 'dark' ? colors.black : colors.white}
           iconColor={colors.secondary}
           style={styles.face}
           onPress={() =>
@@ -79,7 +76,6 @@ const NCalcScreen = ({
           name="face"
           height={40}
           width={40}
-          backgroundColor={scheme === 'dark' ? colors.black : colors.white}
           iconColor={colors.medium}
           onPress={() =>
             isResus
@@ -114,6 +110,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 5,
   },
 });
