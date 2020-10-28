@@ -1,17 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, FlatList, ScrollView, StyleSheet, View } from 'react-native';
-import { useScrollToTop } from '@react-navigation/native';
+import React, { useEffect, useRef, useState } from "react";
+import { Alert, FlatList, ScrollView, StyleSheet, View } from "react-native";
+import { useScrollToTop } from "@react-navigation/native";
 
-import NCalcScreen from '../components/NCalcScreen';
-import NLSToolbar from '../components/NLSToolbar';
-import colors from '../config/colors';
-import ALSDisplayButton from '../components/buttons/ALSDisplayButton';
-import ALSFunctionButton from '../components/buttons/ALSFunctionButton';
-import ALSListHeader from '../components/buttons/ALSListHeader';
-import Stopwatch from '../components/Stopwatch';
+import NCalcScreen from "../components/NCalcScreen";
+import NLSToolbar from "../components/NLSToolbar";
+import colors from "../config/colors";
+import ALSDisplayButton from "../components/buttons/ALSDisplayButton";
+import ALSFunctionButton from "../components/buttons/ALSFunctionButton";
+import ALSListHeader from "../components/buttons/ALSListHeader";
+import Stopwatch from "../components/Stopwatch";
 
-import AppText from '../components/AppText';
-import AssessBabyModal from '../components/AssessBabyModal';
+import AppText from "../components/AppText";
+import AssessBabyModal from "../components/AssessBabyModal";
 import {
   afterChestRise,
   afterChestRiseFlatList,
@@ -20,10 +20,10 @@ import {
   functionButtons,
   preResusChecklist,
   resusRequired,
-} from '../brains/nlsObjects';
-import LogModal from '../components/LogModal';
-import NoChestRiseModal from '../components/NoChestRiseModal';
-import InitialAssessmentModal from '../components/InitialAssessmentModal';
+} from "../brains/nlsObjects";
+import LogModal from "../components/LogModal";
+import NoChestRiseModal from "../components/NoChestRiseModal";
+import InitialAssessmentModal from "../components/InitialAssessmentModal";
 
 const NLSScreen = () => {
   const [reset, setReset] = useState(false);
@@ -99,36 +99,51 @@ const NLSScreen = () => {
 
   //reset button logic
   const handleReset = () => {
-    setFunctionButtons(resetLogTimes(functionButtons));
-    setReset(true);
-    setIsTimerActive(false);
-    setEndEncounter(false);
-    Alert.alert(
-      'Your NLS encounter has been reset.',
-      '',
-      [
-        {
-          text: 'OK',
-          onPress: () => 'OK',
-          style: 'cancel',
-        },
-      ],
-      { cancelable: true }
-    );
-    setReset(false);
+    if (reset == true) {
+      setLogVisible(false);
+      setFunctionButtons(resetLogTimes(functionButtons));
+      setIsTimerActive(false);
+      setEndEncounter(false);
+      setReset(false);
+      Alert.alert(
+        "Your NLS encounter has been reset.",
+        "",
+        [
+          {
+            text: "OK",
+            onPress: () => "OK",
+            style: "cancel",
+          },
+        ],
+        { cancelable: true }
+      );
+    }
   };
+
+  useEffect(() => {
+    if (reset == true && logVisible == false) {
+      setEndEncounter(false);
+      handleReset();
+    }
+  });
 
   //reset button alert
   const resetLog = () => {
     Alert.alert(
-      'Do you wish to reset your NLS encounter?',
-      '',
+      "Do you wish to reset your NLS encounter?",
+      "",
       [
-        { text: 'Reset', onPress: () => handleReset() },
         {
-          text: 'Cancel',
-          onPress: () => 'Cancel',
-          style: 'cancel',
+          text: "Reset",
+          onPress: () => {
+            setReset(true);
+            handleReset();
+          },
+        },
+        {
+          text: "Cancel",
+          onPress: () => "Cancel",
+          style: "cancel",
         },
       ],
       { cancelable: false }
@@ -175,7 +190,7 @@ const NLSScreen = () => {
   });
 
   const renderListItem = ({ item }) => {
-    if (item.type === 'preResusChecklist') {
+    if (item.type === "preResusChecklist") {
       return (
         <ALSFunctionButton
           kind="neonate"
@@ -188,8 +203,8 @@ const NLSScreen = () => {
         />
       );
     } else if (
-      item.type === 'resusRequired' ||
-      item.type === 'afterChestRise'
+      item.type === "resusRequired" ||
+      item.type === "afterChestRise"
     ) {
       return (
         <ALSFunctionButton
@@ -201,7 +216,7 @@ const NLSScreen = () => {
           timerState={timerState}
         />
       );
-    } else if (item.type === 'listHeader') {
+    } else if (item.type === "listHeader") {
       return (
         <ALSListHeader
           title={item.id}
@@ -211,7 +226,7 @@ const NLSScreen = () => {
           onUpPress={() => scrollMe(item.onUpPress)}
         />
       );
-    } else if (item.type === 'modal') {
+    } else if (item.type === "modal") {
       return (
         <InitialAssessmentModal
           encounterState={encounterState}
@@ -248,7 +263,7 @@ const NLSScreen = () => {
             onPress={() => setIsTimerActive(true)}
             style={styles.button}
           >
-            {!isTimerActive && 'Start Timer'}
+            {!isTimerActive && "Start Timer"}
             {isTimerActive && (
               <Stopwatch
                 intervalState={intervalState}
@@ -274,6 +289,7 @@ const NLSScreen = () => {
             encounterState={encounterState}
             logInput={functionButtons}
             logVisibleState={logVisibleState}
+            resetState={resetState}
             style={styles.button}
           />
 
@@ -300,13 +316,13 @@ const NLSScreen = () => {
             <ALSListHeader
               onDownPress={() => scrollMe(1070)}
               downArrow={true}
-              title={'Pre-Resus Checklist:'}
+              title={"Pre-Resus Checklist:"}
             />
           }
           ListFooterComponent={
             <ALSFunctionButton
               kind="neonate"
-              title={afterChestRise[afterChestRise.length - 1]['id']}
+              title={afterChestRise[afterChestRise.length - 1]["id"]}
               logState={logState}
               encounterState={encounterState}
               timerState={timerState}
@@ -327,42 +343,42 @@ const styles = StyleSheet.create({
     marginBottom: 200,
   },
   bottomContainer: {
-    flexDirection: 'column',
+    flexDirection: "column",
     padding: 15,
     paddingTop: 5,
     flex: 1,
   },
   button: {
-    alignContent: 'center',
+    alignContent: "center",
     backgroundColor: colors.dark,
-    justifyContent: 'center',
-    textAlign: 'center',
+    justifyContent: "center",
+    textAlign: "center",
   },
 
   buttonPressed: {
     backgroundColor: colors.primary,
-    flexWrap: 'nowrap',
+    flexWrap: "nowrap",
     height: 90,
-    justifyContent: 'center',
-    textAlign: 'center',
+    justifyContent: "center",
+    textAlign: "center",
   },
   middleContainer: {
-    alignSelf: 'center',
-    alignItems: 'center',
+    alignSelf: "center",
+    alignItems: "center",
     //backgroundColor: colors.primary,
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     marginTop: 3,
     marginBottom: 3,
   },
   verticalButtonContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     flex: 1,
     //backgroundColor: 'yellow',
   },
   darkButton: {
     backgroundColor: colors.dark,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   mediumButton: {
     backgroundColor: colors.medium,

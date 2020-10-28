@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Alert,
   Modal,
@@ -7,22 +7,23 @@ import {
   TouchableOpacity,
   useColorScheme,
   View,
-} from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+} from "react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import colors from '../../app/config/colors';
-import defaultStyles from '../../app/config/styles';
-import AppText from './AppText';
-import ALSDisplayButton from './buttons/ALSDisplayButton';
-import parseLog from '../brains/parseLog';
-import onShare from '../brains/onShare';
-import { readItemFromStorage, writeItemToStorage } from '../brains/storage';
+import colors from "../../app/config/colors";
+import defaultStyles from "../../app/config/styles";
+import AppText from "./AppText";
+import ALSDisplayButton from "./buttons/ALSDisplayButton";
+import parseLog from "../brains/parseLog";
+import onShare from "../brains/onShare";
+import { readItemFromStorage, writeItemToStorage } from "../brains/storage";
 
 const LogModal = ({
   encounterState,
   logInput,
   logVisibleState,
   kind,
+  resetState,
   style,
 }) => {
   const scheme = useColorScheme();
@@ -33,18 +34,31 @@ const LogModal = ({
   const endEncounter = encounterState.value;
   const setEndEncounter = encounterState.setValue;
 
-  const logType = kind === 'child' ? 'APLS' : 'NLS';
+  const reset = resetState.value;
+  const setReset = resetState.setValue;
+
+  const logType = kind === "child" ? "APLS" : "NLS";
   const storageKey = `${logType}_log`;
   const rawLog = parseLog(logInput, logType);
   const [log, setLog] = useState(rawLog);
   if (rawLog) writeItemToStorage(storageKey, setLog, rawLog);
-  const firstEverLogMessage = 'No log entries found';
+  const firstEverLogMessage = "No log entries found";
 
   useEffect(() => {
     if (!rawLog) {
       readItemFromStorage(storageKey, setLog, firstEverLogMessage);
     }
   }, []);
+
+  const handleReset = () => {
+    if (!endEncounter) {
+      setModalVisible(false);
+    } else {
+      setReset(true);
+      setModalVisible(false);
+      setEndEncounter(false);
+    }
+  };
 
   return (
     <React.Fragment>
@@ -57,7 +71,7 @@ const LogModal = ({
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            Alert.alert('Window has been closed.');
+            Alert.alert("Window has been closed.");
           }}
         >
           <View style={styles.centeredView}>
@@ -66,7 +80,7 @@ const LogModal = ({
                 styles.modalView,
                 {
                   backgroundColor:
-                    kind === 'child'
+                    kind === "child"
                       ? colors.darkPrimary
                       : colors.darkSecondary,
                 },
@@ -76,9 +90,7 @@ const LogModal = ({
                 <TouchableOpacity
                   style={styles.touchable}
                   onPress={() => {
-                    endEncounter
-                      ? setEndEncounter(false) && setModalVisible(!modalVisible)
-                      : setModalVisible(!modalVisible);
+                    handleReset();
                   }}
                 >
                   <View style={styles.closeIcon}>
@@ -111,7 +123,7 @@ const LogModal = ({
                   styles.log,
                   {
                     backgroundColor:
-                      scheme === 'dark' ? colors.black : colors.white,
+                      scheme === "dark" ? colors.black : colors.white,
                   },
                 ]}
               >
@@ -120,7 +132,7 @@ const LogModal = ({
                     style={[
                       styles.text,
                       {
-                        color: scheme === 'dark' ? colors.white : colors.black,
+                        color: scheme === "dark" ? colors.white : colors.black,
                       },
                     ]}
                   >
@@ -140,52 +152,52 @@ export default LogModal;
 
 const styles = StyleSheet.create({
   button: {
-    alignContent: 'center',
+    alignContent: "center",
     backgroundColor: colors.dark,
-    justifyContent: 'center',
-    textAlign: 'center',
-    width: '44%',
+    justifyContent: "center",
+    textAlign: "center",
+    width: "44%",
   },
 
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   closeIcon: {
     height: 50,
     width: 50,
     //backgroundColor: colors.primary,
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   exportIcon: {
-    alignItems: 'center',
+    alignItems: "center",
     height: 50,
-    justifyContent: 'center',
+    justifyContent: "center",
     width: 50,
   },
   heading: {
-    alignSelf: 'center',
+    alignSelf: "center",
     color: colors.white,
     fontSize: 19,
     marginBottom: 5,
   },
   headers: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 5,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   icon: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -198,25 +210,25 @@ const styles = StyleSheet.create({
     width: defaultStyles.container.width - 10,
   },
   log: {
-    alignContent: 'flex-start',
-    justifyContent: 'flex-start',
+    alignContent: "flex-start",
+    justifyContent: "flex-start",
     backgroundColor: colors.white,
     borderRadius: 5,
     flex: 1,
-    flexDirection: 'column',
+    flexDirection: "column",
     margin: 10,
     padding: 5,
   },
   text: {
-    alignSelf: 'center',
+    alignSelf: "center",
     color: colors.black,
     fontSize: 18,
     lineHeight: 25,
     margin: 10,
-    textAlignVertical: 'center',
+    textAlignVertical: "center",
   },
   touchable: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     //backgroundColor: "blue",
   },
 });

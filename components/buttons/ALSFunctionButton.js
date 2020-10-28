@@ -1,27 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   StyleSheet,
   TouchableHighlight,
   TouchableOpacity,
   View,
-} from 'react-native';
+} from "react-native";
 
-import colors from '../../config/colors';
-import AppText from '../AppText';
-import ButtonIcon from '../buttons/ButtonIcon';
-import defaultStyles from '../../config/styles';
+import colors from "../../config/colors";
+import AppText from "../AppText";
+import ButtonIcon from "../buttons/ButtonIcon";
+import defaultStyles from "../../config/styles";
 
 const ALSFunctionButton = ({
   encounterState,
-  kind = 'child',
+  kind = "child",
   logState,
   resetState,
   style,
   backgroundColorPressed = null,
   timerState,
   title,
-  type = 'function',
+  type = "function",
 }) => {
   const reset = resetState.value;
   const setReset = resetState.setValue;
@@ -44,7 +44,7 @@ const ALSFunctionButton = ({
 
   // logs time with event button
   const updateTime = (title, oldState) => {
-    if (type === 'function' && !endEncounter) {
+    if (type === "function" && !endEncounter) {
       setIsTimerActive(true);
       const timeStamp = new Date();
       const oldButtonArray = oldState[title];
@@ -54,7 +54,7 @@ const ALSFunctionButton = ({
         updatingState[title] = newButtonArray;
         return updatingState;
       });
-    } else if (!endEncounter && type === 'checklist') {
+    } else if (!endEncounter && type === "checklist") {
       const timeStamp = new Date();
       const oldButtonArray = oldState[title];
       const newButtonArray = oldButtonArray.concat(timeStamp);
@@ -74,13 +74,13 @@ const ALSFunctionButton = ({
     !isTimerActive ? setIsTimerActive(true) : setIsTimerActive(false);
     setEndEncounter(false);
     Alert.alert(
-      'Your APLS Log has been reset.',
-      '',
+      "Your APLS Log has been reset.",
+      "",
       [
         {
-          text: 'OK',
-          onPress: () => 'OK',
-          style: 'cancel',
+          text: "OK",
+          onPress: () => "OK",
+          style: "cancel",
         },
       ],
       { cancelable: true }
@@ -91,14 +91,14 @@ const ALSFunctionButton = ({
   //reset button alert
   const resetLog = () => {
     Alert.alert(
-      'Do you wish to reset your APLS Log?',
-      '',
+      "Do you wish to reset your APLS Log?",
+      "",
       [
-        { text: 'Reset', onPress: () => handleReset() },
+        { text: "Reset", onPress: () => handleReset() },
         {
-          text: 'Cancel',
-          onPress: () => 'Cancel',
-          style: 'cancel',
+          text: "Cancel",
+          onPress: () => "Cancel",
+          style: "cancel",
         },
       ],
       { cancelable: false }
@@ -130,15 +130,15 @@ const ALSFunctionButton = ({
       setClicks(clicks + 1);
     } else {
       Alert.alert(
-        'You can only select this once',
-        'Please click undo if you need to cancel this log entry.',
+        "You can only select this once",
+        "Please click undo if you need to cancel this log entry.",
         [
           {
-            text: 'Undo',
+            text: "Undo",
             onPress: () => handleUndo(),
-            style: 'cancel',
+            style: "cancel",
           },
-          { text: 'OK', onPress: () => 'OK Pressed' },
+          { text: "OK", onPress: () => "OK Pressed" },
         ],
         { cancelable: false }
       );
@@ -198,7 +198,7 @@ const ALSFunctionButton = ({
           changeBackground && [
             {
               backgroundColor:
-                kind === 'child'
+                kind === "child"
                   ? backgroundColorPressed || colors.primary
                   : backgroundColorPressed || colors.secondary,
             },
@@ -221,28 +221,28 @@ export default ALSFunctionButton;
 
 const styles = StyleSheet.create({
   button: {
-    alignItems: 'center',
+    alignItems: "center",
     //justifyContent: 'center',
     backgroundColor: colors.medium,
     borderRadius: 5,
     //flex: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
     height: 57,
     margin: 5,
     padding: 10,
     paddingLeft: 20,
-    width: '98%',
+    width: "98%",
   },
   buttonPressed: {
-    alignItems: 'center',
+    alignItems: "center",
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   text: {
-    textAlignVertical: 'center',
-    height: 20,
+    textAlignVertical: "center",
+    height: 25,
     color: colors.white,
-    width: '90%',
+    width: "90%",
     //backgroundColor: 'black',
   },
 });
