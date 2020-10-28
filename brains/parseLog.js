@@ -1,7 +1,7 @@
 import zeit from './zeit';
 
 // functionButtons is object from the resus page logic
-export default (functionButtons, type = 'APLS') => {
+export default (functionButtons, type) => {
   const objectAsArray = [];
   for (const [key, value] of Object.entries(functionButtons)) {
     if (Array.isArray(value) && value.length > 0) {
@@ -50,7 +50,7 @@ export default (functionButtons, type = 'APLS') => {
     if (day.length < 2) day = '0' + day;
     return [day, month, year].join('/');
   };
-  if (objectAsArray[0] === undefined) return 'No entries found in log';
+  if (objectAsArray[0] === undefined) return null;
   let outputString = `Log of ${type} encounter on ${formatDate(
     objectAsArray[0][0]
   )}:\n\n${formatTime(objectAsArray[0][0])}: Resuscitation Encounter Started`;
@@ -59,7 +59,7 @@ export default (functionButtons, type = 'APLS') => {
       objectAsArray[i][1]
     }`;
     outputString += newLine;
-  } //need to get rid of milliseconds output from total elapsed time of resuscitation
+  }
 
   if (
     functionButtons.ROSC &&

@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Alert,
   Modal,
   ScrollView,
-  Share,
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
-  useWindowDimensions,
   View,
 } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -17,12 +15,14 @@ import defaultStyles from '../../app/config/styles';
 import AppText from './AppText';
 import ALSDisplayButton from './buttons/ALSDisplayButton';
 import parseLog from '../brains/parseLog';
+import onShare from '../brains/onShare';
+import { readItemFromStorage, writeItemToStorage } from '../brains/storage';
 
 const LogModal = ({
   encounterState,
   logInput,
   logVisibleState,
-  kind = 'child',
+  kind,
   style,
 }) => {
   const scheme = useColorScheme();
@@ -33,25 +33,18 @@ const LogModal = ({
   const endEncounter = encounterState.value;
   const setEndEncounter = encounterState.setValue;
 
-  // const onShare = async () => {
-  //     try {
-  //       const result = await Share.share({
-  //     title: 'APLS Log',
-  //     message: parseLog(logInput)
-  //       });
-  //       if (result.action === Share.sharedAction) {
-  //         if (result.activityType) {
-  //           // shared with activity type of result.activityType
-  //         } else {
-  //           // shared
-  //         }
-  //       } else if (result.action === Share.dismissedAction) {
-  //         // dismissed
-  //       }
-  //     } catch (error) {
-  //       alert(error.message);
-  //     }
-  //   };
+  const logType = kind === 'child' ? 'APLS' : 'NLS';
+  const storageKey = `${logType}_log`;
+  const rawLog = parseLog(logInput, logType);
+  const [log, setLog] = useState(rawLog);
+  if (rawLog) writeItemToStorage(storageKey, setLog, rawLog);
+  const firstEverLogMessage = 'No log entries found';
+
+  useEffect(() => {
+    if (!rawLog) {
+      readItemFromStorage(storageKey, setLog, firstEverLogMessage);
+    }
+  }, []);
 
   return (
     <React.Fragment>
@@ -97,16 +90,16 @@ const LogModal = ({
                   </View>
                 </TouchableOpacity>
 
-                <AppText style={styles.heading}>APLS Log</AppText>
+                <AppText
+                  style={styles.heading}
+                >{`Most Recent ${logType} Log`}</AppText>
                 <TouchableOpacity
                   style={styles.exportIcon}
-                  onPress={() => {
-                    onShare;
-                  }}
+                  onPress={() => onShare(log)}
                 >
                   <View style={styles.exportIcon}>
                     <MaterialCommunityIcons
-                      name="export"
+                      name="export-variant"
                       color={colors.white}
                       size={30}
                     />
@@ -131,7 +124,7 @@ const LogModal = ({
                       },
                     ]}
                   >
-                    {parseLog(logInput)}
+                    {log}
                   </AppText>
                 </ScrollView>
               </View>
@@ -176,7 +169,7 @@ const styles = StyleSheet.create({
   heading: {
     alignSelf: 'center',
     color: colors.white,
-    fontSize: 20,
+    fontSize: 19,
     marginBottom: 5,
   },
   headers: {
