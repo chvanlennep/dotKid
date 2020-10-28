@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Platform,
   StyleSheet,
@@ -6,22 +6,22 @@ import {
   useColorScheme,
   View,
   TouchableOpacity,
-} from "react-native";
-import { Picker } from "@react-native-community/picker";
-import { useFormikContext } from "formik";
+} from 'react-native';
+import { Picker } from '@react-native-community/picker';
+import { useFormikContext } from 'formik';
 
-import colors from "../../../config/colors";
-import defaultStyles from "../../../config/styles";
-import ButtonIcon from "../ButtonIcon";
-import AppText from "../../AppText";
-import ErrorMessage from "../../ErrorMessage";
-import { GlobalStateContext } from "../../GlobalStateContext";
+import colors from '../../../config/colors';
+import defaultStyles from '../../../config/styles';
+import ButtonIcon from '../ButtonIcon';
+import AppText from '../../AppText';
+import ErrorMessage from '../../ErrorMessage';
+import { GlobalStateContext } from '../../GlobalStateContext';
 
-const HeartRateInputButton = ({ global = false, name = "heartRate" }) => {
+const HeartRateInputButton = ({ global = false, name = 'heartRate' }) => {
   const [showInput, setShowInput] = useState(false);
-  const [buttonText, setButtonText] = useState("Heart Rate");
+  const [buttonText, setButtonText] = useState('Heart Rate');
   const [showCancel, setShowCancel] = useState(false);
-  const [localHR, setLocalHR] = useState("");
+  const [localHR, setLocalHR] = useState('');
 
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
   const { setFieldValue, errors, touched, values } = useFormikContext();
@@ -42,7 +42,7 @@ const HeartRateInputButton = ({ global = false, name = "heartRate" }) => {
       }
     } else {
       if (!localHR) {
-        setLocalHR("60-100");
+        setLocalHR('60-100');
       }
       setShowInput(true);
       setShowCancel(true);
@@ -50,11 +50,11 @@ const HeartRateInputButton = ({ global = false, name = "heartRate" }) => {
   };
 
   const cancelInput = () => {
-    setButtonText("Heart Rate");
+    setButtonText('Heart Rate');
     setShowInput(false);
-    setLocalHR("");
+    setLocalHR('');
     if (!global) {
-      setFieldValue(name, "");
+      setFieldValue(name, '');
     }
     setShowCancel(false);
   };
@@ -67,15 +67,15 @@ const HeartRateInputButton = ({ global = false, name = "heartRate" }) => {
         if (!values[name]) {
           setShowInput(false);
           setShowCancel(false);
-          setButtonText("Heart Rate");
-          setLocalHR("");
+          setButtonText('Heart Rate');
+          setLocalHR('');
         }
       }
     }
   });
 
   return (
-    <>
+    <React.Fragment>
       <View>
         <View style={styles.button}>
           <TouchableOpacity onPress={toggleInput}>
@@ -95,7 +95,7 @@ const HeartRateInputButton = ({ global = false, name = "heartRate" }) => {
         <>
           <View
             style={
-              scheme === "dark"
+              scheme === 'dark'
                 ? styles.darkPickerContainer
                 : styles.lightPickerContainer
             }
@@ -120,7 +120,7 @@ const HeartRateInputButton = ({ global = false, name = "heartRate" }) => {
         </>
       )}
       <ErrorMessage error={errors[name]} visible={touched[name]} />
-    </>
+    </React.Fragment>
   );
 };
 
@@ -128,50 +128,50 @@ export default HeartRateInputButton;
 
 const styles = StyleSheet.create({
   button: {
-    alignItems: "center",
+    alignItems: 'center',
     backgroundColor: colors.dark,
     borderRadius: 5,
     color: colors.white,
-    flexDirection: "row",
+    flexDirection: 'row',
     height: 57,
     margin: 5,
     padding: 10,
-    width: Dimensions.get("window").width * 0.85,
+    width: Dimensions.get('window').width * 0.85,
   },
   buttonTextBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: Dimensions.get("window").width * 0.85,
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: Dimensions.get('window').width * 0.72,
   },
   picker: {
     height: 200,
     width: 280,
   },
   lightPickerContainer: {
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "center",
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   darkPickerContainer: {
-    alignSelf: "center",
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
     backgroundColor: colors.light,
     borderRadius: 5,
-    width: Dimensions.get("window").width * 0.85,
+    width: Dimensions.get('window').width * 0.85,
     backgroundColor: colors.light,
   },
   submitButton: {
-    alignItems: "center",
+    alignItems: 'center',
     backgroundColor: colors.medium,
     borderRadius: 5,
     color: colors.white,
-    flexDirection: "row",
+    flexDirection: 'row',
     height: 57,
     margin: 5,
     padding: 10,
-    justifyContent: "center",
-    width: Dimensions.get("window").width * 0.85,
+    justifyContent: 'center',
+    width: Dimensions.get('window').width * 0.85,
   },
 });

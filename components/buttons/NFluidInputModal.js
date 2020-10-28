@@ -20,6 +20,7 @@ import defaultStyles from '../../config/styles';
 import NumberInputButton from './input/NumberInputButton';
 import AppForm from '../AppForm';
 import FormSubmitTickButton from './FormSubmitTickButton';
+import { readItemFromStorage, writeItemToStorage } from '../../brains/storage';
 
 const NFluidInputModal = ({ name }) => {
   const scheme = useColorScheme();
@@ -39,31 +40,6 @@ const NFluidInputModal = ({ name }) => {
   const buttonText = name;
   const [values, setValues] = useState(defaults);
   const [showReset, setShowReset] = useState(false);
-
-  const readItemFromStorage = async () => {
-    let values;
-    try {
-      values = await AsyncStorage.getItem(storageKey);
-    } catch (error) {
-      console.log(`Error reading item: ${error}`);
-    }
-    if (values === null || values === undefined) {
-      setValues(defaults);
-    } else {
-      const parsedValues = JSON.parse(values);
-      setValues(parsedValues);
-    }
-  };
-
-  const writeItemToStorage = async (newValues) => {
-    const serialisedValues = JSON.stringify(newValues);
-    try {
-      await AsyncStorage.setItem(storageKey, serialisedValues);
-    } catch (error) {
-      console.log(`Error writing item: ${error}`);
-    }
-    setValues(newValues);
-  };
 
   const wrongNumber = '↑ Are you sure about this amount?';
   const validationSchema = Yup.object().shape({
@@ -90,7 +66,7 @@ const NFluidInputModal = ({ name }) => {
   });
 
   useEffect(() => {
-    readItemFromStorage();
+    readItemFromStorage(storageKey, setValues, defaults);
   }, []);
 
   useEffect(() => {
@@ -119,7 +95,7 @@ const NFluidInputModal = ({ name }) => {
         text: 'Yes',
         onPress: () => {
           setShowReset(false);
-          writeItemToStorage(defaults);
+          writeItemToStorage(storageKey, setValues, defaults);
         },
       },
     ]);
@@ -183,9 +159,8 @@ const NFluidInputModal = ({ name }) => {
   ));
 
   const submitRequirements = (values) => {
-    setValues(values);
+    writeItemToStorage(storageKey, setValues, values);
     setModalVisible(false);
-    writeItemToStorage(values);
   };
 
   const infoParagraph =

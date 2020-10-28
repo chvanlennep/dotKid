@@ -104,7 +104,7 @@ const NLSScreen = () => {
     setIsTimerActive(false);
     setEndEncounter(false);
     Alert.alert(
-      'Your NLS Log has been reset.',
+      'Your NLS encounter has been reset.',
       '',
       [
         {
@@ -121,7 +121,7 @@ const NLSScreen = () => {
   //reset button alert
   const resetLog = () => {
     Alert.alert(
-      'Do you wish to reset your NLS Log?',
+      'Do you wish to reset your NLS encounter?',
       '',
       [
         { text: 'Reset', onPress: () => handleReset() },

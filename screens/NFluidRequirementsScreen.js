@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Yup from 'yup';
@@ -19,11 +19,21 @@ import ageChecker from '../brains/ageChecker';
 import nFluidCalculator from '../brains/nFluidCalculator';
 import { GlobalStateContext } from '../components/GlobalStateContext';
 import zeit from '../brains/zeit';
+import { readItemFromStorage } from '../brains/storage';
 
 const NFluidRequirementsScreen = () => {
   const navigation = useNavigation();
 
+  const defaults = {
+    day1: '60',
+    day2: '80',
+    day3: '100',
+    day4: '120',
+    day5: '150',
+  };
+
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
+  const [workingValues, setWorkingValues] = useState(defaults);
 
   const moveDataAcrossGlobal = (movingTo, values) => {
     setGlobalStats((globalStats) => {
@@ -86,29 +96,17 @@ const NFluidRequirementsScreen = () => {
     tom: null,
   };
 
-  const defaults = {
-    day1: '60',
-    day2: '80',
-    day3: '100',
-    day4: '120',
-    day5: '150',
-  };
-
   const handleFormikSubmit = async (values) => {
-    let referenceValues;
-    let parsedReferenceValues;
     const { gestationInDays } = values;
     const correctedGestation =
       gestationInDays + zeit(values.dob, 'days', values.dom);
     const termEtc =
       correctedGestation < 280 && gestationInDays < 259 ? 'Preterm' : 'Term';
-    try {
-      referenceValues = await AsyncStorage.getItem(
-        `${termEtc.toLowerCase()}_fluid_requirements`
-      );
-    } catch (error) {
-      console.log(`Error reading item: ${error}`);
-    }
+    readItemFromStorage(
+      `${termEtc.toLowerCase()}_fluid_requirements`,
+      setWorkingValues,
+      defaults
+    );
     const checkAge = ageChecker(values, 29);
     if (checkAge === 'Negative age') {
       Alert.alert('Time Travelling Patient', 'Please check the dates entered', [
@@ -136,9 +134,7 @@ const NFluidRequirementsScreen = () => {
         ]
       );
     } else {
-      parsedReferenceValues = JSON.parse(referenceValues);
-      const finalReferenceValues = parsedReferenceValues || defaults;
-      const results = nFluidCalculator(values, finalReferenceValues, termEtc);
+      const results = nFluidCalculator(values, workingValues, termEtc);
       const serialisedObject = JSON.stringify(results);
       navigation.navigate(routes.NEONATE_FLUID_RESULTS, serialisedObject);
     }

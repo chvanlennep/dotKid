@@ -138,7 +138,7 @@ const APLSScreen = () => {
     setIsTimerActive(false);
     setEndEncounter(false);
     Alert.alert(
-      'Your APLS Log has been reset.',
+      'Your APLS encounter has been reset.',
       '',
       [
         {
@@ -155,7 +155,7 @@ const APLSScreen = () => {
   //reset button alert
   const resetLog = () => {
     Alert.alert(
-      'Do you wish to reset your APLS Log?',
+      'Do you wish to reset your APLS encounter?',
       '',
       [
         { text: 'Reset', onPress: () => handleReset() },
@@ -314,6 +314,7 @@ const APLSScreen = () => {
             logInput={functionButtons}
             logVisibleState={logVisibleState}
             style={styles.button}
+            kind="child"
           />
           <RhythmModal
             logState={logState}

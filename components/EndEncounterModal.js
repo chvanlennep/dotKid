@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Dimensions,
@@ -8,14 +8,14 @@ import {
   FlatList,
   useWindowDimensions,
   View,
-} from "react-native";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+} from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-import colors from "../config/colors";
-import defaultStyles from "../config/styles";
-import EndEncounterButton from "../components/buttons/EndEncounterButton";
-import AppText from "./AppText";
-import ALSToolButton from "./buttons/ALSToolButton";
+import colors from '../config/colors';
+import defaultStyles from '../config/styles';
+import EndEncounterButton from '../components/buttons/EndEncounterButton';
+import AppText from './AppText';
+import ALSToolButton from './buttons/ALSToolButton';
 
 const EndEncounterModal = ({
   logState,
@@ -43,7 +43,7 @@ const EndEncounterModal = ({
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            Alert.alert("Window has been closed.");
+            Alert.alert('Window has been closed.');
           }}
         >
           <View style={styles.centeredView}>
@@ -110,62 +110,62 @@ export default EndEncounterModal;
 
 const styles = StyleSheet.create({
   assessment: {
-    alignContent: "center",
-    alignItems: "center",
+    alignContent: 'center',
+    alignItems: 'center',
     backgroundColor: colors.light,
     borderRadius: 5,
-    flexDirection: "column",
-    flexWrap: "nowrap",
+    flexDirection: 'column',
+    flexWrap: 'nowrap',
     flex: 1,
     margin: 10,
     padding: 7,
     paddingBottom: 15,
   },
   button: {
-    alignItems: "center",
-    flexWrap: "nowrap",
+    alignItems: 'center',
+    flexWrap: 'nowrap',
     backgroundColor: colors.dark,
-    justifyContent: "center",
+    justifyContent: 'center',
     padding: 2,
-    width: "50%",
+    width: '50%',
   },
   buttonPressed: {
     backgroundColor: colors.primary,
-    flexWrap: "nowrap",
+    flexWrap: 'nowrap',
     height: 90,
-    justifyContent: "center",
-    textAlign: "center",
+    justifyContent: 'center',
+    textAlign: 'center',
   },
 
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   closeIcon: {
     height: 50,
     width: 50,
     //backgroundColor: colors.primary,
     borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   heading: {
-    alignSelf: "center",
+    alignSelf: 'center',
     color: colors.white,
     fontSize: 20,
     marginTop: -30,
     marginBottom: 5,
   },
   icon: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 10,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -179,32 +179,32 @@ const styles = StyleSheet.create({
     backgroundColor: colors.darkSecondary,
   },
   options: {
-    flexDirection: "row",
+    flexDirection: 'row',
     paddingBottom: 10,
   },
   sats: {
-    justifyContent: "center",
+    justifyContent: 'center',
     backgroundColor: colors.dark,
     borderRadius: 5,
     height: 50,
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     margin: 5,
     padding: 10,
   },
   satsText: {
     fontSize: 16,
     lineHeight: 24,
-    textAlign: "center",
-    textAlignVertical: "center",
-    alignSelf: "center",
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    alignSelf: 'center',
     margin: 4,
     color: colors.white,
   },
   slider: {
     marginTop: 10,
     marginBottom: 20,
-    alignItems: "center",
+    alignItems: 'center',
   },
   buttons: {
     backgroundColor: colors.dark,
@@ -214,14 +214,14 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 18,
-    textAlign: "center",
-    textAlignVertical: "center",
-    alignSelf: "center",
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    alignSelf: 'center',
     margin: 3,
     color: colors.white,
   },
   touchable: {
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
     //backgroundColor: "blue",
   },
 });

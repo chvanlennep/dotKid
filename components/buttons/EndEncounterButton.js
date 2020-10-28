@@ -4,7 +4,7 @@ import React, {
   useMemo,
   useRef,
   useState,
-} from "react";
+} from 'react';
 import {
   Alert,
   StyleSheet,
@@ -12,11 +12,11 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   View,
-} from "react-native";
+} from 'react-native';
 
-import colors from "../../config/colors";
-import AppText from "../AppText";
-import ButtonIcon from "../buttons/ButtonIcon";
+import colors from '../../config/colors';
+import AppText from '../AppText';
+import ButtonIcon from '../buttons/ButtonIcon';
 
 const EndEncounterButton = ({
   encounterState,
@@ -73,13 +73,13 @@ const EndEncounterButton = ({
     !isTimerActive ? setIsTimerActive(true) : setIsTimerActive(false);
     setEndEncounter(false);
     Alert.alert(
-      "Your APLS Log has been reset.",
-      "",
+      'Your APLS Log has been reset.',
+      '',
       [
         {
-          text: "OK",
-          onPress: () => "OK",
-          style: "cancel",
+          text: 'OK',
+          onPress: () => 'OK',
+          style: 'cancel',
         },
       ],
       { cancelable: true }
@@ -90,14 +90,14 @@ const EndEncounterButton = ({
   //reset button alert
   const resetLog = () => {
     Alert.alert(
-      "Do you wish to reset your APLS Log?",
-      "",
+      'Do you wish to reset your APLS Log?',
+      '',
       [
-        { text: "Reset", onPress: () => handleReset() },
+        { text: 'Reset', onPress: () => handleReset() },
         {
-          text: "Cancel",
-          onPress: () => "Cancel",
-          style: "cancel",
+          text: 'Cancel',
+          onPress: () => 'Cancel',
+          style: 'cancel',
         },
       ],
       { cancelable: false }
@@ -131,15 +131,15 @@ const EndEncounterButton = ({
       setModal(false);
     } else {
       Alert.alert(
-        "You can only select this once",
-        "Please click undo if you need to cancel this log entry.",
+        'You can only select this once',
+        'Please click undo if you need to cancel this log entry.',
         [
           {
-            text: "Undo",
+            text: 'Undo',
             onPress: () => handleUndo(),
-            style: "cancel",
+            style: 'cancel',
           },
-          { text: "OK", onPress: () => "OK Pressed" },
+          { text: 'OK', onPress: () => 'OK Pressed' },
         ],
         { cancelable: false }
       );
@@ -196,7 +196,7 @@ const EndEncounterButton = ({
           styles.buttonPressed,
           {
             backgroundColor:
-              kind === "child" ? colors.primary : colors.secondary,
+              kind === 'child' ? colors.primary : colors.secondary,
           },
         ],
       ]}
@@ -211,7 +211,7 @@ const EndEncounterButton = ({
             styles.buttonPressed,
             {
               backgroundColor:
-                kind === "child" ? colors.primary : colors.secondary,
+                kind === 'child' ? colors.primary : colors.secondary,
             },
           ],
         ]}
@@ -232,28 +232,27 @@ export default EndEncounterButton;
 
 const styles = StyleSheet.create({
   button: {
-    alignItems: "center",
+    alignItems: 'center',
     backgroundColor: colors.medium,
     borderRadius: 5,
-    flex: 1,
-    flexDirection: "row",
+    flexDirection: 'row',
     height: 57,
     margin: 5,
     padding: 10,
-    width: "98%",
+    width: '98%',
   },
   buttonPressed: {
-    alignItems: "center",
+    alignItems: 'center',
     flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     backgroundColor: colors.primary,
   },
   content: {
-    alignItems: "center",
+    alignItems: 'center',
     flex: 1,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
 });

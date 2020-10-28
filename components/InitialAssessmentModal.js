@@ -1,32 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Modal,
+  ScrollView,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
   View,
-} from "react-native";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import * as Yup from "yup";
+} from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-import Button from "../components/buttons/Button";
-import colors from "../../app/config/colors";
-import defaultStyles from "../../app/config/styles";
-import ALSDisplayButton from "./buttons/ALSDisplayButton";
-import AppText from "./AppText";
-import ALSFunctionButton from "./buttons/ALSFunctionButton";
-import ALSListHeader from "./buttons/ALSListHeader";
-import FormSubmitButton from "../components/buttons/FormSubmitButton";
-import FormResetButton from "../components/buttons/FormResetButton";
-import AppForm from "../components/AppForm";
-import HeartRateInputButton from "../components/buttons/input/HeartRateInputButton";
-import ChestMovementInputButton from "../components/buttons/input/ChestMovementInputButton";
-import BreathingInputButton from "../components/buttons/input/BreathingInputButton";
-import SaturationsInputButton from "../components/buttons/input/SaturationsInputButton";
-import ToneInputButton from "../components/buttons/input/ToneInputButton";
-import FiO2Slider from "./buttons/input/FiO2Slider";
+import * as Yup from 'yup';
+
+import Button from '../components/buttons/Button';
+import colors from '../../app/config/colors';
+import defaultStyles from '../../app/config/styles';
+import ALSDisplayButton from './buttons/ALSDisplayButton';
+import AppText from './AppText';
+import ALSFunctionButton from './buttons/ALSFunctionButton';
+import ALSListHeader from './buttons/ALSListHeader';
+import FormSubmitButton from '../components/buttons/FormSubmitButton';
+import FormResetButton from '../components/buttons/FormResetButton';
+import AppForm from '../components/AppForm';
+import HeartRateInputButton from '../components/buttons/input/HeartRateInputButton';
+import ChestMovementInputButton from '../components/buttons/input/ChestMovementInputButton';
+import BreathingInputButton from '../components/buttons/input/BreathingInputButton';
+import SaturationsInputButton from '../components/buttons/input/SaturationsInputButton';
+import ToneInputButton from '../components/buttons/input/ToneInputButton';
+import FiO2Slider from './buttons/input/FiO2Slider';
 
 const AssessBabyModal = ({
   encounterState,
@@ -53,21 +54,21 @@ const AssessBabyModal = ({
 
   const validationSchema = Yup.object().shape({
     heartRate: Yup.string()
-      .required("↑ Please select a heart rate")
-      .label("Heart Rate"),
+      .required('↑ Please select a heart rate')
+      .label('Heart Rate'),
     breathing: Yup.string()
-      .required("↑ Please select a breathing assessment")
-      .label("Breathing"),
+      .required('↑ Please select a breathing assessment')
+      .label('Breathing'),
 
     tone: Yup.string()
-      .required("↑ Please select a tone assessment")
-      .label("Tone"),
+      .required('↑ Please select a tone assessment')
+      .label('Tone'),
   });
 
   const initialValues = {
-    heartRate: "",
-    breathing: "",
-    tone: "",
+    heartRate: '',
+    breathing: '',
+    tone: '',
   };
 
   // logs time with event button
@@ -88,19 +89,18 @@ const AssessBabyModal = ({
     updateTime(values.tone, functionButtons);
     setModalVisible(false);
     setInitialAssessmentComplete(true);
-    console.log(initialAssessmentComplete);
   };
 
   const handlePress = () => {
     if (initialAssessmentComplete) {
       Alert.alert(
         'One initial assessment per encounter. Please press "Assess Baby" if you wish to complete a further assessment',
-        "",
+        '',
         [
           {
-            text: "Ok",
-            onPress: () => "Cancel",
-            style: "cancel",
+            text: 'Ok',
+            onPress: () => 'Cancel',
+            style: 'cancel',
           },
         ]
       );
@@ -135,7 +135,7 @@ const AssessBabyModal = ({
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            Alert.alert("Window has been closed.");
+            Alert.alert('Window has been closed.');
           }}
         >
           <View style={styles.centeredView}>
@@ -155,25 +155,25 @@ const AssessBabyModal = ({
                 </View>
               </TouchableOpacity>
               <AppText style={styles.heading}>Initial Assessment</AppText>
-              <KeyboardAwareScrollView>
+              <ScrollView>
                 <View style={styles.assessment}>
                   <ALSFunctionButton
                     kind="neonate"
-                    title={"Dry and wrap baby"}
+                    title={'Dry and wrap baby'}
                     timerState={timerState}
                     logState={logState}
                     encounterState={encounterState}
                     resetState={resetState}
-                    style={styles.button}
+                    style={styles.functionButtons}
                   />
                   <ALSFunctionButton
                     kind="neonate"
-                    title={"Hat on"}
+                    title={'Hat on'}
                     timerState={timerState}
                     logState={logState}
                     encounterState={encounterState}
                     resetState={resetState}
-                    style={styles.button}
+                    style={styles.functionButtons}
                   />
                   <AppForm
                     initialValues={initialValues}
@@ -185,7 +185,7 @@ const AssessBabyModal = ({
                     <ToneInputButton />
 
                     <FormResetButton
-                      style={{ width: Dimensions.get("window").width * 0.85 }}
+                      style={{ width: Dimensions.get('window').width * 0.85 }}
                     />
                     <FormSubmitButton
                       name="Complete Assessment"
@@ -193,7 +193,7 @@ const AssessBabyModal = ({
                     />
                   </AppForm>
                 </View>
-              </KeyboardAwareScrollView>
+              </ScrollView>
             </View>
           </View>
         </Modal>
@@ -205,52 +205,52 @@ const AssessBabyModal = ({
 export default AssessBabyModal;
 const styles = StyleSheet.create({
   assessment: {
-    alignContent: "center",
-    alignItems: "center",
+    alignContent: 'center',
+    alignItems: 'center',
     backgroundColor: colors.light,
     borderRadius: 5,
-    flexDirection: "column",
-    flexWrap: "nowrap",
+    flexDirection: 'column',
+    flexWrap: 'nowrap',
     margin: 10,
     padding: 7,
     paddingBottom: 15,
   },
-  button: {
-    backgroundColor: colors.dark,
-  },
   buttonPressed: {
     backgroundColor: colors.secondary,
   },
-
+  functionButtons: {
+    width: Dimensions.get('window').width * 0.85,
+    backgroundColor: colors.dark,
+  },
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   closeIcon: {
     height: 50,
     width: 50,
     //backgroundColor: colors.primary,
     borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   heading: {
-    alignSelf: "center",
+    alignSelf: 'center',
     color: colors.white,
     fontSize: 20,
     marginTop: -30,
     marginBottom: 5,
   },
   icon: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 10,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -261,50 +261,52 @@ const styles = StyleSheet.create({
     elevation: 5,
     flex: 0.7,
     width: defaultStyles.container.width - 10,
-    backgroundColor: "#096534",
+    backgroundColor: '#096534',
   },
   options: {
-    flexDirection: "row",
+    flexDirection: 'row',
     paddingBottom: 10,
   },
   sats: {
-    justifyContent: "center",
+    justifyContent: 'center',
     backgroundColor: colors.dark,
     borderRadius: 5,
     height: 95,
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     margin: 5,
     padding: 10,
   },
   satsText: {
     fontSize: 16,
     lineHeight: 24,
-    textAlign: "center",
-    textAlignVertical: "center",
-    alignSelf: "center",
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    alignSelf: 'center',
     margin: 4,
     color: colors.white,
   },
   slider: {
     marginTop: 10,
     marginBottom: 20,
-    alignItems: "center",
+    alignItems: 'center',
   },
   submit: {
     backgroundColor: colors.secondary,
-    width: Dimensions.get("window").width * 0.85,
+    width: Dimensions.get('window').width * 0.85,
   },
   text: {
     fontSize: 18,
-    textAlign: "center",
-    textAlignVertical: "center",
-    alignSelf: "center",
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    alignSelf: 'center',
     margin: 3,
     color: colors.white,
   },
   touchable: {
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
     //backgroundColor: "blue",
   },
 });
+
+const SafeKeeping = () => <></>;

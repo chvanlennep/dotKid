@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, TouchableOpacity, Dimensions } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
 
 import AppText from '../AppText';
 import colors from '../../config/colors';

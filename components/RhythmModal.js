@@ -49,7 +49,7 @@ const RhythmModal = ({ logState, resetState, style }) => {
             },
             style: 'cancel',
           },
-          { text: 'OK', onPress: () => console.log('OK Pressed') },
+          { text: 'OK', onPress: () => 'OK Pressed' },
         ],
         { cancelable: false }
       );

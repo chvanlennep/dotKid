@@ -106,7 +106,6 @@ const AssessBabyModal = ({
 
   //form submission
   const handleFormikSubmit = (values) => {
-    console.log(values);
     updateTime('FiO2', functionButtons, values.FiO2);
     updateTime(values.heartRate, functionButtons);
     updateTime(values.chestMovement, functionButtons);

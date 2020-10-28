@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Platform,
   StyleSheet,
@@ -6,22 +6,22 @@ import {
   useColorScheme,
   View,
   TouchableOpacity,
-} from "react-native";
-import { Picker } from "@react-native-community/picker";
-import { useFormikContext } from "formik";
+} from 'react-native';
+import { Picker } from '@react-native-community/picker';
+import { useFormikContext } from 'formik';
 
-import colors from "../../../config/colors";
-import defaultStyles from "../../../config/styles";
-import ButtonIcon from "../ButtonIcon";
-import AppText from "../../AppText";
-import ErrorMessage from "../../ErrorMessage";
-import { GlobalStateContext } from "../../GlobalStateContext";
+import colors from '../../../config/colors';
+import defaultStyles from '../../../config/styles';
+import ButtonIcon from '../ButtonIcon';
+import AppText from '../../AppText';
+import ErrorMessage from '../../ErrorMessage';
+import { GlobalStateContext } from '../../GlobalStateContext';
 
-const SaturationsInputButton = ({ global = false, name = "saturations" }) => {
+const SaturationsInputButton = ({ global = false, name = 'saturations' }) => {
   const [showInput, setShowInput] = useState(false);
-  const [buttonText, setButtonText] = useState("Sats/Colour");
+  const [buttonText, setButtonText] = useState('Sats/Colour');
   const [showCancel, setShowCancel] = useState(false);
-  const [localSaturations, setLocalSaturations] = useState("");
+  const [localSaturations, setLocalSaturations] = useState('');
 
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
   const { setFieldValue, errors, touched, values } = useFormikContext();
@@ -31,7 +31,11 @@ const SaturationsInputButton = ({ global = false, name = "saturations" }) => {
     if (showInput) {
       setShowInput(false);
       if (localSaturations) {
-        setButtonText(`Sats/Colour: ${localSaturations}`);
+        const buttonText =
+          localSaturations === 'Adequate For Age'
+            ? 'Sats/Colour: Ad. for Age'
+            : 'Sats/Colour: Inad. for Age';
+        setButtonText(buttonText);
         setShowCancel(true);
         if (!global) {
           setFieldValue(name, localSaturations);
@@ -42,7 +46,7 @@ const SaturationsInputButton = ({ global = false, name = "saturations" }) => {
       }
     } else {
       if (!localSaturations) {
-        setLocalSaturations("Adequate For Age");
+        setLocalSaturations('Adequate For Age');
       }
       setShowInput(true);
       setShowCancel(true);
@@ -50,11 +54,11 @@ const SaturationsInputButton = ({ global = false, name = "saturations" }) => {
   };
 
   const cancelInput = () => {
-    setButtonText("Sats/Colour");
+    setButtonText('Sats/Colour');
     setShowInput(false);
-    setLocalSaturations("");
+    setLocalSaturations('');
     if (!global) {
-      setFieldValue(name, "");
+      setFieldValue(name, '');
     }
     setShowCancel(false);
   };
@@ -67,15 +71,15 @@ const SaturationsInputButton = ({ global = false, name = "saturations" }) => {
         if (!values[name]) {
           setShowInput(false);
           setShowCancel(false);
-          setButtonText("Sats/Colour");
-          setLocalSaturations("");
+          setButtonText('Sats/Colour');
+          setLocalSaturations('');
         }
       }
     }
   });
 
   return (
-    <>
+    <React.Fragment>
       <View>
         <View style={styles.button}>
           <TouchableOpacity onPress={toggleInput}>
@@ -95,7 +99,7 @@ const SaturationsInputButton = ({ global = false, name = "saturations" }) => {
         <>
           <View
             style={
-              scheme === "dark"
+              scheme === 'dark'
                 ? styles.darkPickerContainer
                 : styles.lightPickerContainer
             }
@@ -107,7 +111,10 @@ const SaturationsInputButton = ({ global = false, name = "saturations" }) => {
               }}
               selectedValue={localSaturations}
             >
-              <Picker.Item label="Low For Age" value="Low For Age" />
+              <Picker.Item
+                label="Inadequate For Age"
+                value="Inadequate For Age"
+              />
               <Picker.Item label="Adequate For Age" value="Adequate For Age" />
             </Picker>
           </View>
@@ -119,7 +126,7 @@ const SaturationsInputButton = ({ global = false, name = "saturations" }) => {
         </>
       )}
       <ErrorMessage error={errors[name]} visible={touched[name]} />
-    </>
+    </React.Fragment>
   );
 };
 
@@ -127,50 +134,50 @@ export default SaturationsInputButton;
 
 const styles = StyleSheet.create({
   button: {
-    alignItems: "center",
+    alignItems: 'center',
     backgroundColor: colors.dark,
     borderRadius: 5,
     color: colors.white,
-    flexDirection: "row",
+    flexDirection: 'row',
     height: 57,
     margin: 5,
     padding: 10,
-    width: Dimensions.get("window").width * 0.85,
+    width: Dimensions.get('window').width * 0.85,
   },
   buttonTextBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: Dimensions.get("window").width * 0.85,
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: Dimensions.get('window').width * 0.72,
   },
   picker: {
     height: 200,
     width: 280,
   },
   lightPickerContainer: {
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "center",
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   darkPickerContainer: {
-    alignSelf: "center",
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
     backgroundColor: colors.light,
     borderRadius: 5,
-    width: Dimensions.get("window").width * 0.85,
+    width: Dimensions.get('window').width * 0.85,
     backgroundColor: colors.light,
   },
   submitButton: {
-    alignItems: "center",
+    alignItems: 'center',
     backgroundColor: colors.medium,
     borderRadius: 5,
     color: colors.white,
-    flexDirection: "row",
+    flexDirection: 'row',
     height: 57,
     margin: 5,
     padding: 10,
-    justifyContent: "center",
-    width: Dimensions.get("window").width * 0.85,
+    justifyContent: 'center',
+    width: Dimensions.get('window').width * 0.85,
   },
 });

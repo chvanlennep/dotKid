@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   StyleSheet,
   TouchableHighlight,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 
-import colors from "../../config/colors";
-import AppText from "../AppText";
-import ButtonIcon from "../buttons/ButtonIcon";
+import colors from '../../config/colors';
+import AppText from '../AppText';
+import ButtonIcon from '../buttons/ButtonIcon';
 
 const ALSTeriaryFunctionButton = ({
   encounterState,
@@ -99,7 +99,6 @@ const ALSTeriaryFunctionButton = ({
   const handleUndo = () => {
     handleChangeBackground(changeBackground, functionButtons, title);
     removeTime(title, functionButtons);
-    console.log(functionButtons);
     setClicks(clicks - 1);
   };
 
@@ -120,13 +119,13 @@ const ALSTeriaryFunctionButton = ({
     !isTimerActive ? setIsTimerActive(true) : setIsTimerActive(false);
     setEndEncounter(false);
     Alert.alert(
-      "Your APLS Log has been reset.",
-      "",
+      'Your APLS Log has been reset.',
+      '',
       [
         {
-          text: "OK",
-          onPress: () => "OK",
-          style: "cancel",
+          text: 'OK',
+          onPress: () => 'OK',
+          style: 'cancel',
         },
       ],
       { cancelable: true }
@@ -137,14 +136,14 @@ const ALSTeriaryFunctionButton = ({
   //reset button alert
   const resetLog = () => {
     Alert.alert(
-      "Do you wish to reset your APLS Log?",
-      "",
+      'Do you wish to reset your APLS Log?',
+      '',
       [
-        { text: "Reset", onPress: () => handleReset() },
+        { text: 'Reset', onPress: () => handleReset() },
         {
-          text: "Cancel",
-          onPress: () => "Cancel",
-          style: "cancel",
+          text: 'Cancel',
+          onPress: () => 'Cancel',
+          style: 'cancel',
         },
       ],
       { cancelable: false }
@@ -163,13 +162,18 @@ const ALSTeriaryFunctionButton = ({
       activeOpacity={0.5}
       underlayColor={colors.light}
       onPress={handlePress}
-      style={[styles.button, style, changeBackground && styles.buttonPressed]}
       pressed={changeBackground}
       title={title}
     >
-      <View style={styles.content}>
-        <AppText style={{ color: colors.white }}>{`${title} ${
-          clicks ? "x" + clicks : ""
+      <View
+        style={[
+          styles.button,
+          style,
+          changeBackground && { backgroundColor: colors.primary },
+        ]}
+      >
+        <AppText style={styles.text}>{`${title} ${
+          clicks ? 'x' + clicks : ''
         }`}</AppText>
 
         {showUndo && (
@@ -188,25 +192,25 @@ export default ALSTeriaryFunctionButton;
 
 const styles = StyleSheet.create({
   button: {
-    alignItems: "center",
+    alignItems: 'center',
     backgroundColor: colors.medium,
     borderRadius: 5,
     flex: 1,
-    flexDirection: "row",
+    flexDirection: 'row',
     height: 57,
     margin: 5,
     padding: 10,
-    width: "98%",
-  },
-  buttonPressed: {
-    backgroundColor: colors.primary,
-    flexWrap: "nowrap",
+    paddingLeft: 20,
+    width: '98%',
   },
   content: {
-    alignItems: "center",
-    flex: 1,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    //justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    color: colors.white,
+    width: '90%',
+    //backgroundColor: 'black',
   },
 });

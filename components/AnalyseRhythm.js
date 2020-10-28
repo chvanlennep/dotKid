@@ -66,7 +66,6 @@ const AnalyseRhythm = ({ rhythmPressedState, rhythmTimeState, resetState }) => {
       secDiff = Math.floor((date - start.current) / 1000);
       secondsPassed.current = repeatTime - secDiff;
       setTime(date.toLocaleTimeString());
-      console.log(secDiff);
       if (secondsPassed.current < 1) {
         setRhythmPressed(false);
       }

@@ -97,7 +97,7 @@ const NoChestRiseModal = ({
                       logState={logState}
                       encounterState={encounterState}
                       resetState={resetState}
-                      style={styles.button}
+                      style={styles.buttons}
                     />
                   }
                   ListFooterComponent={
@@ -108,7 +108,8 @@ const NoChestRiseModal = ({
                       encounterState={encounterState}
                       timerState={timerState}
                       resetState={resetState}
-                      style={styles.submit}
+                      style={[styles.buttons]}
+                      backgroundColorPressed={colors.black}
                     />
                   }
                 />
@@ -199,7 +200,7 @@ const styles = StyleSheet.create({
   },
   sats: {
     justifyContent: 'center',
-    backgroundColor: colors.dark,
+    backgroundColor: colors.black,
     borderRadius: 5,
     height: 70,
     flexDirection: 'row',
