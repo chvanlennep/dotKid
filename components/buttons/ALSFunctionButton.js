@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlignVertical: 'center',
-    height: 20,
+    height: 25,
     color: colors.white,
     width: '90%',
     //backgroundColor: 'black',

@@ -23,6 +23,7 @@ const LogModal = ({
   logInput,
   logVisibleState,
   kind,
+  resetState,
   style,
 }) => {
   const scheme = useColorScheme();
@@ -32,6 +33,9 @@ const LogModal = ({
 
   const endEncounter = encounterState.value;
   const setEndEncounter = encounterState.setValue;
+
+  const reset = resetState.value;
+  const setReset = resetState.setValue;
 
   const logType = kind === 'child' ? 'APLS' : 'NLS';
   const storageKey = `${logType}_log`;
@@ -52,6 +56,16 @@ const LogModal = ({
       }
     }
   }, [log]);
+
+  const handleReset = () => {
+    if (!endEncounter) {
+      setModalVisible(false);
+    } else {
+      setReset(true);
+      setModalVisible(false);
+      setEndEncounter(false);
+    }
+  };
 
   return (
     <React.Fragment>
@@ -83,9 +97,7 @@ const LogModal = ({
                 <TouchableOpacity
                   style={styles.touchable}
                   onPress={() => {
-                    endEncounter
-                      ? setEndEncounter(false) && setModalVisible(!modalVisible)
-                      : setModalVisible(!modalVisible);
+                    handleReset();
                   }}
                 >
                   <View style={styles.closeIcon}>

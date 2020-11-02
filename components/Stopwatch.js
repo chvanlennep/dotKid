@@ -64,9 +64,11 @@ const Stopwatch = ({ intervalState, logState, resetState, timerState }) => {
 
   //makes start time object accessible to the function
   useEffect(() => {
-    updateTime("Start Time", functionButtons);
-    const startTime = functionButtons["Start Time"];
-    return () => startTime[0];
+    if (isTimerActive) {
+      updateTime("Start Time", functionButtons);
+      const startTime = functionButtons["Start Time"];
+      return () => startTime[0];
+    }
   }, []);
 
   //Main timer
@@ -95,9 +97,6 @@ const Stopwatch = ({ intervalState, logState, resetState, timerState }) => {
   useEffect(() => {
     if (reset) {
       setIntervalTime(0);
-      setStart(new Date());
-      updateTime("Start Time", functionButtons);
-      const startTime = functionButtons["Start Time"];
     }
   });
 
