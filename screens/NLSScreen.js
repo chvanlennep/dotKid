@@ -101,13 +101,13 @@ const NLSScreen = () => {
       setEndEncounter(false);
       setReset(false);
       Alert.alert(
-        "Your NLS encounter has been reset.",
-        "",
+        'Your NLS encounter has been reset.',
+        '',
         [
           {
-            text: "OK",
-            onPress: () => "OK",
-            style: "cancel",
+            text: 'OK',
+            onPress: () => 'OK',
+            style: 'cancel',
           },
         ],
         { cancelable: true }
@@ -125,20 +125,20 @@ const NLSScreen = () => {
   //reset button alert
   const resetLog = () => {
     Alert.alert(
-      "Do you wish to reset your NLS encounter?",
-      "",
+      'Do you wish to reset your NLS encounter?',
+      '',
       [
         {
-          text: "Reset",
+          text: 'Reset',
           onPress: () => {
             setReset(true);
             handleReset();
           },
         },
         {
-          text: "Cancel",
-          onPress: () => "Cancel",
-          style: "cancel",
+          text: 'Cancel',
+          onPress: () => 'Cancel',
+          style: 'cancel',
         },
       ],
       { cancelable: false }
@@ -185,7 +185,7 @@ const NLSScreen = () => {
   });
 
   const renderListItem = ({ item }) => {
-    if (item.type === "preResusChecklist") {
+    if (item.type === 'preResusChecklist') {
       return (
         <ALSFunctionButton
           kind="neonate"
@@ -197,14 +197,7 @@ const NLSScreen = () => {
           type="checklist"
         />
       );
-<<<<<<< HEAD
     } else if (item.type === 'resusRequired') {
-=======
-    } else if (
-      item.type === "resusRequired" ||
-      item.type === "afterChestRise"
-    ) {
->>>>>>> 4ea7c612226a8d94d59800d5756f93eb953aca38
       return (
         <ALSFunctionButton
           kind="neonate"
@@ -215,7 +208,6 @@ const NLSScreen = () => {
           timerState={timerState}
         />
       );
-<<<<<<< HEAD
     } else if (item.type === 'afterChestRise') {
       return (
         <ALSTeriaryFunctionButton
@@ -228,9 +220,6 @@ const NLSScreen = () => {
         />
       );
     } else if (item.type === 'listHeader') {
-=======
-    } else if (item.type === "listHeader") {
->>>>>>> 4ea7c612226a8d94d59800d5756f93eb953aca38
       return (
         <ALSListHeader
           title={item.id}
@@ -240,7 +229,7 @@ const NLSScreen = () => {
           onUpPress={() => scrollMe(item.onUpPress)}
         />
       );
-    } else if (item.type === "modal") {
+    } else if (item.type === 'modal') {
       return (
         <InitialAssessmentModal
           encounterState={encounterState}
@@ -278,7 +267,7 @@ const NLSScreen = () => {
             onPress={() => setIsTimerActive(true)}
             style={styles.button}
           >
-            {!isTimerActive && "Start Timer"}
+            {!isTimerActive && 'Start Timer'}
             {isTimerActive && (
               <Stopwatch
                 intervalState={intervalState}
@@ -331,13 +320,13 @@ const NLSScreen = () => {
             <ALSListHeader
               onDownPress={() => scrollMe(1070)}
               downArrow={true}
-              title={"Pre-Resus Checklist:"}
+              title={'Pre-Resus Checklist:'}
             />
           }
           ListFooterComponent={
             <ALSFunctionButton
               kind="neonate"
-              title={afterChestRise[afterChestRise.length - 1]["id"]}
+              title={afterChestRise[afterChestRise.length - 1]['id']}
               logState={logState}
               encounterState={encounterState}
               timerState={timerState}
@@ -358,42 +347,42 @@ const styles = StyleSheet.create({
     marginBottom: 200,
   },
   bottomContainer: {
-    flexDirection: "column",
+    flexDirection: 'column',
     padding: 15,
     paddingTop: 5,
     flex: 1,
   },
   button: {
-    alignContent: "center",
+    alignContent: 'center',
     backgroundColor: colors.dark,
-    justifyContent: "center",
-    textAlign: "center",
+    justifyContent: 'center',
+    textAlign: 'center',
   },
 
   buttonPressed: {
     backgroundColor: colors.primary,
-    flexWrap: "nowrap",
+    flexWrap: 'nowrap',
     height: 90,
-    justifyContent: "center",
-    textAlign: "center",
+    justifyContent: 'center',
+    textAlign: 'center',
   },
   middleContainer: {
-    alignSelf: "center",
-    alignItems: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
     //backgroundColor: colors.primary,
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginTop: 3,
     marginBottom: 3,
   },
   verticalButtonContainer: {
-    alignItems: "center",
+    alignItems: 'center',
     flex: 1,
     //backgroundColor: 'yellow',
   },
   darkButton: {
     backgroundColor: colors.dark,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   mediumButton: {
     backgroundColor: colors.medium,
