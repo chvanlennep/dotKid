@@ -47,9 +47,10 @@ const extraItems = {
   'Chest Not Moving': [],
   'Low For Age': [],
   'Adequate For Age': [],
+  'Inadequate For Age': [],
   FiO2: [],
-  'Dry and wrap baby': [],
-  'Hat on': [],
+  'Dry and Wrap Baby': [],
+  'Hat On': [],
   'Resuscitation not required': [],
   'Transferred to NICU': [],
 };
@@ -74,6 +75,7 @@ const afterChestRise = [
   { id: 'Chest compressions 3:1 if HR<60' },
   { id: 'Vent. breaths if HR >60' },
   { id: 'PEEP +/- O2 when breathing' },
+  { id: 'Resuscitation drugs if appropriate' },
 ];
 
 const makeFunctionButtonsObject = () => {
@@ -109,7 +111,7 @@ const makeKeyExtractorArray = () => {
     id: 'Resuscitation Required:',
     type: 'listHeader',
     downArrow: true,
-    onDownPress: 1470,
+    onDownPress: 1750,
     upArrow: true,
     onUpPress: 0,
   };

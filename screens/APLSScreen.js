@@ -311,6 +311,7 @@ const APLSScreen = () => {
         <View style={styles.verticalButtonContainer}>
           <LogModal
             encounterState={encounterState}
+            resetState={resetState}
             logInput={functionButtons}
             logVisibleState={logVisibleState}
             style={styles.button}
