@@ -91,7 +91,7 @@ const calculateBP = (heightCentile, inputAge, systolic, diastolic, sex) => {
         return "Systolic BP between 90th and 95th centile.";
         break;
       case systolic < adjustedValues.adjustedSystolic90:
-        return "Systolic BP <90th centile \nNormotensive";
+        return "Systolic BP <90th centile \nNot hypertensive";
         break;
       default:
         return "error";
@@ -113,7 +113,7 @@ const calculateBP = (heightCentile, inputAge, systolic, diastolic, sex) => {
         return "Diastolic BP between 90th and 95th centile.";
         break;
       case diastolic < adjustedValues.adjustedDiastolic90:
-        return "Diastolic BP <90th centile \nNormotensive";
+        return "Diastolic BP <90th centile \nNot hypertensive";
         break;
       default:
         return "error";
