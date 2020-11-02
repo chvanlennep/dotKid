@@ -22,6 +22,7 @@ const ALSFunctionButton = ({
   timerState,
   title,
   type = 'function',
+  setConfirm = null,
 }) => {
   const reset = resetState.value;
   const setReset = resetState.setValue;
@@ -38,6 +39,8 @@ const ALSFunctionButton = ({
   const setIsTimerActive = timerState.setValue;
 
   const [showUndo, setShowUndo] = useState(false);
+
+  const movingChest = title === 'Chest is now moving' ? true : false;
 
   //number of times pressed logic
   const [clicks, setClicks] = useState(0);
@@ -183,6 +186,12 @@ const ALSFunctionButton = ({
     }
   });
 
+  useEffect(() => {
+    if (setConfirm && changeBackground) {
+      setConfirm(true);
+    }
+  }, [changeBackground]);
+
   return (
     <TouchableHighlight
       activeOpacity={0.5}
@@ -207,7 +216,7 @@ const ALSFunctionButton = ({
       >
         <AppText style={styles.text}>{title}</AppText>
 
-        {showUndo && (
+        {showUndo && !movingChest && (
           <TouchableOpacity onPress={handleUndo}>
             <ButtonIcon name="refresh" backgroundColor={null} />
           </TouchableOpacity>

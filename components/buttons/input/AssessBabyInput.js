@@ -7,16 +7,23 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import Slider from '@react-native-community/slider';
+import { Picker } from '@react-native-community/picker';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useFormikContext } from 'formik';
-
 import colors from '../../../config/colors';
-import defaultStyles from '../../../config/styles';
-import AppText from '../../AppText';
 
-const FiO2Slider = ({ pickerStateObject }) => {
+const AssessBabyInput = ({ pickerDetails, pickerStateObject }) => {
   const [pickerState, setPickerState] = pickerStateObject;
+
+  const { name, pickerContent } = pickerDetails;
+
+  const middleIndex = Math.round(pickerContent.length / 2) - 1;
+  const initialValue = pickerContent[middleIndex]['value'];
+  const [local, setLocal] = useState(initialValue);
+
+  const labelList = pickerContent.map((item, index) => (
+    <Picker.Item label={item.value} value={item.value} key={index} />
+  ));
 
   const changePickerState = (name, key, value) => {
     setPickerState((pickerState) => {
@@ -26,54 +33,36 @@ const FiO2Slider = ({ pickerStateObject }) => {
     });
   };
 
-  const name = 'FiO2';
-
-  const [fio2, setFio2] = useState(20);
-
   const { setFieldValue, values } = useFormikContext();
+  const ios = Platform.OS === 'ios' ? true : false;
+
+  const scheme = useColorScheme();
+  const dark = scheme === 'dark' ? true : false;
 
   const accept = () => {
-    setFieldValue(name, fio2);
-    changePickerState(name, 'open', false);
+    setFieldValue(name, local);
     changePickerState(name, 'filled', true);
   };
 
   const cancel = () => {
-    if (values[name]) setFio2(values[name]);
+    if (values[name]) setLocal(values[name]);
     changePickerState(name, 'cancelled', true);
   };
-
-  // useEffect(() => {
-  //   // button has been filled in by user:
-  //   if (showCancel && FiO2 && !showInput) {
-  //     if (!global) {
-  //       // Reset by formik:
-  //       if (!values[name]) {
-  //         setShowInput(false);
-  //         setShowCancel(false);
-  //         setButtonText('FiO2');
-  //         setFio2('');
-  //       }
-  //     }
-  //   }
-  // });
 
   return (
     <React.Fragment>
       {pickerState[name]['open'] && (
         <React.Fragment>
           <View style={styles.lightPickerContainer}>
-            <AppText style={styles.o2Text}>{`~${fio2}%`}</AppText>
-            <Slider
-              style={styles.slider}
-              minimumValue={20}
-              maximumValue={100}
-              step={10}
-              value={fio2}
-              onValueChange={(value) => setFio2(value)}
-              minimumTrackTintColor="#FFFFFF"
-              maximumTrackTintColor="#000000"
-            />
+            <Picker
+              style={styles.picker}
+              onValueChange={(itemValue, itemIndex) => {
+                setLocal(itemValue);
+              }}
+              selectedValue={local}
+            >
+              {labelList}
+            </Picker>
           </View>
           <View style={styles.buttonContainer}>
             <View style={styles.closeIcon}>
@@ -101,30 +90,13 @@ const FiO2Slider = ({ pickerStateObject }) => {
   );
 };
 
-export default FiO2Slider;
+export default AssessBabyInput;
 
 const styles = StyleSheet.create({
-  inputBox: {
-    alignItems: 'center',
-    backgroundColor: colors.dark,
-    borderRadius: 5,
-    color: colors.dark,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    height: 57,
-    margin: 5,
-    padding: 10,
-    paddingHorizontal: 30,
-    width: Dimensions.get('window').width * 0.85,
-  },
-  output: {
-    color: colors.white,
-    marginRight: 10,
-  },
-  slider: {
-    width: Dimensions.get('window').width * 0.55,
-    height: 40,
-    alignSelf: 'center',
+  picker: {
+    height: 210,
+    width: 280,
+    //backgroundColor: 'orange',
   },
   lightPickerContainer: {
     alignItems: 'center',
@@ -132,7 +104,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
     width: Dimensions.get('window').width * 0.85,
-    height: 210,
     marginTop: 10,
     marginBottom: 10,
     borderRadius: 15,
@@ -144,13 +115,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-  },
-  o2Text: {
-    color: colors.black,
-    marginTop: -20,
-    marginBottom: 10,
-    textAlign: 'center',
-    fontWeight: '500',
   },
   closeIcon: {
     height: 50,

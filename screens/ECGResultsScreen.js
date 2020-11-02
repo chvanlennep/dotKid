@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-
 import PCalcScreen from '../components/PCalcScreen';
 import AppText from '../components/AppText';
 import colors from '../config/colors';
@@ -14,8 +13,14 @@ const BPResultsScreen = ({ route, navigation }) => {
   const measurements = parameters.measurements;
 
   let QTcTitle = `QT (${parameters.measurements.qtinterval} seconds)`;
-  const ageBeforeCorrection = parameters.centileObject.ageBeforeCorrection;
-  const ageAfterCorrection = parameters.centileObject.ageAfterCorrection;
+  const ageBeforeCorrection = 'Not corrected';
+  let ageAfterCorrection;
+  if (parameters.centileObject.kind === 'birth') {
+    ageAfterCorrection = '0 days';
+  } else {
+    ageAfterCorrection = parameters.centileObject.ageAfterCorrection;
+  }
+
   const [QTc, reference] = parameters.QTCOutput;
 
   return (
@@ -23,8 +28,8 @@ const BPResultsScreen = ({ route, navigation }) => {
       <View style={styles.topContainer}>
         <AgeButton
           kind="child"
-          valueBeforeCorrection={ageBeforeCorrection}
           valueAfterCorrection={ageAfterCorrection}
+          valueBeforeCorrection={ageBeforeCorrection}
         />
         <Button
           label="← Calculate Again"

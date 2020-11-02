@@ -92,8 +92,6 @@ const AssessBabyTimer = ({ assessmentState, assessmentTime, resetState }) => {
 
 export default AssessBabyTimer;
 
-// <div>{secondsPassed.current}</div>
-
 const styles = StyleSheet.create({
   text: {
     color: colors.white,

@@ -1,27 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-
 import colors from '../../app/config/colors';
 import defaultStyles from '../../app/config/styles';
+import ALSDisplayButton from './buttons/ALSDisplayButton';
 import AppText from './AppText';
-import ALSListHeader from './buttons/ALSListHeader';
 import AppForm from '../components/AppForm';
+import FiO2Slider from './buttons/input/FiO2Slider';
+import AssessBabyTimer from './AssessBabyTimer';
 import AssessBabyInput from '../components/buttons/input/AssessBabyInput';
 import AssessBabyTitle from './AssessBabyTitle';
 
-const InitialAssessBabyModal = ({
-  initialAssessmentState,
+const GeneralAssessBaby = ({
   assessmentState,
+  assessmentTime,
   logState,
   resetState,
   timerState,
+  style,
 }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+
   const nameArray = [
-    'Dry and Wrap Baby',
-    'Hat On',
-    'Heart Rate',
+    'Chest Movement',
     'Breathing',
+    'Heart Rate',
+    'Saturations',
+    'FiO2',
     'Tone',
   ];
 
@@ -30,19 +35,17 @@ const InitialAssessBabyModal = ({
     const workingObject = {};
     while (i < nameArray.length) {
       workingObject[nameArray[i]] = {
-        open: nameArray[i] === 'Dry and Wrap Baby' ? true : false,
+        open: nameArray[i] === 'Chest Movement' ? true : false,
         color: false,
         filled: false,
         cancelled: false,
-        submitForm: false,
+        submit: false,
       };
       i++;
     }
     return workingObject;
   };
 
-  const setAssessBaby = assessmentState.setValue;
-  const [modalVisible, setModalVisible] = useState(false);
   const [pickerState, setPickerState] = useState(makeInitialPickerState());
   const [pickerText, setPickerText] = useState(nameArray[0]);
   const [submitForm, setSubmitForm] = useState(false);
@@ -50,19 +53,9 @@ const InitialAssessBabyModal = ({
 
   const allPickerDetails = [
     {
-      name: 'Dry and Wrap Baby',
-      iconName: 'tumble-dryer',
-      pickerContent: [{ value: 'Done' }, { value: 'Not Done' }],
-    },
-    {
-      name: 'Hat On',
-      iconName: 'hat-fedora',
-      pickerContent: [{ value: 'Done' }, { value: 'Not Done' }],
-    },
-    {
-      name: 'Heart Rate',
-      iconName: 'heart-pulse',
-      pickerContent: [{ value: '<60' }, { value: '60-100' }, { value: '>100' }],
+      name: 'Chest Movement',
+      iconName: 'circle-expand',
+      pickerContent: [{ value: 'Chest Not Moving' }, { value: 'Chest Moving' }],
     },
     {
       name: 'Breathing',
@@ -72,6 +65,23 @@ const InitialAssessBabyModal = ({
         { value: 'Inadequate Breathing' },
         { value: 'Adequate Breathing' },
       ],
+    },
+    {
+      name: 'Heart Rate',
+      iconName: 'heart-pulse',
+      pickerContent: [{ value: '<60' }, { value: '60-100' }, { value: '>100' }],
+    },
+    {
+      name: 'Saturations',
+      iconName: 'percent',
+      pickerContent: [
+        { value: 'Inadequate For Age' },
+        { value: 'Adequate For Age' },
+      ],
+    },
+    {
+      name: 'FiO2',
+      iconName: 'gas-cylinder',
     },
     {
       name: 'Tone',
@@ -134,46 +144,30 @@ const InitialAssessBabyModal = ({
     });
   };
 
-  const togglePicker = (name) => {
-    for (let i = 0; i < nameArray.length; i++) {
-      if (name !== nameArray[i]) {
-        if (pickerState[nameArray[i]]['open']) {
-          if (!pickerState[nameArray[i]['color']]) {
-            //Alert.alert('');
-          }
-          changePickerState(nameArray[i], 'open', false);
-          changePickerState(name, 'open', true);
-          name === 'Saturations'
-            ? setPickerText(`Colour +/- Saturations`)
-            : setPickerText(name);
-          break;
-        }
-      }
-    }
-  };
-
-  const reset = resetState.value;
-
   const functionButtons = logState.value;
   const setFunctionButtons = logState.setValue;
 
-  const initialAssessmentComplete = initialAssessmentState.value;
-  const setInitialAssessmentComplete = initialAssessmentState.setValue;
+  const assessBaby = assessmentState.value;
+  const setAssessBaby = assessmentState.setValue;
 
   const setIsTimerActive = timerState.setValue;
 
   const initialValues = {};
   nameArray.map((item) => (initialValues[item] = ''));
 
-  // logs time with event button. This has been modified from the others to make sure dry / wrap and hat on appear in order
-  const updateTime = (submitArray, oldState) => {
-    for (let i = 0; i < submitArray.length; i++) {
-      const addTime = (date, millisecs) => {
-        date.setTime(date.getTime() + millisecs);
-        return date;
-      };
-      const timeStamp = addTime(new Date(), i * 5);
-      const title = submitArray[i];
+  // logs time with event button
+  const updateTime = (title, oldState, FiO2) => {
+    const timeStamp = new Date();
+    if (title === 'FiO2') {
+      oldState[`FiO2: ${FiO2}%`] = [];
+      const oldButtonArray = oldState[`FiO2: ${FiO2}%`];
+      const newButtonArray = oldButtonArray.concat(timeStamp);
+      setFunctionButtons((oldState) => {
+        const updatingState = oldState;
+        updatingState[`FiO2: ${FiO2}%`] = newButtonArray;
+        return updatingState;
+      });
+    } else {
       const oldButtonArray = oldState[title];
       const newButtonArray = oldButtonArray.concat(timeStamp);
       setFunctionButtons((oldState) => {
@@ -184,44 +178,28 @@ const InitialAssessBabyModal = ({
     }
   };
 
+  //form submission
   const handleFormikSubmit = (values) => {
-    let submitArray = [];
-    for (let i = 0; i < nameArray.length; i++) {
-      const key = nameArray[i];
-      const value = values[nameArray[i]];
-      if (key === 'Dry and Wrap Baby' || key === 'Hat On') {
-        if (value === 'Done') submitArray.push(key);
+    for (const [key, value] of Object.entries(values)) {
+      if (key === 'FiO2') {
+        updateTime('FiO2', functionButtons, value);
       } else {
-        submitArray.push(value);
+        updateTime(value, functionButtons);
       }
     }
-    updateTime(submitArray, functionButtons);
-    setPickerText(nameArray[0]);
-    setPickerState(makeInitialPickerState());
-    setInitialAssessmentComplete(true);
-    setAssessBaby(true);
     setModalVisible(false);
+    setPickerText(nameArray[0]);
+    setAssessBaby(true);
+    setPickerState(makeInitialPickerState());
   };
 
+  //starts timer and opens modal
   const handlePress = () => {
-    if (initialAssessmentComplete) {
-      Alert.alert(
-        'One initial assessment per encounter. Please press "Assess Baby" if you wish to complete a further assessment',
-        '',
-        [
-          {
-            text: 'Ok',
-            onPress: () => 'Cancel',
-            style: 'cancel',
-          },
-        ]
-      );
-    } else {
-      setIsTimerActive(true);
-      setModalVisible(true);
-    }
+    setModalVisible(true);
+    setIsTimerActive(true);
   };
 
+  // user tries to close modal before completion:
   const handleClosePress = () => {
     Alert.alert(
       'Assessment Not Completed',
@@ -245,14 +223,25 @@ const InitialAssessBabyModal = ({
     );
   };
 
-  // reset button logic
-  useEffect(() => {
-    if (reset === true) {
-      setInitialAssessmentComplete(false);
+  const togglePicker = (name) => {
+    for (let i = 0; i < nameArray.length; i++) {
+      if (name !== nameArray[i]) {
+        if (pickerState[nameArray[i]]['open']) {
+          if (!pickerState[nameArray[i]['color']]) {
+            //Alert.alert('');
+          }
+          changePickerState(nameArray[i], 'open', false);
+          changePickerState(name, 'open', true);
+          name === 'Saturations'
+            ? setPickerText(`Colour +/- Saturations`)
+            : setPickerText(name);
+          break;
+        }
+      }
     }
-  }, [reset]);
+  };
 
-  // tick button pressed
+  // Logic for when the tick button is pressed:
   useEffect(() => {
     for (let i = 0; i < nameArray.length; i++) {
       if (pickerState[nameArray[i]]['filled']) {
@@ -304,14 +293,19 @@ const InitialAssessBabyModal = ({
 
   return (
     <React.Fragment>
-      <ALSListHeader
-        iconColor={initialAssessmentComplete ? colors.secondary : colors.dark}
-        isModal={true}
-        initialAssessmentState={initialAssessmentState}
+      <ALSDisplayButton
         onPress={handlePress}
-        style={[initialAssessmentComplete && styles.buttonPressed]}
-        title="Initial Assessment..."
-      />
+        style={[style, assessBaby && styles.buttonPressed]}
+      >
+        Assess Baby
+        {assessBaby && (
+          <AssessBabyTimer
+            assessmentState={assessmentState}
+            assessmentTime={assessmentTime}
+            resetState={resetState}
+          />
+        )}
+      </ALSDisplayButton>
 
       <View style={styles.centeredView}>
         <Modal
@@ -323,32 +317,41 @@ const InitialAssessBabyModal = ({
           }}
         >
           <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <TouchableOpacity
-                style={styles.touchable}
-                onPress={handleClosePress}
-              >
-                <View style={styles.closeIcon}>
-                  <MaterialCommunityIcons
-                    name="close-circle"
-                    color={colors.white}
-                    size={30}
-                  />
+            <AppForm
+              initialValues={initialValues}
+              onSubmit={handleFormikSubmit}
+            >
+              <View style={styles.modalView}>
+                <TouchableOpacity
+                  style={styles.touchable}
+                  onPress={handleClosePress}
+                >
+                  <View style={styles.closeIcon}>
+                    <MaterialCommunityIcons
+                      name="close-circle"
+                      color={colors.white}
+                      size={30}
+                    />
+                  </View>
+                </TouchableOpacity>
+                <AppText style={styles.heading}>Assess Baby</AppText>
+                <View style={styles.sats}>
+                  <AppText style={styles.text}>
+                    Acceptable Pre-ductal Saturations:
+                  </AppText>
+                  <AppText style={styles.satsText}>
+                    2 min: 60% | 3 min: 70% | 4 min: 80% {'\n'}5 min: 85% | 10
+                    min: 90%
+                  </AppText>
                 </View>
-              </TouchableOpacity>
-              <AppText style={styles.heading}>Initial Assessment</AppText>
-              <AppForm
-                initialValues={initialValues}
-                onSubmit={handleFormikSubmit}
-              >
                 <View style={styles.buttonRow}>{renderTopButtons}</View>
                 <AssessBabyTitle
                   submitObject={[submitForm, setSubmitForm]}
                   resetObject={[resetForm, setResetForm]}
                 >{`${pickerText}:`}</AssessBabyTitle>
                 {renderInputs}
-              </AppForm>
-            </View>
+              </View>
+            </AppForm>
           </View>
         </Modal>
       </View>
@@ -356,21 +359,24 @@ const InitialAssessBabyModal = ({
   );
 };
 
-export default InitialAssessBabyModal;
+export default GeneralAssessBaby;
 const styles = StyleSheet.create({
-  assessment: {
-    alignContent: 'center',
+  miniButton: {
+    borderRadius: 10,
+    width: 45,
+    height: 45,
     alignItems: 'center',
-    backgroundColor: colors.light,
-    borderRadius: 5,
-    flexDirection: 'column',
-    flexWrap: 'nowrap',
-    margin: 10,
-    padding: 7,
-    paddingBottom: 15,
+    justifyContent: 'center',
   },
-  buttonPressed: {
-    backgroundColor: colors.secondary,
+  buttonRow: {
+    height: 60,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingLeft: 5,
+    paddingRight: 5,
+    //backgroundColor: 'white',
+    //flexWrap: 'wrap',
   },
   centeredView: {
     flex: 1,
@@ -392,11 +398,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: -30,
     marginBottom: 5,
-    marginBottom: 10,
-  },
-  icon: {
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   modalView: {
     margin: 20,
@@ -412,28 +413,12 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     elevation: 5,
     width: defaultStyles.container.width - 10,
-    backgroundColor: '#096534',
+    //height: 500,
+    backgroundColor: colors.darkSecondary,
   },
   options: {
     flexDirection: 'row',
     paddingBottom: 10,
-  },
-  buttonRow: {
-    height: 60,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingLeft: 20,
-    paddingRight: 20,
-    //backgroundColor: 'white',
-    //flexWrap: 'wrap',
-  },
-  miniButton: {
-    borderRadius: 10,
-    width: 45,
-    height: 45,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   sats: {
     justifyContent: 'center',
@@ -462,8 +447,16 @@ const styles = StyleSheet.create({
     margin: 3,
     color: colors.white,
   },
-  touchable: {
-    alignSelf: 'flex-start',
-    //backgroundColor: "blue",
+  buttonPressed: {
+    backgroundColor: colors.secondary,
+    flexWrap: 'nowrap',
+    height: 80,
+    padding: 10,
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
+  timerText: {
+    textAlign: 'center',
+    color: colors.white,
   },
 });

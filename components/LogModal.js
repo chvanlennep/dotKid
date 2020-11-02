@@ -35,16 +35,23 @@ const LogModal = ({
 
   const logType = kind === 'child' ? 'APLS' : 'NLS';
   const storageKey = `${logType}_log`;
-  const rawLog = parseLog(logInput, logType);
-  const [log, setLog] = useState(rawLog);
-  if (rawLog) writeItemToStorage(storageKey, setLog, rawLog);
   const firstEverLogMessage = 'No log entries found';
+  const [log, setLog] = useState(firstEverLogMessage);
 
   useEffect(() => {
-    if (!rawLog) {
-      readItemFromStorage(storageKey, setLog, firstEverLogMessage);
+    const rawLog = parseLog(logInput, logType);
+    rawLog && rawLog.length !== 103
+      ? setLog(rawLog)
+      : readItemFromStorage(storageKey, setLog, firstEverLogMessage);
+  });
+
+  useEffect(() => {
+    if (log && log !== firstEverLogMessage) {
+      if (log.slice(log.length - 7) !== 'ongoing') {
+        writeItemToStorage(storageKey, () => null, log);
+      }
     }
-  }, []);
+  }, [log]);
 
   return (
     <React.Fragment>

@@ -1,7 +1,7 @@
-import { DefaultTheme } from "@react-navigation/native";
-import { Platform } from "react-native";
+import { DefaultTheme } from '@react-navigation/native';
+import { Platform } from 'react-native';
 
-import colors from "../config/colors";
+import colors from '../config/colors';
 
 const lightTheme = {
   dark: false,
@@ -17,7 +17,7 @@ const darkTheme = {
   dark: true,
   colors: {
     ...DefaultTheme.colors,
-    card: Platform.OS === "ios" ? colors.black : colors.dark,
+    card: Platform.OS === 'ios' ? colors.black : colors.dark,
     border: colors.black,
     primary: colors.white,
     background: colors.black,

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, FlatList, ScrollView, StyleSheet, View } from 'react-native';
-import { useScrollToTop } from '@react-navigation/native';
+import { Alert, FlatList, StyleSheet, View } from 'react-native';
 
 import NCalcScreen from '../components/NCalcScreen';
 import NLSToolbar from '../components/NLSToolbar';
@@ -9,21 +8,17 @@ import ALSDisplayButton from '../components/buttons/ALSDisplayButton';
 import ALSFunctionButton from '../components/buttons/ALSFunctionButton';
 import ALSListHeader from '../components/buttons/ALSListHeader';
 import Stopwatch from '../components/Stopwatch';
-
+import GeneralAssessBaby from '../components/GeneralAssessBaby';
 import AppText from '../components/AppText';
-import AssessBabyModal from '../components/AssessBabyModal';
 import {
   afterChestRise,
-  afterChestRiseFlatList,
   flatListOneData,
-  flatListTwoData,
   functionButtons,
-  preResusChecklist,
-  resusRequired,
 } from '../brains/nlsObjects';
 import LogModal from '../components/LogModal';
 import NoChestRiseModal from '../components/NoChestRiseModal';
 import InitialAssessmentModal from '../components/InitialAssessmentModal';
+import ALSTeriaryFunctionButton from '../components/buttons/ALSTertiaryFunctionButton';
 
 const NLSScreen = () => {
   const [reset, setReset] = useState(false);
@@ -168,7 +163,7 @@ const NLSScreen = () => {
   };
 
   useEffect(() => {
-    if (endEncounter == true) {
+    if (endEncounter === true) {
       setLogVisible(true);
       setIsTimerActive(false);
     }
@@ -187,12 +182,20 @@ const NLSScreen = () => {
           type="checklist"
         />
       );
-    } else if (
-      item.type === 'resusRequired' ||
-      item.type === 'afterChestRise'
-    ) {
+    } else if (item.type === 'resusRequired') {
       return (
         <ALSFunctionButton
+          kind="neonate"
+          title={item.id}
+          logState={logState}
+          encounterState={encounterState}
+          resetState={resetState}
+          timerState={timerState}
+        />
+      );
+    } else if (item.type === 'afterChestRise') {
+      return (
+        <ALSTeriaryFunctionButton
           kind="neonate"
           title={item.id}
           logState={logState}
@@ -215,6 +218,7 @@ const NLSScreen = () => {
       return (
         <InitialAssessmentModal
           encounterState={encounterState}
+          assessmentState={assessmentState}
           initialAssessmentState={initialAssessmentState}
           logState={logState}
           resetState={resetState}
@@ -258,7 +262,7 @@ const NLSScreen = () => {
               />
             )}
           </ALSDisplayButton>
-          <AssessBabyModal
+          <GeneralAssessBaby
             assessmentState={assessmentState}
             assessmentTime={assessmentTime}
             encounterState={encounterState}

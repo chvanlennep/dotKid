@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-} from "react-native";
+} from 'react-native';
 
-import colors from "../../config/colors";
-import AppText from "../AppText";
-import ButtonIcon from "../../components/buttons/ButtonIcon";
+import colors from '../../config/colors';
+import AppText from '../AppText';
+import ButtonIcon from '../../components/buttons/ButtonIcon';
 
 let showList;
 let setShowList;
@@ -31,7 +31,7 @@ const ALSListHeader = ({
           <TouchableOpacity onPress={onUpPress}>
             <ButtonIcon
               iconColor={iconColor}
-              name="arrow-up-thick"
+              name="arrow-up-circle"
               backgroundColor={null}
             />
           </TouchableOpacity>
@@ -41,7 +41,7 @@ const ALSListHeader = ({
           <TouchableOpacity onPress={onUpPress}>
             <ButtonIcon
               iconColor={upArrow ? colors.white : colors.dark}
-              name="arrow-up-thick"
+              name="arrow-up-circle"
               backgroundColor={null}
             />
           </TouchableOpacity>
@@ -53,7 +53,7 @@ const ALSListHeader = ({
           <TouchableOpacity onPress={onDownPress}>
             <ButtonIcon
               iconColor={downArrow ? colors.white : colors.dark}
-              name="arrow-down-thick"
+              name="arrow-down-circle"
               backgroundColor={null}
             />
           </TouchableOpacity>
@@ -68,20 +68,20 @@ export default ALSListHeader;
 
 const styles = StyleSheet.create({
   button: {
-    alignItems: "center",
+    alignItems: 'center',
     borderRadius: 5,
     color: colors.white,
-    flexDirection: "row",
+    flexDirection: 'row',
     height: 57,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
     margin: 5,
     padding: 10,
-    width: "100%",
+    width: '100%',
     backgroundColor: colors.dark,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   text: {
     color: colors.white,
-    fontWeight: "500",
+    fontWeight: '500',
   },
 });

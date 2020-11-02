@@ -17,61 +17,61 @@ import AppText from '../../AppText';
 import ErrorMessage from '../../ErrorMessage';
 import { GlobalStateContext } from '../../GlobalStateContext';
 
-const ChestMovementInputButton = ({
+const AssessBabyInput = ({
   global = false,
-  name = 'chestMovement',
+  name = 'breathing',
+  visibleObject,
 }) => {
-  const [showInput, setShowInput] = useState(false);
-  const [buttonText, setButtonText] = useState('Chest');
-  const [showCancel, setShowCancel] = useState(false);
-  const [localCM, setLocalCM] = useState('');
+  const [local, setLocal] = useState('');
 
-  const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
+  const [showInput, setShowInput] = visibleObject;
+
+  const pickerDetails = {
+    name: 'breathing',
+    pickerContent: [
+      { label: 'Apnoeic', value: 'Apnoeic' },
+      { label: 'Adequate Breathing', value: 'Adequate Breathing' },
+      { label: 'Inadequate Breathing', value: 'Inadequate Breathing' },
+    ],
+  };
+
   const { setFieldValue, errors, touched, values } = useFormikContext();
   const scheme = useColorScheme();
 
   const toggleInput = () => {
     if (showInput) {
       setShowInput(false);
-      if (localCM) {
-        setButtonText(`Chest: ${localCM}`);
-        setShowCancel(true);
+      if (local) {
         if (!global) {
-          setFieldValue(name, localCM);
+          setFieldValue(name, local);
         }
       } else {
-        setButtonText(`Chest`);
-        setShowCancel(false);
       }
     } else {
-      if (!localCM) {
-        setLocalCM('Chest Moving');
+      if (!local) {
+        setLocal('Adequate Breathing');
       }
       setShowInput(true);
-      setShowCancel(true);
     }
   };
 
   const cancelInput = () => {
-    setButtonText('Chest');
     setShowInput(false);
-    setLocalCM('');
+    setLocal('');
     if (!global) {
       setFieldValue(name, '');
     }
-    setShowCancel(false);
   };
 
   useEffect(() => {
     // button has been filled in by user:
-    if (showCancel && localCM && !showInput) {
+    if (local && !showInput) {
       if (!global) {
         // Reset by formik:
         if (!values[name]) {
           setShowInput(false);
-          setShowCancel(false);
-          setButtonText('Chest');
-          setLocalCM('');
+
+          setLocal('');
         }
       }
     }
@@ -79,23 +79,8 @@ const ChestMovementInputButton = ({
 
   return (
     <React.Fragment>
-      <View>
-        <View style={styles.button}>
-          <TouchableOpacity onPress={toggleInput}>
-            <View style={styles.buttonTextBox}>
-              <ButtonIcon name="circle-expand" />
-              <AppText style={{ color: colors.white }}>{buttonText}</AppText>
-            </View>
-          </TouchableOpacity>
-          {showCancel && (
-            <TouchableOpacity onPress={cancelInput}>
-              <ButtonIcon name="delete-forever" />
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
       {showInput && (
-        <>
+        <React.Fragment>
           <View
             style={
               scheme === 'dark'
@@ -106,12 +91,19 @@ const ChestMovementInputButton = ({
             <Picker
               style={styles.picker}
               onValueChange={(itemValue, itemIndex) => {
-                setLocalCM(itemValue);
+                setLocal(itemValue);
               }}
-              selectedValue={localCM}
+              selectedValue={local}
             >
-              <Picker.Item label="Chest Moving" value="Chest Moving" />
-              <Picker.Item label="Chest Not Moving" value="Chest Not Moving" />
+              <Picker.Item label="Apnoeic" value="Apnoeic" />
+              <Picker.Item
+                label="Inadequate Breathing"
+                value="Inadequate Breathing"
+              />
+              <Picker.Item
+                label="Adequate Breathing"
+                value="Adequate Breathing"
+              />
             </Picker>
           </View>
           <TouchableOpacity onPress={toggleInput}>
@@ -119,14 +111,14 @@ const ChestMovementInputButton = ({
               <AppText style={{ color: colors.white }}>Submit</AppText>
             </View>
           </TouchableOpacity>
-        </>
+        </React.Fragment>
       )}
       <ErrorMessage error={errors[name]} visible={touched[name]} />
     </React.Fragment>
   );
 };
 
-export default ChestMovementInputButton;
+export default AssessBabyInput;
 
 const styles = StyleSheet.create({
   button: {
@@ -153,6 +145,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
+    alignSelf: 'center',
+    width: Dimensions.get('window').width * 0.85,
   },
   darkPickerContainer: {
     alignSelf: 'center',
@@ -175,5 +169,13 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: 'center',
     width: Dimensions.get('window').width * 0.85,
+  },
+  miniButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 40,
+    height: 40,
+    backgroundColor: colors.dark,
+    borderRadius: 10,
   },
 });

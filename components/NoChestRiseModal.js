@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Alert,
   Dimensions,
@@ -16,6 +16,7 @@ import ALSDisplayButton from './buttons/ALSDisplayButton';
 import { chestRiseFlatList, noChestRise } from '../brains/nlsObjects';
 import ALSFunctionButton from '../components/buttons/ALSFunctionButton';
 import AppText from './AppText';
+import ALSTertiaryFunctionButton from './buttons/ALSTertiaryFunctionButton';
 const NoChestRiseModal = ({
   afterClose,
   logState,
@@ -25,13 +26,14 @@ const NoChestRiseModal = ({
   style,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [confirm, setConfirm] = useState(false);
 
   const isTimerActive = timerState.value;
   const setIsTimerActive = timerState.setValue;
 
   const renderListItem = ({ item }) => {
     return (
-      <ALSFunctionButton
+      <ALSTertiaryFunctionButton
         kind="neonate"
         title={item.id}
         logState={logState}
@@ -48,6 +50,33 @@ const NoChestRiseModal = ({
     setIsTimerActive(true);
   };
 
+  const handleClose = () => {
+    Alert.alert(
+      'Chest Rise Not Confirmed',
+      '',
+      [
+        {
+          text: 'Return to Checklist',
+          style: 'cancel',
+        },
+        {
+          text: 'Close Checklist',
+          onPress: () => {
+            setModalVisible(false);
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  useEffect(() => {
+    if (confirm) {
+      setModalVisible(false);
+      setConfirm(false);
+    }
+  }, [confirm]);
+
   return (
     <React.Fragment>
       <ALSDisplayButton onPress={handlePress} style={style}>
@@ -62,12 +91,7 @@ const NoChestRiseModal = ({
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <TouchableOpacity
-                style={styles.touchable}
-                onPress={() => {
-                  setModalVisible(!modalVisible);
-                }}
-              >
+              <TouchableOpacity style={styles.touchable} onPress={handleClose}>
                 <View style={styles.closeIcon}>
                   <MaterialCommunityIcons
                     name="close-circle"
@@ -90,7 +114,7 @@ const NoChestRiseModal = ({
                   }
                   renderItem={renderListItem}
                   ListHeaderComponent={
-                    <ALSFunctionButton
+                    <ALSTertiaryFunctionButton
                       kind="neonate"
                       title={noChestRise[0]['id']}
                       timerState={timerState}
@@ -103,13 +127,14 @@ const NoChestRiseModal = ({
                   ListFooterComponent={
                     <ALSFunctionButton
                       kind="neonate"
-                      title={'Chest Moving'}
+                      title={'Chest is now moving'}
                       logState={logState}
                       encounterState={encounterState}
                       timerState={timerState}
                       resetState={resetState}
                       style={[styles.buttons]}
                       backgroundColorPressed={colors.black}
+                      setConfirm={setConfirm}
                     />
                   }
                 />

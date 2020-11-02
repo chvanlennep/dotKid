@@ -1,5 +1,11 @@
 import React from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import {
+  Alert,
+  DrawerLayoutAndroidComponent,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Yup from 'yup';
@@ -49,6 +55,7 @@ const ECGScreen = () => {
     dob: null,
     tob: null,
     dom: null,
+    tom: null,
   };
 
   const handleFormikSubmit = (values) => {
@@ -117,10 +124,7 @@ const ECGScreen = () => {
             />
             <DateTimeInputButton kind="child" type="measured" />
             <FormResetButton />
-            <FormSubmitButton
-              name="Calculate Blood Pressure Centiles"
-              kind="child"
-            />
+            <FormSubmitButton name="Calculate QTc" kind="child" />
           </AppForm>
         </View>
       </KeyboardAwareScrollView>

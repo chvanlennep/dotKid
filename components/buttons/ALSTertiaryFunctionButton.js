@@ -12,9 +12,11 @@ import AppText from '../AppText';
 import ButtonIcon from '../buttons/ButtonIcon';
 
 const ALSTeriaryFunctionButton = ({
+  kind = 'child',
   encounterState,
   logState,
   resetState,
+  backgroundColorPressed = null,
   style,
   timerState,
   title,
@@ -169,7 +171,14 @@ const ALSTeriaryFunctionButton = ({
         style={[
           styles.button,
           style,
-          changeBackground && { backgroundColor: colors.primary },
+          changeBackground && [
+            {
+              backgroundColor:
+                kind === 'child'
+                  ? backgroundColorPressed || colors.primary
+                  : backgroundColorPressed || colors.secondary,
+            },
+          ],
         ]}
       >
         <AppText style={styles.text}>{`${title} ${
