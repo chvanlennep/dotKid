@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Alert,
   Modal,
@@ -6,13 +6,13 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   View,
-} from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+} from "react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import AppText from '../AppText';
-import colors from '../../config/colors';
-import Icon from '../Icon';
-import defaultStyles from '../../config/styles';
+import AppText from "../AppText";
+import colors from "../../config/colors";
+import Icon from "../Icon";
+import defaultStyles from "../../config/styles";
 
 const modalWidth =
   defaultStyles.container.width > 400 ? 400 : defaultStyles.container.width;
@@ -44,7 +44,7 @@ const MoreCentileInfo = ({ exactCentile }) => {
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            Alert.alert('Window has been closed.');
+            Alert.alert("Window has been closed.");
           }}
         >
           <View style={styles.centeredView}>
@@ -85,28 +85,28 @@ export default MoreCentileInfo;
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   closeIcon: {
     height: 50,
     width: 50,
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   mainContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
   },
   modalMessage: {
     borderRadius: 5,
     marginTop: 0,
     marginBottom: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    //backgroundColor: colors.dark,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.dark,
     flex: 5,
     padding: 5,
     paddingLeft: 2,
@@ -116,9 +116,9 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -131,18 +131,18 @@ const styles = StyleSheet.create({
     backgroundColor: colors.light,
   },
   modalTextHeadings: {
-    textAlign: 'center',
-    flexWrap: 'wrap',
+    textAlign: "center",
+    flexWrap: "wrap",
     fontSize: 20,
-    fontWeight: '500',
+    fontWeight: "500",
     color: colors.white,
   },
   modalTextHeadingWrapper: {
     borderRadius: 5,
     marginTop: 0,
     marginBottom: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: colors.dark,
     flex: 1,
     padding: 5,
@@ -151,15 +151,15 @@ const styles = StyleSheet.create({
     margin: 8,
   },
   modalTextParagraph: {
-    color: colors.black,
+    color: colors.white,
     marginBottom: 5,
-    textAlign: 'center',
+    textAlign: "center",
     flex: 9,
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
     fontSize: 15,
     marginLeft: 15,
     marginRight: 15,
-    fontWeight: '400',
+    fontWeight: "400",
     fontSize: 18,
     // backgroundColor: "green",
   },
