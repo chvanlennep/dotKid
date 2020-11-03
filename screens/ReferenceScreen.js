@@ -7,10 +7,10 @@ import colors from "../config/colors";
 const ReferenceScreen = () => {
   return (
     <ReferenceBackgroundScreen>
-      <View style={styles.headingContainer}>
-        <AppText style={styles.heading}>References</AppText>
-      </View>
       <ScrollView>
+        <View style={styles.headingContainer}>
+          <AppText style={styles.heading}>References</AppText>
+        </View>
         <View style={styles.outputContainer}>
           <AppText style={styles.subheading}>
             Child Centile / Birth Centile / Preterm Centile Calculators
@@ -161,7 +161,6 @@ export default ReferenceScreen;
 const styles = StyleSheet.create({
   heading: {
     fontSize: 28,
-    fontWeight: "bold",
     marginTop: 10,
     marginLeft: 12,
   },
@@ -169,27 +168,28 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   outputContainer: {
-    backgroundColor: colors.dark,
+    backgroundColor: "#EBEBEB",
     padding: 10,
     paddingBottom: 20,
-    borderRadius: 10,
-    margin: 5,
+    borderRadius: 5,
+    margin: 10,
+    marginHorizontal: 10,
   },
   subheading: {
-    color: colors.white,
+    color: colors.darkSecondary,
     fontSize: 20,
     marginTop: 10,
     marginLeft: 12,
   },
   hyperlink: {
-    color: "lightblue",
+    color: colors.darkPrimary,
     fontSize: 16,
     lineHeight: 23,
     marginLeft: 15,
     marginTop: -15,
   },
   text: {
-    color: colors.white,
+    color: colors.dark,
     fontSize: 16,
     lineHeight: 22,
     margin: 15,
