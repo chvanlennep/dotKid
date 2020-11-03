@@ -69,8 +69,8 @@ const PCentileResultsScreen = ({ route, navigation }) => {
         <Button
           label="← Calculate Again"
           onPress={() => navigation.goBack()}
-          style={{ backgroundColor: colors.medium }}
-          textStyle={{ color: colors.white }}
+          style={{ backgroundColor: colors.light }}
+          textStyle={{ color: colors.black }}
         />
       </View>
       <KeyboardAwareScrollView>

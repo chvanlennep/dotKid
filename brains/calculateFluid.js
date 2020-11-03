@@ -6,7 +6,7 @@ let textOutput;
 // This function outputs IV fluid requirements in ml/hr.
 
 export default (weight, percentage, sex) => {
-  const childOutput = `Fluid requirements for children: \n\n100ml/kg/day for the first 10kg \n+ 50ml/kg/day for 10kg to 20kg \n+ 20ml/kg/day 20kg upwards \n\nPercentage correction is then applied`;
+  const childOutput = `100ml/kg/day for the first 10kg \n+ 50ml/kg/day for 10kg to 20kg \n+ 20ml/kg/day 20kg upwards \n\nPercentage correction applied (in this case: ${percentage}%)`;
   if (weight > 45 && sex == 'Female') {
     correctedFluid = 'Girls do not usually require more than 83.3';
     textOutput = childOutput;

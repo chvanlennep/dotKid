@@ -1,9 +1,8 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Yup from 'yup';
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-community/async-storage';
 
 import AppForm from '../components/AppForm';
 import colors from '../config/colors';
@@ -32,8 +31,10 @@ const NFluidRequirementsScreen = () => {
     day5: '150',
   };
 
+  const [termValues, setTermValues] = useState(defaults);
+  const [pretermValues, setPretermValues] = useState(defaults);
+
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
-  const [workingValues, setWorkingValues] = useState(defaults);
 
   const moveDataAcrossGlobal = (movingTo, values) => {
     setGlobalStats((globalStats) => {
@@ -102,11 +103,7 @@ const NFluidRequirementsScreen = () => {
       gestationInDays + zeit(values.dob, 'days', values.dom);
     const termEtc =
       correctedGestation < 280 && gestationInDays < 259 ? 'Preterm' : 'Term';
-    readItemFromStorage(
-      `${termEtc.toLowerCase()}_fluid_requirements`,
-      setWorkingValues,
-      defaults
-    );
+    const workingValues = termEtc === 'Term' ? termValues : pretermValues;
     const checkAge = ageChecker(values, 29);
     if (checkAge === 'Negative age') {
       Alert.alert('Time Travelling Patient', 'Please check the dates entered', [
@@ -140,6 +137,15 @@ const NFluidRequirementsScreen = () => {
     }
   };
 
+  useEffect(() => {
+    readItemFromStorage(`term_fluid_requirements`, setTermValues, defaults);
+    readItemFromStorage(
+      `preterm_fluid_requirements`,
+      setPretermValues,
+      defaults
+    );
+  }, []);
+
   return (
     <NCalcScreen style={{ flex: 1 }}>
       <KeyboardAwareScrollView>
@@ -171,13 +177,16 @@ const NFluidRequirementsScreen = () => {
               defaultValue="100"
               global={false}
             />
-            <NFluidInputButton />
+            <NFluidInputButton
+              termObject={[termValues, setTermValues]}
+              pretermObject={[pretermValues, setPretermValues]}
+            />
             <DateTimeInputButton
               kind="neonate"
               type="measured"
               renderTime={true}
             />
-            <FormResetButton />
+            <FormResetButton additionalMessage="This will not reset any custom fluid requirements" />
             <FormSubmitButton
               name="Calculate Fluid Requirement"
               kind="neonate"

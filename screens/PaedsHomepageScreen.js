@@ -43,7 +43,7 @@ const PaedsHomepageScreen = () => {
             Child Centile Calculator
           </NavigateButton>
           <NavigateButton directions={routes.ECG}>
-            ECG Calculator
+            QTc Calculator
           </NavigateButton>
           <NavigateButton directions={routes.FLUID_CALCULATOR}>
             IV Fluid Calculator

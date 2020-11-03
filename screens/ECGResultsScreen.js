@@ -13,12 +13,11 @@ const BPResultsScreen = ({ route, navigation }) => {
   const measurements = parameters.measurements;
 
   let QTcTitle = `QT (${parameters.measurements.qtinterval} seconds)`;
-  const ageBeforeCorrection = 'Not corrected';
-  let ageAfterCorrection;
+  let ageBeforeCorrection = parameters.centileObject.ageBeforeCorrection;
+  let ageAfterCorrection = parameters.centileObject.ageAfterCorrection;
   if (parameters.centileObject.kind === 'birth') {
     ageAfterCorrection = '0 days';
-  } else {
-    ageAfterCorrection = parameters.centileObject.ageAfterCorrection;
+    ageBeforeCorrection = 'not corrected';
   }
 
   const [QTc, reference] = parameters.QTCOutput;

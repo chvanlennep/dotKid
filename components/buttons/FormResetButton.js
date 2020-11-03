@@ -1,28 +1,28 @@
-import React from "react";
+import React from 'react';
 import {
   Alert,
   StyleSheet,
   View,
   TouchableOpacity,
   useWindowDimensions,
-} from "react-native";
-import { useFormikContext } from "formik";
+} from 'react-native';
+import { useFormikContext } from 'formik';
 
-import AppText from "../AppText";
-import colors from "../../config/colors";
-import defaultStyles from "../../config/styles";
+import AppText from '../AppText';
+import colors from '../../config/colors';
+import defaultStyles from '../../config/styles';
 
-const SubmitButton = ({ name = "Reset...", style }) => {
+const SubmitButton = ({ name = 'Reset...', additionalMessage = '', style }) => {
   const { handleReset } = useFormikContext();
 
   const handleResetAlert = () => {
-    Alert.alert("Are you sure you want to reset?", "", [
+    Alert.alert('Are you sure you want to reset?', `${additionalMessage}`, [
       {
-        text: "Cancel",
-        style: "cancel",
+        text: 'Cancel',
+        style: 'cancel',
       },
       {
-        text: "Yes",
+        text: 'Yes',
         onPress: () => handleReset(),
       },
     ]);
@@ -41,15 +41,15 @@ export default SubmitButton;
 
 const styles = StyleSheet.create({
   submitButton: {
-    alignItems: "center",
+    alignItems: 'center',
     borderRadius: 5,
     backgroundColor: colors.medium,
     color: colors.white,
-    flexDirection: "row",
+    flexDirection: 'row',
     height: 57,
     margin: 5,
     padding: 10,
-    justifyContent: "center",
+    justifyContent: 'center',
     ...defaultStyles.container,
   },
 });

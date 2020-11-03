@@ -11,7 +11,6 @@ import {
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Yup from 'yup';
-import AsyncStorage from '@react-native-community/async-storage';
 
 import AppText from '../AppText';
 import colors from '../../config/colors';
@@ -20,9 +19,10 @@ import defaultStyles from '../../config/styles';
 import NumberInputButton from './input/NumberInputButton';
 import AppForm from '../AppForm';
 import FormSubmitTickButton from './FormSubmitTickButton';
-import { readItemFromStorage, writeItemToStorage } from '../../brains/storage';
+import { writeItemToStorage } from '../../brains/storage';
+import checkDefault from '../../brains/checkDefault';
 
-const NFluidInputModal = ({ name }) => {
+const NFluidInputModal = ({ name, valuesObject }) => {
   const scheme = useColorScheme();
   const dark = scheme === 'dark' ? true : false;
 
@@ -38,7 +38,7 @@ const NFluidInputModal = ({ name }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const buttonText = name;
-  const [values, setValues] = useState(defaults);
+  const [values, setValues] = valuesObject;
   const [showReset, setShowReset] = useState(false);
 
   const wrongNumber = '↑ Are you sure about this amount?';
@@ -66,21 +66,10 @@ const NFluidInputModal = ({ name }) => {
   });
 
   useEffect(() => {
-    readItemFromStorage(storageKey, setValues, defaults);
-  }, []);
-
-  useEffect(() => {
-    if (
-      values.day1 !== '60' ||
-      values.day2 !== '80' ||
-      values.day3 !== '100' ||
-      values.day4 !== '120' ||
-      values.day5 !== '150'
-    ) {
-      if (!showReset) {
-        setShowReset(true);
-      }
-    } else {
+    if (!checkDefault(values) && !showReset) {
+      setShowReset(true);
+    }
+    if (checkDefault(values) && showReset) {
       setShowReset(false);
     }
   }, [values, showReset]);

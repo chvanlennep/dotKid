@@ -1,20 +1,17 @@
-import React, { useContext, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import React, { useContext, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-import PCalcScreen from "../components/PCalcScreen";
-import AppText from "../components/AppText";
-import colors from "../config/colors";
-import AgeButton from "../components/buttons/AgeButton";
-import Button from "../components/buttons/Button";
-import MoreCentileInfo from "../components/buttons/MoreCentileInfo";
+import PCalcScreen from '../components/PCalcScreen';
+import AppText from '../components/AppText';
+import colors from '../config/colors';
+import AgeButton from '../components/buttons/AgeButton';
+import Button from '../components/buttons/Button';
+import MoreCentileInfo from '../components/buttons/MoreCentileInfo';
 const FluidResultsScreen = ({ route, navigation }) => {
   const parameters = JSON.parse(route.params);
-  const measurements = parameters.measurements;
-  const centileResults = parameters.centileObject;
 
   let fluidTitle = `Calculated Fluid Requirements:`;
-  let fluidReference = `...`;
 
   const [fluid, fluidText] = parameters.results;
   const ageBeforeCorrection = parameters.centileObject.ageBeforeCorrection;
@@ -43,13 +40,15 @@ const FluidResultsScreen = ({ route, navigation }) => {
                 <AppText style={styles.text}>{fluidTitle}</AppText>
               </View>
               <View style={styles.output}>
-                <AppText style={styles.outputText}>
-                  {fluid} ml/hour{"\n"}
-                </AppText>
-                <AppText style={styles.outputText}>{fluidText}</AppText>
+                <AppText style={styles.outputText}>{fluid} ml/hour</AppText>
               </View>
             </View>
-            <MoreCentileInfo exactCentile={fluidReference} />
+          </View>
+          <View style={styles.reference}>
+            <AppText style={styles.referenceTitle}>
+              Fluid requirements for children:
+            </AppText>
+            <AppText style={styles.referenceOutput}>{fluidText}</AppText>
           </View>
         </View>
       </KeyboardAwareScrollView>
@@ -61,47 +60,73 @@ export default FluidResultsScreen;
 
 const styles = StyleSheet.create({
   bottomContainer: {
-    alignSelf: "center",
-    alignItems: "center",
-    // backgroundColor: "dodgerblue",
+    alignSelf: 'center',
+    alignItems: 'center',
+    //backgroundColor: "dodgerblue",
     paddingHorizontal: 20,
-    width: "100%",
+    width: '100%',
     marginBottom: 75,
-    marginTop: 40,
+    height: '100%',
   },
   outputContainer: {
-    // backgroundColor: "orangered",
-    alignSelf: "center",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    backgroundColor: colors.medium,
+    borderRadius: 10,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
     marginHorizontal: 10,
     marginBottom: 10,
     marginTop: 10,
-    height: 80,
-    width: "100%",
+    height: 110,
+    width: '100%',
   },
   outputTextBox: {
-    paddingLeft: 10,
-    paddingRight: 20,
-    // backgroundColor: "limegreen",
-    textAlign: "left",
-    justifyContent: "center",
-    height: "100%",
-    width: "85%",
+    paddingLeft: 20,
+    paddingRight: 10,
+    //backgroundColor: 'limegreen',
+    textAlign: 'left',
+    justifyContent: 'center',
+    flex: 8,
   },
   outputText: {
     fontSize: 16,
-    lineHeight: 25,
-    textAlign: "left",
+    textAlign: 'left',
+    color: colors.white,
+    flexWrap: 'wrap',
   },
   topContainer: {
     marginTop: 5,
   },
+  reference: {
+    margin: 10,
+    marginLeft: 20,
+    marginRight: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    backgroundColor: colors.medium,
+    width: '80%',
+  },
+  referenceTitle: {
+    paddingTop: 15,
+    paddingBottom: 5,
+    color: colors.white,
+    fontWeight: '500',
+    fontSize: 15,
+    textAlign: 'center',
+  },
+  referenceOutput: {
+    color: colors.white,
+    fontSize: 14,
+    textAlign: 'center',
+    paddingBottom: 15,
+    padding: 5,
+  },
   text: {
     fontSize: 18,
-    textAlign: "left",
-    fontWeight: "500",
-    paddingBottom: 5,
+    textAlign: 'left',
+    fontWeight: '500',
+    paddingBottom: 10,
+    color: colors.white,
   },
 });

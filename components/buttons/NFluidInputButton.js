@@ -1,18 +1,83 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, TouchableOpacity, Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  Alert,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
 
 import AppText from '../AppText';
 import colors from '../../config/colors';
 import ButtonIcon from './ButtonIcon';
 import defaultStyles from '../../config/styles';
 import NFluidInputModal from './NFluidInputModal';
+import { writeItemToStorage } from '../../brains/storage';
+import checkDefault from '../../brains/checkDefault';
 
-const NFluidInputButton = () => {
+const NFluidInputButton = ({ termObject, pretermObject }) => {
+  const defaults = {
+    day1: '60',
+    day2: '80',
+    day3: '100',
+    day4: '120',
+    day5: '150',
+  };
+
   const [showSelection, setShowSelection] = useState(false);
+
+  const [showTermReset, setShowTermReset] = useState(false);
+  const [showPretermReset, setShowPretermReset] = useState(false);
+
+  const [termValues, setTermValues] = termObject;
+  const [pretermValues, setPretermValues] = pretermObject;
 
   const toggleSelection = () => {
     showSelection ? setShowSelection(false) : setShowSelection(true);
   };
+
+  const resetInput = () => {
+    Alert.alert('Are you sure you want to reset all your custom values?', '', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Yes',
+        onPress: () => {
+          writeItemToStorage(
+            `term_fluid_requirements`,
+            setTermValues,
+            defaults
+          );
+          writeItemToStorage(
+            `preterm_fluid_requirements`,
+            setPretermValues,
+            defaults
+          );
+          setTermValues(defaults);
+          setPretermValues(defaults);
+        },
+      },
+    ]);
+  };
+
+  const width = defaultStyles.container.width;
+
+  useEffect(() => {
+    if (!checkDefault(termValues) && !showTermReset) {
+      setShowTermReset(true);
+    }
+    if (!checkDefault(pretermValues) && !showPretermReset) {
+      setShowPretermReset(true);
+    }
+    if (checkDefault(termValues) && showTermReset) {
+      setShowTermReset(false);
+    }
+    if (checkDefault(pretermValues) && showPretermReset) {
+      setShowPretermReset(false);
+    }
+  }, [termValues, pretermValues, showTermReset, showPretermReset]);
 
   return (
     <React.Fragment>
@@ -21,20 +86,35 @@ const NFluidInputButton = () => {
           onPress={toggleSelection}
           style={{ flexDirection: 'row' }}
         >
-          <View style={styles.textBox}>
+          <View
+            style={[
+              styles.textBox,
+              {
+                width:
+                  showTermReset || showPretermReset ? width - 100 : width - 55,
+              },
+            ]}
+          >
             <ButtonIcon name="cup-water" />
             <AppText style={{ color: colors.white }}>
               Daily Requirements...
             </AppText>
           </View>
+        </TouchableOpacity>
+        {(showTermReset || showPretermReset) && (
+          <TouchableOpacity onPress={resetInput}>
+            <ButtonIcon name="refresh" />
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity onPress={toggleSelection}>
           {showSelection && <ButtonIcon name="chevron-down" />}
           {!showSelection && <ButtonIcon name="chevron-right" />}
         </TouchableOpacity>
       </View>
       {showSelection && (
         <React.Fragment>
-          <NFluidInputModal name="Term" />
-          <NFluidInputModal name="Preterm" />
+          <NFluidInputModal name="Term" valuesObject={termObject} />
+          <NFluidInputModal name="Preterm" valuesObject={pretermObject} />
         </React.Fragment>
       )}
     </React.Fragment>
@@ -121,7 +201,7 @@ const styles = StyleSheet.create({
   textBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: defaultStyles.container.width - 55,
+    width: defaultStyles.container.width - 100,
   },
   title: {
     fontSize: 19,
