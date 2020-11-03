@@ -22,6 +22,7 @@ const InitialAssessBabyModal = ({
     'Hat On',
     'Heart Rate',
     'Breathing',
+    'Colour',
     'Tone',
   ];
 
@@ -74,6 +75,16 @@ const InitialAssessBabyModal = ({
       ],
     },
     {
+      name: 'Colour',
+      iconName: 'percent',
+      pickerContent: [
+        { value: 'Pale' },
+        { value: 'Blue' },
+        { value: 'Blue extremities' },
+        { value: 'Pink' },
+      ],
+    },
+    {
       name: 'Tone',
       iconName: 'human-handsdown',
       pickerContent: [
@@ -108,22 +119,13 @@ const InitialAssessBabyModal = ({
   ));
 
   const renderInputs = allPickerDetails.map((item, index) => {
-    if (item.name === 'FiO2') {
-      return (
-        <FiO2Slider
-          key={index}
-          pickerStateObject={[pickerState, setPickerState]}
-        />
-      );
-    } else {
-      return (
-        <AssessBabyInput
-          key={index}
-          pickerDetails={allPickerDetails[index]}
-          pickerStateObject={[pickerState, setPickerState]}
-        />
-      );
-    }
+    return (
+      <AssessBabyInput
+        key={index}
+        pickerDetails={allPickerDetails[index]}
+        pickerStateObject={[pickerState, setPickerState]}
+      />
+    );
   });
 
   const changePickerState = (name, key, value) => {
@@ -423,8 +425,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingLeft: 20,
-    paddingRight: 20,
+    paddingLeft: 8,
+    paddingRight: 8,
     //backgroundColor: 'white',
     //flexWrap: 'wrap',
   },

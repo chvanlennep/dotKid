@@ -69,7 +69,7 @@ const EndEncounterModal = ({
               <View style={styles.assessment}>
                 <EndEncounterButton
                   kind="neonate"
-                  title="Resuscitation not required"
+                  title="Resuscitation complete"
                   timerState={timerState}
                   logState={logState}
                   modalState={modalState}

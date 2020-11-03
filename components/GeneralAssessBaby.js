@@ -6,7 +6,7 @@ import defaultStyles from '../../app/config/styles';
 import ALSDisplayButton from './buttons/ALSDisplayButton';
 import AppText from './AppText';
 import AppForm from '../components/AppForm';
-import FiO2Slider from './buttons/input/FiO2Slider';
+import O2Slider from './buttons/input/O2Slider';
 import AssessBabyTimer from './AssessBabyTimer';
 import AssessBabyInput from '../components/buttons/input/AssessBabyInput';
 import AssessBabyTitle from './AssessBabyTitle';
@@ -26,7 +26,7 @@ const GeneralAssessBaby = ({
     'Breathing',
     'Heart Rate',
     'Saturations',
-    'FiO2',
+    'Inhaled O2',
     'Tone',
   ];
 
@@ -74,13 +74,9 @@ const GeneralAssessBaby = ({
     {
       name: 'Saturations',
       iconName: 'percent',
-      pickerContent: [
-        { value: 'Inadequate For Age' },
-        { value: 'Adequate For Age' },
-      ],
     },
     {
-      name: 'FiO2',
+      name: 'Inhaled O2',
       iconName: 'gas-cylinder',
     },
     {
@@ -118,10 +114,19 @@ const GeneralAssessBaby = ({
   ));
 
   const renderInputs = allPickerDetails.map((item, index) => {
-    if (item.name === 'FiO2') {
+    if (item.name === 'Inhaled O2') {
       return (
-        <FiO2Slider
+        <O2Slider
           key={index}
+          type="fi"
+          pickerStateObject={[pickerState, setPickerState]}
+        />
+      );
+    } else if (item.name === 'Saturations') {
+      return (
+        <O2Slider
+          key={index}
+          type="sp"
           pickerStateObject={[pickerState, setPickerState]}
         />
       );
@@ -156,15 +161,15 @@ const GeneralAssessBaby = ({
   nameArray.map((item) => (initialValues[item] = ''));
 
   // logs time with event button
-  const updateTime = (title, oldState, FiO2) => {
+  const updateTime = (title, oldState, oxygen) => {
     const timeStamp = new Date();
-    if (title === 'FiO2') {
-      oldState[`FiO2: ${FiO2}%`] = [];
-      const oldButtonArray = oldState[`FiO2: ${FiO2}%`];
+    if (title === 'Inhaled O2' || title === 'Saturations') {
+      oldState[`${title}: ${oxygen}%`] = [];
+      const oldButtonArray = oldState[`${title}: ${oxygen}%`];
       const newButtonArray = oldButtonArray.concat(timeStamp);
       setFunctionButtons((oldState) => {
         const updatingState = oldState;
-        updatingState[`FiO2: ${FiO2}%`] = newButtonArray;
+        updatingState[`${title}: ${oxygen}%`] = newButtonArray;
         return updatingState;
       });
     } else {
@@ -181,8 +186,10 @@ const GeneralAssessBaby = ({
   //form submission
   const handleFormikSubmit = (values) => {
     for (const [key, value] of Object.entries(values)) {
-      if (key === 'FiO2') {
-        updateTime('FiO2', functionButtons, value);
+      if (key === 'Inhaled O2') {
+        updateTime('Inhaled O2', functionButtons, value);
+      } else if (key === 'Saturations') {
+        updateTime('Saturations', functionButtons, value);
       } else {
         updateTime(value, functionButtons);
       }
@@ -232,9 +239,7 @@ const GeneralAssessBaby = ({
           }
           changePickerState(nameArray[i], 'open', false);
           changePickerState(name, 'open', true);
-          name === 'Saturations'
-            ? setPickerText(`Colour +/- Saturations`)
-            : setPickerText(name);
+          setPickerText(name);
           break;
         }
       }
@@ -265,9 +270,7 @@ const GeneralAssessBaby = ({
           newName = nameArray[i + 1];
         }
         changePickerState(newName, 'open', true);
-        setPickerText(
-          newName === 'Saturations' ? `Colour +/- Saturations` : newName
-        );
+        setPickerText(newName);
         break;
       }
     }

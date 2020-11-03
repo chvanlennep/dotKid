@@ -298,7 +298,7 @@ const NLSScreen = () => {
           />
 
           <NoChestRiseModal
-            afterClose={() => scrollMe(1750)}
+            afterClose={() => scrollMe(1540)}
             encounterState={encounterState}
             logState={logState}
             resetState={resetState}

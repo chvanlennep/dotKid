@@ -9,7 +9,7 @@ const preResusChecklist = [
   { id: 'PIP/PEEP correct for gestation' },
   { id: 'Suction working' },
   { id: 'Correct mask size' },
-  { id: 'Hat found' },
+  { id: 'Appropriate Hat' },
   { id: 'Warm blankets' },
   { id: 'Plastic wrap (if appropriate)' },
   { id: 'O2 +/- ECG monitoring' },
@@ -51,11 +51,14 @@ const extraItems = {
   FiO2: [],
   'Dry and Wrap Baby': [],
   'Hat On': [],
-  'Resuscitation not required': [],
+  'Resuscitation complete': [],
   'Transferred to NICU': [],
+  Pale: [],
+  Blue: [],
+  'Blue extremities': [],
+  Pink: [],
 };
 
-// NOTE: an object with nested arrays
 const noChestRise = [
   { id: 'Check head position' },
   { id: 'Repeat inflation breaths' },
@@ -63,19 +66,23 @@ const noChestRise = [
   { id: 'O2 +/- ECG monitoring' },
   { id: 'Look for a response' },
   { id: 'Consider help' },
+  { id: 'Airway inspection' },
   { id: 'Suction under direct vision' },
-  { id: 'Consider airway inspection' },
-  { id: 'Meconium aspirator if needed' },
+  { id: 'Meconium aspirator?' },
   { id: 'Chest is now moving' },
 ];
 
 const afterChestRise = [
   { id: 'Check chest moving if HR<60' },
-  { id: '30s of vent. breaths' },
-  { id: 'Chest compressions 3:1 if HR<60' },
+  { id: '30s vent. breaths if HR <60' },
+  { id: 'Chest comp. 3:1 if HR<60' },
   { id: 'Vent. breaths if HR >60' },
-  { id: 'PEEP +/- O2 when breathing' },
-  { id: 'Resuscitation drugs if appropriate' },
+  { id: 'PEEP +/- O2 if breathing' },
+  { id: 'Emergency vascular access' },
+  { id: 'Resuscitation drugs if approp.' },
+  { id: 'Patient intubated' },
+  { id: 'ET tube removed' },
+  { id: 'Colour change on CO2 detector' },
 ];
 
 const makeFunctionButtonsObject = () => {
@@ -111,7 +118,7 @@ const makeKeyExtractorArray = () => {
     id: 'Resuscitation Required:',
     type: 'listHeader',
     downArrow: true,
-    onDownPress: 1750,
+    onDownPress: 1540,
     upArrow: true,
     onUpPress: 0,
   };
