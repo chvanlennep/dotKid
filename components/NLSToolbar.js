@@ -1,7 +1,9 @@
-import React from "react";
-import { StyleSheet, useWindowDimensions, View } from "react-native";
-import ALSToolButton from "./buttons/ALSToolButton";
-import EndEncounterModal from "./EndEncounterModal";
+import React from 'react';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
+
+import ALSToolButton from './buttons/ALSToolButton';
+import EndEncounterModal from './EndEncounterModal';
+import colors from '../config/colors';
 
 const NLSToolbar = ({
   reset,
@@ -31,7 +33,7 @@ export default NLSToolbar;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "orangered",
-    flexDirection: "row",
+    backgroundColor: colors.secondary,
+    flexDirection: 'row',
   },
 });

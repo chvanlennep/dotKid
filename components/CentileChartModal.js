@@ -87,7 +87,7 @@ const CentileChartModal = (props) => {
         break;
       case 'bmi':
         titleLabel = 'BMI';
-        units = '(kg/m)²';
+        units = '(kg/m²)';
         break;
       default:
         titleLabel = 'No title';

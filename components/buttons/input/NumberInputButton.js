@@ -197,6 +197,7 @@ const NumberInputButton = ({
               setLocalNumber(text);
             }}
             value={localNumber}
+            autoFocus={true}
             clearTextOnFocus={false}
             keyboardType={'decimal-pad'}
             placeholder={placeHolderText}
@@ -231,6 +232,10 @@ const styles = StyleSheet.create({
   buttonTextBox: {
     flexDirection: 'row',
     alignItems: 'center',
+    width: defaultStyles.container.width - 55,
+    height: 57,
+    //backgroundColor: 'green',
+    alignSelf: 'center',
   },
   inputBox: {
     alignItems: 'center',

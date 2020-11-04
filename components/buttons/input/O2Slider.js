@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
-import { StyleSheet, Dimensions, View, TouchableOpacity } from 'react-native';
+import {
+  Platform,
+  StyleSheet,
+  Dimensions,
+  View,
+  TouchableOpacity,
+} from 'react-native';
 import Slider from '@react-native-community/slider';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useFormikContext } from 'formik';
 
 import colors from '../../../config/colors';
 import AppText from '../../AppText';
+
+const pickerHeight = Platform.OS === 'ios' ? 210 : 110;
 
 const O2Slider = ({ pickerStateObject, type = 'fi' }) => {
   const [pickerState, setPickerState] = pickerStateObject;
@@ -83,19 +91,6 @@ const O2Slider = ({ pickerStateObject, type = 'fi' }) => {
 export default O2Slider;
 
 const styles = StyleSheet.create({
-  inputBox: {
-    alignItems: 'center',
-    backgroundColor: colors.dark,
-    borderRadius: 5,
-    color: colors.dark,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    height: 57,
-    margin: 5,
-    padding: 10,
-    paddingHorizontal: 30,
-    width: Dimensions.get('window').width * 0.85,
-  },
   output: {
     color: colors.white,
     marginRight: 10,
@@ -111,7 +106,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
     width: Dimensions.get('window').width * 0.85,
-    height: 210,
+    height: pickerHeight,
     marginTop: 10,
     marginBottom: 10,
     borderRadius: 15,

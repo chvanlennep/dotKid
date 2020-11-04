@@ -76,7 +76,7 @@ const afterChestRise = [
   { id: 'Check chest moving if HR<60' },
   { id: '30s vent. breaths if HR <60' },
   { id: 'Chest comp. 3:1 if HR<60' },
-  { id: 'Vent. breaths if HR >60' },
+  { id: 'Vent. breaths given' },
   { id: 'PEEP +/- O2 if breathing' },
   { id: 'Emergency vascular access' },
   { id: 'Resuscitation drugs if approp.' },

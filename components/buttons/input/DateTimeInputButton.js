@@ -597,6 +597,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: defaultStyles.container.width - 55,
+    height: 57,
+    //backgroundColor: 'green',
+    alignSelf: 'center',
   },
   modalView: {
     margin: 20,

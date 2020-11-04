@@ -75,9 +75,9 @@ export default (functionButtons, type) => {
     )}`;
     return outputString;
   } else if (
-    functionButtons['Resuscitation not required'] &&
+    functionButtons['Resuscitation complete'] &&
     (functionButtons.RIP.length === 1 ||
-      functionButtons['Resuscitation not required'].length === 1 ||
+      functionButtons['Resuscitation complete'].length === 1 ||
       functionButtons['Transferred to NICU'].length === 1)
   ) {
     outputString += `\nTotal elapsed time of resuscitation encounter: ${zeit(

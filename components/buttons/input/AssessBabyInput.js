@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState } from 'react';
 import {
   Platform,
   StyleSheet,
@@ -11,6 +11,8 @@ import { Picker } from '@react-native-community/picker';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useFormikContext } from 'formik';
 import colors from '../../../config/colors';
+
+const pickerHeight = Platform.OS === 'ios' ? 210 : 110;
 
 const AssessBabyInput = ({ pickerDetails, pickerStateObject }) => {
   const [pickerState, setPickerState] = pickerStateObject;
@@ -34,7 +36,6 @@ const AssessBabyInput = ({ pickerDetails, pickerStateObject }) => {
   };
 
   const { setFieldValue, values } = useFormikContext();
-  const ios = Platform.OS === 'ios' ? true : false;
 
   const scheme = useColorScheme();
   const dark = scheme === 'dark' ? true : false;
@@ -94,7 +95,7 @@ export default AssessBabyInput;
 
 const styles = StyleSheet.create({
   picker: {
-    height: 210,
+    height: pickerHeight,
     width: 280,
     //backgroundColor: 'orange',
   },

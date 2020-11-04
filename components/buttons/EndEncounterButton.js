@@ -1,16 +1,9 @@
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   StyleSheet,
   TouchableHighlight,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from 'react-native';
 

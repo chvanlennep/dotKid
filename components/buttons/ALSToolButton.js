@@ -1,13 +1,13 @@
-import React from "react";
+import React from 'react';
 import {
   StyleSheet,
   Text,
   TouchableOpacity,
   useWindowDimensions,
   View,
-} from "react-native";
-import AppText from "../AppText";
-import colors from "../../config/colors";
+} from 'react-native';
+import AppText from '../AppText';
+import colors from '../../config/colors';
 
 const ALSToolButton = ({ name, onPress, style }) => {
   return (
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.medium,
     height: 57,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

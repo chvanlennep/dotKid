@@ -1,6 +1,7 @@
-import React from "react";
-import { StyleSheet, useWindowDimensions, View } from "react-native";
-import ALSToolButton from "./buttons/ALSToolButton";
+import React from 'react';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import colors from '../config/colors';
+import ALSToolButton from './buttons/ALSToolButton';
 
 const ALSToolbar = ({ reset, rip, rosc }) => {
   return (
@@ -28,6 +29,7 @@ export default ALSToolbar;
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
+    flexDirection: 'row',
+    backgroundColor: colors.primary,
   },
 });

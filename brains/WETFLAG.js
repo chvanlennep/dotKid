@@ -8,22 +8,19 @@ export default WETFLAG = (dob, dom, sex, weight) => {
   // rounds in 0.5 intervals for ETTube
   function round(value, step) {
     step || (step = 1.0);
-    var inv = 1.0 / step;
+    const inv = 1.0 / step;
     return Math.round(value * inv) / inv;
   }
 
   // allows user to input weight if known
   let finalWeight;
-  let formattedWeight;
   let weightIsEstimated = false;
   if (isNaN(weight)) {
-    finalWeight = weightOn50th(ageInDays, ageInMonths, sex);
-    formattedWeight =
-      finalWeight < 10 ? finalWeight.toFixed(1) : Math.round(finalWeight);
+    const estWeight = weightOn50th(ageInDays, ageInMonths, sex);
+    finalWeight = estWeight < 10 ? estWeight.toFixed(1) : Math.round(estWeight);
     weightIsEstimated = true;
   } else {
-    finalWeight = Number(weight);
-    formattedWeight = finalWeight.toFixed(2);
+    finalWeight = weight.toFixed(2);
   }
 
   // limits defibrillator energy output based on APLS guidelines https://www.resus.org.uk/sites/default/files/2020-03/PETchart-18-05-16.pdf
@@ -61,7 +58,7 @@ export default WETFLAG = (dob, dom, sex, weight) => {
   }
 
   return {
-    weight: formattedWeight,
+    weight: finalWeight,
     weightIsEstimated: weightIsEstimated,
     energy: energy,
     ETtube: ETtube,

@@ -4,7 +4,6 @@ import {
   Modal,
   StyleSheet,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -91,7 +90,7 @@ const WETFLAGResultsScreen = ({ route, navigation }) => {
                   {lorazepam}ml of 1mg/ml
                   {'\n'}
                 </AppText>
-                <AppText style={styles.outputText}>Adrenaline dose:</AppText>
+                <AppText style={styles.outputText}>Adrenaline:</AppText>
                 <AppText style={styles.value}>
                   {adrenaline}ml of 1:10,000
                   {'\n'}
