@@ -13,7 +13,6 @@ const preResusChecklist = [
   { id: 'Warm blankets' },
   { id: 'Plastic wrap (if appropriate)' },
   { id: 'O2 +/- ECG monitoring' },
-  { id: 'ECG monitor' },
   { id: 'Stethoscope' },
   { id: 'Laryngoscope available' },
   { id: 'ET tube available' },
