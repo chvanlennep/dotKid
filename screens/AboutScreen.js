@@ -7,6 +7,8 @@ import {
   useColorScheme,
   View,
 } from "react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
 import AppText from "../components/AppText";
 import ReferenceBackgroundScreen from "../components/ReferenceBackgroundScreen";
 import colors from "../config/colors";
@@ -73,6 +75,84 @@ const AboutScreen = () => {
               { color: dark ? colors.lightSecondary : colors.darkSecondary },
             ]}
           >
+            About
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.text,
+              { color: dark ? colors.white : colors.dark },
+            ]}
+          >
+            dotKid was created by Dr Charles van Lennep{" "}
+            {
+              <Text
+                style={[
+                  defaultStyles.text,
+                  styles.hyperlink,
+                  { color: dark ? colors.lightPrimary : colors.darkPrimary },
+                ]}
+                onPress={() =>
+                  Linking.openURL("mailto:charles@vanlennep.co.uk")
+                }
+              >
+                {"email here"}
+              </Text>
+            }{" "}
+            and Dr Ryan Samuels{" "}
+            {
+              <Text
+                style={[
+                  defaultStyles.text,
+                  styles.hyperlink,
+                  { color: dark ? colors.lightPrimary : colors.darkPrimary },
+                ]}
+                onPress={() => Linking.openURL("mailto:ryuasamuels@gmail.com")}
+              >
+                {"email here"}
+              </Text>
+            }{" "}
+            or{" "}
+            {
+              <>
+                <MaterialCommunityIcons
+                  name="twitter"
+                  color={"#1DA1F2"}
+                  size={16}
+                />{" "}
+                <Text
+                  style={[
+                    defaultStyles.text,
+                    styles.hyperlink,
+                    { color: dark ? colors.lightPrimary : colors.darkPrimary },
+                  ]}
+                  onPress={() =>
+                    Linking.openURL("https://twitter.com/drryantalks?lang=en")
+                  }
+                >
+                  {"@DrRyanTalks"}
+                </Text>
+              </>
+            }
+            .{"\n"}
+            {"\n"}If you have any feedback or suggestions for dotKid then please
+            get in touch!
+          </Text>
+        </View>
+        <View
+          style={[
+            styles.outputContainer,
+            { backgroundColor: dark ? colors.dark : "#EBEBEB" },
+            { marginBottom: 100 },
+          ]}
+        >
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.subheading,
+              { color: dark ? colors.lightSecondary : colors.darkSecondary },
+            ]}
+          >
             Legal Disclaimer
           </Text>
           <Text
@@ -82,7 +162,42 @@ const AboutScreen = () => {
               { color: dark ? colors.white : colors.dark },
             ]}
           >
-            ...
+            By downloading and/or using dotKid {`(`}"this app"{`)`} you
+            acknowledge that you have read and agree to be bound by the terms of
+            the disclaimer outlined below. If you do not wish to be bound by
+            these terms please close and discontinue usage of this app.
+            {"\n"}
+            {"\n"}This app is for use by professional paediatric/neonatal staff
+            in the United Kingdom only and is intended as a guide/tool in the
+            aid of clinical care. This app is written according to evidence
+            based clinical guidelines and is designed with safety functions to
+            eliminate or reduce risks as far as possible. Neither this app nor
+            its contents or output should be used as a replacement for clinical
+            expertise, experience or judgement. This app, its contents and
+            output should be handled in such a way that maintains patient
+            confidentialty and in accordance with Caldicott Principles.
+            {"\n"}
+            {"\n"}
+            This app, its content and output should not be used as a replacement
+            for local or organisational guidelines.
+            {"\n"}
+            {"\n"}The creators of dotKid will endeavour to keep dotKid accurate,
+            up-to-date and free from errors. However, no responsibility can be
+            taken by the creators of dotKid should this not be the case.
+            {"\n"}
+            {"\n"}The use of dotKid is at the users discretion and no
+            responsibility nor liability shall be taken by the creators of
+            dotKid for the use or misuse of this app, nor its contents or
+            outputs.
+            {"\n"}
+            {"\n"}You agree to hold the creators of this app harmless and free
+            from fault for any claim, demand, cost, expense or legal pursuit
+            where this app is used not in accordance with the instructions for
+            use and/or the purposes intended and/or the actions you take as a
+            result of this app, its contents or output as outlined on this page.
+            {"\n"}
+            {"\n"}This disclaimer shall be governed by the laws of England and
+            Wales and any dispute shall be submitted to the English courts.
           </Text>
         </View>
       </ScrollView>
@@ -101,6 +216,13 @@ const styles = StyleSheet.create({
   headingContainer: {
     padding: 10,
   },
+  hyperlink: {
+    color: colors.darkPrimary,
+    fontSize: 16,
+    lineHeight: 23,
+    marginLeft: 16,
+    textDecorationLine: "underline",
+  },
   outputContainer: {
     backgroundColor: "#EBEBEB",
     padding: 10,
@@ -115,16 +237,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginLeft: 12,
   },
-  hyperlink: {
-    color: colors.darkPrimary,
-    fontSize: 16,
-    lineHeight: 23,
-    marginLeft: 15,
-    marginTop: -15,
-  },
   text: {
     fontSize: 16,
-    lineHeight: 22,
+    lineHeight: 23,
+    marginTop: 5,
     margin: 15,
   },
 });

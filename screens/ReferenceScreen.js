@@ -60,7 +60,7 @@ const ReferenceScreen = () => {
               )
             }
           >
-            - {"UK-WHO Growth Charts"}
+            {"UK-WHO Growth Charts"}
           </Text>
         </View>
         <View
@@ -99,7 +99,7 @@ const ReferenceScreen = () => {
               )
             }
           >
-            - {"European Society of Hypertension Guidelines"}
+            {"European Society of Hypertension Guidelines"}
           </Text>
         </View>
         <View
@@ -137,7 +137,7 @@ const ReferenceScreen = () => {
               Linking.openURL("https://pubmed.ncbi.nlm.nih.gov/3657876/")
             }
           >
-            - {"The Mosteller Equation"}
+            {"The Mosteller Equation"}
           </Text>
         </View>
         <View
@@ -176,7 +176,6 @@ const ReferenceScreen = () => {
               )
             }
           >
-            -{" "}
             {
               "Comparison of Formulas for Calculation of the Corrected QT Interval"
             }
@@ -219,7 +218,7 @@ const ReferenceScreen = () => {
               )
             }
           >
-            - {"NICE: Principles & Protocols for IV Fluid Therapy"}
+            {"NICE: Principles & Protocols for IV Fluid Therapy"}
           </Text>
         </View>
         <View
@@ -261,7 +260,7 @@ const ReferenceScreen = () => {
               )
             }
           >
-            - {"Resus Council: Paediatric Emergency Drug Chart"}
+            {"Resus Council: Paediatric Emergency Drug Chart"}
           </Text>
         </View>
         <View
@@ -300,7 +299,7 @@ const ReferenceScreen = () => {
               )
             }
           >
-            - {"NICE: Jaundice Treatment Threshold Graphs"}
+            {"NICE: Jaundice Treatment Threshold Graphs"}
           </Text>
         </View>
         <View
@@ -339,7 +338,7 @@ const ReferenceScreen = () => {
               )
             }
           >
-            - {"Resus Council: Advanced Paediatric Life Support"}
+            {"Resus Council: Advanced Paediatric Life Support"}
           </Text>
         </View>
         <View
@@ -379,7 +378,7 @@ const ReferenceScreen = () => {
               )
             }
           >
-            - {"Resus Council: Newborn Life Support"}
+            {"Resus Council: Newborn Life Support"}
           </Text>
         </View>
       </ScrollView>
@@ -417,11 +416,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 23,
     marginLeft: 15,
-    marginTop: -15,
+    marginTop: -12,
+    textDecorationLine: "underline",
   },
   text: {
     fontSize: 16,
     lineHeight: 22,
+    marginTop: 5,
     margin: 15,
   },
 });
