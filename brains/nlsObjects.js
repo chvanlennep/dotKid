@@ -117,7 +117,7 @@ const makeKeyExtractorArray = () => {
     id: 'Resuscitation Required:',
     type: 'listHeader',
     downArrow: true,
-    onDownPress: 1540,
+    onDownPress: 1470,
     upArrow: true,
     onUpPress: 0,
   };
