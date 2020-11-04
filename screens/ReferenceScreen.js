@@ -1,155 +1,386 @@
 import React from "react";
-import { Linking, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+} from "react-native";
 import AppText from "../components/AppText";
 import ReferenceBackgroundScreen from "../components/ReferenceBackgroundScreen";
 import colors from "../config/colors";
+import defaultStyles from "../config/styles";
 
 const ReferenceScreen = () => {
+  const scheme = useColorScheme();
+  const dark = scheme === "dark" ? true : false;
+
   return (
     <ReferenceBackgroundScreen>
       <ScrollView>
         <View style={styles.headingContainer}>
           <AppText style={styles.heading}>References</AppText>
         </View>
-        <View style={styles.outputContainer}>
-          <AppText style={styles.subheading}>
+        <View
+          style={[
+            styles.outputContainer,
+            { backgroundColor: dark ? colors.dark : "#EBEBEB" },
+          ]}
+        >
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.subheading,
+              { color: dark ? colors.lightSecondary : colors.darkSecondary },
+            ]}
+          >
             Child Centile / Birth Centile / Preterm Centile Calculators
-          </AppText>
-          <AppText style={styles.text}>
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.text,
+              { color: dark ? colors.white : colors.dark },
+            ]}
+          >
             - All functions based on RCPCH UK-WHO growth chart data
             {"\n"}- Some statistical methods used to extrapolate inbetween data
             points REF
-          </AppText>
-          <AppText
-            style={styles.hyperlink}
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.hyperlink,
+              { color: dark ? colors.lightPrimary : colors.darkPrimary },
+            ]}
             onPress={() =>
               Linking.openURL(
                 "https://www.rcpch.ac.uk/resources/uk-who-growth-charts-guidance-health-professionals"
               )
             }
           >
-            -{" "}
-            {
-              "https://www.rcpch.ac.uk/resources/uk-who-growth-charts-guidance-health-professionals"
-            }
-          </AppText>
+            - {"UK-WHO Growth Charts"}
+          </Text>
         </View>
-        <View style={styles.outputContainer}>
-          <AppText style={styles.subheading}>Blood Pressure Calculator</AppText>
-          <AppText style={styles.text}>
+        <View
+          style={[
+            styles.outputContainer,
+            { backgroundColor: dark ? colors.dark : "#EBEBEB" },
+          ]}
+        >
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.subheading,
+              { color: dark ? colors.lightSecondary : colors.darkSecondary },
+            ]}
+          >
+            Blood Pressure Calculator
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.text,
+              { color: dark ? colors.white : colors.dark },
+            ]}
+          >
             - Based on values from European Society of Hypertension guidelines
-          </AppText>
-          <AppText
-            style={styles.hyperlink}
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.hyperlink,
+              { color: dark ? colors.lightPrimary : colors.darkPrimary },
+            ]}
             onPress={() =>
               Linking.openURL(
                 "https://journals.lww.com/jhypertension/Fulltext/2016/10000/2016_European_Society_of_Hypertension_guidelines.2.aspx"
               )
             }
           >
-            -{" "}
-            {
-              "https://journals.lww.com/jhypertension/Fulltext/2016/10000/2016_European_Society_of_Hypertension_guidelines.2.aspx"
-            }
-          </AppText>
+            - {"European Society of Hypertension Guidelines"}
+          </Text>
         </View>
-        <View style={styles.outputContainer}>
-          <AppText style={styles.subheading}>
+        <View
+          style={[
+            styles.outputContainer,
+            { backgroundColor: dark ? colors.dark : "#EBEBEB" },
+          ]}
+        >
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.subheading,
+              { color: dark ? colors.lightSecondary : colors.darkSecondary },
+            ]}
+          >
             Body Surface Area Calculator
-          </AppText>
-          <AppText style={styles.text}>
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.text,
+              { color: dark ? colors.white : colors.dark },
+            ]}
+          >
             - Body surface area calculated using the Mosteller formula {"\n"}-
             BSA = √((height (cm) x weight (kg)/3600))
-          </AppText>
-          <AppText
-            style={styles.hyperlink}
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.hyperlink,
+              { color: dark ? colors.lightPrimary : colors.darkPrimary },
+            ]}
             onPress={() =>
-              Linking.openURL(
-                "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5493254/"
-              )
+              Linking.openURL("https://pubmed.ncbi.nlm.nih.gov/3657876/")
             }
           >
-            - {"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5493254/"}
-          </AppText>
+            - {"The Mosteller Equation"}
+          </Text>
         </View>
-        <View style={styles.outputContainer}>
-          <AppText style={styles.subheading}>ECG Calculator</AppText>
-          <AppText style={styles.text}>
+        <View
+          style={[
+            styles.outputContainer,
+            { backgroundColor: dark ? colors.dark : "#EBEBEB" },
+          ]}
+        >
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.subheading,
+              { color: dark ? colors.lightSecondary : colors.darkSecondary },
+            ]}
+          >
+            ECG Calculator
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.text,
+              { color: dark ? colors.white : colors.dark },
+            ]}
+          >
             - QTc calculated using the Bazett formula
-          </AppText>
-          <AppText
-            style={styles.hyperlink}
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.hyperlink,
+              { color: dark ? colors.lightPrimary : colors.darkPrimary },
+            ]}
             onPress={() =>
               Linking.openURL(
                 "https://www.jpeds.com/article/S0022-3476(14)01206-2/abstract"
               )
             }
           >
-            - {"https://www.jpeds.com/article/S0022-3476(14)01206-2/abstract"}
-          </AppText>
+            -{" "}
+            {
+              "Comparison of Formulas for Calculation of the Corrected QT Interval"
+            }
+          </Text>
         </View>
-        <View style={styles.outputContainer}>
-          <AppText style={styles.subheading}>
+        <View
+          style={[
+            styles.outputContainer,
+            { backgroundColor: dark ? colors.dark : "#EBEBEB" },
+          ]}
+        >
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.subheading,
+              { color: dark ? colors.lightSecondary : colors.darkSecondary },
+            ]}
+          >
             Paediatric / Neonatal Fluid Calculators
-          </AppText>
-          <AppText style={styles.text}>
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.text,
+              { color: dark ? colors.white : colors.dark },
+            ]}
+          >
             - Fluid requirement calculators based on NICE guidelines for IV
             fluid therapy in children and young people
-          </AppText>
-          <AppText
-            style={styles.hyperlink}
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.hyperlink,
+              { color: dark ? colors.lightPrimary : colors.darkPrimary },
+            ]}
             onPress={() =>
               Linking.openURL(
                 "https://www.nice.org.uk/guidance/ng29/chapter/Recommendations#principles-and-protocols-for-intravenous-fluid-therapy"
               )
             }
           >
-            -{" "}
-            {
-              "https://www.nice.org.uk/guidance/ng29/chapter/Recommendations#principles-and-protocols-for-intravenous-fluid-therapy"
-            }
-          </AppText>
+            - {"NICE: Principles & Protocols for IV Fluid Therapy"}
+          </Text>
         </View>
-        <View style={styles.outputContainer}>
-          <AppText style={styles.subheading}>WETFLAG</AppText>
-          <AppText style={styles.text}>
+        <View
+          style={[
+            styles.outputContainer,
+            { backgroundColor: dark ? colors.dark : "#EBEBEB" },
+          ]}
+        >
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.subheading,
+              { color: dark ? colors.lightSecondary : colors.darkSecondary },
+            ]}
+          >
+            WETFLAG
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.text,
+              { color: dark ? colors.white : colors.dark },
+            ]}
+          >
             - WETFLAG estimated weight and drug dosages based on Resus Council
             guidelines for estimated paediatric resuscitation values.
             {"\n"}- Default weight is based on 50th centile for patient sex
             according to UK-WHO paediatric growth chart values.
-          </AppText>
-          <AppText
-            style={styles.hyperlink}
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.hyperlink,
+              { color: dark ? colors.lightPrimary : colors.darkPrimary },
+            ]}
             onPress={() =>
               Linking.openURL(
                 "https://www.resus.org.uk/sites/default/files/2020-03/PETchart-18-05-16.pdf"
               )
             }
           >
-            -{" "}
-            {
-              "https://www.resus.org.uk/sites/default/files/2020-03/PETchart-18-05-16.pdf"
-            }
-          </AppText>
+            - {"Resus Council: Paediatric Emergency Drug Chart"}
+          </Text>
         </View>
-        <View style={[styles.outputContainer, { marginBottom: 150 }]}>
-          <AppText style={styles.subheading}>Jaundice Calculator</AppText>
-          <AppText style={styles.text}>
+        <View
+          style={[
+            styles.outputContainer,
+            { backgroundColor: dark ? colors.dark : "#EBEBEB" },
+          ]}
+        >
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.subheading,
+              { color: dark ? colors.lightSecondary : colors.darkSecondary },
+            ]}
+          >
+            Jaundice Calculator
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.text,
+              { color: dark ? colors.white : colors.dark },
+            ]}
+          >
             - Based on NICE jaundice treatment threshold graphs and values
-          </AppText>
-          <AppText
-            style={styles.hyperlink}
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.hyperlink,
+              { color: dark ? colors.lightPrimary : colors.darkPrimary },
+            ]}
             onPress={() =>
               Linking.openURL(
                 "https://www.nice.org.uk/guidance/cg98/resources/treatment-threshold-graphs-excel-544300525"
               )
             }
           >
-            -{" "}
-            {
-              "https://www.nice.org.uk/guidance/cg98/resources/treatment-threshold-graphs-excel-544300525"
+            - {"NICE: Jaundice Treatment Threshold Graphs"}
+          </Text>
+        </View>
+        <View
+          style={[
+            styles.outputContainer,
+            { backgroundColor: dark ? colors.dark : "#EBEBEB" },
+          ]}
+        >
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.subheading,
+              { color: dark ? colors.lightSecondary : colors.darkSecondary },
+            ]}
+          >
+            APLS
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.text,
+              { color: dark ? colors.white : colors.dark },
+            ]}
+          >
+            - Based on Resus Council APLS guidelines
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.hyperlink,
+              { color: dark ? colors.lightPrimary : colors.darkPrimary },
+            ]}
+            onPress={() =>
+              Linking.openURL(
+                "https://www.resus.org.uk/library/2015-resuscitation-guidelines/paediatric-advanced-life-support"
+              )
             }
-          </AppText>
+          >
+            - {"Resus Council: Advanced Paediatric Life Support"}
+          </Text>
+        </View>
+        <View
+          style={[
+            styles.outputContainer,
+            { backgroundColor: dark ? colors.dark : "#EBEBEB" },
+            { marginBottom: 100 },
+          ]}
+        >
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.subheading,
+              { color: dark ? colors.lightSecondary : colors.darkSecondary },
+            ]}
+          >
+            NLS
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.text,
+              { color: dark ? colors.white : colors.dark },
+            ]}
+          >
+            - Based on Resus Council NLS guidelines
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.hyperlink,
+              { color: dark ? colors.lightPrimary : colors.darkPrimary },
+            ]}
+            onPress={() =>
+              Linking.openURL(
+                "https://www.resus.org.uk/training-courses/newborn-life-support/nls-newborn-life-support"
+              )
+            }
+          >
+            - {"Resus Council: Newborn Life Support"}
+          </Text>
         </View>
       </ScrollView>
     </ReferenceBackgroundScreen>
@@ -189,7 +420,6 @@ const styles = StyleSheet.create({
     marginTop: -15,
   },
   text: {
-    color: colors.dark,
     fontSize: 16,
     lineHeight: 22,
     margin: 15,

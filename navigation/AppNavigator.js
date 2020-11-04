@@ -1,15 +1,16 @@
-import React from 'react';
-import { useColorScheme } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import React from "react";
+import { useColorScheme } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import APLSScreen from '../screens/APLSScreen';
-import PaedsHomepageScreen from '../screens/PaedsHomepageScreen';
-import ReferenceScreen from '../screens/ReferenceScreen';
-import SettingsScreen from '../screens/SettingsScreen';
-import CalcNavigator from './CalcNavigator';
-import colors from '../config/colors';
-import ALSNavigator from './ALSNavigator';
+import APLSScreen from "../screens/APLSScreen";
+import PaedsHomepageScreen from "../screens/PaedsHomepageScreen";
+import ReferenceScreen from "../screens/ReferenceScreen";
+import SettingsScreen from "../screens/SettingsScreen";
+import CalcNavigator from "./CalcNavigator";
+import colors from "../config/colors";
+import ALSNavigator from "./ALSNavigator";
+import AboutScreen from "../screens/AboutScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -49,6 +50,19 @@ const AppNavigator = () => {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="book-open-variant"
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="About"
+        component={AboutScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="information-outline"
               color={color}
               size={size}
             />
