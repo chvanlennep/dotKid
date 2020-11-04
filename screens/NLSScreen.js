@@ -318,7 +318,7 @@ const NLSScreen = () => {
           ref={scrollRef}
           ListHeaderComponent={
             <ALSListHeader
-              onDownPress={() => scrollMe(1070)}
+              onDownPress={() => scrollMe(1000)}
               downArrow={true}
               title={'Pre-Resus Checklist:'}
             />
