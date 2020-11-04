@@ -21,6 +21,17 @@ const AboutScreen = () => {
       <ScrollView>
         <View style={styles.headingContainer}>
           <AppText style={styles.heading}>Important Information</AppText>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.text,
+              { color: dark ? colors.white : colors.dark },
+              { marginBottom: 0 },
+            ]}
+          >
+            Please read and acknowledge the following information before using
+            this app:
+          </Text>
         </View>
         <View
           style={[
