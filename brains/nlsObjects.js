@@ -13,7 +13,6 @@ const preResusChecklist = [
   { id: 'Warm blankets' },
   { id: 'Plastic wrap (if appropriate)' },
   { id: 'O2 +/- ECG monitoring' },
-  { id: 'ECG monitor' },
   { id: 'Stethoscope' },
   { id: 'Laryngoscope available' },
   { id: 'ET tube available' },
@@ -118,7 +117,7 @@ const makeKeyExtractorArray = () => {
     id: 'Resuscitation Required:',
     type: 'listHeader',
     downArrow: true,
-    onDownPress: 1540,
+    onDownPress: 1470,
     upArrow: true,
     onUpPress: 0,
   };

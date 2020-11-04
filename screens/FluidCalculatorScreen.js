@@ -174,7 +174,7 @@ const FluidCalculatorScreen = () => {
               kind="child"
             />
             <FormResetButton />
-            <FormSubmitButton name="Calculate Child Centiles" kind="child" />
+            <FormSubmitButton name="Calculate IV fluid rate" kind="child" />
           </AppForm>
         </View>
       </KeyboardAwareScrollView>
