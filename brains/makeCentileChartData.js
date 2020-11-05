@@ -442,7 +442,6 @@ export default (
   topValueForY =
     candidateValue1 > candidateValue2 ? candidateValue1 : candidateValue2;
 
-  //work out how many indicies to skip left to make sure centile labels aren't chopped off:
   const centileLabelStrings = [
     '0.4th',
     '2nd',
@@ -454,6 +453,8 @@ export default (
     '98th',
     '99.6th',
   ];
+
+  //work out how many indicies to skip left to make sure centile labels aren't chopped off:
   let takeOffIndex;
   if (kind === 'birth') {
     takeOffIndex = 2;
