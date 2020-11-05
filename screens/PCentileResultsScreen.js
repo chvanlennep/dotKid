@@ -42,7 +42,7 @@ const PCentileResultsScreen = ({ route, navigation }) => {
     : (weightTitle = 'Weight:');
   let bmiTitle = 'BMI:';
   if (measurements.weight && measurements.height) {
-    if (dayAgeForChart > 730) {
+    if (dayAgeForChart > 730 || monthAgeForChart >= 48) {
       rawBmi =
         measurements.weight /
         ((measurements.height / 100) * (measurements.height / 100));
