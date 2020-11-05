@@ -155,7 +155,7 @@ export default (
             miniArray.push(computedValue);
           }
         } else {
-          let internalKind = 'child';
+          let internalKind = kind;
           let internalIndex = 0;
           if (gestationInDays < 259) {
             internalKind = 'neonate';

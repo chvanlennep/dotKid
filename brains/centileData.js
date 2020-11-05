@@ -1,14 +1,26 @@
 /* 
 All centile data in an object
-For child data, sourced from WHO 1 day old until 1 day before 4th birthday (day increments)
+For child data, sourced from WHO 0 day old until 1 day before 4th birthday (day increments)
 From 4th birthday, sourced from UK data in monthly increments
-Day 0 of child data is birth data (all 37+ infants) from UK data
+37+ birth data is kept separately. This is UK data
 Preterm data is from UK in weekly increments
 
 Note capitals for Male and Female (I passed the input from the picker directly and was lazy, could've done toLowerCase)
 */
 
 export default {
+  birth: {
+    Male: {
+      hc: [[0, 1, 35, 0.0382]],
+      length: [[0, 1, 51, 0.0451]],
+      weight: [[0, 1, 3.5, 0.1427]],
+    },
+    Female: {
+      hc: [[0, 1, 34, 0.0334]],
+      length: [[0, 1, 50, 0.0399]],
+      weight: [[0, 1, 3.36, 0.1408]],
+    },
+  },
   child: {
     Female: {
       bmi: [
@@ -1644,7 +1656,7 @@ export default {
       ],
       // Only until 2 years of age:
       hc: [
-        [0, 1, 34, 0.0334],
+        [0, 1, 33.8787, 0.03496],
         [1, 1, 33.975, 0.03479],
         [2, 1, 34.0714, 0.03461],
         [3, 1, 34.1677, 0.03444],
@@ -2377,7 +2389,7 @@ export default {
         [730, 1, 47.1799, 0.02958],
       ],
       height: [
-        [0, 1, 50, 0.0399],
+        [0, 1, 49.1477, 0.0379],
         [1, 1, 49.3166, 0.03783],
         [2, 1, 49.4854, 0.03776],
         [3, 1, 49.6543, 0.0377],
@@ -4008,7 +4020,7 @@ export default {
         [216, 1, 163.57, 0.03695],
       ],
       weight: [
-        [0, 1, 3.36, 0.1408],
+        [0, 0.3809, 3.2322, 0.14171],
         [1, 0.3259, 3.1957, 0.14578],
         [2, 0.3101, 3.2104, 0.14637],
         [3, 0.2986, 3.2315, 0.14657],
@@ -7273,7 +7285,7 @@ export default {
       ],
       // Only until 2 years of age:
       hc: [
-        [0, 1, 35, 0.0382],
+        [0, 1, 34.4618, 0.03686],
         [1, 1, 34.562, 0.03656],
         [2, 1, 34.6622, 0.03625],
         [3, 1, 34.7625, 0.03595],
@@ -8006,7 +8018,7 @@ export default {
         [730, 1, 48.2494, 0.02821],
       ],
       height: [
-        [0, 1, 51, 0.0451],
+        [0, 1, 49.8842, 0.03795],
         [1, 1, 50.0601, 0.03785],
         [2, 1, 50.2359, 0.03775],
         [3, 1, 50.4118, 0.03764],
@@ -9637,7 +9649,7 @@ export default {
         [216, 1, 177.09, 0.03958],
       ],
       weight: [
-        [0, 1, 3.5, 0.1427],
+        [0, 0.3487, 3.3464, 0.14602],
         [1, 0.3127, 3.3174, 0.14693],
         [2, 0.3029, 3.337, 0.14676],
         [3, 0.2959, 3.3627, 0.14647],

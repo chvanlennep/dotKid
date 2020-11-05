@@ -623,7 +623,7 @@ const centileFromLms = (
       length: lengthCentile,
       weight: weightCentile,
     };
-  } else if (kind === 'child') {
+  } else {
     let index;
     const monthAgeForChart = ageInMonths;
     let dayAgeForChart = ageInDays;
@@ -668,9 +668,10 @@ const centileFromLms = (
       }
     }
     if (object.height || object.length) {
-      array = centileData[kind][sex]['height'][index];
+      const measurementLabel = object.height ? 'height' : 'length';
+      array = centileData[kind][sex][measurementLabel][index];
       z = calculateZ(object.height || object.length, array);
-      heightCentile = outputCentile(z, object, 'height', array);
+      heightCentile = outputCentile(z, object, measurementLabel, array);
     }
     if (object.weight) {
       let weight;
@@ -680,7 +681,7 @@ const centileFromLms = (
       array = centileData[kind][sex]['weight'][index];
       z = calculateZ(weight, array);
       weightCentile = outputCentile(z, object, 'weight', array);
-      if (object.height && ageInDays !== 0) {
+      if (object.height && ageInDays > 730) {
         array = centileData[kind][sex]['bmi'][index];
         bmi = calculateBMI(object.weight, object.height);
         z = calculateZ(bmi, array);
@@ -722,7 +723,7 @@ const calculateCentile = (object) => {
       ageInMonths,
       birthGestationInDays,
       correctedGestationInDays,
-      'child',
+      kind,
       object
     );
     return {
