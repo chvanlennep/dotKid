@@ -42,11 +42,15 @@ const PCentileResultsScreen = ({ route, navigation }) => {
     : (weightTitle = 'Weight:');
   let bmiTitle = 'BMI:';
   if (measurements.weight && measurements.height) {
-    rawBmi =
-      measurements.weight /
-      ((measurements.height / 100) * (measurements.height / 100));
-    const niceLookingBmi = Number(rawBmi.toFixed(1));
-    bmiTitle = `BMI (${niceLookingBmi}kg/m²):`;
+    if (dayAgeForChart > 730) {
+      rawBmi =
+        measurements.weight /
+        ((measurements.height / 100) * (measurements.height / 100));
+      const niceLookingBmi = Number(rawBmi.toFixed(1));
+      bmiTitle = `BMI (${niceLookingBmi}kg/m²):`;
+    } else {
+      bmiTitle = 'BMI (N/A under 2 years):';
+    }
   }
   let hcTitle = 'Head Circumference:';
   if (measurements.hc) {
