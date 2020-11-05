@@ -18,7 +18,7 @@ import colors from '../config/colors';
 import AppText from './AppText';
 
 const chartWidth =
-  defaultStyle.container.width > 350 ? 280 : defaultStyle.container.width - 70;
+  defaultStyle.container.width > 440 ? 360 : defaultStyle.container.width - 80;
 const chartHeight = chartWidth * 1.6;
 
 LogBox.ignoreLogs(['Warning: Failed prop type:']);
@@ -54,6 +54,9 @@ const CentileChart = ({
   const dark = scheme === 'dark' ? true : false;
   const chartBackgroundColor = dark ? colors.black : colors.white;
   const chartForegroundColor = dark ? colors.white : colors.black;
+
+  // looks better visually for low ages
+  const curvyChart = ageInDays && ageInDays < 56 ? true : false;
 
   let finalXKey;
   if (kind !== 'birth') {
@@ -138,7 +141,7 @@ const CentileChart = ({
             style={{ flex: 1 }}
             svg={{ strokeWidth: 2 }}
             contentInset={{ top: 5, bottom: 10, left: 3, right: 3 }}
-            curve={shape.curveLinear}
+            curve={curvyChart ? shape.curveNatural : shape.curveLinear}
           >
             <ExtraDot />
             <CentileLabels />
