@@ -6,7 +6,9 @@ const GlobalStateProvider = ({ children }) => {
   const [globalStats, setGlobalStats] = useState({
     child: {
       dob: null,
+      dom: null,
       tob: null,
+      tom: null,
       gestationInDays: 280,
       hc: '',
       height: '',
@@ -15,7 +17,9 @@ const GlobalStateProvider = ({ children }) => {
     },
     neonate: {
       dob: null,
+      dom: null,
       tob: null,
+      tom: null,
       gestationInDays: 0,
       hc: '',
       length: '',

@@ -33,6 +33,7 @@ const JaundiceScreen = () => {
     gestationInDays: Yup.number()
       .min(161, '↑ Please select a birth gestation')
       .required()
+      .nullable()
       .label('Birth Gestation'),
     dob: Yup.date()
       .nullable()
@@ -42,13 +43,10 @@ const JaundiceScreen = () => {
         } of birth`
       )
       .label('Date of Birth'),
-    tob: Yup.date()
-      .nullable()
-      .required('↑ Please enter a time of birth')
-      .label('Time of Birth'),
   });
 
   const handleFormikSubmit = (values) => {
+    console.log(values);
     const checkAge = ageChecker(values, 14);
     if (checkAge === 'Negative age') {
       Alert.alert(
