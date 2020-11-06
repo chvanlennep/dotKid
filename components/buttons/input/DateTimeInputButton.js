@@ -17,6 +17,7 @@ import ErrorMessage from '../../ErrorMessage';
 import { GlobalStateContext } from '../../GlobalStateContext';
 import defaultStyles from '../../../config/styles';
 import AppText from '../../AppText';
+import BareDTPickerAndroid from '../../BareDTPickerAndroid';
 
 const modalWidth =
   defaultStyles.container.width > 360 ? 360 : defaultStyles.container.width;
@@ -29,7 +30,7 @@ const DateTimeInputButton = ({
 }) => {
   const android = Platform.OS === 'android' ? true : false;
   const ios = Platform.OS === 'ios' ? true : false;
-  scheme = useColorScheme();
+  const scheme = useColorScheme();
   const dark = scheme === 'dark' ? true : false;
   const darkBackgroundColor =
     kind === 'child' ? colors.darkPrimary : colors.darkSecondary;
@@ -68,21 +69,36 @@ const DateTimeInputButton = ({
 
   const dateName = type === 'birth' ? 'dob' : 'dom';
   const timeName = type === 'birth' ? 'tob' : 'tom';
-  const resetValue = null;
   const cancelIcon = type === 'birth' ? 'delete-forever' : 'refresh';
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [date, setDate] = useState(null);
-  const [time, setTime] = useState(null);
-  const [showPickerDateAndroid, setShowPickerDateAndroid] = useState(false);
-  const [showPickerTimeAndroid, setShowPickerTimeAndroid] = useState(false);
-  const [text1, setText1] = useState(`${userLabel1}`);
-  const [text2, setText2] = useState(`${userLabel2}`);
-  const [showCancel, setShowCancel] = useState(false);
-  const [showCancelTime, setShowCancelTime] = useState(false);
+  const initialState = {
+    date: null,
+    time: null,
+    showCancel: false,
+    modalVisible: false,
+    text1: userLabel1,
+    showCancelTime: false,
+    showPickerDateAndroid: false,
+    showPickerTimeAndroid: false,
+    text2: userLabel2,
+    changedDateAndroid: false,
+    changedTimeAndroid: false,
+  };
+
+  const [state, setState] = useState(initialState);
 
   const { setFieldValue, errors, touched, values } = useFormikContext();
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
+
+  const manageState = (object, state) => {
+    setState((state) => {
+      const mutableState = { ...state };
+      for (const [key, value] of Object.entries(object)) {
+        mutableState[key] = value;
+      }
+      return mutableState;
+    });
+  };
 
   const manageStats = {
     read: function (kind, measurementType) {
@@ -111,306 +127,309 @@ const DateTimeInputButton = ({
       if (inputDate && !inputTime) {
         if (type === 'measured') {
           if (formatDate(inputDate) === formatDate(new Date())) {
-            setText1(`Measured: Today`);
+            return `Measured: Today`;
           } else {
-            setText1(`Measured on ${formatDate(inputDate)}`);
+            return `Measured on ${formatDate(inputDate)}`;
           }
         } else {
-          setText1(`${userLabel1}: ${formatDate(inputDate)}`);
+          return `${userLabel1}: ${formatDate(inputDate)}`;
         }
       }
       if (inputTime && !inputDate) {
         if (type === 'measured') {
           if (formatTime(inputTime) === formatTime(new Date())) {
-            setText2('Measured: Now');
+            return `Measured: now`;
           } else {
-            setText2(`Measured at ${formatTime(inputTime)}`);
+            return `Measured at ${formatTime(inputTime)}`;
           }
         } else {
-          setText2(`Time of Birth: ${formatTime(inputTime)}`);
+          return `Time of Birth: ${formatTime(inputTime)}`;
         }
       }
     }
     if (ios) {
       if (renderTime) {
         if (type === 'birth') {
-          setText1(
-            `DOB: ${formatDate(inputDate)} at ${formatTime(
-              inputTime || new Date()
-            )}`
-          );
+          return `DOB: ${formatDate(inputDate)} at ${formatTime(
+            inputTime || new Date()
+          )}`;
         } else if (type === 'measured') {
           if (
             formatDate(inputDate) === formatDate(new Date()) &&
             formatTime(inputTime) === formatTime(new Date())
           ) {
-            setText1(`Measured: Now`);
+            return `Measured: Now`;
           } else {
-            setText1(
-              `Measured: ${formatDate(inputDate)} at ${formatTime(inputTime)}`
-            );
+            return `Measured: ${formatDate(inputDate)} at ${formatTime(
+              inputTime
+            )}`;
           }
         }
       } else {
         if (type === 'birth') {
-          setText1(`${userLabel1}: ${formatDate(inputDate)}`);
+          return `${userLabel1}: ${formatDate(inputDate)}`;
         } else {
           if (formatDate(inputDate) === formatDate(new Date())) {
-            setText1(`Measured: Now`);
+            return `Measured: Now`;
           } else {
-            setText1(`Measured on ${formatDate(inputDate)}`);
+            return `Measured on ${formatDate(inputDate)}`;
           }
         }
       }
     }
   };
 
-  const onChangeDate = (e, selectedDate) => {
-    setShowPickerDateAndroid(false);
+  const {
+    date,
+    time,
+    showCancel,
+    showCancelTime,
+    modalVisible,
+    showPickerDateAndroid,
+    showPickerTimeAndroid,
+    text1,
+    text2,
+    changedDateAndroid,
+    changedTimeAndroid,
+  } = state;
+
+  const onChangeDateIos = (e, selectedDate) => {
     const currentDate = selectedDate || date;
-    setDate(currentDate);
-    if (ios) {
-      if (!global) {
-        setFieldValue(dateName, currentDate);
-      }
-    }
-    if (android) {
-      if (
-        type === 'measured' &&
-        formatDate(currentDate) === formatDate(new Date())
-      ) {
-        setShowCancel(false);
-        if (!global) {
-          setFieldValue(dateName, null);
-        }
-        manageStats.write(kind, dateName, null);
-      } else {
-        customiseLabel(currentDate, null);
-        setShowCancel(true);
-        manageStats.write(kind, dateName, currentDate);
-        if (!global) {
-          setFieldValue(dateName, currentDate);
-        }
-      }
-    }
+    manageState({ date: currentDate }, state);
   };
 
   const onChangeTimeIos = (e, selectedTime) => {
     const currentTime = selectedTime || time;
-    setTime(currentTime);
+    manageState({ time: currentTime }, state);
     if (!global) {
       setFieldValue(timeName, currentTime);
     }
   };
 
-  const onChangeTimeAndroid = (e, selectedTime) => {
-    setShowPickerTimeAndroid(false);
-    const currentTime = selectedTime || time;
-    if (
-      type === 'measured' &&
-      formatTime(currentTime) === formatTime(new Date())
-    ) {
-      setShowCancelTime(false);
-      if (!global) {
-        setFieldValue(timeName, null);
-      }
-      manageStats.write(kind, timeName, null);
-    } else {
-      customiseLabel(null, currentTime);
-      setShowCancelTime(true);
-      manageStats.write(kind, timeName, currentTime);
-      if (!global) {
-        setFieldValue(timeName, currentTime);
-      }
-    }
-  };
-
   const togglePicker = () => {
-    if (ios && modalVisible) {
-      customiseLabel(date, time);
+    let workingObject = {};
+    if (modalVisible) {
+      workingObject.text1 = customiseLabel(date, time);
       if (type === 'birth') {
         if (renderTime) {
+          if (!global) {
+            setFieldValue(dateName, date);
+            setFieldValue(timeName, time);
+          }
           manageStats.write(kind, dateName, date);
           manageStats.write(kind, timeName, time);
         } else {
+          if (!global) {
+            setFieldValue(dateName, date);
+          }
           manageStats.write(kind, dateName, date);
         }
-        setShowCancel(true);
+        workingObject.showCancel = true;
       } else if (type === 'measured') {
         if (formatDate(date) !== formatDate(new Date())) {
-          setShowCancel(true);
+          workingObject.showCancel = true;
         } else {
           setFieldValue(dateName, null);
         }
         if (renderTime) {
           if (formatTime(time) !== formatTime(new Date())) {
-            setShowCancel(true);
+            workingObject.showCancel = true;
           } else {
             setFieldValue(timeName, null);
           }
         }
       }
-      setModalVisible(false);
-    } else if (!modalVisible || !showPickerDateAndroid) {
-      if (!date) {
-        setDate(new Date());
+      workingObject.modalVisible = false;
+      manageState(workingObject, state);
+    } else if (!modalVisible && ios) {
+      let workingObject = {};
+      if (!state.date) {
+        workingObject.date = new Date();
         if (!global) setFieldValue(dateName, new Date());
       }
-      if (!time && renderTime) {
-        setTime(new Date());
+      if (!state.time && renderTime) {
+        workingObject.time = new Date();
         if (!global) setFieldValue(timeName, new Date());
       }
-      ios ? setModalVisible(true) : setShowPickerDateAndroid(true);
+      workingObject.modalVisible = true;
+      manageState(workingObject, state);
+    } else {
+      workingObject.showPickerDateAndroid = true;
     }
+    manageState(workingObject, state);
   };
 
   const openPickerTimeAndroid = () => {
-    if (!time) {
-      setTime(new Date());
-    }
-    setShowPickerTimeAndroid(true);
+    manageState({ showPickerTimeAndroid: true }, state);
   };
 
-  const cancelInput = () => {
+  const cancelInput = (timeButton = false) => {
+    let workingObject = {};
     if (modalVisible) {
-      setModalVisible(false);
-      const globalDob = manageStats.read(kind, dateName);
-      setDate(globalDob);
-      setFieldValue(dateName, globalDob);
+      workingObject.modalVisible = false;
+      workingObject.date = manageStats.read(kind, dateName);
+      setFieldValue(dateName, workingObject.date);
       if (renderTime) {
-        const globalTob = manageStats.read(kind, timeName);
-        setTime(globalTob);
-        setFieldValue(timeName, globalTob);
+        workingObject.time = manageStats.read(kind, timeName);
+        setFieldValue(timeName, workingObject.time);
       }
+      manageState(workingObject, state);
     } else {
-      setText1(`${userLabel1}`);
-      setDate(resetValue);
-      if (renderTime) {
-        setTime(resetValue);
-      }
-      setShowCancel(false);
-      if (!global) {
-        setFieldValue(dateName, resetValue);
-        if (ios && renderTime) {
-          setFieldValue(timeName, resetValue);
+      if (!timeButton) {
+        if (!global) {
+          setFieldValue(dateName, null);
+          if (renderTime) {
+            setFieldValue(timeName, null);
+          }
         }
+        manageStats.write(kind, dateName, null);
+        if (renderTime) {
+          manageStats.write(kind, timeName, null);
+        }
+        workingObject.showCancel = false;
+        workingObject.text1 = userLabel1;
+        workingObject.date = null;
+      } else if (timeButton) {
+        if (!global) {
+          setFieldValue(timeName, null);
+        }
+        manageStats.write(kind, timeName, null);
+        workingObject.showCancelTime = false;
+        workingObject.time = null;
+        workingObject.text2 = userLabel2;
       }
-      manageStats.write(kind, dateName, resetValue);
-      if (ios && renderTime) {
-        manageStats.write(kind, timeName, resetValue);
-      }
-    }
-  };
-
-  const cancelTimeInputAndroid = () => {
-    setText2(`${userLabel2}`);
-    setTime(resetValue);
-    setShowCancelTime(false);
-    if (!global) {
-      setFieldValue(timeName, resetValue);
-    }
-    manageStats.write(kind, timeName, resetValue);
-  };
-
-  const localReset = () => {
-    setText1(`${userLabel1}`);
-    setText2(`${userLabel2}`);
-    setDate(resetValue);
-    if (renderTime) {
-      setTime(resetValue);
-    }
-    setShowCancel(false);
-    if (android && renderTime) {
-      setShowCancelTime(false);
+      manageState(workingObject, state);
     }
   };
 
   useEffect(() => {
-    if (type === 'measured') {
-      // reset by formik, but previously changed by user
-      if (
-        showCancel &&
-        !values[dateName] &&
-        !values[timeName] &&
-        !modalVisible &&
-        !showPickerTimeAndroid &&
-        !showPickerDateAndroid
-      )
-        localReset();
+    if (changedDateAndroid) {
+      if (type === 'measured' && formatDate(date) === formatDate(new Date())) {
+        setFieldValue(dateName, null);
+        manageStats.write(kind, dateName, null);
+      } else {
+        setFieldValue(dateName, date);
+        manageStats.write(kind, dateName, date);
+      }
+      manageState({ changedDateAndroid: false }, state);
+    } else if (changedTimeAndroid) {
+      if (type === 'measured' && formatTime(time) === formatTime(new Date())) {
+        setFieldValue(timeName, null);
+        manageStats.write(kind, timeName, null);
+      } else {
+        setFieldValue(timeName, time);
+        manageStats.write(kind, timeName, time);
+      }
+      manageState({ changedTimeAndroid: false }, state);
     }
   });
 
   useEffect(() => {
-    if (type === 'birth') {
-      const globalDob = manageStats.read(kind, dateName);
-      const globalTob = manageStats.read(kind, timeName);
-      // button filled out by user (must put no modalVisible otherwise value stuck)
-      if (
-        showCancel &&
-        !modalVisible &&
-        !showPickerDateAndroid &&
-        !showPickerTimeAndroid &&
-        (date || time)
-      ) {
-        // // reset by formik:
-        if (!global) {
-          if (!values[dateName]) {
-            localReset();
-            manageStats.write(kind, dateName, resetValue);
-            manageStats.write(kind, timeName, resetValue);
-          }
-        }
-        // reset globally:
-        if (!globalDob && !globalTob) {
-          localReset();
+    if (!changedTimeAndroid && !changedDateAndroid) {
+      if (type === 'measured') {
+        // reset by formik, but previously changed by user
+        if (
+          state.showCancel &&
+          !values[dateName] &&
+          !values[timeName] &&
+          !state.modalVisible &&
+          !state.showPickerTimeAndroid &&
+          !state.showPickerDateAndroid
+        )
+          manageState(initialState, state);
+      }
+    }
+  }, [state, values[dateName], values[timeName]]);
+
+  useEffect(() => {
+    if (!changedTimeAndroid && !changedDateAndroid) {
+      if (type === 'birth') {
+        const globalDob = manageStats.read(kind, dateName);
+        const globalTob = manageStats.read(kind, timeName);
+        // button filled out by user (must put no modalVisible otherwise value stuck)
+        if (
+          showCancel &&
+          !modalVisible &&
+          !showPickerDateAndroid &&
+          !showPickerTimeAndroid &&
+          (date || time)
+        ) {
+          // // reset by formik:
           if (!global) {
-            setFieldValue(dateName, resetValue);
-            setFieldValue(timeName, resetValue);
+            if (!values[dateName] && !values[timeName]) {
+              manageStats.write(kind, dateName, null);
+              manageStats.write(kind, timeName, null);
+              manageState(initialState, state);
+            }
+          }
+          // reset globally:
+          if (!globalDob && !globalTob) {
+            if (!global) {
+              setFieldValue(dateName, null);
+              setFieldValue(timeName, null);
+            }
+            manageState(initialState, state);
+          }
+          // value changed by global state:
+          if (globalDob) {
+            if (formatDate(globalDob) !== formatDate(date)) {
+              if (!global) {
+                setFieldValue(dateName, globalDob);
+                setFieldValue(timeName, globalTob);
+              }
+              let workingObject = {};
+              workingObject.date = globalDob;
+              if (renderTime) workingObject.time = globalTob || globalDob;
+              renderTime && ios
+                ? (workingObject.text1 = customiseLabel(
+                    globalDob,
+                    globalTob || globalDob
+                  ))
+                : (workingObject.text1 = customiseLabel(globalDob, null));
+              if (renderTime && android)
+                workingObject.text2 = customiseLabel(
+                  null,
+                  globalTob || globalDob
+                );
+              manageState(workingObject, state);
+            }
           }
         }
-        // value changed by global state:
-        if (globalDob) {
-          if (
-            formatDate(globalDob) !== formatDate(date) ||
-            formatTime(globalTob) !== formatTime(time)
-          ) {
+        // not filled in by user:
+        if (
+          !showCancel &&
+          !modalVisible &&
+          !showPickerDateAndroid &&
+          !showPickerTimeAndroid &&
+          date === null &&
+          time === null
+        ) {
+          // value updated via global state:
+          if (globalDob) {
             if (!global) {
               setFieldValue(dateName, globalDob);
-              setFieldValue(timeName, globalTob);
+              if (renderTime && globalTob) {
+                setFieldValue(timeName, globalTob);
+              }
             }
-            setDate(globalDob);
-            setTime(globalTob);
-            customiseLabel(globalDob, renderTime ? globalTob : null);
-          }
-        }
-      }
-      // not filled in by user:
-      if (
-        !showCancel &&
-        !modalVisible &&
-        !showPickerDateAndroid &&
-        !showPickerTimeAndroid &&
-        date === resetValue &&
-        time === resetValue
-      ) {
-        // value updated via global state:
-        if (globalDob) {
-          if (!global) {
-            setFieldValue(dateName, globalDob);
-            if (renderTime && globalTob) {
-              setFieldValue(timeName, globalTob);
-            }
-          }
-          setDate(globalDob);
-          setTime(globalTob ? globalTob : new Date());
-          if (ios) {
-            customiseLabel(globalDob, globalTob ? globalTob : new Date());
-          } else if (android) {
-            customiseLabel(globalDob, globalTob ? globalTob : null);
-          }
-          setShowCancel(true);
-          if (globalTob) {
-            setShowCancelTime(true);
+            let workingObject = {};
+            workingObject.date = globalDob;
+            if (renderTime) workingObject.time = globalTob || globalDob;
+            renderTime && ios
+              ? (workingObject.text1 = customiseLabel(
+                  globalDob,
+                  globalTob || globalDob
+                ))
+              : (workingObject.text1 = customiseLabel(globalDob, null));
+            if (renderTime && android)
+              workingObject.text2 = customiseLabel(
+                null,
+                globalTob || globalDob
+              );
+            workingObject.showCancel = true;
+            workingObject.showCancelTime = true;
+            if (globalTob && android) workingObject.showCancelTime = true;
+            manageState(workingObject, state);
           }
         }
       }
@@ -427,7 +446,7 @@ const DateTimeInputButton = ({
           </View>
         </TouchableOpacity>
         {showCancel && (
-          <TouchableOpacity onPress={cancelInput}>
+          <TouchableOpacity onPress={() => cancelInput()}>
             <ButtonIcon name={cancelIcon} />
           </TouchableOpacity>
         )}
@@ -443,7 +462,7 @@ const DateTimeInputButton = ({
               </View>
             </TouchableOpacity>
             {showCancelTime && (
-              <TouchableOpacity onPress={cancelTimeInputAndroid}>
+              <TouchableOpacity onPress={() => cancelInput(true)}>
                 <ButtonIcon name={cancelIcon} />
               </TouchableOpacity>
             )}
@@ -474,7 +493,7 @@ const DateTimeInputButton = ({
                     value={date}
                     mode="date"
                     display="spinner"
-                    onChange={onChangeDate}
+                    onChange={onChangeDateIos}
                     style={{ height: 150 }}
                   />
                 </View>
@@ -494,7 +513,7 @@ const DateTimeInputButton = ({
               )}
               <View style={styles.buttonContainer}>
                 <View style={styles.closeIcon}>
-                  <TouchableOpacity onPress={cancelInput}>
+                  <TouchableOpacity onPress={() => cancelInput()}>
                     <MaterialCommunityIcons
                       name="close-circle"
                       color={dark ? colors.white : colors.black}
@@ -517,24 +536,17 @@ const DateTimeInputButton = ({
         </Modal>
       </View>
       {showPickerDateAndroid && android && (
-        <DateTimePicker
-          testID="datePicker"
-          value={date}
-          mode="date"
-          display="spinner"
-          onChange={onChangeDate}
-          style={[styles.Picker]}
+        <BareDTPickerAndroid
+          isDate={true}
+          stateObject={[state, setState]}
+          type={type}
         />
       )}
       {showPickerTimeAndroid && android && renderTime && (
-        <DateTimePicker
-          testID="timePicker"
-          value={time}
-          mode="time"
-          minuteInterval={15}
-          display="spinner"
-          onChange={onChangeTimeAndroid}
-          style={styles.Picker}
+        <BareDTPickerAndroid
+          isDate={false}
+          stateObject={[state, setState]}
+          type={type}
         />
       )}
     </React.Fragment>
