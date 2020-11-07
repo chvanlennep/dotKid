@@ -1,16 +1,12 @@
-import React from "react";
-import { useColorScheme } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React from 'react';
 
-import APLSScreen from "../screens/APLSScreen";
-import PaedsHomepageScreen from "../screens/PaedsHomepageScreen";
-import ReferenceScreen from "../screens/ReferenceScreen";
-import SettingsScreen from "../screens/SettingsScreen";
-import CalcNavigator from "./CalcNavigator";
-import colors from "../config/colors";
-import ALSNavigator from "./ALSNavigator";
-import AboutScreen from "../screens/AboutScreen";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+import ReferenceScreen from '../screens/ReferenceScreen';
+import CalcNavigator from './CalcNavigator';
+import ALSNavigator from './ALSNavigator';
+import AboutScreen from '../screens/AboutScreen';
 
 const Tab = createBottomTabNavigator();
 

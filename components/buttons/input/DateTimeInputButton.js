@@ -344,6 +344,7 @@ const DateTimeInputButton = ({
   useEffect(() => {
     if (!changedTimeAndroid && !changedDateAndroid) {
       if (type === 'birth') {
+        let workingObject = {};
         const globalDob = manageStats.read(kind, dateName);
         const globalTob = manageStats.read(kind, timeName);
         // button filled out by user (must put no modalVisible otherwise value stuck)
@@ -377,7 +378,6 @@ const DateTimeInputButton = ({
                 setFieldValue(dateName, globalDob);
                 setFieldValue(timeName, globalTob);
               }
-              let workingObject = {};
               workingObject.date = globalDob;
               if (renderTime) workingObject.time = globalTob || globalDob;
               renderTime && ios
@@ -412,7 +412,6 @@ const DateTimeInputButton = ({
                 setFieldValue(timeName, globalTob);
               }
             }
-            let workingObject = {};
             workingObject.date = globalDob;
             if (renderTime) workingObject.time = globalTob || globalDob;
             renderTime && ios
