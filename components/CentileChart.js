@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   overallContainer: {
-    margin: 20,
+    margin: 15,
     marginTop: 5,
     borderRadius: 10,
     alignSelf: 'center',
