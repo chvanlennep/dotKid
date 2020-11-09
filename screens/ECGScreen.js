@@ -70,7 +70,7 @@ const ECGScreen = () => {
         Alert.alert(
           'Time Travelling Patient',
           'Please check the dates entered',
-          [{ text: 'OK' }],
+          [{ text: 'OK', onPress: () => null }],
           { cancelable: false }
         );
         break;
@@ -78,7 +78,7 @@ const ECGScreen = () => {
         Alert.alert(
           'Patient Too Old',
           'This calculator can only be used under 18 years of age',
-          { text: 'OK' },
+          [{ text: 'OK', onPress: () => null }],
           { cancelable: false }
         );
         break;

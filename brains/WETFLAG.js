@@ -15,12 +15,12 @@ export default WETFLAG = (dob, dom, sex, weight) => {
   // allows user to input weight if known
   let finalWeight;
   let weightIsEstimated = false;
-  if (isNaN(weight)) {
+  if (!weight) {
     const estWeight = weightOn50th(ageInDays, ageInMonths, sex);
     finalWeight = estWeight < 10 ? estWeight.toFixed(1) : Math.round(estWeight);
     weightIsEstimated = true;
   } else {
-    finalWeight = weight.toFixed(2);
+    finalWeight = Number(weight).toFixed(2);
   }
 
   // limits defibrillator energy output based on APLS guidelines https://www.resus.org.uk/sites/default/files/2020-03/PETchart-18-05-16.pdf

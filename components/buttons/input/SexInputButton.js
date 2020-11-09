@@ -19,7 +19,7 @@ import ErrorMessage from '../../ErrorMessage';
 import { GlobalStateContext } from '../../GlobalStateContext';
 
 const modalWidth =
-  defaultStyles.container.width > 360 ? 360 : defaultStyles.container.width;
+  defaultStyles.container.width > 350 ? 350 : defaultStyles.container.width;
 
 const SexInputButton = ({ global = false, kind, name = 'sex' }) => {
   const ios = Platform.OS === 'ios' ? true : false;
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
   },
   iosPicker: {
     height: 200,
-    width: modalWidth,
+    width: modalWidth - 50,
   },
   androidPicker: {
     height: 100,
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: modalWidth,
-    //backgroundColor: 'black',
+    //backgroundColor: 'orange',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

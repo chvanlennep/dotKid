@@ -19,7 +19,7 @@ import { GlobalStateContext } from '../../GlobalStateContext';
 import defaultStyles from '../../../config/styles';
 
 const modalWidth =
-  defaultStyles.container.width > 360 ? 360 : defaultStyles.container.width;
+  defaultStyles.container.width > 350 ? 350 : defaultStyles.container.width;
 
 const GestationInputButton = ({
   global = false,
@@ -326,14 +326,16 @@ const styles = StyleSheet.create({
   },
   iosPicker: {
     height: 200,
-    width: modalWidth / 2,
+    width: modalWidth / 2.2,
+    //backgroundColor: 'orange',
+    alignSelf: 'center',
   },
   androidPicker: {
     height: 100,
     width: modalWidth / 2 - 10,
   },
   pickerContainer: {
-    alignSelf: 'center',
+    //alignSelf: 'center',
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',

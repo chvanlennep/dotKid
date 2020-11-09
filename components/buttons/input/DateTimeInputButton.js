@@ -20,7 +20,7 @@ import AppText from '../../AppText';
 import BareDTPickerAndroid from '../../BareDTPickerAndroid';
 
 const modalWidth =
-  defaultStyles.container.width > 360 ? 360 : defaultStyles.container.width;
+  defaultStyles.container.width > 350 ? 350 : defaultStyles.container.width;
 
 const DateTimeInputButton = ({
   global = false,

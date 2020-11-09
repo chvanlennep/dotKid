@@ -39,9 +39,7 @@ const WETFLAGScreen = () => {
   const initialValues = {
     dob: null,
     sex: '',
-    weight: Yup.number()
-      .min(0.1, wrongUnitsMessage('kg'))
-      .max(150, wrongUnitsMessage('kg')),
+    weight: '',
     dom: null,
   };
 
@@ -53,7 +51,7 @@ const WETFLAGScreen = () => {
         Alert.alert(
           'Time Travelling Patient',
           'Please check the dates entered',
-          [{ text: 'OK' }],
+          [{ text: 'OK', onPress: () => null }],
           { cancelable: false }
         );
         break;
@@ -61,7 +59,7 @@ const WETFLAGScreen = () => {
         Alert.alert(
           'Patient Too Old',
           'This calculator can only be used under 18 years of age',
-          { text: 'OK' },
+          [{ text: 'OK', onPress: () => null }],
           { cancelable: false }
         );
         break;

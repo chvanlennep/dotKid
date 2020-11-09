@@ -129,11 +129,7 @@ const WETFLAGResultsScreen = ({ route, navigation }) => {
                             <View style={styles.closeIcon}>
                               <MaterialCommunityIcons
                                 name="close-circle"
-                                color={
-                                  scheme === 'dark'
-                                    ? colors.black
-                                    : colors.white
-                                }
+                                color={colors.black}
                                 size={30}
                               />
                             </View>
@@ -194,14 +190,12 @@ const styles = StyleSheet.create({
   closeIcon: {
     height: 50,
     width: 50,
-    backgroundColor: colors.medium,
-    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
   heading: {
     alignSelf: 'center',
-    color: colors.white,
+    color: colors.black,
     fontSize: 20,
     marginTop: -35,
     marginBottom: 15,
@@ -224,7 +218,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: defaultStyles.container.width - 10,
-    backgroundColor: colors.medium,
+    backgroundColor: colors.light,
   },
   output: {},
   outputText: {
