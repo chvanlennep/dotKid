@@ -21,7 +21,7 @@ export default ageChecker = (object, maximumAgeInDays, minimumAgeInDays) => {
     tempTom.getHours(),
     tempTom.getMinutes()
   );
-  const max = maximumAgeInDays ? maximumAgeInDays : 6574;
+  const max = maximumAgeInDays || 6574;
   const ageInDays = zeit(finalDob, 'days', finalDom);
   if (ageInDays < 0) {
     return 'Negative age';

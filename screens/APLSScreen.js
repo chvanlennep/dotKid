@@ -3,6 +3,7 @@ import { Alert, FlatList, StyleSheet, View } from 'react-native';
 
 import PCalcScreen from '../components/PCalcScreen';
 import ALSToolbar from '../components/ALSToolbar';
+import defaultStyles from '../config/styles';
 import colors from '../config/colors';
 import AppText from '../components/AppText';
 import ALSDisplayButton from '../components/buttons/ALSDisplayButton';
@@ -12,7 +13,7 @@ import Stopwatch from '../components/Stopwatch';
 
 import ALSTertiaryFunctionButton from '../components/buttons/ALSTertiaryFunctionButton';
 import AdrenalineTimer from '../components/AdrenalineTimer';
-import AnalyseRhythm from '../components/AnalyseRhythm';
+
 import {
   flatListData,
   functionButtons,
@@ -257,11 +258,18 @@ const APLSScreen = () => {
           encounterState={encounterState}
           resetState={resetState}
           timerState={timerState}
+          style={styles.listButton}
         />
       );
     }
     if (item.type === 'listHeader') {
-      return <ALSListHeader isList={false} title={item.id} />;
+      return (
+        <ALSListHeader
+          isList={false}
+          title={item.id}
+          style={styles.headingButton}
+        />
+      );
     } else {
       return (
         <ALSTertiaryFunctionButton
@@ -270,6 +278,7 @@ const APLSScreen = () => {
           logState={logState}
           timerState={timerState}
           resetState={resetState}
+          style={styles.listButton}
         />
       );
     }
@@ -339,6 +348,7 @@ const APLSScreen = () => {
               logState={logState}
               encounterState={encounterState}
               resetState={resetState}
+              style={styles.listButton}
             />
           }
           ListFooterComponent={
@@ -348,6 +358,7 @@ const APLSScreen = () => {
               encounterState={encounterState}
               timerState={timerState}
               resetState={resetState}
+              style={styles.listButton}
             />
           }
         />
@@ -364,9 +375,12 @@ const styles = StyleSheet.create({
     marginBottom: 200,
   },
   bottomContainer: {
-    padding: 15,
+    flexDirection: 'column',
     paddingTop: 5,
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
   },
   button: {
     alignContent: 'center',
@@ -407,5 +421,13 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     marginLeft: 15,
+  },
+  listButton: {
+    width: defaultStyles.container.width - 10,
+    alignSelf: 'center',
+  },
+  headingButton: {
+    width: defaultStyles.container.width - 5,
+    alignSelf: 'center',
   },
 });

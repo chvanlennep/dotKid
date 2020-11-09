@@ -4,6 +4,7 @@ import { Alert, FlatList, StyleSheet, View } from 'react-native';
 import NCalcScreen from '../components/NCalcScreen';
 import NLSToolbar from '../components/NLSToolbar';
 import colors from '../config/colors';
+import defaultStyles from '../config/styles';
 import ALSDisplayButton from '../components/buttons/ALSDisplayButton';
 import ALSFunctionButton from '../components/buttons/ALSFunctionButton';
 import ALSListHeader from '../components/buttons/ALSListHeader';
@@ -145,38 +146,6 @@ const NLSScreen = () => {
     );
   };
 
-  //removes time from log object
-  const removeTime = (title, oldState) => {
-    const oldButtonArray = oldState[title];
-    if (oldButtonArray.length < 2) {
-      setFunctionButtons((oldState) => {
-        const updatingState = oldState;
-        updatingState[title] = [];
-        return updatingState;
-      });
-    } else {
-      const newButtonArray = oldButtonArray.slice(0, -1);
-      setFunctionButtons((oldState) => {
-        const updatingState = oldState;
-        updatingState[title] = newButtonArray;
-        return updatingState;
-      });
-    }
-  };
-
-  // adds time to log object
-  const handleLogEvent = (newState, title) => {
-    setIsTimerActive(true);
-    const newTime = new Date();
-    const oldLogArray = newState[title];
-    const newLogArray = oldLogArray.concat(newTime);
-    setFunctionButtons((newState) => {
-      const updateState = newState;
-      updateState[title] = newLogArray;
-      return updateState;
-    });
-  };
-
   useEffect(() => {
     if (endEncounter === true) {
       setLogVisible(true);
@@ -195,6 +164,7 @@ const NLSScreen = () => {
           resetState={resetState}
           timerState={timerState}
           type="checklist"
+          style={styles.listButton}
         />
       );
     } else if (item.type === 'resusRequired') {
@@ -206,6 +176,7 @@ const NLSScreen = () => {
           encounterState={encounterState}
           resetState={resetState}
           timerState={timerState}
+          style={styles.listButton}
         />
       );
     } else if (item.type === 'afterChestRise') {
@@ -217,6 +188,7 @@ const NLSScreen = () => {
           encounterState={encounterState}
           resetState={resetState}
           timerState={timerState}
+          style={styles.listButton}
         />
       );
     } else if (item.type === 'listHeader') {
@@ -227,6 +199,7 @@ const NLSScreen = () => {
           onDownPress={() => scrollMe(item.onDownPress)}
           upArrow={item.upArrow}
           onUpPress={() => scrollMe(item.onUpPress)}
+          style={styles.headingButton}
         />
       );
     } else if (item.type === 'modal') {
@@ -298,7 +271,7 @@ const NLSScreen = () => {
           />
 
           <NoChestRiseModal
-            afterClose={() => scrollMe(1540)}
+            afterClose={() => scrollMe(1470)}
             encounterState={encounterState}
             logState={logState}
             resetState={resetState}
@@ -321,16 +294,18 @@ const NLSScreen = () => {
               onDownPress={() => scrollMe(1000)}
               downArrow={true}
               title={'Pre-Resus Checklist:'}
+              style={styles.headingButton}
             />
           }
           ListFooterComponent={
-            <ALSFunctionButton
+            <ALSTeriaryFunctionButton
               kind="neonate"
               title={afterChestRise[afterChestRise.length - 1]['id']}
               logState={logState}
               encounterState={encounterState}
-              timerState={timerState}
               resetState={resetState}
+              timerState={timerState}
+              style={styles.listButton}
             />
           }
         />
@@ -342,15 +317,13 @@ const NLSScreen = () => {
 export default NLSScreen;
 
 const styles = StyleSheet.create({
-  bottomButton: {
-    backgroundColor: colors.medium,
-    marginBottom: 200,
-  },
   bottomContainer: {
     flexDirection: 'column',
-    padding: 15,
     paddingTop: 5,
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
   },
   button: {
     alignContent: 'center',
@@ -358,13 +331,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     textAlign: 'center',
   },
-
-  buttonPressed: {
-    backgroundColor: colors.primary,
-    flexWrap: 'nowrap',
-    height: 90,
-    justifyContent: 'center',
-    textAlign: 'center',
+  listButton: {
+    width: defaultStyles.container.width - 10,
+    alignSelf: 'center',
+  },
+  headingButton: {
+    width: defaultStyles.container.width - 5,
+    alignSelf: 'center',
   },
   middleContainer: {
     alignSelf: 'center',
@@ -379,13 +352,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     //backgroundColor: 'yellow',
-  },
-  darkButton: {
-    backgroundColor: colors.dark,
-    alignSelf: 'center',
-  },
-  mediumButton: {
-    backgroundColor: colors.medium,
   },
   text: {
     fontSize: 28,

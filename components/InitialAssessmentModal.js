@@ -311,10 +311,12 @@ const InitialAssessBabyModal = ({
         isModal={true}
         initialAssessmentState={initialAssessmentState}
         onPress={handlePress}
-        style={[initialAssessmentComplete && styles.buttonPressed]}
+        style={[
+          !initialAssessmentComplete && styles.headingButton,
+          initialAssessmentComplete && styles.buttonPressed,
+        ]}
         title="Initial Assessment..."
       />
-
       <View style={styles.centeredView}>
         <Modal
           animationType="slide"
@@ -373,6 +375,8 @@ const styles = StyleSheet.create({
   },
   buttonPressed: {
     backgroundColor: colors.secondary,
+    width: defaultStyles.container.width - 5,
+    alignSelf: 'center',
   },
   centeredView: {
     flex: 1,
@@ -395,6 +399,10 @@ const styles = StyleSheet.create({
     marginTop: -30,
     marginBottom: 5,
     marginBottom: 10,
+  },
+  headingButton: {
+    width: defaultStyles.container.width - 5,
+    alignSelf: 'center',
   },
   icon: {
     alignItems: 'center',

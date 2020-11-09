@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   Alert,
-  Dimensions,
   Modal,
   StyleSheet,
   TouchableOpacity,
@@ -17,6 +16,7 @@ import { chestRiseFlatList, noChestRise } from '../brains/nlsObjects';
 import ALSFunctionButton from '../components/buttons/ALSFunctionButton';
 import AppText from './AppText';
 import ALSTertiaryFunctionButton from './buttons/ALSTertiaryFunctionButton';
+
 const NoChestRiseModal = ({
   afterClose,
   logState,
@@ -28,7 +28,6 @@ const NoChestRiseModal = ({
   const [modalVisible, setModalVisible] = useState(false);
   const [confirm, setConfirm] = useState(false);
 
-  const isTimerActive = timerState.value;
   const setIsTimerActive = timerState.setValue;
 
   const renderListItem = ({ item }) => {
@@ -155,12 +154,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.light,
     borderRadius: 5,
-    flexDirection: 'column',
     flexWrap: 'nowrap',
     flex: 1,
-    margin: 10,
-    padding: 7,
-    paddingBottom: 15,
+    margin: 5,
+    padding: 5,
+    paddingBottom: 10,
   },
   buttons: {
     alignItems: 'center',
@@ -203,7 +201,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   modalView: {
-    margin: 20,
+    margin: 5,
     backgroundColor: 'white',
     borderRadius: 10,
     shadowColor: '#000',
@@ -213,10 +211,9 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.7,
     shadowRadius: 4,
-    paddingBottom: 10,
+    paddingBottom: 5,
     elevation: 5,
     flex: 0.8,
-    width: defaultStyles.container.width - 10,
     backgroundColor: colors.darkSecondary,
   },
   options: {
@@ -249,7 +246,7 @@ const styles = StyleSheet.create({
   },
   buttons: {
     backgroundColor: colors.dark,
-    width: Dimensions.get('window').width * 0.8,
+    width: defaultStyles.container.width * 0.9,
   },
   submit: {
     backgroundColor: colors.dark,

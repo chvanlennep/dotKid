@@ -7,7 +7,7 @@ const BareDTPickerAndroid = ({ isDate, stateObject, type }) => {
     ? state.date || new Date()
     : state.time || new Date();
 
-  const manageState = (object, state) => {
+  const manageState = (object) => {
     setState((state) => {
       const mutableState = { ...state };
       for (const [key, value] of Object.entries(object)) {
@@ -105,7 +105,7 @@ const BareDTPickerAndroid = ({ isDate, stateObject, type }) => {
         ? (workingObject.showPickerDateAndroid = false)
         : (workingObject.showPickerTimeAndroid = false);
     }
-    manageState(workingObject, state);
+    manageState(workingObject);
   };
 
   return (

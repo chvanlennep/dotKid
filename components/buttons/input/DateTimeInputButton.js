@@ -90,7 +90,7 @@ const DateTimeInputButton = ({
   const { setFieldValue, errors, touched, values } = useFormikContext();
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
 
-  const manageState = (object, state) => {
+  const manageState = (object) => {
     setState((state) => {
       const mutableState = { ...state };
       for (const [key, value] of Object.entries(object)) {
@@ -195,12 +195,12 @@ const DateTimeInputButton = ({
 
   const onChangeDateIos = (e, selectedDate) => {
     const currentDate = selectedDate || date;
-    manageState({ date: currentDate }, state);
+    manageState({ date: currentDate });
   };
 
   const onChangeTimeIos = (e, selectedTime) => {
     const currentTime = selectedTime || time;
-    manageState({ time: currentTime }, state);
+    manageState({ time: currentTime });
     if (!global) {
       setFieldValue(timeName, currentTime);
     }
@@ -240,7 +240,7 @@ const DateTimeInputButton = ({
         }
       }
       workingObject.modalVisible = false;
-      manageState(workingObject, state);
+      manageState(workingObject);
     } else if (!modalVisible && ios) {
       let workingObject = {};
       if (!state.date) {
@@ -260,7 +260,7 @@ const DateTimeInputButton = ({
   };
 
   const openPickerTimeAndroid = () => {
-    manageState({ showPickerTimeAndroid: true }, state);
+    manageState({ showPickerTimeAndroid: true });
   };
 
   const cancelInput = (timeButton = false) => {
@@ -273,7 +273,7 @@ const DateTimeInputButton = ({
         workingObject.time = manageStats.read(kind, timeName);
         setFieldValue(timeName, workingObject.time);
       }
-      manageState(workingObject, state);
+      manageState(workingObject);
     } else {
       if (!timeButton) {
         if (!global) {
@@ -311,7 +311,7 @@ const DateTimeInputButton = ({
         setFieldValue(dateName, date);
         manageStats.write(kind, dateName, date);
       }
-      manageState({ changedDateAndroid: false }, state);
+      manageState({ changedDateAndroid: false });
     } else if (changedTimeAndroid) {
       if (type === 'measured' && formatTime(time) === formatTime(new Date())) {
         setFieldValue(timeName, null);
@@ -320,7 +320,7 @@ const DateTimeInputButton = ({
         setFieldValue(timeName, time);
         manageStats.write(kind, timeName, time);
       }
-      manageState({ changedTimeAndroid: false }, state);
+      manageState({ changedTimeAndroid: false });
     }
   });
 
@@ -336,7 +336,7 @@ const DateTimeInputButton = ({
           !state.showPickerTimeAndroid &&
           !state.showPickerDateAndroid
         )
-          manageState(initialState, state);
+          manageState(initialState);
       }
     }
   }, [state, values[dateName], values[timeName]]);
