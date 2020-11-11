@@ -1,14 +1,17 @@
-import { Platform, Dimensions } from "react-native";
+import { Platform, Dimensions } from 'react-native';
 
-import colors from "./colors";
+import colors from './colors';
+
+const windowWidth = Dimensions.get('window').width;
 
 export default {
+  windowWidth,
   colors,
   text: {
-    fontSize: 18,
-    fontFamily: Platform.OS === "ios" ? "System" : "Roboto",
+    fontSize: windowWidth < 375 ? 16 : 18,
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'Roboto',
   },
   container: {
-    width: Dimensions.get("window").width - 10,
+    width: windowWidth - 10,
   },
 };

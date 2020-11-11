@@ -22,6 +22,10 @@ import FormSubmitTickButton from './FormSubmitTickButton';
 import { writeItemToStorage } from '../../brains/storage';
 import checkDefault from '../../brains/checkDefault';
 
+const windowHeight = Dimensions.get('window').height;
+let modalHeight = windowHeight * 0.7 > 570 ? 570 : windowHeight * 0.7;
+if (windowHeight < 570) modalHeight = windowHeight * 0.9;
+
 const NFluidInputModal = ({ name, valuesObject }) => {
   const scheme = useColorScheme();
   const dark = scheme === 'dark' ? true : false;
@@ -256,10 +260,7 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingBottom: 15,
     paddingTop: 15,
-    height:
-      Dimensions.get('window').height * 0.7 > 570
-        ? 570
-        : Dimensions.get('window').height * 0.7,
+    height: modalHeight,
   },
   infoContainer: {
     backgroundColor: colors.dark,

@@ -6,10 +6,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 import colors from '../../config/colors';
 import AppText from '../AppText';
-import ButtonIcon from '../buttons/ButtonIcon';
+import defaultStyles from '../../config/styles';
 
 const ALSTeriaryFunctionButton = ({
   kind = 'child',
@@ -187,8 +188,18 @@ const ALSTeriaryFunctionButton = ({
 
         {showUndo && (
           <React.Fragment>
-            <TouchableOpacity onPress={handleUndo}>
-              <ButtonIcon name="refresh" backgroundColor={null} />
+            <TouchableOpacity
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onPress={handleUndo}
+            >
+              <MaterialCommunityIcons
+                name="refresh"
+                color={colors.white}
+                size={20}
+              />
             </TouchableOpacity>
           </React.Fragment>
         )}
@@ -209,7 +220,6 @@ const styles = StyleSheet.create({
     height: 57,
     margin: 5,
     padding: 10,
-    paddingLeft: 15,
   },
   content: {
     flexDirection: 'row',
@@ -218,7 +228,8 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.white,
-    width: '90%',
+    width: defaultStyles.container.width - 55,
+    marginRight: 5,
     //backgroundColor: 'black',
   },
 });

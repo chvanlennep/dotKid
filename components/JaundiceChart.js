@@ -120,7 +120,6 @@ const JaundiceChart = ({ ageInHours, gestationWeeks, sbr }) => {
                     svg={{
                       fill: chartForegroundColor,
                       fontSize: 9,
-                      fontWeight: '500',
                     }}
                     numberOfTicks={10}
                     formatLabel={(value) => `${value}`}

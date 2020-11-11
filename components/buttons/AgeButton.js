@@ -54,7 +54,7 @@ const SubmitButton = ({
   switch (kind) {
     case 'child':
       if (valueAfterCorrection !== 'not corrected') {
-        outputString = `Age: ${valueAfterCorrection}`;
+        outputString = `Age: ${valueAfterCorrection}*`;
       } else {
         outputString = `Age: ${valueBeforeCorrection}`;
       }

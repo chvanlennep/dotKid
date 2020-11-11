@@ -10,7 +10,6 @@ import ALSDisplayButton from '../components/buttons/ALSDisplayButton';
 import ALSFunctionButton from '../components/buttons/ALSFunctionButton';
 import ALSListHeader from '../components/buttons/ALSListHeader';
 import Stopwatch from '../components/Stopwatch';
-
 import ALSTertiaryFunctionButton from '../components/buttons/ALSTertiaryFunctionButton';
 import AdrenalineTimer from '../components/AdrenalineTimer';
 
@@ -106,50 +105,12 @@ const APLSScreen = () => {
     }
   };
 
-  //analyse rhythm logic
-  const analyse = () => {
-    setIsTimerActive(true);
-    if (!rhythmPressed) {
-      setRhythmPressed(true);
-      handleLogEvent(functionButtons, 'Rhythm Analysed');
-    } else if (rhythmPressed) {
-      Alert.alert(
-        'You can only log this every 2 minutes',
-        'Please click undo if you need to cancel this log entry.',
-        [
-          {
-            text: 'Undo',
-            onPress: () => {
-              removeTime('Rhythm Analysed', functionButtons);
-              setRhythmPressed(false);
-            },
-            style: 'cancel',
-          },
-          { text: 'OK', onPress: () => 'OK' },
-        ],
-        { cancelable: false }
-      );
-    }
-  };
-
   //reset button logic
   const handleReset = () => {
     setFunctionButtons(resetLogTimes(functionButtons));
     setReset(true);
     setIsTimerActive(false);
     setEndEncounter(false);
-    Alert.alert(
-      'Your APLS encounter has been reset.',
-      '',
-      [
-        {
-          text: 'OK',
-          onPress: () => 'OK',
-          style: 'cancel',
-        },
-      ],
-      { cancelable: true }
-    );
     setReset(false);
   };
 
@@ -417,7 +378,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.medium,
   },
   text: {
-    fontSize: 28,
+    fontSize: defaultStyles.windowWidth < 375 ? 24 : 28,
   },
   textContainer: {
     marginLeft: 15,

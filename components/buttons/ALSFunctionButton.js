@@ -9,8 +9,8 @@ import {
 
 import colors from '../../config/colors';
 import AppText from '../AppText';
-import ButtonIcon from '../buttons/ButtonIcon';
 import defaultStyles from '../../config/styles';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const ALSFunctionButton = ({
   encounterState,
@@ -217,9 +217,21 @@ const ALSFunctionButton = ({
         <AppText style={styles.text}>{title}</AppText>
 
         {showUndo && !movingChest && (
-          <TouchableOpacity onPress={handleUndo}>
-            <ButtonIcon name="refresh" backgroundColor={null} />
-          </TouchableOpacity>
+          <React.Fragment>
+            <TouchableOpacity
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onPress={handleUndo}
+            >
+              <MaterialCommunityIcons
+                name="refresh"
+                color={colors.white}
+                size={20}
+              />
+            </TouchableOpacity>
+          </React.Fragment>
         )}
       </View>
     </TouchableHighlight>
@@ -231,27 +243,18 @@ export default ALSFunctionButton;
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
-    //justifyContent: 'center',
     backgroundColor: colors.medium,
     borderRadius: 5,
-    //flex: 1,
     flexDirection: 'row',
     height: 57,
     margin: 5,
     padding: 10,
-    paddingLeft: 15,
-    width: '98%',
-  },
-  buttonPressed: {
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row',
   },
   text: {
     textAlignVertical: 'center',
     height: 25,
     color: colors.white,
-    width: '90%',
+    width: defaultStyles.container.width - 55,
     //backgroundColor: 'black',
   },
 });

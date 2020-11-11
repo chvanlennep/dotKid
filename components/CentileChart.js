@@ -79,7 +79,6 @@ const CentileChart = ({
       fill: chartForegroundColor,
       fontSize: chartFontSize,
       textAnchor: 'middle',
-      fontWeight: '500',
     };
     const textItems = listDetails.map(({ label, coords }, index) => (
       <Text {...textProps} y={y(coords)} key={index}>
@@ -130,7 +129,6 @@ const CentileChart = ({
             svg={{
               fill: chartForegroundColor,
               fontSize: chartFontSize,
-              fontWeight: '500',
             }}
             numberOfTicks={8}
             formatLabel={(value) => `${value}`}

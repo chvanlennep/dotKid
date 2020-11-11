@@ -64,9 +64,9 @@ const styles = StyleSheet.create({
     ...defaultStyles.container,
   },
   text: {
-    fontSize: 28,
-    marginBottom: 10,
-    marginTop: 10,
+    fontSize: defaultStyles.windowWidth < 375 ? 24 : 28,
+    marginBottom: 5,
+    marginTop: 5,
     marginLeft: 12,
   },
 });

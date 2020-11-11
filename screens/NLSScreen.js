@@ -101,18 +101,6 @@ const NLSScreen = () => {
       setIsTimerActive(false);
       setEndEncounter(false);
       setReset(false);
-      Alert.alert(
-        'Your NLS encounter has been reset.',
-        '',
-        [
-          {
-            text: 'OK',
-            onPress: () => 'OK',
-            style: 'cancel',
-          },
-        ],
-        { cancelable: true }
-      );
     }
   };
 
@@ -354,7 +342,7 @@ const styles = StyleSheet.create({
     //backgroundColor: 'yellow',
   },
   text: {
-    fontSize: 28,
+    fontSize: defaultStyles.windowWidth < 375 ? 24 : 28,
   },
   textContainer: {
     marginLeft: 15,

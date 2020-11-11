@@ -10,9 +10,6 @@ import colors from '../../config/colors';
 import AppText from '../AppText';
 import ButtonIcon from '../../components/buttons/ButtonIcon';
 
-let showList;
-let setShowList;
-
 const ALSListHeader = ({
   downArrow = false,
   iconColor,
@@ -46,9 +43,7 @@ const ALSListHeader = ({
             />
           </TouchableOpacity>
         )}
-
         <AppText style={styles.text}>{title}</AppText>
-
         {!isModal && (
           <TouchableOpacity onPress={onDownPress}>
             <ButtonIcon
@@ -69,16 +64,14 @@ export default ALSListHeader;
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 5,
     color: colors.white,
     flexDirection: 'row',
     height: 57,
-    justifyContent: 'space-between',
     margin: 5,
     padding: 10,
-    width: '100%',
     backgroundColor: colors.dark,
-    alignSelf: 'center',
   },
   text: {
     color: colors.white,
