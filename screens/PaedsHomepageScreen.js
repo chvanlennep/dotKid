@@ -14,7 +14,7 @@ import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton
 
 const PaedsHomepageScreen = () => {
   return (
-    <PCalcScreen isHomePage={true} style={{ flex: 2 }}>
+    <PCalcScreen isHomePage={true} style={{ flex: 1 }}>
       <View style={styles.topContainer}>
         <AppForm
           // dummy AppForm so useFormikContext line in components doesn't throw error here:

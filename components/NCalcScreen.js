@@ -105,7 +105,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
   topContainer: {
     alignSelf: 'center',
     flexDirection: 'row',
