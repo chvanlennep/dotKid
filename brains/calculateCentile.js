@@ -136,28 +136,28 @@ const outputCentileFromMeasurementsPreterm = (
     measurement /= 1000;
   }
   const extremeThresholdsZ = [
-    [-2.432862217, '0.7th'],
-    [2.431896467, '99.2nd'],
+    [-2.432379059, '0.7th'],
+    [2.432379059, '99.2nd'],
   ];
   const lowerTiny = [
     [-4, '-4SD'],
     [-3, '-3SD'],
-    [-2.969793493, 0.1],
-    [-2.808324616, 0.2],
-    [-2.697796954, 0.3],
-    [-2.612814606, 0.4],
-    [-2.543334687, 0.5],
-    [-2.484317559, 0.6],
-    [-2.432862217, 0.7],
+    [-2.967737925, 0.1],
+    [-2.807033768, 0.2],
+    [-2.696844261, 0.3],
+    [-2.612054141, 0.4],
+    [-2.542698819, 0.5],
+    [-2.483769293, 0.6],
+    [-2.432379059, 0.7],
   ];
   const upperTiny = [
-    [2.431896467, 99.2],
-    [2.483221773, 99.3],
-    [2.542063978, 99.4],
-    [2.611295184, 99.5],
-    [2.695894009, 99.6],
-    [2.805747581, 99.7],
-    [2.965694822, 99.8],
+    [2.432379059, 99.2],
+    [2.483769293, 99.3],
+    [2.542698819, 99.4],
+    [2.612054141, 99.5],
+    [2.696844261, 99.6],
+    [2.807033768, 99.7],
+    [2.967737925, 99.8],
     [3, 99.9],
     [4, '+3SD'],
   ];
@@ -297,15 +297,15 @@ const giveRange = (
     childMeasurement /= 1000;
   }
   const majorCentileLines = [
-    [-2.6521, '0.4th'],
-    [-2.0537, '2nd'],
-    [-1.3408, '9th'],
-    [-0.6745, '25th'],
+    [-2.652069808, '0.4th'],
+    [-2.053748911, '2nd'],
+    [-1.340755034, '9th'],
+    [-0.67448975, '25th'],
     [0, '50th'],
-    [0.6745, '75th'],
-    [1.3408, '91st'],
-    [2.0537, '98th'],
-    [2.6521, '99.6th'],
+    [0.67448975, '75th'],
+    [1.340755034, '91st'],
+    [2.053748911, '98th'],
+    [2.652069808, '99.6th'],
   ];
   const zFor03 = -2.69684;
   const zFor997 = 2.69684;
@@ -429,18 +429,12 @@ const outputCentileFloatGest = (
         return [centile, 'N/A'];
     }
   } else {
-    const workingLMSData = null;
-    const range = giveRange(
-      workingLMSData,
-      object,
-      measurementType,
-      floatWeeks
-    );
+    const range = giveRange(null, object, measurementType, floatWeeks);
     return [range, addOrdinalSuffix(centile)];
   }
 };
 
-//using lookup tables. Only valid for z scores between -3 and 3
+//using lookup table (excel generated). Only valid for z scores between -3 and 3
 const zToRawCentile = (z) => {
   if (typeof z !== 'number') {
     return 'Invalid input';
@@ -448,13 +442,8 @@ const zToRawCentile = (z) => {
   if (z < -3 || z > 3) {
     return 'Invalid input';
   }
-  const zTo2 = Number(z.toFixed(2));
-  const firstPartOfZ = Math.floor(Math.abs(zTo2) * 10); // eg -2.58, convert to 25
-  const firstLookupIndex = z < 0 ? 30 - firstPartOfZ : 31 + firstPartOfZ; // convert to index
-  const diff =
-    Math.round(Math.abs(zTo2) * 100) - Math.floor(Math.abs(zTo2) * 10) * 10; // eg diff between -2.58 and -2.50
-  const secondLookupIndex = diff > 9 ? 10 : diff + 1; // convert to index
-  return zScores[firstLookupIndex][secondLookupIndex] * 100;
+  const lookUpIndex = Math.round(z * 100) + 300;
+  return zScores[lookUpIndex][1];
 };
 
 // LMS route
