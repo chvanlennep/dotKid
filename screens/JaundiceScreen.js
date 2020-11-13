@@ -46,7 +46,6 @@ const JaundiceScreen = () => {
   });
 
   const handleFormikSubmit = (values) => {
-    console.log(values);
     const checkAge = ageChecker(values, 14);
     if (checkAge === 'Negative age') {
       Alert.alert(

@@ -1,6 +1,7 @@
 import regression from 'regression';
 
 import centileData from './centileData';
+import zScores from './zScores';
 import zeit from './zeit';
 
 // kept separate for simplicity
@@ -135,28 +136,28 @@ const outputCentileFromMeasurementsPreterm = (
     measurement /= 1000;
   }
   const extremeThresholdsZ = [
-    [-2.43238, '0.7th'],
-    [2.43238, '99.2nd'],
+    [-2.432862217, '0.7th'],
+    [2.431896467, '99.2nd'],
   ];
   const lowerTiny = [
     [-4, '-4SD'],
     [-3, '-3SD'],
-    [-2.96774, 0.1],
-    [-2.80703, 0.2],
-    [-2.69684, 0.3],
-    [-2.61205, 0.4],
-    [-2.5427, 0.5],
-    [-2.48377, 0.6],
-    [-2.43238, 0.7],
+    [-2.969793493, 0.1],
+    [-2.808324616, 0.2],
+    [-2.697796954, 0.3],
+    [-2.612814606, 0.4],
+    [-2.543334687, 0.5],
+    [-2.484317559, 0.6],
+    [-2.432862217, 0.7],
   ];
   const upperTiny = [
-    [2.43238, 99.2],
-    [2.48377, 99.3],
-    [2.5427, 99.4],
-    [2.61205, 99.5],
-    [2.69684, 99.6],
-    [2.80703, 99.7],
-    [2.96774, 99.8],
+    [2.431896467, 99.2],
+    [2.483221773, 99.3],
+    [2.542063978, 99.4],
+    [2.611295184, 99.5],
+    [2.695894009, 99.6],
+    [2.805747581, 99.7],
+    [2.965694822, 99.8],
     [3, 99.9],
     [4, '+3SD'],
   ];
@@ -439,6 +440,23 @@ const outputCentileFloatGest = (
   }
 };
 
+//using lookup tables. Only valid for z scores between -3 and 3
+const zToRawCentile = (z) => {
+  if (typeof z !== 'number') {
+    return 'Invalid input';
+  }
+  if (z < -3 || z > 3) {
+    return 'Invalid input';
+  }
+  const zTo2 = Number(z.toFixed(2));
+  const firstPartOfZ = Math.floor(Math.abs(zTo2) * 10); // eg -2.58, convert to 25
+  const firstLookupIndex = z < 0 ? 30 - firstPartOfZ : 31 + firstPartOfZ; // convert to index
+  const diff =
+    Math.round(Math.abs(zTo2) * 100) - Math.floor(Math.abs(zTo2) * 10) * 10; // eg diff between -2.58 and -2.50
+  const secondLookupIndex = diff > 9 ? 10 : diff + 1; // convert to index
+  return zScores[firstLookupIndex][secondLookupIndex] * 100;
+};
+
 // LMS route
 const calculateZ = (childMeasurement, array) => {
   if (Array.isArray(array)) {
@@ -478,25 +496,8 @@ const outputCentile = (z, object, measurementType, workingLMSData) => {
           '>99.96th, more than 4 SDs above the mean',
         ];
       default:
-        let factK = 1;
-        let sum = 0;
-        let term = 1;
-        let k = 0;
-        let loopStop = Math.exp(-23);
-        while (Math.abs(term) > loopStop) {
-          term =
-            (((0.3989422804 * Math.pow(-1, k) * Math.pow(z, k)) /
-              (2 * k + 1) /
-              Math.pow(2, k)) *
-              Math.pow(z, k + 1)) /
-            factK;
-          sum += term;
-          k++;
-          factK *= k;
-        }
-        sum += 0.5;
-        let rawCentile = sum * 100;
-        let integerCentile = Math.round(rawCentile);
+        const rawCentile = zToRawCentile(z);
+        const integerCentile = Math.round(rawCentile);
         let oneDecimalCentile = Number(rawCentile.toFixed(1));
         const range = giveRange(workingLMSData, object, measurementType);
         if (oneDecimalCentile < 0.8 || oneDecimalCentile > 99.2) {
@@ -530,26 +531,9 @@ const outputBMICentile = (z, object, workingLMSData) => {
       case z < -3:
         return ['Very thin (<0.1st)', '3 to 4 SDs below the mean'];
       default:
-        let factK = 1;
-        let sum = 0;
-        let term = 1;
-        let k = 0;
-        let loopStop = Math.exp(-23);
-        while (Math.abs(term) > loopStop) {
-          term =
-            (((0.3989422804 * Math.pow(-1, k) * Math.pow(z, k)) /
-              (2 * k + 1) /
-              Math.pow(2, k)) *
-              Math.pow(z, k + 1)) /
-            factK;
-          sum += term;
-          k++;
-          factK *= k;
-        }
-        sum += 0.5;
-        let rawCentile = sum * 100;
-        let integerCentile = Math.round(rawCentile);
-        let oneDecimalCentile = Number(rawCentile.toFixed(1));
+        const rawCentile = zToRawCentile(z);
+        const integerCentile = Math.round(rawCentile);
+        const oneDecimalCentile = Number(rawCentile.toFixed(1));
         let outputExactCentile;
         if (oneDecimalCentile < 0.8 || oneDecimalCentile > 99.2) {
           outputExactCentile = addOrdinalSuffix(oneDecimalCentile);
