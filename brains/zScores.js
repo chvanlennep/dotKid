@@ -1,4 +1,5 @@
 //calculated from excel: NORM.S.DIST(z,TRUE)*100
+//index 0 is z score, index 1 is percentile
 export default [
   [-3, 0.134989803],
   [-2.99, 0.139488724],
