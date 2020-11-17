@@ -1,7 +1,7 @@
 import centileData from './centileData';
 
 export default (ageInDays, ageInMonths, sex) => {
-  const index = ageInDays <= 1459 ? ageInDays : ageInMonths + 1412;
+  const index = ageInDays < 1460 ? ageInDays : ageInMonths + 1412;
   const array = centileData['child'][sex]['weight'][index];
 
   function computeChildMeasurementForGraph(z, lConstant, mConstant, sConstant) {

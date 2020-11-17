@@ -12,25 +12,23 @@ const calculateBMI = (weight, heightInCm) => {
 
 //adds correct ordinal suffix to integers and 1 decimal place numbers
 const addOrdinalSuffix = (inputNumber) => {
-  let answerNumber = inputNumber;
   if (Number.isInteger(inputNumber) === false) {
-    inputNumber *= 10;
-    if (Number.isInteger(inputNumber) === false) {
+    if (Number.isInteger(inputNumber * 10) === false) {
       return 'Error: only integers or numbers to 1 decimal place are supported';
     }
   }
-  let remainder10 = inputNumber % 10;
-  let remainder100 = inputNumber % 100;
+  const remainder10 = inputNumber % 10;
+  const remainder100 = inputNumber % 100;
   if (remainder10 === 1 && remainder100 !== 11) {
-    return `${answerNumber}st`;
+    return `${inputNumber}st`;
   }
   if (remainder10 === 2 && remainder100 !== 12) {
-    return `${answerNumber}nd`;
+    return `${inputNumber}nd`;
   }
   if (remainder10 === 3 && remainder100 !== 13) {
-    return `${answerNumber}rd`;
+    return `${inputNumber}rd`;
   } else {
-    return `${answerNumber}th`;
+    return `${inputNumber}th`;
   }
 };
 
@@ -98,20 +96,23 @@ const outputPretermMeasurements = (
   dataPoint3 = workingLMSData[2][0];
   arrayLength = measurementArray.length;
   for (let i = 0; i < arrayLength; i++) {
-    let dataset = [
+    const dataset = [
       [dataPoint1, measurementArray[i][0]],
       [dataPoint2, measurementArray[i][1]],
       [dataPoint3, measurementArray[i][2]],
     ];
-    let equationAsObject = regression.polynomial(dataset, {
+    const equationAsObject = regression.polynomial(dataset, {
       order: 2,
       precision: 6,
     });
+    if (equationAsObject.r2 <= 0.9999) {
+      console.log(`Low R2: ${equationAsObject.r2}`);
+    }
     measurementLimitsEquations.push(equationAsObject.equation);
   }
   let finalMeasurementLimitsArray = [];
   arrayLength = measurementLimitsEquations.length;
-  finalMeasurementLimitsArray.push(Math.round(floatWeeks * 7));
+  finalMeasurementLimitsArray.push(Math.round(floatWeeks * 7)); // used for debugging, no other use
   for (let i = 0; i < arrayLength; i++) {
     finalMeasurementLimitsArray.push(
       measurementLimitsEquations[i][0] * Math.pow(floatWeeks, 2) +
@@ -261,7 +262,7 @@ const outputCentileFromMeasurementsPreterm = (
   }
 };
 
-// LMS route
+// measurement from LMS data
 const computeChildMeasurement = (zScore, workingLMSData) => {
   return (
     workingLMSData[2] *
@@ -600,7 +601,7 @@ const centileFromLms = (
     let index;
     const monthAgeForChart = ageInMonths;
     let dayAgeForChart = ageInDays;
-    if (ageInDays <= 1459) {
+    if (ageInDays < 1460) {
       if (
         (birthGestationInDays < 259 &&
           birthGestationInDays >= 224 &&
