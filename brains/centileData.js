@@ -9,6 +9,17 @@ Note capitals for Male and Female (I passed the input from the picker directly a
 */
 
 export default {
+  majorZScores: [
+    -2.652069808, //0.4th
+    -2.053748911, //2nd
+    -1.340755034, //9th
+    -0.67448975, //25th
+    0, // 50th
+    0.67448975, //75th
+    1.340755034, //91st
+    2.053748911, //98th
+    2.652069808, //99.6th
+  ],
   birth: {
     Male: {
       hc: [[0, 1, 35, 0.0382]],
@@ -11468,6 +11479,7 @@ export default {
       [-0.062706778, 47.5],
       [-0.037608288, 48.5],
       [-0.01253347, 49.5],
+      [0, 50], //even though only 0.5 interval, still needed if measurement just below mean
     ],
     wholeCentileZLimitsPart2: [
       [0.01253347, 50.5],
