@@ -604,8 +604,8 @@ const centileFromLms = (
       if (
         (birthGestationInDays < 259 &&
           birthGestationInDays >= 224 &&
-          ageInDays <= 365) ||
-        (birthGestationInDays < 224 && ageInDays <= 730)
+          ageInMonths <= 12) ||
+        (birthGestationInDays < 224 && ageInMonths <= 24)
       ) {
         index = ageInDays - (280 - birthGestationInDays);
         ageAfterCorrection = zeit(

@@ -36,17 +36,19 @@ export default (
     millisecondDifference / (milliseconds * seconds * minutes * hours * days);
   const rawMonths =
     millisecondDifference / (milliseconds * seconds * minutes * hours * months);
-  let rawYears;
-  let tempRawYears =
+  const rawYears =
     millisecondDifference /
     (milliseconds * seconds * minutes * hours * exactYears);
+  const yearBitLeft = rawYears - Math.floor(rawYears);
+  const remainderMonths = Math.floor(yearBitLeft * 12);
+  const monthBitLeft = rawMonths - Math.floor(rawMonths);
+  const remainderWeeks = Math.floor(monthBitLeft * 4);
+  let birthday = false;
   if (
-    [untilObject.getMonth(), untilObject.getDate()] ===
-    [fromObject.getMonth(), fromObject.getDate()]
+    `${fromObject.getDate()}${fromObject.getMonth()}` ===
+    `${untilObject.getDate()}${untilObject.getMonth()}`
   ) {
-    rawYears = Math.round(tempRawYears);
-  } else {
-    rawYears = tempRawYears;
+    birthday = true;
   }
   let rawAnswer;
   switch (true) {
@@ -57,20 +59,23 @@ export default (
       rawAnswer = rawHours;
       break;
     case units === 'days':
-      rawAnswer = rawDays;
+      // fudge to catch 3 year 11 month old plotting at 4 years old on chart
+      if (Math.round(rawDays) === 1460 && remainderMonths === 11) {
+        rawAnswer = 1459;
+      } else {
+        rawAnswer = rawDays;
+      }
       break;
     case units === 'weeks':
       rawAnswer = rawWeeks;
       break;
     case units === 'months':
-      rawAnswer = rawMonths;
+      birthday ? (rawAnswer = Math.round(rawMonths)) : (rawAnswer = rawMonths);
       break;
     case units === 'years':
-      rawAnswer = rawYears;
+      birthday ? (rawAnswer = Math.round(rawYears)) : (rawAnswer = rawYears);
       break;
     case units === 'string':
-      const yearBitLeft = rawYears - Math.floor(rawYears);
-      const remainderMonths = Math.floor(yearBitLeft * 12);
       const intAges = {
         seconds: Math.floor(rawSeconds),
         remainderSeconds: Math.floor(rawSeconds) % 60,
@@ -81,7 +86,7 @@ export default (
         days: Math.floor(rawDays),
         remainderDays: Math.floor(rawDays) % 7,
         weeks: Math.floor(rawWeeks),
-        remainderWeeks: Math.floor(rawWeeks) % 4,
+        remainderWeeks: remainderWeeks,
         months: Math.floor(rawMonths),
         remainderMonths: remainderMonths,
         years: Math.floor(rawYears),
@@ -131,10 +136,19 @@ export default (
           return `${intAges.days} day${plurals.days} and ${intAges.remainderHours} hour${plurals.remainderHours}`;
         case wholeWeeks > 2 && wholeWeeks <= 8:
           return `${intAges.weeks} week${plurals.weeks} and ${intAges.remainderDays} day${plurals.remainderDays}`;
-        case wholeWeeks > 8 && wholeWeeks <= 52:
-          return `${intAges.months} month${plurals.months} and ${intAges.remainderWeeks} week${plurals.remainderWeeks}`;
+        case wholeWeeks > 8 && rawYears < 1:
+          // if a leap day adds 1 day, could appear 1 year old when they aren't
+          if (rawYears > 0.9993) {
+            return `11 months and 3 weeks`;
+          } else {
+            return `${intAges.months} month${plurals.months} and ${intAges.remainderWeeks} week${plurals.remainderWeeks}`;
+          }
         default:
-          return `${intAges.years} year${plurals.years} and ${intAges.remainderMonths} month${plurals.remainderMonths}`;
+          if (birthday) {
+            return `${Math.round(rawYears)} year${plurals.years} and 0 months`;
+          } else {
+            return `${intAges.years} year${plurals.years} and ${intAges.remainderMonths} month${plurals.remainderMonths}`;
+          }
       }
     case units === undefined:
       return 'Error: please specify units for output';
