@@ -81,8 +81,8 @@ const DateTimeInputButton = ({
     showPickerDateAndroid: false,
     showPickerTimeAndroid: false,
     text2: userLabel2,
-    changedDateAndroid: false,
-    changedTimeAndroid: false,
+    changedDate: false,
+    changedTime: false,
   };
 
   const [state, setState] = useState(initialState);
@@ -129,7 +129,7 @@ const DateTimeInputButton = ({
           if (formatDate(inputDate) === formatDate(new Date())) {
             return `Measured: Today`;
           } else {
-            return `Measured on ${formatDate(inputDate)}`;
+            return `Measured on: ${formatDate(inputDate)}`;
           }
         } else {
           return `${userLabel1}: ${formatDate(inputDate)}`;
@@ -138,9 +138,9 @@ const DateTimeInputButton = ({
       if (inputTime && !inputDate) {
         if (type === 'measured') {
           if (formatTime(inputTime) === formatTime(new Date())) {
-            return `Measured: now`;
+            return `Measured: Now`;
           } else {
-            return `Measured at ${formatTime(inputTime)}`;
+            return `Measured at: ${formatTime(inputTime)}`;
           }
         } else {
           return `Time of Birth: ${formatTime(inputTime)}`;
@@ -170,9 +170,9 @@ const DateTimeInputButton = ({
           return `${userLabel1}: ${formatDate(inputDate)}`;
         } else {
           if (formatDate(inputDate) === formatDate(new Date())) {
-            return `Measured: Now`;
+            return `Measured: Today`;
           } else {
-            return `Measured on ${formatDate(inputDate)}`;
+            return `Measured on: ${formatDate(inputDate)}`;
           }
         }
       }
@@ -189,8 +189,8 @@ const DateTimeInputButton = ({
     showPickerTimeAndroid,
     text1,
     text2,
-    changedDateAndroid,
-    changedTimeAndroid,
+    changedDate,
+    changedTime,
   } = state;
 
   const onChangeDateIos = (e, selectedDate) => {
@@ -201,9 +201,6 @@ const DateTimeInputButton = ({
   const onChangeTimeIos = (e, selectedTime) => {
     const currentTime = selectedTime || time;
     manageState({ time: currentTime });
-    if (!global) {
-      setFieldValue(timeName, currentTime);
-    }
   };
 
   const togglePicker = () => {
@@ -212,31 +209,21 @@ const DateTimeInputButton = ({
       workingObject.text1 = customiseLabel(date, time);
       if (type === 'birth') {
         if (renderTime) {
-          if (!global) {
-            setFieldValue(dateName, date);
-            setFieldValue(timeName, time);
-          }
-          manageStats.write(kind, dateName, date);
-          manageStats.write(kind, timeName, time);
+          workingObject.changedTime = true;
         } else {
-          if (!global) {
-            setFieldValue(dateName, date);
-          }
-          manageStats.write(kind, dateName, date);
+          workingObject.changedDate = true;
         }
         workingObject.showCancel = true;
       } else if (type === 'measured') {
         if (formatDate(date) !== formatDate(new Date())) {
           workingObject.showCancel = true;
-        } else {
-          setFieldValue(dateName, null);
         }
+        workingObject.changedDate = true;
         if (renderTime) {
           if (formatTime(time) !== formatTime(new Date())) {
             workingObject.showCancel = true;
-          } else {
-            setFieldValue(timeName, null);
           }
+          workingObject.changedTime = true;
         }
       }
       workingObject.modalVisible = false;
@@ -245,11 +232,9 @@ const DateTimeInputButton = ({
       let workingObject = {};
       if (!state.date) {
         workingObject.date = new Date();
-        if (!global) setFieldValue(dateName, new Date());
       }
       if (!state.time && renderTime) {
         workingObject.time = new Date();
-        if (!global) setFieldValue(timeName, new Date());
       }
       workingObject.modalVisible = true;
       manageState(workingObject, state);
@@ -268,32 +253,21 @@ const DateTimeInputButton = ({
     if (modalVisible) {
       workingObject.modalVisible = false;
       workingObject.date = manageStats.read(kind, dateName);
-      setFieldValue(dateName, workingObject.date);
       if (renderTime) {
         workingObject.time = manageStats.read(kind, timeName);
-        setFieldValue(timeName, workingObject.time);
       }
       manageState(workingObject);
     } else {
       if (!timeButton) {
-        if (!global) {
-          setFieldValue(dateName, null);
-          if (renderTime) {
-            setFieldValue(timeName, null);
-          }
-        }
-        manageStats.write(kind, dateName, null);
+        workingObject.changedDate = true;
         if (renderTime) {
-          manageStats.write(kind, timeName, null);
+          workingObject.changedTime = true;
         }
         workingObject.showCancel = false;
         workingObject.text1 = userLabel1;
         workingObject.date = null;
       } else if (timeButton) {
-        if (!global) {
-          setFieldValue(timeName, null);
-        }
-        manageStats.write(kind, timeName, null);
+        workingObject.changedTime = true;
         workingObject.showCancelTime = false;
         workingObject.time = null;
         workingObject.text2 = userLabel2;
@@ -303,7 +277,7 @@ const DateTimeInputButton = ({
   };
 
   useEffect(() => {
-    if (changedDateAndroid) {
+    if (changedDate) {
       if (type === 'measured' && formatDate(date) === formatDate(new Date())) {
         setFieldValue(dateName, null);
         manageStats.write(kind, dateName, null);
@@ -311,8 +285,9 @@ const DateTimeInputButton = ({
         setFieldValue(dateName, date);
         manageStats.write(kind, dateName, date);
       }
-      manageState({ changedDateAndroid: false });
-    } else if (changedTimeAndroid) {
+      manageState({ changedDate: false });
+    }
+    if (changedTime) {
       if (type === 'measured' && formatTime(time) === formatTime(new Date())) {
         setFieldValue(timeName, null);
         manageStats.write(kind, timeName, null);
@@ -320,12 +295,12 @@ const DateTimeInputButton = ({
         setFieldValue(timeName, time);
         manageStats.write(kind, timeName, time);
       }
-      manageState({ changedTimeAndroid: false });
+      manageState({ changedTime: false });
     }
   });
 
   useEffect(() => {
-    if (!changedTimeAndroid && !changedDateAndroid) {
+    if (!changedTime && !changedDate) {
       if (type === 'measured') {
         // reset by formik, but previously changed by user
         if (
@@ -342,7 +317,7 @@ const DateTimeInputButton = ({
   }, [state, values[dateName], values[timeName]]);
 
   useEffect(() => {
-    if (!changedTimeAndroid && !changedDateAndroid) {
+    if (!changedTime && !changedDate) {
       if (type === 'birth') {
         let workingObject = {};
         const globalDob = manageStats.read(kind, dateName);

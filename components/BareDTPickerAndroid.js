@@ -93,8 +93,8 @@ const BareDTPickerAndroid = ({ isDate, stateObject, type }) => {
         ? (workingObject.showPickerDateAndroid = false)
         : (workingObject.showPickerTimeAndroid = false);
       isDate
-        ? (workingObject.changedDateAndroid = true)
-        : (workingObject.changedTimeAndroid = true);
+        ? (workingObject.changedDate = true)
+        : (workingObject.changedTime = true);
     } else {
       if (isDate) {
         if (!state.showCancel) workingObject.date = null;
