@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Appearance,
   Dimensions,
@@ -9,15 +9,14 @@ import {
   View,
 } from 'react-native';
 
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import defaultStyle from '../config/styles';
 import colors from '../config/colors';
 import AppText from './AppText';
 import CentileChart from './CentileChart';
 import Icon from './Icon';
 
-const { height, width } = Dimensions.get('window');
+const {height, width} = Dimensions.get('window');
 const aspectRatio = height / width;
 const chartWidth = aspectRatio > 1.6 ? width - 90 : width - 250;
 const chartHeight = chartWidth * 1.6;
@@ -100,15 +99,14 @@ const CentileChartModal = (props) => {
         onPress={() => {
           setModalVisible(true);
         }}
-        style={{ margin: 6 }}
-      >
+        style={{margin: 6}}>
         <Icon
           name="chart-line"
           width={40}
           height={40}
           borderRadius={5}
           backgroundColor={colors.dark}
-        ></Icon>
+        />
       </TouchableOpacity>
       <View style={styles.centeredView}>
         <Modal
@@ -116,17 +114,15 @@ const CentileChartModal = (props) => {
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            console.log('Window closed');
-          }}
-        >
+            setModalVisible(!modalVisible);
+          }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <View style={styles.closeIcon}>
                 <TouchableOpacity
                   onPress={() => {
                     setModalVisible(!modalVisible);
-                  }}
-                >
+                  }}>
                   <MaterialCommunityIcons
                     name="close-circle"
                     color={colors.black}
@@ -135,8 +131,7 @@ const CentileChartModal = (props) => {
                 </TouchableOpacity>
               </View>
               <AppText
-                style={styles.title}
-              >{`${titleLabel} Chart ${units}`}</AppText>
+                style={styles.title}>{`${titleLabel} Chart ${units}`}</AppText>
               {gestationLabel && (
                 <AppText style={styles.gestationLabel}>
                   {gestationLabel}

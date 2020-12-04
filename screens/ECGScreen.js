@@ -6,8 +6,8 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import {useNavigation} from '@react-navigation/native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import * as Yup from 'yup';
 
 import PCalcScreen from '../components/PCalcScreen';
@@ -70,16 +70,16 @@ const ECGScreen = () => {
         Alert.alert(
           'Time Travelling Patient',
           'Please check the dates entered',
-          [{ text: 'OK', onPress: () => null }],
-          { cancelable: false }
+          [{text: 'OK', onPress: () => null}],
+          {cancelable: false},
         );
         break;
       case ageCheck === 'Too old':
         Alert.alert(
           'Patient Too Old',
           'This calculator can only be used under 18 years of age',
-          [{ text: 'OK', onPress: () => null }],
-          { cancelable: false }
+          [{text: 'OK', onPress: () => null}],
+          {cancelable: false},
         );
         break;
       default:
@@ -87,7 +87,7 @@ const ECGScreen = () => {
         const QTCOutput = calculateQTC(
           age,
           values.qtinterval,
-          values.rrinterval
+          values.rrinterval,
         );
         const serialisedObject = JSON.stringify({
           QTCOutput,
@@ -99,14 +99,13 @@ const ECGScreen = () => {
   };
 
   return (
-    <PCalcScreen style={{ flex: 1 }}>
+    <PCalcScreen style={{flex: 1}}>
       <KeyboardAwareScrollView>
         <View style={styles.topContainer}>
           <AppForm
             initialValues={initialValues}
             onSubmit={handleFormikSubmit}
-            validationSchema={validationSchema}
-          >
+            validationSchema={validationSchema}>
             <DateTimeInputButton kind="child" type="birth" />
             <NumberInputButton
               name="qtinterval"
@@ -114,6 +113,7 @@ const ECGScreen = () => {
               iconName="heart-flash"
               unitsOfMeasurement=" seconds"
               kind="child"
+              global={false}
             />
             <NumberInputButton
               name="rrinterval"
@@ -121,6 +121,7 @@ const ECGScreen = () => {
               iconName="heart-pulse"
               unitsOfMeasurement=" seconds"
               kind="child"
+              global={false}
             />
             <DateTimeInputButton kind="child" type="measured" />
             <FormResetButton />

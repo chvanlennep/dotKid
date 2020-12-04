@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Alert,
   Modal,
@@ -7,12 +7,12 @@ import {
   FlatList,
   View,
 } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../config/colors';
 import defaultStyles from '../config/styles';
 import ALSDisplayButton from './buttons/ALSDisplayButton';
-import { chestRiseFlatList, noChestRise } from '../brains/nlsObjects';
+import {chestRiseFlatList, noChestRise} from '../brains/nlsObjects';
 import ALSFunctionButton from '../components/buttons/ALSFunctionButton';
 import AppText from './AppText';
 import ALSTertiaryFunctionButton from './buttons/ALSTertiaryFunctionButton';
@@ -30,7 +30,7 @@ const NoChestRiseModal = ({
 
   const setIsTimerActive = timerState.setValue;
 
-  const renderListItem = ({ item }) => {
+  const renderListItem = ({item}) => {
     return (
       <ALSTertiaryFunctionButton
         kind="neonate"
@@ -65,7 +65,7 @@ const NoChestRiseModal = ({
           },
         },
       ],
-      { cancelable: false }
+      {cancelable: false},
     );
   };
 
@@ -86,8 +86,7 @@ const NoChestRiseModal = ({
           animationType="slide"
           transparent={true}
           visible={modalVisible}
-          onShow={afterClose}
-        >
+          onShow={afterClose}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <TouchableOpacity style={styles.touchable} onPress={handleClose}>

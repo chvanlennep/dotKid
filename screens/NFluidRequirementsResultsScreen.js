@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
 import NCalcScreen from '../components/NCalcScreen';
 import colors from '../config/colors';
@@ -12,7 +12,7 @@ import NFluidOutput from '../components/NFluidOutput';
 
 const flexDirection = defaultStyles.container.width > 500 ? 'row' : 'column';
 
-const NFluidRequirementsResultsScreen = ({ route, navigation }) => {
+const NFluidRequirementsResultsScreen = ({route, navigation}) => {
   const results = JSON.parse(route.params);
 
   const initialValues = {
@@ -20,7 +20,7 @@ const NFluidRequirementsResultsScreen = ({ route, navigation }) => {
   };
 
   return (
-    <NCalcScreen style={{ flex: 1 }}>
+    <NCalcScreen isResults={true} style={{flex: 1}}>
       <View style={styles.topContainer}>
         <AgeButton
           kind="nFluid"
@@ -30,8 +30,8 @@ const NFluidRequirementsResultsScreen = ({ route, navigation }) => {
         <Button
           label="← Calculate Again"
           onPress={() => navigation.goBack()}
-          style={{ backgroundColor: colors.light }}
-          textStyle={{ color: colors.black }}
+          style={{backgroundColor: colors.light}}
+          textStyle={{color: colors.black}}
         />
         <View>
           <AppForm initialValues={initialValues}>

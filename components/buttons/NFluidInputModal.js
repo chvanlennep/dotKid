@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Alert,
   StyleSheet,
@@ -8,8 +8,8 @@ import {
   Modal,
   Dimensions,
 } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import * as Yup from 'yup';
 
 import AppText from '../AppText';
@@ -19,14 +19,14 @@ import defaultStyles from '../../config/styles';
 import NumberInputButton from './input/NumberInputButton';
 import AppForm from '../AppForm';
 import FormSubmitTickButton from './FormSubmitTickButton';
-import { writeItemToStorage } from '../../brains/storage';
+import {writeItemToStorage} from '../../brains/storage';
 import checkDefault from '../../brains/checkDefault';
 
 const windowHeight = Dimensions.get('window').height;
 let modalHeight = windowHeight * 0.7 > 570 ? 570 : windowHeight * 0.7;
 if (windowHeight < 570) modalHeight = windowHeight * 0.9;
 
-const NFluidInputModal = ({ name, valuesObject }) => {
+const NFluidInputModal = ({name, valuesObject}) => {
   const scheme = useColorScheme();
   const dark = scheme === 'dark' ? true : false;
 
@@ -166,8 +166,9 @@ const NFluidInputModal = ({ name, valuesObject }) => {
           <View style={styles.textBox}>
             <ButtonIcon name={iconName} />
             <AppText
-              style={{ color: colors.white }}
-            >{`For ${buttonText} Infants`}</AppText>
+              style={{
+                color: colors.white,
+              }}>{`For ${buttonText} Infants`}</AppText>
           </View>
         </TouchableOpacity>
         {showReset && (
@@ -181,10 +182,7 @@ const NFluidInputModal = ({ name, valuesObject }) => {
           animationType="slide"
           transparent={true}
           visible={modalVisible}
-          onRequestClose={() => {
-            console.log('Window closed');
-          }}
-        >
+          onRequestClose={() => setModalVisible(false)}>
           <View style={styles.centeredView}>
             <View
               style={[
@@ -192,15 +190,13 @@ const NFluidInputModal = ({ name, valuesObject }) => {
                 {
                   backgroundColor: dark ? colors.darkSecondary : colors.light,
                 },
-              ]}
-            >
+              ]}>
               <AppForm
                 initialValues={values}
                 onSubmit={submitRequirements}
-                validationSchema={validationSchema}
-              >
+                validationSchema={validationSchema}>
                 <AppText style={styles.title}>{`${name} Requirements`}</AppText>
-                <KeyboardAwareScrollView style={{ alignSelf: 'center' }}>
+                <KeyboardAwareScrollView style={{alignSelf: 'center'}}>
                   {renderButtons}
                   <View style={styles.infoContainer}>
                     <AppText style={styles.infoTitle}>Note:</AppText>

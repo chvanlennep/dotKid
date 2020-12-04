@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 
 import NCalcScreen from '../components/NCalcScreen';
 import AppText from '../components/AppText';
@@ -10,7 +10,7 @@ import Button from '../components/buttons/Button';
 import YoungWarning from '../components/YoungWarning';
 import JaundiceChart from '../components/JaundiceChart';
 
-const NCentileResultsScreen = ({ route, navigation }) => {
+const NCentileResultsScreen = ({route, navigation}) => {
   const parameters = JSON.parse(route.params);
   const {
     stringAge,
@@ -30,7 +30,7 @@ const NCentileResultsScreen = ({ route, navigation }) => {
   if (exchangeWarning) backgroundColor = 'red';
 
   return (
-    <NCalcScreen style={{ flex: 1 }}>
+    <NCalcScreen isResults={true} style={{flex: 1}}>
       <View style={styles.topContainer}>
         <AgeButton
           gestationWeeks={gestationWeeks}
@@ -40,8 +40,8 @@ const NCentileResultsScreen = ({ route, navigation }) => {
         <Button
           label="← Calculate Again"
           onPress={() => navigation.goBack()}
-          style={{ backgroundColor: colors.light }}
-          textStyle={{ color: colors.black }}
+          style={{backgroundColor: colors.light}}
+          textStyle={{color: colors.black}}
         />
       </View>
       <ScrollView>
@@ -50,20 +50,22 @@ const NCentileResultsScreen = ({ route, navigation }) => {
           <View
             style={[
               styles.answerTextHeadingWrapper,
-              { backgroundColor: backgroundColor },
-            ]}
-          >
+              {backgroundColor: backgroundColor},
+            ]}>
             <AppText
-              style={styles.answerTextHeadings}
-            >{`${mainConclusion} (SBR: ${sbr})`}</AppText>
+              style={
+                styles.answerTextHeadings
+              }>{`${mainConclusion} (SBR: ${sbr})`}</AppText>
           </View>
           <View>
             <AppText
-              style={styles.thresholdsText}
-            >{`Phototherapy threshold: ${phototherapy}`}</AppText>
+              style={
+                styles.thresholdsText
+              }>{`Phototherapy threshold: ${phototherapy}`}</AppText>
             <AppText
-              style={styles.thresholdsText}
-            >{`Exchange transfusion threshold: ${exchange}`}</AppText>
+              style={
+                styles.thresholdsText
+              }>{`Exchange transfusion threshold: ${exchange}`}</AppText>
           </View>
         </View>
         <JaundiceChart

@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import {StyleSheet, View} from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import NCalcScreen from '../components/NCalcScreen';
 import AppText from '../components/AppText';
@@ -13,7 +13,7 @@ import CentileChartModal from '../components/CentileChartModal';
 
 const flexDirection = defaultStyles.container.width > 500 ? 'row' : 'column';
 
-const NCentileResultsScreen = ({ route, navigation }) => {
+const NCentileResultsScreen = ({route, navigation}) => {
   const parameters = JSON.parse(route.params);
   const measurements = parameters.measurements;
   const results = parameters.results;
@@ -33,7 +33,7 @@ const NCentileResultsScreen = ({ route, navigation }) => {
   if (measurements.hc) hcTitle = `Head Circumference (${measurements.hc}cm):`;
 
   return (
-    <NCalcScreen style={{ flex: 1 }}>
+    <NCalcScreen isResults={true} style={{flex: 1}}>
       <View style={styles.topContainer}>
         <AgeButton
           kind="neonate"
@@ -43,8 +43,8 @@ const NCentileResultsScreen = ({ route, navigation }) => {
         <Button
           label="← Calculate Again"
           onPress={() => navigation.goBack()}
-          style={{ backgroundColor: colors.light }}
-          textStyle={{ color: colors.black }}
+          style={{backgroundColor: colors.light}}
+          textStyle={{color: colors.black}}
         />
       </View>
       <KeyboardAwareScrollView>

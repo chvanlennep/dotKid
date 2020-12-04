@@ -141,7 +141,6 @@ const RhythmButton = ({
     handleChangeBackground(changeBackground, functionButtons, title);
     removeTime(title, functionButtons);
     setRhythmPressed(false);
-    console.log(functionButtons);
     setClicks(clicks - 1);
   };
 

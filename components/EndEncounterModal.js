@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   Dimensions,
@@ -9,7 +9,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../config/colors';
 import defaultStyles from '../config/styles';
@@ -35,7 +35,7 @@ const EndEncounterModal = ({
       <ALSToolButton
         name="End Encounter"
         onPress={() => setModalVisible(true)}
-        style={{ width: useWindowDimensions().width / 2 }}
+        style={{width: useWindowDimensions().width / 2}}
       />
       <View style={styles.centeredView}>
         <Modal
@@ -43,17 +43,15 @@ const EndEncounterModal = ({
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            Alert.alert('Window has been closed.');
-          }}
-        >
+            setModalVisible(!modalVisible);
+          }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <TouchableOpacity
                 style={styles.touchable}
                 onPress={() => {
                   setModalVisible(!modalVisible);
-                }}
-              >
+                }}>
                 <View style={styles.closeIcon}>
                   <MaterialCommunityIcons
                     name="close-circle"

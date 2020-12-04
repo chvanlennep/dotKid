@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import React, {useContext, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import PCalcScreen from '../components/PCalcScreen';
 import AppText from '../components/AppText';
@@ -8,7 +8,7 @@ import colors from '../config/colors';
 import AgeButton from '../components/buttons/AgeButton';
 import Button from '../components/buttons/Button';
 import MoreCentileInfo from '../components/buttons/MoreCentileInfo';
-const FluidResultsScreen = ({ route, navigation }) => {
+const FluidResultsScreen = ({route, navigation}) => {
   const parameters = JSON.parse(route.params);
 
   let fluidTitle = `Calculated Fluid Requirements:`;
@@ -18,7 +18,7 @@ const FluidResultsScreen = ({ route, navigation }) => {
   const ageAfterCorrection = parameters.centileObject.ageAfterCorrection;
 
   return (
-    <PCalcScreen style={{ flex: 1 }}>
+    <PCalcScreen isResults={true} style={{flex: 1}}>
       <View style={styles.topContainer}>
         <AgeButton
           kind="child"
@@ -28,8 +28,8 @@ const FluidResultsScreen = ({ route, navigation }) => {
         <Button
           label="← Calculate Again"
           onPress={() => navigation.goBack()}
-          style={{ backgroundColor: colors.light }}
-          textStyle={{ color: colors.black }}
+          style={{backgroundColor: colors.light}}
+          textStyle={{color: colors.black}}
         />
       </View>
       <KeyboardAwareScrollView>

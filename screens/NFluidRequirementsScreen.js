@@ -1,8 +1,8 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import React, {useContext, useState, useEffect} from 'react';
+import {Alert, StyleSheet, View} from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import * as Yup from 'yup';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 import AppForm from '../components/AppForm';
 import colors from '../config/colors';
@@ -16,9 +16,9 @@ import NFluidInputButton from '../components/buttons/NFluidInputButton';
 import GestationInputButton from '../components/buttons/input/GestationInputButton';
 import ageChecker from '../brains/ageChecker';
 import nFluidCalculator from '../brains/nFluidCalculator';
-import { GlobalStateContext } from '../components/GlobalStateContext';
+import {GlobalStateContext} from '../components/GlobalStateContext';
 import zeit from '../brains/zeit';
-import { readItemFromStorage } from '../brains/storage';
+import {readItemFromStorage} from '../brains/storage';
 
 const NFluidRequirementsScreen = () => {
   const navigation = useNavigation();
@@ -38,8 +38,8 @@ const NFluidRequirementsScreen = () => {
 
   const moveDataAcrossGlobal = (movingTo, values) => {
     setGlobalStats((globalStats) => {
-      const child = { ...globalStats.child };
-      const neonate = { ...globalStats.neonate };
+      const child = {...globalStats.child};
+      const neonate = {...globalStats.neonate};
       for (const [key, value] of Object.entries(values)) {
         let newKey = key;
         let newValue = value;
@@ -61,7 +61,7 @@ const NFluidRequirementsScreen = () => {
           child[newKey] = newValue;
         }
       }
-      return { child, neonate };
+      return {child, neonate};
     });
   };
 
@@ -98,7 +98,7 @@ const NFluidRequirementsScreen = () => {
   };
 
   const handleFormikSubmit = async (values) => {
-    const { gestationInDays } = values;
+    const {gestationInDays} = values;
     const correctedGestation =
       gestationInDays + zeit(values.dob, 'days', values.dom);
     const termEtc =
@@ -107,7 +107,7 @@ const NFluidRequirementsScreen = () => {
     const checkAge = ageChecker(values, 29);
     if (checkAge === 'Negative age') {
       Alert.alert('Time Travelling Patient', 'Please check the dates entered', [
-        { text: 'OK', onPress: () => null },
+        {text: 'OK', onPress: () => null},
       ]);
     } else if (
       (gestationInDays >= 259 && checkAge === 'Too old') ||
@@ -125,10 +125,10 @@ const NFluidRequirementsScreen = () => {
             text: 'OK',
             onPress: () => {
               moveDataAcrossGlobal('child', values);
-              navigation.navigate(routes.FLUID_CALCULATOR);
+              navigation.navigate('RootPaed', {screen: 'FluidCalculator'});
             },
           },
-        ]
+        ],
       );
     } else {
       const results = nFluidCalculator(values, workingValues, termEtc);
@@ -142,19 +142,18 @@ const NFluidRequirementsScreen = () => {
     readItemFromStorage(
       `preterm_fluid_requirements`,
       setPretermValues,
-      defaults
+      defaults,
     );
   }, []);
 
   return (
-    <NCalcScreen style={{ flex: 1 }}>
+    <NCalcScreen style={{flex: 1}}>
       <KeyboardAwareScrollView>
         <View style={styles.topContainer}>
           <AppForm
             initialValues={initialValues}
             onSubmit={handleFormikSubmit}
-            validationSchema={validationSchema}
-          >
+            validationSchema={validationSchema}>
             <DateTimeInputButton
               kind="neonate"
               type="birth"

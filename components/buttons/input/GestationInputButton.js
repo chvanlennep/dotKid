@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   Platform,
   StyleSheet,
@@ -7,15 +7,15 @@ import {
   useColorScheme,
   Modal,
 } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { Picker } from '@react-native-community/picker';
-import { useFormikContext } from 'formik';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Picker} from '@react-native-picker/picker';
+import {useFormikContext} from 'formik';
 
 import AppText from '../../AppText';
 import colors from '../../../config/colors';
 import ButtonIcon from '../ButtonIcon';
 import ErrorMessage from '../../ErrorMessage';
-import { GlobalStateContext } from '../../GlobalStateContext';
+import {GlobalStateContext} from '../../GlobalStateContext';
 import defaultStyles from '../../../config/styles';
 
 const modalWidth =
@@ -40,14 +40,14 @@ const GestationInputButton = ({
   const ios = Platform.OS === 'ios' ? true : false;
 
   const [buttonLabel, setButtonLabel] = useState(
-    `Birth Gestation${defaultGestationString}`
+    `Birth Gestation${defaultGestationString}`,
   );
   const [modalVisible, setModalVisible] = useState(false);
   const [showReset, setShowReset] = useState(false);
   const [localWeeks, setLocalWeeks] = useState(defaultWeeks);
   const [localDays, setLocalDays] = useState(defaultDays);
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
-  const { setFieldValue, values, errors, touched } = useFormikContext();
+  const {setFieldValue, values, errors, touched} = useFormikContext();
 
   const resetIcon = kind === 'child' ? 'refresh' : 'delete-forever';
 
@@ -63,17 +63,17 @@ const GestationInputButton = ({
     write: function (kind, measurementType, value) {
       if (kind === 'child') {
         setGlobalStats((globalStats) => {
-          const child = { ...globalStats.child };
-          const neonate = { ...globalStats.neonate };
+          const child = {...globalStats.child};
+          const neonate = {...globalStats.neonate};
           child[measurementType] = value;
-          return { child, neonate };
+          return {child, neonate};
         });
       } else if (kind === 'neonate')
         setGlobalStats((globalStats) => {
-          const child = { ...globalStats.child };
-          const neonate = { ...globalStats.neonate };
+          const child = {...globalStats.child};
+          const neonate = {...globalStats.neonate};
           neonate[measurementType] = value;
-          return { child, neonate };
+          return {child, neonate};
         });
     },
   };
@@ -117,14 +117,14 @@ const GestationInputButton = ({
     } else {
       setModalVisible(false);
       setButtonLabel(
-        kind === 'neonate' ? 'Birth Gestation' : `Birth Gestation: Term`
+        kind === 'neonate' ? 'Birth Gestation' : `Birth Gestation: Term`,
       );
       setLocalWeeks(defaultWeeks);
       setLocalDays(defaultDays);
       manageStats.write(
         kind,
         'gestationInDays',
-        defaultWeeks * 7 + defaultDays
+        defaultWeeks * 7 + defaultDays,
       );
       if (!global) {
         setFieldValue(name, defaultWeeks * 7 + defaultDays);
@@ -161,7 +161,7 @@ const GestationInputButton = ({
         if (values[name] === defaultGestationInDays) {
           setShowReset(false);
           setButtonLabel(
-            kind === 'neonate' ? 'Birth Gestation' : `Birth Gestation: Term`
+            kind === 'neonate' ? 'Birth Gestation' : `Birth Gestation: Term`,
           );
           setLocalWeeks(defaultWeeks);
           setLocalDays(defaultDays);
@@ -174,7 +174,7 @@ const GestationInputButton = ({
       if (globalGestation === defaultGestationInDays) {
         setShowReset(false);
         setButtonLabel(
-          kind === 'neonate' ? 'Birth Gestation' : `Birth Gestation: Term`
+          kind === 'neonate' ? 'Birth Gestation' : `Birth Gestation: Term`,
         );
         setLocalWeeks(defaultWeeks);
         setLocalDays(defaultDays);
@@ -227,7 +227,7 @@ const GestationInputButton = ({
         <TouchableOpacity onPress={toggleGestPicker}>
           <View style={styles.textBox}>
             <ButtonIcon name="human-pregnant" />
-            <AppText style={{ color: colors.white }}>{buttonLabel}</AppText>
+            <AppText style={{color: colors.white}}>{buttonLabel}</AppText>
           </View>
         </TouchableOpacity>
         {showReset && (
@@ -241,10 +241,7 @@ const GestationInputButton = ({
           animationType="slide"
           transparent={true}
           visible={modalVisible}
-          onRequestClose={() => {
-            console.log('Window closed');
-          }}
-        >
+          onRequestClose={resetInput}>
           <View style={styles.centeredView}>
             <View
               style={[
@@ -253,17 +250,15 @@ const GestationInputButton = ({
                   backgroundColor:
                     dark && ios ? darkBackgroundColor : colors.light,
                 },
-              ]}
-            >
+              ]}>
               <View style={styles.pickerContainer}>
                 <Picker
                   style={ios ? styles.iosPicker : styles.androidPicker}
-                  itemStyle={{ color: dark ? colors.white : colors.black }}
+                  itemStyle={{color: dark ? colors.white : colors.black}}
                   onValueChange={(itemValue, itemIndex) => {
                     setLocalWeeks(itemValue);
                   }}
-                  selectedValue={localWeeks}
-                >
+                  selectedValue={localWeeks}>
                   {weekLabelList}
                 </Picker>
                 <Picker
@@ -274,8 +269,7 @@ const GestationInputButton = ({
                   onValueChange={(itemValue, itemIndex) => {
                     setLocalDays(itemValue);
                   }}
-                  selectedValue={localDays}
-                >
+                  selectedValue={localDays}>
                   {dayLabelList}
                 </Picker>
               </View>

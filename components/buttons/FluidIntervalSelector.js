@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   Platform,
   Modal,
@@ -7,9 +7,9 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import { Picker } from '@react-native-community/picker';
-import { useFormikContext } from 'formik';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import {Picker} from '@react-native-picker/picker';
+import {useFormikContext} from 'formik';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../../config/colors';
 import defaultStyles from '../../config/styles';
@@ -19,7 +19,7 @@ import AppText from '../AppText';
 const modalWidth =
   defaultStyles.container.width > 360 ? 360 : defaultStyles.container.width;
 
-const FluidIntervalSelector = ({ kind = 'neonate', name = 'interval' }) => {
+const FluidIntervalSelector = ({kind = 'neonate', name = 'interval'}) => {
   const ios = Platform.OS === 'ios' ? true : false;
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -27,7 +27,7 @@ const FluidIntervalSelector = ({ kind = 'neonate', name = 'interval' }) => {
   const [showReset, setShowReset] = useState(false);
   const [localInterval, setLocalInterval] = useState('3 hourly');
 
-  const { setFieldValue, values } = useFormikContext();
+  const {setFieldValue, values} = useFormikContext();
   const scheme = useColorScheme();
   const dark = scheme === 'dark' ? true : false;
   const darkBackgroundColor =
@@ -73,7 +73,7 @@ const FluidIntervalSelector = ({ kind = 'neonate', name = 'interval' }) => {
           <TouchableOpacity onPress={toggleGestInput}>
             <View style={styles.buttonTextBox}>
               <ButtonIcon name="watch" />
-              <AppText style={{ color: colors.white }}>{buttonText}</AppText>
+              <AppText style={{color: colors.white}}>{buttonText}</AppText>
             </View>
           </TouchableOpacity>
           {showReset && (
@@ -88,10 +88,7 @@ const FluidIntervalSelector = ({ kind = 'neonate', name = 'interval' }) => {
           animationType="slide"
           transparent={true}
           visible={modalVisible}
-          onRequestClose={() => {
-            console.log('Window closed');
-          }}
-        >
+          onRequestClose={cancelInput}>
           <View style={styles.centeredView}>
             <View
               style={[
@@ -100,17 +97,15 @@ const FluidIntervalSelector = ({ kind = 'neonate', name = 'interval' }) => {
                   backgroundColor:
                     dark && ios ? darkBackgroundColor : colors.light,
                 },
-              ]}
-            >
+              ]}>
               <View style={styles.pickerContainer}>
                 <Picker
                   style={ios ? styles.iosPicker : styles.androidPicker}
-                  itemStyle={{ color: dark ? colors.white : colors.black }}
+                  itemStyle={{color: dark ? colors.white : colors.black}}
                   onValueChange={(itemValue, itemIndex) => {
                     setLocalInterval(itemValue);
                   }}
-                  selectedValue={localInterval}
-                >
+                  selectedValue={localInterval}>
                   <Picker.Item label="1 hourly" value="1 hourly" />
                   <Picker.Item label="2 hourly" value="2 hourly" />
                   <Picker.Item label="3 hourly" value="3 hourly" />
@@ -161,7 +156,7 @@ const styles = StyleSheet.create({
   },
   iosPicker: {
     height: 200,
-    width: modalWidth,
+    width: modalWidth - 50,
   },
   androidPicker: {
     height: 100,

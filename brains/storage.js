@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Note: setValues parameter is a useState function initialised in the functional component
 
@@ -27,4 +27,4 @@ const writeItemToStorage = async (storageKey, setValues, newValues) => {
   setValues(newValues);
 };
 
-export { readItemFromStorage, writeItemToStorage };
+export {readItemFromStorage, writeItemToStorage};

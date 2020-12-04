@@ -1,6 +1,6 @@
 import React from 'react';
-import { TouchableWithoutFeedback, View } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import {TouchableWithoutFeedback, View} from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import colors from '../config/colors';
 
 function TopIcon({
@@ -23,8 +23,7 @@ function TopIcon({
           padding: 0,
           alignItems: 'center',
           justifyContent: 'center',
-        }}
-      >
+        }}>
         <MaterialCommunityIcons name={name} color={iconColor} size={width} />
       </View>
     </TouchableWithoutFeedback>

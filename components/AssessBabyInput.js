@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   Platform,
   StyleSheet,
@@ -7,15 +7,15 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import { Picker } from '@react-native-community/picker';
-import { useFormikContext } from 'formik';
+import {Picker} from '@react-native-picker/picker';
+import {useFormikContext} from 'formik';
 
 import colors from '../../../config/colors';
 import defaultStyles from '../../../config/styles';
 import ButtonIcon from '../ButtonIcon';
 import AppText from '../../AppText';
 import ErrorMessage from '../../ErrorMessage';
-import { GlobalStateContext } from '../../GlobalStateContext';
+import {GlobalStateContext} from '../../GlobalStateContext';
 
 const AssessBabyInput = ({
   global = false,
@@ -29,13 +29,13 @@ const AssessBabyInput = ({
   const pickerDetails = {
     name: 'breathing',
     pickerContent: [
-      { label: 'Apnoeic', value: 'Apnoeic' },
-      { label: 'Adequate Breathing', value: 'Adequate Breathing' },
-      { label: 'Inadequate Breathing', value: 'Inadequate Breathing' },
+      {label: 'Apnoeic', value: 'Apnoeic'},
+      {label: 'Adequate Breathing', value: 'Adequate Breathing'},
+      {label: 'Inadequate Breathing', value: 'Inadequate Breathing'},
     ],
   };
 
-  const { setFieldValue, errors, touched, values } = useFormikContext();
+  const {setFieldValue, errors, touched, values} = useFormikContext();
   const scheme = useColorScheme();
 
   const toggleInput = () => {
@@ -86,15 +86,13 @@ const AssessBabyInput = ({
               scheme === 'dark'
                 ? styles.darkPickerContainer
                 : styles.lightPickerContainer
-            }
-          >
+            }>
             <Picker
               style={styles.picker}
               onValueChange={(itemValue, itemIndex) => {
                 setLocal(itemValue);
               }}
-              selectedValue={local}
-            >
+              selectedValue={local}>
               <Picker.Item label="Apnoeic" value="Apnoeic" />
               <Picker.Item
                 label="Inadequate Breathing"
@@ -108,7 +106,7 @@ const AssessBabyInput = ({
           </View>
           <TouchableOpacity onPress={toggleInput}>
             <View style={styles.submitButton}>
-              <AppText style={{ color: colors.white }}>Submit</AppText>
+              <AppText style={{color: colors.white}}>Submit</AppText>
             </View>
           </TouchableOpacity>
         </React.Fragment>

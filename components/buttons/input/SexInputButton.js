@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   Platform,
   Modal,
@@ -7,21 +7,21 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import { Picker } from '@react-native-community/picker';
-import { useFormikContext } from 'formik';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import {Picker} from '@react-native-picker/picker';
+import {useFormikContext} from 'formik';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../../../config/colors';
 import defaultStyles from '../../../config/styles';
 import ButtonIcon from '../ButtonIcon';
 import AppText from '../../AppText';
 import ErrorMessage from '../../ErrorMessage';
-import { GlobalStateContext } from '../../GlobalStateContext';
+import {GlobalStateContext} from '../../GlobalStateContext';
 
 const modalWidth =
   defaultStyles.container.width > 350 ? 350 : defaultStyles.container.width;
 
-const SexInputButton = ({ global = false, kind, name = 'sex' }) => {
+const SexInputButton = ({global = false, kind, name = 'sex'}) => {
   const ios = Platform.OS === 'ios' ? true : false;
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -30,7 +30,7 @@ const SexInputButton = ({ global = false, kind, name = 'sex' }) => {
   const [localSex, setLocalSex] = useState('');
 
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
-  const { setFieldValue, errors, touched, values } = useFormikContext();
+  const {setFieldValue, errors, touched, values} = useFormikContext();
   const scheme = useColorScheme();
   const dark = scheme === 'dark' ? true : false;
   const darkBackgroundColor =
@@ -43,17 +43,17 @@ const SexInputButton = ({ global = false, kind, name = 'sex' }) => {
     write: function (kind, measurementType, value) {
       if (kind === 'child') {
         setGlobalStats((globalStats) => {
-          const child = { ...globalStats.child };
-          const neonate = { ...globalStats.neonate };
+          const child = {...globalStats.child};
+          const neonate = {...globalStats.neonate};
           child[measurementType] = value;
-          return { child, neonate };
+          return {child, neonate};
         });
       } else if (kind === 'neonate')
         setGlobalStats((globalStats) => {
-          const child = { ...globalStats.child };
-          const neonate = { ...globalStats.neonate };
+          const child = {...globalStats.child};
+          const neonate = {...globalStats.neonate};
           neonate[measurementType] = value;
-          return { child, neonate };
+          return {child, neonate};
         });
     },
   };
@@ -154,7 +154,7 @@ const SexInputButton = ({ global = false, kind, name = 'sex' }) => {
           <TouchableOpacity onPress={toggleSexInput}>
             <View style={styles.buttonTextBox}>
               <ButtonIcon name="all-inclusive" />
-              <AppText style={{ color: colors.white }}>{buttonText}</AppText>
+              <AppText style={{color: colors.white}}>{buttonText}</AppText>
             </View>
           </TouchableOpacity>
           {showCancel && (
@@ -169,10 +169,7 @@ const SexInputButton = ({ global = false, kind, name = 'sex' }) => {
           animationType="slide"
           transparent={true}
           visible={modalVisible}
-          onRequestClose={() => {
-            console.log('Window closed');
-          }}
-        >
+          onRequestClose={cancelInput}>
           <View style={styles.centeredView}>
             <View
               style={[
@@ -181,17 +178,15 @@ const SexInputButton = ({ global = false, kind, name = 'sex' }) => {
                   backgroundColor:
                     dark && ios ? darkBackgroundColor : colors.light,
                 },
-              ]}
-            >
+              ]}>
               <View style={styles.pickerContainer}>
                 <Picker
                   style={ios ? styles.iosPicker : styles.androidPicker}
-                  itemStyle={{ color: dark ? colors.white : colors.black }}
+                  itemStyle={{color: dark ? colors.white : colors.black}}
                   onValueChange={(itemValue, itemIndex) => {
                     setLocalSex(itemValue);
                   }}
-                  selectedValue={localSex}
-                >
+                  selectedValue={localSex}>
                   <Picker.Item label="Female" value="Female" />
                   <Picker.Item label="Male" value="Male" />
                 </Picker>

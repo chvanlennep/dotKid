@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, FlatList, StyleSheet, View } from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {Alert, FlatList, StyleSheet, View} from 'react-native';
 
 import NCalcScreen from '../components/NCalcScreen';
 import NLSToolbar from '../components/NLSToolbar';
@@ -30,7 +30,7 @@ const NLSScreen = () => {
   const [endEncounter, setEndEncounter] = useState(false);
   const [resuscitationRequired, setResuscitationRequired] = useState(false);
   const [initialAssessmentComplete, setInitialAssessmentComplete] = useState(
-    false
+    false,
   );
   const [assessBaby, setAssessBaby] = useState(false);
   const [assessTime, setAssessTime] = useState(0);
@@ -130,7 +130,7 @@ const NLSScreen = () => {
           style: 'cancel',
         },
       ],
-      { cancelable: false }
+      {cancelable: false},
     );
   };
 
@@ -141,7 +141,7 @@ const NLSScreen = () => {
     }
   });
 
-  const renderListItem = ({ item }) => {
+  const renderListItem = ({item}) => {
     if (item.type === 'preResusChecklist') {
       return (
         <ALSFunctionButton
@@ -214,7 +214,7 @@ const NLSScreen = () => {
   };
 
   return (
-    <NCalcScreen isResus={true} style={{ flex: 1 }}>
+    <NCalcScreen isResus={true} style={{flex: 1}}>
       <NLSToolbar
         reset={resetLog}
         logState={logState}
@@ -226,8 +226,7 @@ const NLSScreen = () => {
         <View style={styles.verticalButtonContainer}>
           <ALSDisplayButton
             onPress={() => setIsTimerActive(true)}
-            style={styles.button}
-          >
+            style={styles.button}>
             {!isTimerActive && 'Start Timer'}
             {isTimerActive && (
               <Stopwatch
@@ -245,7 +244,6 @@ const NLSScreen = () => {
             logState={logState}
             resetState={resetState}
             timerState={timerState}
-            style={styles.button}
           />
         </View>
         <View style={styles.verticalButtonContainer}>
@@ -269,7 +267,7 @@ const NLSScreen = () => {
         </View>
       </View>
       <View style={styles.textContainer}>
-        <AppText style={styles.text}>NLS</AppText>
+        <AppText style={styles.text}>NLS Runner</AppText>
       </View>
       <View style={styles.bottomContainer}>
         <FlatList

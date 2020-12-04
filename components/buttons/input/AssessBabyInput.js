@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Platform,
   StyleSheet,
@@ -7,17 +7,17 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import { Picker } from '@react-native-community/picker';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useFormikContext } from 'formik';
+import {Picker} from '@react-native-picker/picker';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useFormikContext} from 'formik';
 import colors from '../../../config/colors';
 
 const pickerHeight = Platform.OS === 'ios' ? 210 : 110;
 
-const AssessBabyInput = ({ pickerDetails, pickerStateObject }) => {
+const AssessBabyInput = ({pickerDetails, pickerStateObject}) => {
   const [pickerState, setPickerState] = pickerStateObject;
 
-  const { name, pickerContent } = pickerDetails;
+  const {name, pickerContent} = pickerDetails;
 
   const middleIndex = Math.round(pickerContent.length / 2) - 1;
   const initialValue = pickerContent[middleIndex]['value'];
@@ -29,13 +29,13 @@ const AssessBabyInput = ({ pickerDetails, pickerStateObject }) => {
 
   const changePickerState = (name, key, value) => {
     setPickerState((pickerState) => {
-      const workingState = { ...pickerState };
+      const workingState = {...pickerState};
       workingState[name][key] = value;
       return workingState;
     });
   };
 
-  const { setFieldValue, values } = useFormikContext();
+  const {setFieldValue, values} = useFormikContext();
 
   const scheme = useColorScheme();
   const dark = scheme === 'dark' ? true : false;
@@ -60,8 +60,7 @@ const AssessBabyInput = ({ pickerDetails, pickerStateObject }) => {
               onValueChange={(itemValue, itemIndex) => {
                 setLocal(itemValue);
               }}
-              selectedValue={local}
-            >
+              selectedValue={local}>
               {labelList}
             </Picker>
           </View>

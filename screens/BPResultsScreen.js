@@ -1,7 +1,6 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-
+import {StyleSheet, View} from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import PCalcScreen from '../components/PCalcScreen';
 import AppText from '../components/AppText';
@@ -15,7 +14,7 @@ import CentileChartModal from '../components/CentileChartModal';
 
 const flexDirection = defaultStyles.container.width > 500 ? 'row' : 'column';
 
-const BPResultsScreen = ({ route, navigation }) => {
+const BPResultsScreen = ({route, navigation}) => {
   const parameters = JSON.parse(route.params);
   const measurements = parameters.measurements;
   const centileResults = parameters.centileObject;
@@ -52,7 +51,7 @@ const BPResultsScreen = ({ route, navigation }) => {
     : (diastolicTitle = `Diastolic (${diastolic}mmHg):`);
 
   return (
-    <PCalcScreen style={{ flex: 1 }}>
+    <PCalcScreen isResults={true} style={{flex: 1}}>
       <View style={styles.topContainer}>
         <AgeButton
           kind="child"
@@ -62,8 +61,8 @@ const BPResultsScreen = ({ route, navigation }) => {
         <Button
           label="← Calculate Again"
           onPress={() => navigation.goBack()}
-          style={{ backgroundColor: colors.light }}
-          textStyle={{ color: colors.black }}
+          style={{backgroundColor: colors.light}}
+          textStyle={{color: colors.black}}
         />
       </View>
       <KeyboardAwareScrollView>

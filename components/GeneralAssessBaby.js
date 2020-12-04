@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import React, {useEffect, useState} from 'react';
+import {Alert, Modal, StyleSheet, TouchableOpacity, View} from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import colors from '../../app/config/colors';
 import defaultStyles from '../../app/config/styles';
 import ALSDisplayButton from './buttons/ALSDisplayButton';
@@ -17,7 +17,6 @@ const GeneralAssessBaby = ({
   logState,
   resetState,
   timerState,
-  style,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -50,26 +49,30 @@ const GeneralAssessBaby = ({
   const [pickerText, setPickerText] = useState(nameArray[0]);
   const [submitForm, setSubmitForm] = useState(false);
   const [resetForm, setResetForm] = useState(false);
+  const [blink, setBlink] = useState(false);
+  const [pressedBefore, setPressedBefore] = useState(false);
+
+  const reset = resetState.value;
 
   const allPickerDetails = [
     {
       name: 'Chest Movement',
       iconName: 'circle-expand',
-      pickerContent: [{ value: 'Chest Not Moving' }, { value: 'Chest Moving' }],
+      pickerContent: [{value: 'Chest Not Moving'}, {value: 'Chest Moving'}],
     },
     {
       name: 'Breathing',
       iconName: 'weather-windy',
       pickerContent: [
-        { value: 'Apnoeic' },
-        { value: 'Inadequate Breathing' },
-        { value: 'Adequate Breathing' },
+        {value: 'Apnoeic'},
+        {value: 'Inadequate Breathing'},
+        {value: 'Adequate Breathing'},
       ],
     },
     {
       name: 'Heart Rate',
       iconName: 'heart-pulse',
-      pickerContent: [{ value: '<60' }, { value: '60-100' }, { value: '>100' }],
+      pickerContent: [{value: '<60'}, {value: '60-100'}, {value: '>100'}],
     },
     {
       name: 'Saturations',
@@ -83,9 +86,9 @@ const GeneralAssessBaby = ({
       name: 'Tone',
       iconName: 'human-handsdown',
       pickerContent: [
-        { value: 'Floppy' },
-        { value: 'Poor Tone' },
-        { value: 'Good Tone' },
+        {value: 'Floppy'},
+        {value: 'Poor Tone'},
+        {value: 'Good Tone'},
       ],
     },
   ];
@@ -102,8 +105,7 @@ const GeneralAssessBaby = ({
               (!pickerState[item.name]['open'] && colors.dark) ||
               (pickerState[item.name]['open'] && colors.black),
           },
-        ]}
-      >
+        ]}>
         <MaterialCommunityIcons
           name={item.iconName}
           size={35}
@@ -143,7 +145,7 @@ const GeneralAssessBaby = ({
 
   const changePickerState = (name, key, value) => {
     setPickerState((pickerState) => {
-      const workingState = { ...pickerState };
+      const workingState = {...pickerState};
       workingState[name][key] = value;
       return workingState;
     });
@@ -226,7 +228,7 @@ const GeneralAssessBaby = ({
           },
         },
       ],
-      { cancelable: false }
+      {cancelable: false},
     );
   };
 
@@ -294,12 +296,34 @@ const GeneralAssessBaby = ({
     }
   }, [pickerState]);
 
+  useEffect(() => {
+    if (assessBaby) {
+      setPressedBefore(true);
+    }
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBlink((blink) => !blink);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (reset) {
+      setPressedBefore(false);
+    }
+  }, [reset]);
+
   return (
     <React.Fragment>
       <ALSDisplayButton
         onPress={handlePress}
-        style={[style, assessBaby && styles.buttonPressed]}
-      >
+        style={[
+          styles.button,
+          (assessBaby && styles.buttonPressed) ||
+            (pressedBefore && blink && styles.buttonBlink),
+        ]}>
         Assess Baby
         {assessBaby && (
           <AssessBabyTimer
@@ -315,20 +339,15 @@ const GeneralAssessBaby = ({
           animationType="slide"
           transparent={true}
           visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert('Window has been closed.');
-          }}
-        >
+          onRequestClose={handleClosePress}>
           <View style={styles.centeredView}>
             <AppForm
               initialValues={initialValues}
-              onSubmit={handleFormikSubmit}
-            >
+              onSubmit={handleFormikSubmit}>
               <View style={styles.modalView}>
                 <TouchableOpacity
                   style={styles.touchable}
-                  onPress={handleClosePress}
-                >
+                  onPress={handleClosePress}>
                   <View style={styles.closeIcon}>
                     <MaterialCommunityIcons
                       name="close-circle"
@@ -350,8 +369,10 @@ const GeneralAssessBaby = ({
                 <View style={styles.buttonRow}>{renderTopButtons}</View>
                 <AssessBabyTitle
                   submitObject={[submitForm, setSubmitForm]}
-                  resetObject={[resetForm, setResetForm]}
-                >{`${pickerText}:`}</AssessBabyTitle>
+                  resetObject={[
+                    resetForm,
+                    setResetForm,
+                  ]}>{`${pickerText}:`}</AssessBabyTitle>
                 {renderInputs}
               </View>
             </AppForm>
@@ -450,11 +471,23 @@ const styles = StyleSheet.create({
     margin: 3,
     color: colors.white,
   },
+  button: {
+    alignContent: 'center',
+    backgroundColor: colors.dark,
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
   buttonPressed: {
     backgroundColor: colors.secondary,
     flexWrap: 'nowrap',
     height: 80,
     padding: 10,
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
+  buttonBlink: {
+    alignContent: 'center',
+    backgroundColor: colors.secondary,
     justifyContent: 'center',
     textAlign: 'center',
   },

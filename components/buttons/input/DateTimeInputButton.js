@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   Modal,
   StyleSheet,
@@ -7,14 +7,14 @@ import {
   useColorScheme,
 } from 'react-native';
 
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useFormikContext } from 'formik';
+import {useFormikContext} from 'formik';
 
 import colors from '../../../config/colors';
 import ButtonIcon from '../ButtonIcon';
 import ErrorMessage from '../../ErrorMessage';
-import { GlobalStateContext } from '../../GlobalStateContext';
+import {GlobalStateContext} from '../../GlobalStateContext';
 import defaultStyles from '../../../config/styles';
 import AppText from '../../AppText';
 import BareDTPickerAndroid from '../../BareDTPickerAndroid';
@@ -87,12 +87,12 @@ const DateTimeInputButton = ({
 
   const [state, setState] = useState(initialState);
 
-  const { setFieldValue, errors, touched, values } = useFormikContext();
+  const {setFieldValue, errors, touched, values} = useFormikContext();
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
 
   const manageState = (object) => {
     setState((state) => {
-      const mutableState = { ...state };
+      const mutableState = {...state};
       for (const [key, value] of Object.entries(object)) {
         mutableState[key] = value;
       }
@@ -107,17 +107,17 @@ const DateTimeInputButton = ({
     write: function (kind, measurementType, value) {
       if (kind === 'child') {
         setGlobalStats((globalStats) => {
-          const child = { ...globalStats.child };
-          const neonate = { ...globalStats.neonate };
+          const child = {...globalStats.child};
+          const neonate = {...globalStats.neonate};
           child[measurementType] = value;
-          return { child, neonate };
+          return {child, neonate};
         });
       } else if (kind === 'neonate')
         setGlobalStats((globalStats) => {
-          const child = { ...globalStats.child };
-          const neonate = { ...globalStats.neonate };
+          const child = {...globalStats.child};
+          const neonate = {...globalStats.neonate};
           neonate[measurementType] = value;
-          return { child, neonate };
+          return {child, neonate};
         });
     },
   };
@@ -151,7 +151,7 @@ const DateTimeInputButton = ({
       if (renderTime) {
         if (type === 'birth') {
           return `DOB: ${formatDate(inputDate)} at ${formatTime(
-            inputTime || new Date()
+            inputTime || new Date(),
           )}`;
         } else if (type === 'measured') {
           if (
@@ -161,7 +161,7 @@ const DateTimeInputButton = ({
             return `Measured: Now`;
           } else {
             return `Measured: ${formatDate(inputDate)} at ${formatTime(
-              inputTime
+              inputTime,
             )}`;
           }
         }
@@ -195,12 +195,12 @@ const DateTimeInputButton = ({
 
   const onChangeDateIos = (e, selectedDate) => {
     const currentDate = selectedDate || date;
-    manageState({ date: currentDate });
+    manageState({date: currentDate});
   };
 
   const onChangeTimeIos = (e, selectedTime) => {
     const currentTime = selectedTime || time;
-    manageState({ time: currentTime });
+    manageState({time: currentTime});
   };
 
   const togglePicker = () => {
@@ -210,9 +210,8 @@ const DateTimeInputButton = ({
       if (type === 'birth') {
         if (renderTime) {
           workingObject.changedTime = true;
-        } else {
-          workingObject.changedDate = true;
         }
+        workingObject.changedDate = true;
         workingObject.showCancel = true;
       } else if (type === 'measured') {
         if (formatDate(date) !== formatDate(new Date())) {
@@ -229,7 +228,6 @@ const DateTimeInputButton = ({
       workingObject.modalVisible = false;
       manageState(workingObject);
     } else if (!modalVisible && ios) {
-      let workingObject = {};
       if (!state.date) {
         workingObject.date = new Date();
       }
@@ -237,15 +235,15 @@ const DateTimeInputButton = ({
         workingObject.time = new Date();
       }
       workingObject.modalVisible = true;
-      manageState(workingObject, state);
+      manageState(workingObject);
     } else {
       workingObject.showPickerDateAndroid = true;
     }
-    manageState(workingObject, state);
+    manageState(workingObject);
   };
 
   const openPickerTimeAndroid = () => {
-    manageState({ showPickerTimeAndroid: true });
+    manageState({showPickerTimeAndroid: true});
   };
 
   const cancelInput = (timeButton = false) => {
@@ -272,7 +270,7 @@ const DateTimeInputButton = ({
         workingObject.time = null;
         workingObject.text2 = userLabel2;
       }
-      manageState(workingObject, state);
+      manageState(workingObject);
     }
   };
 
@@ -285,7 +283,7 @@ const DateTimeInputButton = ({
         setFieldValue(dateName, date);
         manageStats.write(kind, dateName, date);
       }
-      manageState({ changedDate: false });
+      manageState({changedDate: false});
     }
     if (changedTime) {
       if (type === 'measured' && formatTime(time) === formatTime(new Date())) {
@@ -295,7 +293,7 @@ const DateTimeInputButton = ({
         setFieldValue(timeName, time);
         manageStats.write(kind, timeName, time);
       }
-      manageState({ changedTime: false });
+      manageState({changedTime: false});
     }
   });
 
@@ -314,7 +312,7 @@ const DateTimeInputButton = ({
           manageState(initialState);
       }
     }
-  }, [state, values[dateName], values[timeName]]);
+  });
 
   useEffect(() => {
     if (!changedTime && !changedDate) {
@@ -335,7 +333,7 @@ const DateTimeInputButton = ({
             if (!values[dateName] && !values[timeName]) {
               manageStats.write(kind, dateName, null);
               manageStats.write(kind, timeName, null);
-              manageState(initialState, state);
+              manageState(initialState);
             }
           }
           // reset globally:
@@ -344,7 +342,7 @@ const DateTimeInputButton = ({
               setFieldValue(dateName, null);
               setFieldValue(timeName, null);
             }
-            manageState(initialState, state);
+            manageState(initialState);
           }
           // value changed by global state:
           if (globalDob) {
@@ -358,15 +356,15 @@ const DateTimeInputButton = ({
               renderTime && ios
                 ? (workingObject.text1 = customiseLabel(
                     globalDob,
-                    globalTob || globalDob
+                    globalTob || globalDob,
                   ))
                 : (workingObject.text1 = customiseLabel(globalDob, null));
               if (renderTime && android)
                 workingObject.text2 = customiseLabel(
                   null,
-                  globalTob || globalDob
+                  globalTob || globalDob,
                 );
-              manageState(workingObject, state);
+              manageState(workingObject);
             }
           }
         }
@@ -392,18 +390,18 @@ const DateTimeInputButton = ({
             renderTime && ios
               ? (workingObject.text1 = customiseLabel(
                   globalDob,
-                  globalTob || globalDob
+                  globalTob || globalDob,
                 ))
               : (workingObject.text1 = customiseLabel(globalDob, null));
             if (renderTime && android)
               workingObject.text2 = customiseLabel(
                 null,
-                globalTob || globalDob
+                globalTob || globalDob,
               );
             workingObject.showCancel = true;
             workingObject.showCancelTime = true;
             if (globalTob && android) workingObject.showCancelTime = true;
-            manageState(workingObject, state);
+            manageState(workingObject);
           }
         }
       }
@@ -416,7 +414,7 @@ const DateTimeInputButton = ({
         <TouchableOpacity onPress={togglePicker}>
           <View style={styles.textBox}>
             <ButtonIcon name="calendar-range" />
-            <AppText style={{ color: colors.white }}>{text1}</AppText>
+            <AppText style={{color: colors.white}}>{text1}</AppText>
           </View>
         </TouchableOpacity>
         {showCancel && (
@@ -432,7 +430,7 @@ const DateTimeInputButton = ({
             <TouchableOpacity onPress={openPickerTimeAndroid}>
               <View style={styles.textBox}>
                 <ButtonIcon name="clock" />
-                <AppText style={{ color: colors.white }}>{text2}</AppText>
+                <AppText style={{color: colors.white}}>{text2}</AppText>
               </View>
             </TouchableOpacity>
             {showCancelTime && (
@@ -449,17 +447,13 @@ const DateTimeInputButton = ({
           animationType="slide"
           transparent={true}
           visible={modalVisible}
-          onRequestClose={() => {
-            console.log('Window closed');
-          }}
-        >
+          onRequestClose={cancelInput}>
           <View style={styles.centeredView}>
             <View
               style={[
                 styles.modalView,
-                { backgroundColor: dark ? darkBackgroundColor : colors.light },
-              ]}
-            >
+                {backgroundColor: dark ? darkBackgroundColor : colors.light},
+              ]}>
               {ios && (
                 <View style={styles.iosDatePicker}>
                   <DateTimePicker
@@ -468,7 +462,7 @@ const DateTimeInputButton = ({
                     mode="date"
                     display="spinner"
                     onChange={onChangeDateIos}
-                    style={{ height: 150 }}
+                    style={{height: 150}}
                   />
                 </View>
               )}
@@ -481,13 +475,13 @@ const DateTimeInputButton = ({
                     minuteInterval={15}
                     display="spinner"
                     onChange={onChangeTimeIos}
-                    style={{ height: 150 }}
+                    style={{height: 150}}
                   />
                 </View>
               )}
               <View style={styles.buttonContainer}>
                 <View style={styles.closeIcon}>
-                  <TouchableOpacity onPress={() => cancelInput()}>
+                  <TouchableOpacity onPress={cancelInput}>
                     <MaterialCommunityIcons
                       name="close-circle"
                       color={dark ? colors.white : colors.black}

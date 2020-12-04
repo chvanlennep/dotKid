@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useState, useEffect, useContext} from 'react';
 import {
   Platform,
   StyleSheet,
@@ -6,8 +7,8 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import { useFormikContext } from 'formik';
-import { GlobalStateContext } from '../../GlobalStateContext';
+import {useFormikContext} from 'formik';
+import {GlobalStateContext} from '../../GlobalStateContext';
 
 import colors from '../../../config/colors';
 import defaultStyles from '../../../config/styles';
@@ -44,7 +45,7 @@ const NumberInputButton = ({
   const [localNumber, setLocalNumber] = useState(firstValue);
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
 
-  const { setFieldValue, errors, touched, values } = useFormikContext();
+  const {setFieldValue, errors, touched, values} = useFormikContext();
 
   const placeHolderText =
     unitsOfMeasurement.charAt(0) === ' '
@@ -58,17 +59,17 @@ const NumberInputButton = ({
     write: function (kind, measurementType, value) {
       if (kind === 'child') {
         setGlobalStats((globalStats) => {
-          const child = { ...globalStats.child };
-          const neonate = { ...globalStats.neonate };
+          const child = {...globalStats.child};
+          const neonate = {...globalStats.neonate};
           child[measurementType] = value;
-          return { child, neonate };
+          return {child, neonate};
         });
       } else if (kind === 'neonate')
         setGlobalStats((globalStats) => {
-          const child = { ...globalStats.child };
-          const neonate = { ...globalStats.neonate };
+          const child = {...globalStats.child};
+          const neonate = {...globalStats.neonate};
           neonate[measurementType] = value;
-          return { child, neonate };
+          return {child, neonate};
         });
     },
   };
@@ -106,7 +107,9 @@ const NumberInputButton = ({
 
   useEffect(() => {
     if (!defaultValue) {
-      let globalNumber;
+      const globalNumber = manageStats.read(kind, name)
+        ? `${manageStats.read(kind, name)}`
+        : '';
       // button has been filled in by user:
       if (showCancel && localNumber && !showTextInput) {
         // Reset by formik:
@@ -120,7 +123,6 @@ const NumberInputButton = ({
           setLocalNumber('');
         }
         if (global) {
-          globalNumber = manageStats.read(kind, name);
           // Reset via global state:
           if (!globalNumber) {
             setShowCancel(false);
@@ -137,9 +139,8 @@ const NumberInputButton = ({
         }
       }
       if (global) {
-        globalNumber = manageStats.read(kind, name);
         // button has not been filled in by user:
-        if (!showCancel && !localNumber && !showTextInput) {
+        if (!showCancel && !showTextInput) {
           // value updated via global state:
           if (globalNumber) {
             setFieldValue(name, globalNumber);
@@ -170,16 +171,25 @@ const NumberInputButton = ({
         setShowCancel(false);
       }
     }
-  }, [defaultValue, values[name], localNumber, showTextInput]);
+  }, [
+    defaultValue,
+    values,
+    name,
+    localNumber,
+    showTextInput,
+    localNumber,
+    unitsOfMeasurement,
+    userLabel,
+  ]);
 
   return (
     <React.Fragment>
       <View>
-        <View style={[styles.button, { width: width }]}>
+        <View style={[styles.button, {width: width}]}>
           <TouchableOpacity onPress={toggleTextInput}>
-            <View style={[styles.buttonTextBox, { width: width - 55 }]}>
+            <View style={[styles.buttonTextBox, {width: width - 55}]}>
               <ButtonIcon name={iconName} />
-              <AppText style={{ color: colors.white }}>{buttonText}</AppText>
+              <AppText style={{color: colors.white}}>{buttonText}</AppText>
             </View>
           </TouchableOpacity>
           {showCancel && (
@@ -190,7 +200,7 @@ const NumberInputButton = ({
         </View>
       </View>
       {showTextInput && (
-        <View style={[styles.inputBox, { width: width }]}>
+        <View style={[styles.inputBox, {width: width}]}>
           <TextInput
             style={styles.textInput}
             onChangeText={(text) => {

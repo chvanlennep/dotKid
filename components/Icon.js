@@ -1,6 +1,6 @@
 import React from 'react';
-import { View } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import {View} from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import colors from '../config/colors';
 
 function Icon({
@@ -24,13 +24,12 @@ function Icon({
         justifyContent: 'center',
         padding,
         margin,
-      }}
-    >
+      }}>
       <MaterialCommunityIcons
         name={name}
         color={iconColor}
         size={20}
-        iconStyle={{ margin: 0 }}
+        iconStyle={{margin: 0}}
       />
     </View>
   );

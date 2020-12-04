@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
-import { StyleSheet, View, Alert } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { useNavigation } from '@react-navigation/native';
+import React, {useContext} from 'react';
+import {StyleSheet, View, Alert} from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {useNavigation} from '@react-navigation/native';
 import * as Yup from 'yup';
 
 import PCalcScreen from '../components/PCalcScreen';
@@ -15,7 +15,7 @@ import FormResetButton from '../components/buttons/FormResetButton';
 import AppForm from '../components/AppForm';
 import calculateCentile from '../brains/calculateCentile';
 import routes from '../navigation/routes';
-import { GlobalStateContext } from '../components/GlobalStateContext';
+import {GlobalStateContext} from '../components/GlobalStateContext';
 import ageChecker from '../brains/ageChecker';
 
 const WETFLAGScreen = () => {
@@ -51,16 +51,16 @@ const WETFLAGScreen = () => {
         Alert.alert(
           'Time Travelling Patient',
           'Please check the dates entered',
-          [{ text: 'OK', onPress: () => null }],
-          { cancelable: false }
+          [{text: 'OK', onPress: () => null}],
+          {cancelable: false},
         );
         break;
       case 'Too old':
         Alert.alert(
           'Patient Too Old',
           'This calculator can only be used under 18 years of age',
-          [{ text: 'OK', onPress: () => null }],
-          { cancelable: false }
+          [{text: 'OK', onPress: () => null}],
+          {cancelable: false},
         );
         break;
       default:
@@ -70,7 +70,7 @@ const WETFLAGScreen = () => {
           values.dob,
           values.dom,
           values.sex,
-          values.weight
+          values.weight,
         );
         const serialisedObject = JSON.stringify({
           output,
@@ -82,19 +82,18 @@ const WETFLAGScreen = () => {
     }
   };
   return (
-    <PCalcScreen style={{ flex: 1 }}>
+    <PCalcScreen style={{flex: 1}}>
       <KeyboardAwareScrollView>
         <View style={styles.topContainer}>
           <AppForm
             initialValues={initialValues}
             onSubmit={handleFormikSubmit}
-            validationSchema={validationSchema}
-          >
+            validationSchema={validationSchema}>
             <DateTimeInputButton kind="child" type="birth" />
             <SexInputButton name="sex" kind="child" />
             <NumberInputButton
               name="weight"
-              userLabel="Weight (optional)"
+              userLabel="Weight (if available)"
               iconName="chart-bar"
               unitsOfMeasurement="kg"
               kind="child"

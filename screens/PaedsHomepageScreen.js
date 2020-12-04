@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import {StyleSheet, View, ScrollView} from 'react-native';
 
 import PCalcScreen from '../components/PCalcScreen';
 import AppText from '../components/AppText';
@@ -14,7 +14,7 @@ import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton
 
 const PaedsHomepageScreen = () => {
   return (
-    <PCalcScreen isHomePage={true} style={{ flex: 1 }}>
+    <PCalcScreen isHomePage={true} style={{flex: 1}}>
       <View style={styles.topContainer}>
         <AppForm
           // dummy AppForm so useFormikContext line in components doesn't throw error here:
@@ -23,14 +23,13 @@ const PaedsHomepageScreen = () => {
             tob: null,
             gestationInDays: null,
             sex: null,
-          }}
-        >
+          }}>
           <DateTimeInputButton global={true} kind="child" type="birth" />
           <GestationInputButton global={true} kind="child" />
           <SexInputButton global={true} kind="child" />
         </AppForm>
       </View>
-      <AppText style={styles.text}> Paediatric </AppText>
+      <AppText style={styles.text}>Paediatric Calculators</AppText>
       <View style={styles.bottomContainer}>
         <ScrollView>
           <NavigateButton directions={routes.BLOOD_PRESSURE}>
@@ -68,9 +67,8 @@ const styles = StyleSheet.create({
     ...defaultStyles.container,
   },
   text: {
-    fontSize: defaultStyles.windowWidth < 375 ? 24 : 28,
+    fontSize: defaultStyles.windowWidth < 375 ? 24 : 27,
     marginBottom: 5,
-    marginTop: 5,
-    marginLeft: 12,
+    marginLeft: 18,
   },
 });

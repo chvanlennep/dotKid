@@ -1,26 +1,25 @@
-import React, { useContext, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import React, {useContext, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import PCalcScreen from '../components/PCalcScreen';
 import AppText from '../components/AppText';
 import colors from '../config/colors';
 import Button from '../components/buttons/Button';
 
-const BSAResultsScreen = ({ route, navigation }) => {
+const BSAResultsScreen = ({route, navigation}) => {
   const parameters = JSON.parse(route.params);
-  const measurements = parameters.measurements;
 
-  const BSA = parameters.output;
+  const {output} = parameters;
 
   return (
-    <PCalcScreen style={{ flex: 1 }}>
+    <PCalcScreen isResults={true} style={{flex: 1}}>
       <View style={styles.topContainer}>
         <Button
           label="← Calculate Again"
           onPress={() => navigation.goBack()}
-          style={{ backgroundColor: colors.light }}
-          textStyle={{ color: colors.black }}
+          style={{backgroundColor: colors.light}}
+          textStyle={{color: colors.black}}
         />
       </View>
       <View style={styles.bottomContainer}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Dimensions,
   LogBox,
@@ -8,17 +8,17 @@ import {
   View,
   useColorScheme,
 } from 'react-native';
-import { LineChart, XAxis, YAxis } from 'react-native-svg-charts';
+import {LineChart, XAxis, YAxis} from 'react-native-svg-charts';
 import * as shape from 'd3-shape';
-import { Circle, G } from 'react-native-svg';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import {Circle, G} from 'react-native-svg';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import makeDataObject from '../brains/makeJaundiceChartData';
 import defaultStyle from '../config/styles';
 import colors from '../config/colors';
 import AppText from '../components/AppText';
 
-const { height, width } = Dimensions.get('window');
+const {height, width} = Dimensions.get('window');
 const aspectRatio = height / width;
 const chartWidth =
   aspectRatio > 1.6
@@ -28,7 +28,7 @@ const chartHeight = chartWidth * 1.6;
 
 LogBox.ignoreLogs(['Warning: Failed prop type:']);
 
-const JaundiceChart = ({ ageInHours, gestationWeeks, sbr }) => {
+const JaundiceChart = ({ageInHours, gestationWeeks, sbr}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const scheme = useColorScheme();
@@ -43,13 +43,13 @@ const JaundiceChart = ({ ageInHours, gestationWeeks, sbr }) => {
     index = 36 + (36 - (336 - ageInHours));
   }
 
-  const { data, topLimit, finalXLabels } = makeDataObject(
+  const {data, topLimit, finalXLabels} = makeDataObject(
     gestationWeeks,
     ageInHours,
-    sbr
+    sbr,
   );
 
-  const ExtraDot = ({ x, y }) => (
+  const ExtraDot = ({x, y}) => (
     <G>
       <G x={x(index)}>
         <Circle
@@ -68,16 +68,14 @@ const JaundiceChart = ({ ageInHours, gestationWeeks, sbr }) => {
       <TouchableOpacity
         onPress={() => {
           setModalVisible(true);
-        }}
-      >
+        }}>
         <View style={styles.viewChartButton}>
           <AppText
             style={{
               color: colors.white,
               fontWeight: '500',
               textAlign: 'center',
-            }}
-          >
+            }}>
             View Chart
           </AppText>
         </View>
@@ -88,17 +86,15 @@ const JaundiceChart = ({ ageInHours, gestationWeeks, sbr }) => {
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            console.log('Window closed');
-          }}
-        >
+            setModalVisible(!modalVisible);
+          }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <View style={styles.closeIcon}>
                 <TouchableOpacity
                   onPress={() => {
                     setModalVisible(!modalVisible);
-                  }}
-                >
+                  }}>
                   <MaterialCommunityIcons
                     name="close-circle"
                     color={colors.black}
@@ -110,13 +106,12 @@ const JaundiceChart = ({ ageInHours, gestationWeeks, sbr }) => {
               <View
                 style={[
                   styles.bigChartContainer,
-                  { backgroundColor: chartBackgroundColor },
-                ]}
-              >
+                  {backgroundColor: chartBackgroundColor},
+                ]}>
                 <View style={styles.smallChartContainer}>
                   <YAxis
                     data={[0, topLimit]}
-                    contentInset={{ top: 10, bottom: 10 }}
+                    contentInset={{top: 10, bottom: 10}}
                     svg={{
                       fill: chartForegroundColor,
                       fontSize: 9,
@@ -128,10 +123,9 @@ const JaundiceChart = ({ ageInHours, gestationWeeks, sbr }) => {
                   <LineChart
                     data={data}
                     style={styles.chart}
-                    svg={{ strokeWidth: 4 }}
-                    contentInset={{ top: 10, bottom: 10 }}
-                    curve={shape.curveLinear}
-                  >
+                    svg={{strokeWidth: 4}}
+                    contentInset={{top: 10, bottom: 10}}
+                    curve={shape.curveLinear}>
                     <ExtraDot />
                   </LineChart>
                 </View>
@@ -139,8 +133,8 @@ const JaundiceChart = ({ ageInHours, gestationWeeks, sbr }) => {
                   style={styles.xAxis}
                   data={finalXLabels}
                   formatLabel={(value, index) => finalXLabels[index]}
-                  contentInset={{ left: 10, right: 10 }}
-                  svg={{ fill: chartForegroundColor, fontSize: 10 }}
+                  contentInset={{left: 10, right: 10}}
+                  svg={{fill: chartForegroundColor, fontSize: 10}}
                 />
               </View>
               <AppText style={styles.xAxisKey}>Age (days)</AppText>

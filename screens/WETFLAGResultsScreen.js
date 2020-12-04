@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Appearance,
   Modal,
@@ -6,8 +6,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import PCalcScreen from '../components/PCalcScreen';
 import AppText from '../components/AppText';
@@ -16,13 +16,11 @@ import AgeButton from '../components/buttons/AgeButton';
 import Button from '../components/buttons/Button';
 import defaultStyles from '../config/styles';
 
-const WETFLAGResultsScreen = ({ route, navigation }) => {
+const WETFLAGResultsScreen = ({route, navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const scheme = Appearance.getColorScheme();
-  const parameters = JSON.parse(route.params);
-  const measurements = parameters.measurements;
 
-  let referenceTitle;
+  const parameters = JSON.parse(route.params);
+
   const ageBeforeCorrection = parameters.centileObject.ageBeforeCorrection;
   const ageAfterCorrection = parameters.centileObject.ageAfterCorrection;
 
@@ -36,7 +34,7 @@ const WETFLAGResultsScreen = ({ route, navigation }) => {
   const weightIsEstimated = parameters.output.weightIsEstimated;
 
   return (
-    <PCalcScreen style={{ flex: 1 }}>
+    <PCalcScreen isResults={true} style={{flex: 1}}>
       <View style={styles.topContainer}>
         <AgeButton
           kind="child"
@@ -46,8 +44,8 @@ const WETFLAGResultsScreen = ({ route, navigation }) => {
         <Button
           label="← Calculate Again"
           onPress={() => navigation.goBack()}
-          style={{ backgroundColor: colors.light }}
-          textStyle={{ color: colors.black }}
+          style={{backgroundColor: colors.light}}
+          textStyle={{color: colors.black}}
         />
       </View>
       <KeyboardAwareScrollView>
@@ -105,9 +103,8 @@ const WETFLAGResultsScreen = ({ route, navigation }) => {
                     onPress={() => {
                       setModalVisible(true);
                     }}
-                    style={[styles.modalButton, { width: 200 }]}
-                    label="Reference Data"
-                  >
+                    style={[styles.modalButton, {width: 200}]}
+                    label="Reference Data">
                     Reference Data
                   </Button>
                   <View style={styles.centeredView}>
@@ -116,16 +113,14 @@ const WETFLAGResultsScreen = ({ route, navigation }) => {
                       transparent={true}
                       visible={modalVisible}
                       onRequestClose={() => {
-                        console.log('Window closed');
-                      }}
-                    >
+                        setModalVisible(false);
+                      }}>
                       <View style={styles.centeredView}>
                         <View style={styles.modalView}>
                           <TouchableOpacity
                             onPress={() => {
                               setModalVisible(!modalVisible);
-                            }}
-                          >
+                            }}>
                             <View style={styles.closeIcon}>
                               <MaterialCommunityIcons
                                 name="close-circle"

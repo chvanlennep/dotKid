@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Platform,
   StyleSheet,
@@ -7,20 +7,20 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useFormikContext } from 'formik';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useFormikContext} from 'formik';
 
 import colors from '../../../config/colors';
 import AppText from '../../AppText';
 
 const pickerHeight = Platform.OS === 'ios' ? 210 : 110;
 
-const O2Slider = ({ pickerStateObject, type = 'fi' }) => {
+const O2Slider = ({pickerStateObject, type = 'fi'}) => {
   const [pickerState, setPickerState] = pickerStateObject;
 
   const changePickerState = (name, key, value) => {
     setPickerState((pickerState) => {
-      const workingState = { ...pickerState };
+      const workingState = {...pickerState};
       workingState[name][key] = value;
       return workingState;
     });
@@ -32,7 +32,7 @@ const O2Slider = ({ pickerStateObject, type = 'fi' }) => {
 
   const [oxygen, setOxygen] = useState(initialValue);
 
-  const { setFieldValue, values } = useFormikContext();
+  const {setFieldValue, values} = useFormikContext();
 
   const accept = () => {
     setFieldValue(name, oxygen);

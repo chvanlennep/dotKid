@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
-import { StyleSheet, View, Alert } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { useNavigation } from '@react-navigation/native';
+import React, {useContext, useRef, useState, useEffect} from 'react';
+import {StyleSheet, View, Alert} from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {useNavigation} from '@react-navigation/native';
 import * as Yup from 'yup';
 
 import PCalcScreen from '../components/PCalcScreen';
@@ -15,19 +15,24 @@ import FormResetButton from '../components/buttons/FormResetButton';
 import AppForm from '../components/AppForm';
 import calculateCentile from '../brains/calculateCentile';
 import routes from '../navigation/routes';
-import { GlobalStateContext } from '../components/GlobalStateContext';
+import {GlobalStateContext} from '../components/GlobalStateContext';
 import ageChecker from '../brains/ageChecker';
+import zeit from '../brains/zeit';
 
 const PCentileScreen = () => {
   const navigation = useNavigation();
 
   const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
 
+  const formikRef = useRef(null);
+
   const oneMeasurementNeeded =
     "↑ We'll need at least one of these measurements";
   const wrongUnitsMessage = (units) => {
     return `↑ Are you sure your input is in ${units}?`;
   };
+
+  const [showGestation, setShowGestation] = useState(false);
 
   const validationSchema = Yup.object().shape(
     {
@@ -74,7 +79,7 @@ const PCentileScreen = () => {
       ['height', 'weight'],
       ['height', 'hc'],
       ['weight', 'hc'],
-    ]
+    ],
   );
 
   const initialValues = {
@@ -91,8 +96,8 @@ const PCentileScreen = () => {
 
   const moveDataAcrossGlobal = (movingTo, values) => {
     setGlobalStats((globalStats) => {
-      const child = { ...globalStats.child };
-      const neonate = { ...globalStats.neonate };
+      const child = {...globalStats.child};
+      const neonate = {...globalStats.neonate};
       for (const [key, value] of Object.entries(values)) {
         if (key !== 'dom' || key !== 'domChanged') {
           let newKey = key;
@@ -116,7 +121,7 @@ const PCentileScreen = () => {
           }
         }
       }
-      return { child, neonate };
+      return {child, neonate};
     });
   };
 
@@ -124,13 +129,13 @@ const PCentileScreen = () => {
     const ageCheck = ageChecker(values);
     if (ageCheck === 'Negative age') {
       Alert.alert('Time Travelling Patient', 'Please check the dates entered', [
-        { text: 'OK', onPress: () => null },
+        {text: 'OK', onPress: () => null},
       ]);
     } else if (ageCheck === 'Too old') {
       Alert.alert(
         'Patient Too Old',
         'This calculator can only be used under 18 years of age',
-        [{ text: 'OK', onPress: () => null }]
+        [{text: 'OK', onPress: () => null}],
       );
     } else {
       const results = calculateCentile(values);
@@ -147,11 +152,11 @@ const PCentileScreen = () => {
               text: 'OK',
               onPress: () => {
                 moveDataAcrossGlobal('neonate', values);
-                navigation.navigate(routes.BIRTH_CENTILE);
+                navigation.navigate('RootN', {screen: 'BirthCentile'});
               },
             },
           ],
-          { cancelable: false }
+          {cancelable: false},
         );
       } else if (results.kind === 'neonate') {
         Alert.alert(
@@ -166,11 +171,11 @@ const PCentileScreen = () => {
               text: 'OK',
               onPress: () => {
                 moveDataAcrossGlobal('neonate', values);
-                navigation.navigate(routes.NEONATE_CENTILE);
+                navigation.navigate('RootN', {screen: 'NCentile'});
               },
             },
           ],
-          { cancelable: false }
+          {cancelable: false},
         );
       } else if (results.kind === 'child' && results.lessThan14) {
         Alert.alert(
@@ -191,35 +196,59 @@ const PCentileScreen = () => {
                 });
                 navigation.navigate(
                   routes.PAEDIATRIC_CENTILE_RESULTS,
-                  serialisedObject
+                  serialisedObject,
                 );
               },
             },
           ],
-          { cancelable: false }
+          {cancelable: false},
         );
       } else {
         const measurements = values;
-        const serialisedObject = JSON.stringify({ measurements, results });
+        const serialisedObject = JSON.stringify({measurements, results});
         navigation.navigate(
           routes.PAEDIATRIC_CENTILE_RESULTS,
-          serialisedObject
+          serialisedObject,
         );
       }
     }
   };
 
+  const dob = globalStats.child.dob;
+  const dom = formikRef.current ? formikRef.current.values.dom : null;
+  let resetValues = true;
+  if (formikRef.current) {
+    if (formikRef.current.values !== formikRef.current.initialValues) {
+      resetValues = false;
+    }
+  }
+
+  useEffect(() => {
+    if (dob) {
+      const ageInDays = zeit(dob, 'days', dom);
+      if (ageInDays >= 0 && ageInDays < 848) {
+        setShowGestation(true);
+      } else {
+        setShowGestation(false);
+      }
+    } else if (resetValues || !dob) {
+      setShowGestation(false);
+    }
+  }, [dob, dom, resetValues]);
+
   return (
-    <PCalcScreen style={{ flex: 1 }}>
+    <PCalcScreen style={{flex: 1}}>
       <KeyboardAwareScrollView>
         <View style={styles.topContainer}>
           <AppForm
             initialValues={initialValues}
+            innerRef={formikRef}
             onSubmit={handleFormikSubmit}
-            validationSchema={validationSchema}
-          >
+            validationSchema={validationSchema}>
             <DateTimeInputButton kind="child" type="birth" />
-            <GestationInputButton name="gestationInDays" kind="child" />
+            {showGestation && (
+              <GestationInputButton name="gestationInDays" kind="child" />
+            )}
             <SexInputButton name="sex" kind="child" />
             <NumberInputButton
               name="weight"

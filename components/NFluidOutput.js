@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -6,8 +6,8 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { useFormikContext } from 'formik';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import {useFormikContext} from 'formik';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import AppText from '../components/AppText';
 import Icon from './Icon';
@@ -17,8 +17,8 @@ import defaultStyles from '../config/styles';
 const modalWidth =
   defaultStyles.container.width > 400 ? 400 : defaultStyles.container.width;
 
-const NFluidOutput = ({ results }) => {
-  const { values } = useFormikContext();
+const NFluidOutput = ({results}) => {
+  const {values} = useFormikContext();
   const {
     corrected1Hourly,
     corrected2Hourly,
@@ -57,7 +57,7 @@ const NFluidOutput = ({ results }) => {
   };
 
   const [output, setOutput] = useState(
-    `${valuesObject['3 hourly']}ml${unitsObject['3 hourly']}`
+    `${valuesObject['3 hourly']}ml${unitsObject['3 hourly']}`,
   );
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -77,7 +77,7 @@ const NFluidOutput = ({ results }) => {
 
   useEffect(() => {
     setOutput(
-      `${valuesObject[values.interval]}ml${unitsObject[values.interval]}`
+      `${valuesObject[values.interval]}ml${unitsObject[values.interval]}`,
     );
   }, [values.interval]);
 
@@ -96,15 +96,14 @@ const NFluidOutput = ({ results }) => {
           <TouchableOpacity
             onPress={() => {
               setModalVisible(true);
-            }}
-          >
+            }}>
             <Icon
               name="information-outline"
               width={40}
               height={40}
               borderRadius={5}
               backgroundColor={colors.dark}
-            ></Icon>
+            />
           </TouchableOpacity>
         </View>
         <View style={styles.centeredView}>
@@ -113,16 +112,14 @@ const NFluidOutput = ({ results }) => {
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {
-              Alert.alert('Window has been closed.');
-            }}
-          >
+              setModalVisible(!modalVisible);
+            }}>
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
                 <TouchableOpacity
                   onPress={() => {
                     setModalVisible(!modalVisible);
-                  }}
-                >
+                  }}>
                   <View style={styles.closeIcon}>
                     <MaterialCommunityIcons
                       name="close-circle"

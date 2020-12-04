@@ -20,7 +20,7 @@ const calculateThresholdUnder38 = (
   hours,
   yIntercept,
   plateauThreshold,
-  mValue
+  mValue,
 ) => {
   if (hours < 72) {
     return yIntercept + mValue * hours;
@@ -59,7 +59,7 @@ const generatePhototherapyData = (hours, gestationWeeks) => {
       hours,
       yInterceptPhoto,
       plateauThresholdPhoto,
-      mValuePhoto
+      mValuePhoto,
     );
   }
 };
@@ -76,7 +76,7 @@ const generateExchangeData = (hours, gestationWeeks) => {
       hours,
       yInterceptExchange,
       plateauThresholdExchange,
-      mValueExchange
+      mValueExchange,
     );
   }
 };
@@ -110,7 +110,7 @@ const makeDataObject = (gestationWeeks, ageInHours, sbr) => {
     }
   }
   const highestLineReach = Math.round(
-    generateExchangeData(topValue, gestationWeeks)
+    generateExchangeData(topValue, gestationWeeks),
   );
 
   for (let t = 0; t < xLabels.length; t++) {
@@ -123,15 +123,15 @@ const makeDataObject = (gestationWeeks, ageInHours, sbr) => {
     data: [
       {
         data: photoArray,
-        svg: { stroke: 'dodgerblue' },
+        svg: {stroke: 'dodgerblue'},
       },
       {
         data: exchangeArray,
-        svg: { stroke: 'red' },
+        svg: {stroke: 'red'},
       },
       {
         data: dotArray,
-        svg: { stroke: null },
+        svg: {stroke: null},
       },
     ],
     topLimit: sbr > highestLineReach ? sbr : highestLineReach,

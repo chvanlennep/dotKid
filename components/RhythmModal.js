@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Alert, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import React, {useState, useEffect} from 'react';
+import {Alert, Modal, StyleSheet, TouchableOpacity, View} from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../../app/config/colors';
 import defaultStyles from '../../app/config/styles';
@@ -10,13 +10,12 @@ import RhythmButton from './buttons/RhythmButton';
 import ALSDisplayButton from './buttons/ALSDisplayButton';
 import AnalyseRhythm from './AnalyseRhythm';
 
-const RhythmModal = ({ logState, resetState, style }) => {
+const RhythmModal = ({logState, resetState, style}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [rhythmPressed, setRhythmPressed] = useState(false);
   const [rhythmTime, setRhythmTime] = useState(0);
-
-  const functionButtons = logState.value;
-  const setFunctionButtons = logState.setValue;
+  const [blink, setBlink] = useState(false);
+  const [pressedBefore, setPressedBefore] = useState(false);
 
   const modalState = {
     value: modalVisible,
@@ -32,6 +31,8 @@ const RhythmModal = ({ logState, resetState, style }) => {
     value: rhythmTime,
     setValue: setRhythmTime,
   };
+
+  const reset = resetState.value;
 
   //analyse rhythm logic
   const analyse = () => {
@@ -49,19 +50,41 @@ const RhythmModal = ({ logState, resetState, style }) => {
             },
             style: 'cancel',
           },
-          { text: 'OK', onPress: () => 'OK Pressed' },
+          {text: 'OK', onPress: () => 'OK Pressed'},
         ],
-        { cancelable: false }
+        {cancelable: false},
       );
     }
   };
+
+  useEffect(() => {
+    if (rhythmPressed) {
+      setPressedBefore(true);
+    }
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBlink((blink) => !blink);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (reset) {
+      setPressedBefore(false);
+    }
+  }, [reset]);
 
   return (
     <React.Fragment>
       <ALSDisplayButton
         onPress={() => analyse()}
-        style={[style, rhythmPressed && styles.buttonPressed]}
-      >
+        style={[
+          style,
+          (rhythmPressed && styles.buttonPressed) ||
+            (pressedBefore && blink && styles.buttonBlink),
+        ]}>
         Analyse Rhythm
         {rhythmPressed && (
           <AnalyseRhythm
@@ -77,17 +100,15 @@ const RhythmModal = ({ logState, resetState, style }) => {
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            Alert.alert('Window has been closed.');
-          }}
-        >
+            setModalVisible(!modalVisible);
+          }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <TouchableOpacity
                 style={styles.touchable}
                 onPress={() => {
                   setModalVisible(!modalVisible);
-                }}
-              >
+                }}>
                 <View style={styles.closeIcon}>
                   <MaterialCommunityIcons
                     name="close-circle"
@@ -105,15 +126,13 @@ const RhythmModal = ({ logState, resetState, style }) => {
                     modalState={modalState}
                     resetState={resetState}
                     rhythmPressedState={rhythmPressedState}
-                    title={'Ventricular Fibrillation'}
-                  ></RhythmButton>
+                    title={'Ventricular Fibrillation'}></RhythmButton>
                   <RhythmButton
                     logState={logState}
                     modalState={modalState}
                     resetState={resetState}
                     rhythmPressedState={rhythmPressedState}
-                    title={'Pulseless VT'}
-                  ></RhythmButton>
+                    title={'Pulseless VT'}></RhythmButton>
                 </View>
               </View>
               <View style={styles.shocks}>
@@ -124,15 +143,13 @@ const RhythmModal = ({ logState, resetState, style }) => {
                     modalState={modalState}
                     resetState={resetState}
                     rhythmPressedState={rhythmPressedState}
-                    title={'Asystole'}
-                  ></RhythmButton>
+                    title={'Asystole'}></RhythmButton>
                   <RhythmButton
                     logState={logState}
                     modalState={modalState}
                     resetState={resetState}
                     rhythmPressedState={rhythmPressedState}
-                    title={'PEA'}
-                  ></RhythmButton>
+                    title={'PEA'}></RhythmButton>
                 </View>
               </View>
             </View>
@@ -151,7 +168,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.dark,
     justifyContent: 'center',
     textAlign: 'center',
-    width: '44%',
   },
   buttonPressed: {
     backgroundColor: colors.primary,
@@ -160,7 +176,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     textAlign: 'center',
   },
-
+  buttonBlink: {
+    alignContent: 'center',
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
   centeredView: {
     flex: 1,
     justifyContent: 'center',

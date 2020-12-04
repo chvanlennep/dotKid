@@ -1,7 +1,7 @@
-import React from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import React, {useContext, useRef, useState, useEffect} from 'react';
+import {Alert, StyleSheet, View} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import * as Yup from 'yup';
 
 import PCalcScreen from '../components/PCalcScreen';
@@ -18,9 +18,15 @@ import routes from '../navigation/routes';
 import zeit from '../brains/zeit';
 import ageChecker from '../brains/ageChecker';
 import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
+import {GlobalStateContext} from '../components/GlobalStateContext';
 
 const BPScreen = () => {
   const navigation = useNavigation();
+  const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
+
+  const formikRef = useRef(null);
+
+  const [showGestation, setShowGestation] = useState(false);
 
   const oneMeasurementNeeded = "↑ We'll need this measurement too";
 
@@ -77,17 +83,17 @@ const BPScreen = () => {
         Alert.alert(
           'Time Travelling Patient',
           'Please check the dates entered',
-          [{ text: 'OK', onPress: () => 'OK' }],
-          { cancelable: false }
+          [{text: 'OK', onPress: () => 'OK'}],
+          {cancelable: false},
         );
         break;
       case ageCheck === 'Too old':
         Alert.alert(
           'Patient Too Old',
           'This calculator can only be used under 18 years of age',
-          { text: 'OK', onPress: () => 'OK' },
+          {text: 'OK', onPress: () => 'OK'},
 
-          { cancelable: false }
+          {cancelable: false},
         );
         break;
       case ageCheck === 'Too young':
@@ -101,7 +107,7 @@ const BPScreen = () => {
               style: 'cancel',
             },
           ],
-          { cancelable: true }
+          {cancelable: true},
         );
         break;
       default:
@@ -118,7 +124,7 @@ const BPScreen = () => {
           age,
           values.systolic,
           values.diastolic,
-          values.sex
+          values.sex,
         );
         const serialisedObject = JSON.stringify({
           BPOutput,
@@ -129,17 +135,41 @@ const BPScreen = () => {
     }
   };
 
+  const dob = globalStats.child.dob;
+  const dom = formikRef.current ? formikRef.current.values.dom : null;
+  let resetValues = true;
+  if (formikRef.current) {
+    if (formikRef.current.values !== formikRef.current.initialValues) {
+      resetValues = false;
+    }
+  }
+
+  useEffect(() => {
+    if (dob) {
+      const ageInDays = zeit(dob, 'days', dom);
+      if (ageInDays >= 0 && ageInDays < 848) {
+        setShowGestation(true);
+      } else {
+        setShowGestation(false);
+      }
+    } else if (resetValues || !dob) {
+      setShowGestation(false);
+    }
+  }, [dob, dom, resetValues]);
+
   return (
-    <PCalcScreen style={{ flex: 1 }}>
+    <PCalcScreen style={{flex: 1}}>
       <KeyboardAwareScrollView>
         <View style={styles.topContainer}>
           <AppForm
             initialValues={initialValues}
+            innerRef={formikRef}
             onSubmit={handleFormikSubmit}
-            validationSchema={validationSchema}
-          >
+            validationSchema={validationSchema}>
             <DateTimeInputButton kind="child" type="birth" />
-            <GestationInputButton name="gestationInDays" kind="child" />
+            {showGestation && (
+              <GestationInputButton name="gestationInDays" kind="child" />
+            )}
             <SexInputButton name="sex" kind="child" />
             <NumberInputButton
               name="height"
@@ -154,6 +184,7 @@ const BPScreen = () => {
               iconName="chevron-double-up"
               unitsOfMeasurement="mmHg"
               kind="child"
+              global={false}
             />
             <NumberInputButton
               name="diastolic"
@@ -161,6 +192,7 @@ const BPScreen = () => {
               iconName="chevron-double-down"
               unitsOfMeasurement="mmHg"
               kind="child"
+              global={false}
             />
             <DateTimeInputButton kind="child" type="measured" />
             <FormResetButton />

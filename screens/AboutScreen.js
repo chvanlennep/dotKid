@@ -7,7 +7,7 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import AppText from '../components/AppText';
 import ReferenceBackgroundScreen from '../components/ReferenceBackgroundScreen';
@@ -27,10 +27,9 @@ const AboutScreen = () => {
             style={[
               defaultStyles.text,
               styles.text,
-              { color: dark ? colors.white : colors.dark },
-              { marginBottom: 0 },
-            ]}
-          >
+              {color: dark ? colors.white : colors.dark},
+              {marginBottom: 0},
+            ]}>
             Please read and acknowledge the following information before using
             this app:
           </Text>
@@ -38,25 +37,22 @@ const AboutScreen = () => {
         <View
           style={[
             styles.outputContainer,
-            { backgroundColor: dark ? colors.dark : '#EBEBEB' },
-          ]}
-        >
+            {backgroundColor: dark ? colors.dark : '#EBEBEB'},
+          ]}>
           <Text
             style={[
               defaultStyles.text,
               styles.subheading,
-              { color: dark ? colors.lightSecondary : colors.darkSecondary },
-            ]}
-          >
+              {color: dark ? colors.lightSecondary : colors.darkSecondary},
+            ]}>
             dotKid
           </Text>
           <Text
             style={[
               defaultStyles.text,
               styles.text,
-              { color: dark ? colors.white : colors.dark },
-            ]}
-          >
+              {color: dark ? colors.white : colors.dark},
+            ]}>
             dotKid is an app to aid qualified paediatric and neonatal staff in
             the functions of their professional role. Guidance is based on
             clinical guidelines as detailed in the references section.
@@ -65,37 +61,33 @@ const AboutScreen = () => {
         <View
           style={[
             styles.outputContainer,
-            { backgroundColor: dark ? colors.dark : '#EBEBEB' },
-          ]}
-        >
+            {backgroundColor: dark ? colors.dark : '#EBEBEB'},
+          ]}>
           <Text
             style={[
               defaultStyles.text,
               styles.subheading,
-              { color: dark ? colors.lightSecondary : colors.darkSecondary },
-            ]}
-          >
+              {color: dark ? colors.lightSecondary : colors.darkSecondary},
+            ]}>
             About
           </Text>
           <Text
             style={[
               defaultStyles.text,
               styles.text,
-              { color: dark ? colors.white : colors.dark },
-            ]}
-          >
+              {color: dark ? colors.white : colors.dark},
+            ]}>
             dotKid was created by Dr Charles van Lennep{' '}
             {
               <Text
                 style={[
                   defaultStyles.text,
                   styles.hyperlink,
-                  { color: dark ? colors.lightPrimary : colors.darkPrimary },
+                  {color: dark ? colors.lightPrimary : colors.darkPrimary},
                 ]}
                 onPress={() =>
                   Linking.openURL('mailto:charles@vanlennep.co.uk')
-                }
-              >
+                }>
                 {'email here'}
               </Text>
             }{' '}
@@ -105,10 +97,9 @@ const AboutScreen = () => {
                 style={[
                   defaultStyles.text,
                   styles.hyperlink,
-                  { color: dark ? colors.lightPrimary : colors.darkPrimary },
+                  {color: dark ? colors.lightPrimary : colors.darkPrimary},
                 ]}
-                onPress={() => Linking.openURL('mailto:ryuasamuels@gmail.com')}
-              >
+                onPress={() => Linking.openURL('mailto:ryuasamuels@gmail.com')}>
                 {'email here'}
               </Text>
             }{' '}
@@ -124,12 +115,11 @@ const AboutScreen = () => {
                   style={[
                     defaultStyles.text,
                     styles.hyperlink,
-                    { color: dark ? colors.lightPrimary : colors.darkPrimary },
+                    {color: dark ? colors.lightPrimary : colors.darkPrimary},
                   ]}
                   onPress={() =>
                     Linking.openURL('https://twitter.com/drryantalks?lang=en')
-                  }
-                >
+                  }>
                   {'@DrRyanTalks'}
                 </Text>
               </>
@@ -142,26 +132,23 @@ const AboutScreen = () => {
         <View
           style={[
             styles.outputContainer,
-            { backgroundColor: dark ? colors.dark : '#EBEBEB' },
-            { marginBottom: 100 },
-          ]}
-        >
+            {backgroundColor: dark ? colors.dark : '#EBEBEB'},
+            {marginBottom: 100},
+          ]}>
           <Text
             style={[
               defaultStyles.text,
               styles.subheading,
-              { color: dark ? colors.lightSecondary : colors.darkSecondary },
-            ]}
-          >
+              {color: dark ? colors.lightSecondary : colors.darkSecondary},
+            ]}>
             Legal Disclaimer
           </Text>
           <Text
             style={[
               defaultStyles.text,
               styles.text,
-              { color: dark ? colors.white : colors.dark },
-            ]}
-          >
+              {color: dark ? colors.white : colors.dark},
+            ]}>
             By downloading and/or using dotKid {`(`}"this app"{`)`} you
             acknowledge that you have read and agree to be bound by the terms of
             the disclaimer outlined below. If you do not wish to be bound by

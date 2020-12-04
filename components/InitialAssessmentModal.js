@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import React, {useEffect, useState} from 'react';
+import {Alert, Modal, StyleSheet, TouchableOpacity, View} from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../../app/config/colors';
 import defaultStyles from '../../app/config/styles';
@@ -53,44 +53,44 @@ const InitialAssessBabyModal = ({
     {
       name: 'Dry and Wrap Baby',
       iconName: 'tumble-dryer',
-      pickerContent: [{ value: 'Done' }, { value: 'Not Done' }],
+      pickerContent: [{value: 'Done'}, {value: 'Not Done'}],
     },
     {
       name: 'Hat On',
       iconName: 'hat-fedora',
-      pickerContent: [{ value: 'Done' }, { value: 'Not Done' }],
+      pickerContent: [{value: 'Done'}, {value: 'Not Done'}],
     },
     {
       name: 'Heart Rate',
       iconName: 'heart-pulse',
-      pickerContent: [{ value: '<60' }, { value: '60-100' }, { value: '>100' }],
+      pickerContent: [{value: '<60'}, {value: '60-100'}, {value: '>100'}],
     },
     {
       name: 'Breathing',
       iconName: 'weather-windy',
       pickerContent: [
-        { value: 'Apnoeic' },
-        { value: 'Inadequate Breathing' },
-        { value: 'Adequate Breathing' },
+        {value: 'Apnoeic'},
+        {value: 'Inadequate Breathing'},
+        {value: 'Adequate Breathing'},
       ],
     },
     {
       name: 'Colour',
       iconName: 'percent',
       pickerContent: [
-        { value: 'Pale' },
-        { value: 'Blue' },
-        { value: 'Blue extremities' },
-        { value: 'Pink' },
+        {value: 'Pale'},
+        {value: 'Blue'},
+        {value: 'Blue extremities'},
+        {value: 'Pink'},
       ],
     },
     {
       name: 'Tone',
       iconName: 'human-handsdown',
       pickerContent: [
-        { value: 'Floppy' },
-        { value: 'Poor Tone' },
-        { value: 'Good Tone' },
+        {value: 'Floppy'},
+        {value: 'Poor Tone'},
+        {value: 'Good Tone'},
       ],
     },
   ];
@@ -107,8 +107,7 @@ const InitialAssessBabyModal = ({
               (!pickerState[item.name]['open'] && colors.dark) ||
               (pickerState[item.name]['open'] && colors.black),
           },
-        ]}
-      >
+        ]}>
         <MaterialCommunityIcons
           name={item.iconName}
           size={35}
@@ -130,7 +129,7 @@ const InitialAssessBabyModal = ({
 
   const changePickerState = (name, key, value) => {
     setPickerState((pickerState) => {
-      const workingState = { ...pickerState };
+      const workingState = {...pickerState};
       workingState[name][key] = value;
       return workingState;
     });
@@ -216,7 +215,7 @@ const InitialAssessBabyModal = ({
             onPress: () => 'Cancel',
             style: 'cancel',
           },
-        ]
+        ],
       );
     } else {
       setIsTimerActive(true);
@@ -243,7 +242,7 @@ const InitialAssessBabyModal = ({
           },
         },
       ],
-      { cancelable: false }
+      {cancelable: false},
     );
   };
 
@@ -279,7 +278,7 @@ const InitialAssessBabyModal = ({
         }
         changePickerState(newName, 'open', true);
         setPickerText(
-          newName === 'Saturations' ? `Colour +/- Saturations` : newName
+          newName === 'Saturations' ? `Colour +/- Saturations` : newName,
         );
         break;
       }
@@ -322,16 +321,12 @@ const InitialAssessBabyModal = ({
           animationType="slide"
           transparent={true}
           visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert('Window has been closed.');
-          }}
-        >
+          onRequestClose={handleClosePress}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <TouchableOpacity
                 style={styles.touchable}
-                onPress={handleClosePress}
-              >
+                onPress={handleClosePress}>
                 <View style={styles.closeIcon}>
                   <MaterialCommunityIcons
                     name="close-circle"
@@ -343,13 +338,14 @@ const InitialAssessBabyModal = ({
               <AppText style={styles.heading}>Initial Assessment</AppText>
               <AppForm
                 initialValues={initialValues}
-                onSubmit={handleFormikSubmit}
-              >
+                onSubmit={handleFormikSubmit}>
                 <View style={styles.buttonRow}>{renderTopButtons}</View>
                 <AssessBabyTitle
                   submitObject={[submitForm, setSubmitForm]}
-                  resetObject={[resetForm, setResetForm]}
-                >{`${pickerText}:`}</AssessBabyTitle>
+                  resetObject={[
+                    resetForm,
+                    setResetForm,
+                  ]}>{`${pickerText}:`}</AssessBabyTitle>
                 {renderInputs}
               </AppForm>
             </View>

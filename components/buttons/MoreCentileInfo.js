@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Alert, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import React, {useState} from 'react';
+import {Alert, Modal, StyleSheet, TouchableOpacity, View} from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import AppText from '../AppText';
 import colors from '../../config/colors';
@@ -10,7 +10,7 @@ import defaultStyles from '../../config/styles';
 const modalWidth =
   defaultStyles.container.width > 400 ? 400 : defaultStyles.container.width;
 
-const MoreCentileInfo = ({ exactCentile }) => {
+const MoreCentileInfo = ({exactCentile}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const modalHeading = `Exact centile: ${exactCentile}`;
   const modalMessage = `The default answer follows RCPCH guidelines based on major centile lines (50th, 75th etc.): \n
@@ -22,15 +22,14 @@ const MoreCentileInfo = ({ exactCentile }) => {
         <TouchableOpacity
           onPress={() => {
             setModalVisible(true);
-          }}
-        >
+          }}>
           <Icon
             name="information-outline"
             width={40}
             height={40}
             borderRadius={5}
             backgroundColor={colors.dark}
-          ></Icon>
+          />
         </TouchableOpacity>
       </View>
       <View style={styles.centeredView}>
@@ -39,16 +38,14 @@ const MoreCentileInfo = ({ exactCentile }) => {
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            Alert.alert('Window has been closed.');
-          }}
-        >
+            setModalVisible(!modalVisible);
+          }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <TouchableOpacity
                 onPress={() => {
                   setModalVisible(!modalVisible);
-                }}
-              >
+                }}>
                 <View style={styles.closeIcon}>
                   <MaterialCommunityIcons
                     name="close-circle"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Alert,
   Modal,
@@ -8,7 +8,7 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../../app/config/colors';
 import defaultStyles from '../../app/config/styles';
@@ -16,7 +16,7 @@ import AppText from './AppText';
 import ALSDisplayButton from './buttons/ALSDisplayButton';
 import parseLog from '../brains/parseLog';
 import onShare from '../brains/onShare';
-import { readItemFromStorage, writeItemToStorage } from '../brains/storage';
+import {readItemFromStorage, writeItemToStorage} from '../brains/storage';
 
 const LogModal = ({
   encounterState,
@@ -33,8 +33,6 @@ const LogModal = ({
 
   const endEncounter = encounterState.value;
   const setEndEncounter = encounterState.setValue;
-
-  const reset = resetState.value;
   const setReset = resetState.setValue;
 
   const logType = kind === 'child' ? 'APLS' : 'NLS';
@@ -55,7 +53,7 @@ const LogModal = ({
         writeItemToStorage(storageKey, () => null, log);
       }
     }
-  }, [log]);
+  }, [log, firstEverLogMessage, storageKey]);
 
   const handleReset = () => {
     if (!endEncounter) {
@@ -77,10 +75,7 @@ const LogModal = ({
           animationType="slide"
           transparent={true}
           visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert('Window has been closed.');
-          }}
-        >
+          onRequestClose={handleReset}>
           <View style={styles.centeredView}>
             <View
               style={[
@@ -91,15 +86,11 @@ const LogModal = ({
                       ? colors.darkPrimary
                       : colors.darkSecondary,
                 },
-              ]}
-            >
+              ]}>
               <View style={styles.headers}>
                 <TouchableOpacity
                   style={styles.touchable}
-                  onPress={() => {
-                    handleReset();
-                  }}
-                >
+                  onPress={handleReset}>
                   <View style={styles.closeIcon}>
                     <MaterialCommunityIcons
                       name="close-circle"
@@ -110,12 +101,12 @@ const LogModal = ({
                 </TouchableOpacity>
 
                 <AppText
-                  style={styles.heading}
-                >{`Most Recent ${logType} Log`}</AppText>
+                  style={
+                    styles.heading
+                  }>{`Most Recent ${logType} Log`}</AppText>
                 <TouchableOpacity
                   style={styles.exportIcon}
-                  onPress={() => onShare(log)}
-                >
+                  onPress={() => onShare(log)}>
                   <View style={styles.exportIcon}>
                     <MaterialCommunityIcons
                       name="export-variant"
@@ -132,8 +123,7 @@ const LogModal = ({
                     backgroundColor:
                       scheme === 'dark' ? colors.black : colors.white,
                   },
-                ]}
-              >
+                ]}>
                 <ScrollView>
                   <AppText
                     style={[
@@ -141,8 +131,7 @@ const LogModal = ({
                       {
                         color: scheme === 'dark' ? colors.white : colors.black,
                       },
-                    ]}
-                  >
+                    ]}>
                     {log}
                   </AppText>
                 </ScrollView>

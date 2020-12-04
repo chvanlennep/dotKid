@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import {StyleSheet, View} from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import PCalcScreen from '../components/PCalcScreen';
 import AppText from '../components/AppText';
@@ -8,7 +8,7 @@ import colors from '../config/colors';
 import AgeButton from '../components/buttons/AgeButton';
 import Button from '../components/buttons/Button';
 
-const BPResultsScreen = ({ route, navigation }) => {
+const BPResultsScreen = ({route, navigation}) => {
   const parameters = JSON.parse(route.params);
   const measurements = parameters.measurements;
 
@@ -23,7 +23,7 @@ const BPResultsScreen = ({ route, navigation }) => {
   const [QTc, reference] = parameters.QTCOutput;
 
   return (
-    <PCalcScreen style={{ flex: 1 }}>
+    <PCalcScreen isResults={true} style={{flex: 1}}>
       <View style={styles.topContainer}>
         <AgeButton
           kind="child"
@@ -33,8 +33,8 @@ const BPResultsScreen = ({ route, navigation }) => {
         <Button
           label="← Calculate Again"
           onPress={() => navigation.goBack()}
-          style={{ backgroundColor: colors.light }}
-          textStyle={{ color: colors.black }}
+          style={{backgroundColor: colors.light}}
+          textStyle={{color: colors.black}}
         />
       </View>
       <KeyboardAwareScrollView>

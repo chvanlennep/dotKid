@@ -1,9 +1,9 @@
 import React from 'react';
-import { Alert, Modal, StyleSheet, View, Button, Platform } from 'react-native';
+import {Alert, Modal, StyleSheet, View, Button, Platform} from 'react-native';
 
 import AppText from '../components/AppText';
 
-const AcceptConditionsModal = ({ setAccepted, modalVisible }) => {
+const AcceptConditionsModal = ({setAccepted, modalVisible}) => {
   const message =
     'This is a pre-release app. It has not been adequately tested and therefore should not be relied upon in clinical practice.\n';
 
@@ -15,14 +15,15 @@ const AcceptConditionsModal = ({ setAccepted, modalVisible }) => {
       transparent={true}
       visible={modalVisible}
       onRequestClose={() => {
-        console.log('Window closed');
-      }}
-    >
+        Alert.alert('App Will Not Be Loaded', '', [
+          {text: 'OK', onPress: () => null},
+        ]);
+      }}>
       <View style={styles.centeredView}>
         <View style={styles.fullScreen}>
           <AppText style={styles.title}>Warning</AppText>
           <AppText style={styles.mainMessage}>{message}</AppText>
-          <View style={{ flexDirection: 'row' }}>
+          <View style={{flexDirection: 'row'}}>
             <View style={styles.buttonContainer}>
               <Button
                 color={android ? 'black' : 'white'}
@@ -36,7 +37,7 @@ const AcceptConditionsModal = ({ setAccepted, modalVisible }) => {
                 title="Cancel"
                 onPress={() => {
                   Alert.alert('App Will Not Be Loaded', '', [
-                    { text: 'OK', onPress: () => null },
+                    {text: 'OK', onPress: () => null},
                   ]);
                 }}
               />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   StyleSheet,
@@ -10,7 +10,7 @@ import {
 import colors from '../../config/colors';
 import AppText from '../AppText';
 import defaultStyles from '../../config/styles';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const ALSFunctionButton = ({
   encounterState,
@@ -86,7 +86,7 @@ const ALSFunctionButton = ({
           style: 'cancel',
         },
       ],
-      { cancelable: true }
+      {cancelable: true},
     );
     setReset(false);
   };
@@ -97,14 +97,14 @@ const ALSFunctionButton = ({
       'Do you wish to reset your APLS Log?',
       '',
       [
-        { text: 'Reset', onPress: () => handleReset() },
+        {text: 'Reset', onPress: () => handleReset()},
         {
           text: 'Cancel',
           onPress: () => 'Cancel',
           style: 'cancel',
         },
       ],
-      { cancelable: false }
+      {cancelable: false},
     );
   };
 
@@ -141,9 +141,9 @@ const ALSFunctionButton = ({
             onPress: () => handleUndo(),
             style: 'cancel',
           },
-          { text: 'OK', onPress: () => 'OK Pressed' },
+          {text: 'OK', onPress: () => 'OK Pressed'},
         ],
-        { cancelable: false }
+        {cancelable: false},
       );
     }
   };
@@ -179,7 +179,7 @@ const ALSFunctionButton = ({
   // reset button logic
 
   useEffect(() => {
-    if (reset == true) {
+    if (reset === true) {
       setChangeBackground(false);
       setClicks(0);
       setShowUndo(false);
@@ -198,22 +198,17 @@ const ALSFunctionButton = ({
       underlayColor={colors.light}
       onPress={handlePress}
       pressed={changeBackground}
-      title={title}
-    >
+      title={title}>
       <View
         style={[
           styles.button,
           style,
           changeBackground && [
             {
-              backgroundColor:
-                kind === 'child'
-                  ? backgroundColorPressed || colors.primary
-                  : backgroundColorPressed || colors.secondary,
+              backgroundColor: backgroundColorPressed || colors.secondary,
             },
           ],
-        ]}
-      >
+        ]}>
         <AppText style={styles.text}>{title}</AppText>
 
         {showUndo && !movingChest && (
@@ -223,8 +218,7 @@ const ALSFunctionButton = ({
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
-              onPress={handleUndo}
-            >
+              onPress={handleUndo}>
               <MaterialCommunityIcons
                 name="refresh"
                 color={colors.white}

@@ -58,7 +58,7 @@ const AnalyseRhythm = ({ rhythmPressedState, rhythmTimeState, resetState }) => {
     if (reset) {
       setRhythmPressed(false);
     }
-  });
+  }, [reset]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -76,19 +76,11 @@ const AnalyseRhythm = ({ rhythmPressedState, rhythmTimeState, resetState }) => {
   }, [time]);
 
   useEffect(() => {
-    const displayInterval = setRhythmTime(secondsToHms(secondsPassed.current));
-
+    setRhythmTime(secondsToHms(secondsPassed.current));
     return () => {
       rhythmTime;
     };
   });
-
-  //   useEffect(() => {
-  //     if (reset == true){
-  //         secondsPassed.current = 0;
-  //     };
-  // }
-  // )
 
   return <AppText style={styles.text}>{`\n${rhythmTime}`}</AppText>;
 };

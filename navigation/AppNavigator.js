@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import ReferenceScreen from '../screens/ReferenceScreen';
 import CalcNavigator from './CalcNavigator';
@@ -12,12 +12,12 @@ const Tab = createBottomTabNavigator();
 
 const AppNavigator = () => {
   return (
-    <Tab.Navigator tabBarOptions={{ showLabel: false }}>
+    <Tab.Navigator tabBarOptions={{showLabel: false}}>
       <Tab.Screen
         name="Calculator"
         component={CalcNavigator}
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons
               name="calculator"
               color={color}
@@ -30,7 +30,7 @@ const AppNavigator = () => {
         name="ALS"
         component={ALSNavigator}
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons
               name="hospital-box"
               color={color}
@@ -43,7 +43,7 @@ const AppNavigator = () => {
         name="References"
         component={ReferenceScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons
               name="book-open-variant"
               color={color}
@@ -56,7 +56,7 @@ const AppNavigator = () => {
         name="About"
         component={AboutScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons
               name="information-outline"
               color={color}

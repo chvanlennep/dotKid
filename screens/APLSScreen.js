@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Alert, FlatList, StyleSheet, View } from 'react-native';
+import React, {useState, useRef, useEffect} from 'react';
+import {Alert, FlatList, StyleSheet, View} from 'react-native';
 
 import PCalcScreen from '../components/PCalcScreen';
 import ALSToolbar from '../components/ALSToolbar';
@@ -16,31 +16,19 @@ import AdrenalineTimer from '../components/AdrenalineTimer';
 import {
   flatListData,
   functionButtons,
-  primaryButtons,
   tertiaryButtons,
 } from '../brains/aplsObjects';
 import RhythmModal from '../components/RhythmModal';
 import LogModal from '../components/LogModal';
+import Adrenaline from '../components/buttons/Adrenaline';
 
 const APLSScreen = () => {
   const [reset, setReset] = useState(false);
   const [fButtons, setFunctionButtons] = useState(functionButtons);
   const [intervalTime, setIntervalTime] = useState(0);
-  const [adrenalineTime, setAdrenalineTime] = useState(0);
-  const [adrenalinePressed, setAdrenalinePressed] = useState(false);
   const [logVisible, setLogVisible] = useState(false);
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [endEncounter, setEndEncounter] = useState(false);
-
-  const adrenalineTimeState = {
-    value: adrenalineTime,
-    setValue: setAdrenalineTime,
-  };
-
-  const adrenalinePressedState = {
-    value: adrenalinePressed,
-    setValue: setAdrenalinePressed,
-  };
 
   const encounterState = {
     value: endEncounter,
@@ -80,31 +68,6 @@ const APLSScreen = () => {
     return functionButtons;
   };
 
-  const adrenaline = () => {
-    setIsTimerActive(true);
-    if (!adrenalinePressed) {
-      setAdrenalinePressed(true);
-      handleLogEvent(functionButtons, 'Adrenaline Administered');
-    } else if (adrenalinePressed) {
-      Alert.alert(
-        'You can only log this every 3 minutes',
-        'Please click undo if you need to cancel this log entry.',
-        [
-          {
-            text: 'Undo',
-            onPress: () => {
-              removeTime('Adrenaline Administered', functionButtons);
-              setAdrenalinePressed(false);
-            },
-            style: 'cancel',
-          },
-          { text: 'OK', onPress: () => 'OK' },
-        ],
-        { cancelable: false }
-      );
-    }
-  };
-
   //reset button logic
   const handleReset = () => {
     setFunctionButtons(resetLogTimes(functionButtons));
@@ -120,14 +83,14 @@ const APLSScreen = () => {
       'Do you wish to reset your APLS encounter?',
       '',
       [
-        { text: 'Reset', onPress: () => handleReset() },
+        {text: 'Reset', onPress: () => handleReset()},
         {
           text: 'Cancel',
           onPress: () => 'Cancel',
           style: 'cancel',
         },
       ],
-      { cancelable: false }
+      {cancelable: false},
     );
   };
 
@@ -151,7 +114,7 @@ const APLSScreen = () => {
           onPress: () => 'Cancel',
         },
       ],
-      { cancelable: false }
+      {cancelable: false},
     );
   };
   // ROSC alert window
@@ -174,7 +137,7 @@ const APLSScreen = () => {
           onPress: () => 'Cancel',
         },
       ],
-      { cancelable: false }
+      {cancelable: false},
     );
   };
 
@@ -210,7 +173,7 @@ const APLSScreen = () => {
     });
   };
 
-  const renderListItem = ({ item }) => {
+  const renderListItem = ({item}) => {
     if (item.type === 'primaryButton' || item.type === 'secondaryButton') {
       return (
         <ALSFunctionButton
@@ -226,8 +189,11 @@ const APLSScreen = () => {
     if (item.type === 'listHeader') {
       return (
         <ALSListHeader
-          isList={false}
           title={item.id}
+          downArrow={item.downArrow}
+          onDownPress={() => scrollMe(item.onDownPress)}
+          upArrow={item.upArrow}
+          onUpPress={() => scrollMe(item.onUpPress)}
           style={styles.headingButton}
         />
       );
@@ -245,15 +211,23 @@ const APLSScreen = () => {
     }
   };
 
+  const scrollRef = useRef();
+
+  const scrollMe = (coordinate) => {
+    scrollRef.current?.scrollToOffset({
+      offset: coordinate,
+      animated: true,
+    });
+  };
+
   return (
-    <PCalcScreen isResus={true} style={{ flex: 1 }}>
+    <PCalcScreen isResus={true} style={{flex: 1}}>
       <ALSToolbar reset={resetLog} rip={RIPAPLS} rosc={ROSCAPLS} />
       <View style={styles.middleContainer}>
         <View style={styles.verticalButtonContainer}>
           <ALSDisplayButton
             onPress={() => setIsTimerActive(true)}
-            style={styles.button}
-          >
+            style={styles.button}>
             {!isTimerActive && 'Start Timer'}
             {isTimerActive && (
               <Stopwatch
@@ -264,19 +238,12 @@ const APLSScreen = () => {
               />
             )}
           </ALSDisplayButton>
-          <ALSDisplayButton
-            onPress={() => adrenaline()}
-            style={[styles.button, adrenalinePressed && styles.buttonPressed]}
-          >
-            {!adrenalinePressed && 'Adrenaline'}
-            {adrenalinePressed && (
-              <AdrenalineTimer
-                adrenalinePressedState={adrenalinePressedState}
-                adrenalineTimeState={adrenalineTimeState}
-                resetState={resetState}
-              />
-            )}
-          </ALSDisplayButton>
+          <Adrenaline
+            removeTime={removeTime}
+            resetState={resetState}
+            timerState={timerState}
+            logState={logState}
+          />
         </View>
         <View style={styles.verticalButtonContainer}>
           <LogModal
@@ -295,21 +262,20 @@ const APLSScreen = () => {
         </View>
       </View>
       <View style={styles.textContainer}>
-        <AppText style={styles.text}>APLS</AppText>
+        <AppText style={styles.text}>APLS Runner</AppText>
       </View>
       <View style={styles.bottomContainer}>
         <FlatList
           data={flatListData}
           keyExtractor={(flatListData) => flatListData.id.toString()}
           renderItem={renderListItem}
+          ref={scrollRef}
           ListHeaderComponent={
-            <ALSFunctionButton
-              title={primaryButtons[0]['id']}
-              timerState={timerState}
-              logState={logState}
-              encounterState={encounterState}
-              resetState={resetState}
-              style={styles.listButton}
+            <ALSListHeader
+              title="Resuscitation Required:"
+              downArrow={true}
+              onDownPress={() => scrollMe(600)}
+              style={styles.headingButton}
             />
           }
           ListFooterComponent={

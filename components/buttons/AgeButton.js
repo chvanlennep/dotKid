@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Alert, Modal, StyleSheet, View, TouchableOpacity } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import React, {useState} from 'react';
+import {Alert, Modal, StyleSheet, View, TouchableOpacity} from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import AppText from '../AppText';
 import colors from '../../config/colors';
@@ -74,7 +74,7 @@ const SubmitButton = ({
       outputString = `Corrected Gestational Age: ${correctedGestationWeeks}+${correctedGestationDays}`;
       modalHeading = `Birth Gestation: ${birthGestationWeeks}+${birthGestationDays} \n \n ${outputString}`;
       modalMessage = `${pretermAge} day${pluralSuffix} old (${addOrdinalSuffix(
-        pretermAge + 1
+        pretermAge + 1,
       )} day of life)`;
       break;
     case 'jaundice':
@@ -85,7 +85,7 @@ const SubmitButton = ({
     case 'nFluid':
       outputString = `Age: ${valueBeforeCorrection}`;
       modalHeading = `Age: ${valueBeforeCorrection}\n(${addOrdinalSuffix(
-        valueAfterCorrection + 1
+        valueAfterCorrection + 1,
       )} day of life)`;
       modalMessage = 'Chronological age used for calculation';
       break;
@@ -108,17 +108,15 @@ const SubmitButton = ({
         <TouchableOpacity
           onPress={() => {
             setModalVisible(true);
-          }}
-        >
+          }}>
           <View
             style={[
               styles.submitButton,
               {
                 backgroundColor: buttonBackGroundColor,
               },
-            ]}
-          >
-            <AppText style={{ color: colors.white }}>{outputString}</AppText>
+            ]}>
+            <AppText style={{color: colors.white}}>{outputString}</AppText>
             <Icon
               backgroundColor={null}
               height={40}
@@ -133,16 +131,14 @@ const SubmitButton = ({
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {
-              Alert.alert('Window has been closed.');
-            }}
-          >
+              setModalVisible(!modalVisible);
+            }}>
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
                 <TouchableOpacity
                   onPress={() => {
                     setModalVisible(!modalVisible);
-                  }}
-                >
+                  }}>
                   <View style={styles.closeIcon}>
                     <MaterialCommunityIcons
                       name="close-circle"
@@ -173,9 +169,8 @@ const SubmitButton = ({
           {
             backgroundColor: buttonBackGroundColor,
           },
-        ]}
-      >
-        <AppText style={{ color: colors.white }}>{outputString}</AppText>
+        ]}>
+        <AppText style={{color: colors.white}}>{outputString}</AppText>
       </View>
     );
 };

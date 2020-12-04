@@ -1,19 +1,14 @@
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-  useColorScheme,
-  TouchableOpacity,
-} from 'react-native';
-import { useFormikContext } from 'formik';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import {StyleSheet, View, useColorScheme, TouchableOpacity} from 'react-native';
+import {useFormikContext} from 'formik';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../../config/colors';
 
 const FormSubmitTickButton = (setModalVisible) => {
   const scheme = useColorScheme();
   const dark = scheme === 'dark' ? true : false;
-  const { handleSubmit } = useFormikContext();
+  const {handleSubmit} = useFormikContext();
   return (
     <View style={styles.acceptIcon}>
       <TouchableOpacity onPress={handleSubmit}>

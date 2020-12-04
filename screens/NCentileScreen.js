@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import React, {useContext} from 'react';
+import {Alert, StyleSheet, View} from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import * as Yup from 'yup';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 import AppForm from '../components/AppForm';
 import colors from '../config/colors';
@@ -14,7 +14,7 @@ import GestationInputButton from '../components/buttons/input/GestationInputButt
 import FormSubmitButton from '../components/buttons/FormSubmitButton';
 import FormResetButton from '../components/buttons/FormResetButton';
 import routes from '../navigation/routes';
-import { GlobalStateContext } from '../components/GlobalStateContext';
+import {GlobalStateContext} from '../components/GlobalStateContext';
 import calculateCentile from '../brains/calculateCentile';
 import ageChecker from '../brains/ageChecker';
 
@@ -77,7 +77,7 @@ const PCentileScreen = () => {
       ['length', 'weight'],
       ['length', 'hc'],
       ['weight', 'hc'],
-    ]
+    ],
   );
 
   const initialValues = {
@@ -94,8 +94,8 @@ const PCentileScreen = () => {
 
   const moveDataAcrossGlobal = (movingTo, values) => {
     setGlobalStats((globalStats) => {
-      const child = { ...globalStats.child };
-      const neonate = { ...globalStats.neonate };
+      const child = {...globalStats.child};
+      const neonate = {...globalStats.neonate};
       for (const [key, value] of Object.entries(values)) {
         if (key !== 'domChanged') {
           let newKey = key;
@@ -119,7 +119,7 @@ const PCentileScreen = () => {
           }
         }
       }
-      return { child, neonate };
+      return {child, neonate};
     });
   };
 
@@ -127,13 +127,13 @@ const PCentileScreen = () => {
     const ageCheck = ageChecker(values);
     if (ageCheck === 'Negative age') {
       Alert.alert('Time Travelling Patient', 'Please check the dates entered', [
-        { text: 'OK', onPress: () => null },
+        {text: 'OK', onPress: () => null},
       ]);
     } else if (ageCheck === 'Too old') {
       Alert.alert(
         'Patient Too Old',
         'This calculator can only be used under 18 years of age',
-        [{ text: 'OK', onPress: () => null }]
+        [{text: 'OK', onPress: () => null}],
       );
     } else {
       const results = calculateCentile(values);
@@ -153,7 +153,7 @@ const PCentileScreen = () => {
               },
             },
           ],
-          { cancelable: false }
+          {cancelable: false},
         );
       } else if (results.kind === 'child') {
         Alert.alert(
@@ -168,11 +168,11 @@ const PCentileScreen = () => {
               text: 'OK',
               onPress: () => {
                 moveDataAcrossGlobal('child', values);
-                navigation.navigate(routes.PAEDIATRIC_CENTILE);
+                navigation.navigate('RootPaed', {screen: 'PCentile'});
               },
             },
           ],
-          { cancelable: false }
+          {cancelable: false},
         );
       } else if (results.kind === 'neonate' && results.lessThan14) {
         Alert.alert(
@@ -193,30 +193,29 @@ const PCentileScreen = () => {
                 });
                 navigation.navigate(
                   routes.NEONATE_CENTILE_RESULTS,
-                  serialisedObject
+                  serialisedObject,
                 );
               },
             },
           ],
-          { cancelable: false }
+          {cancelable: false},
         );
       } else {
         const measurements = values;
-        const serialisedObject = JSON.stringify({ measurements, results });
+        const serialisedObject = JSON.stringify({measurements, results});
         navigation.navigate(routes.NEONATE_CENTILE_RESULTS, serialisedObject);
       }
     }
   };
 
   return (
-    <NCalcScreen style={{ flex: 1 }}>
+    <NCalcScreen style={{flex: 1}}>
       <KeyboardAwareScrollView>
         <View style={styles.topContainer}>
           <AppForm
             initialValues={initialValues}
             onSubmit={handleFormikSubmit}
-            validationSchema={validationSchema}
-          >
+            validationSchema={validationSchema}>
             <DateTimeInputButton kind="neonate" type="birth" />
             <GestationInputButton kind="neonate" />
             <SexInputButton kind="neonate" />
