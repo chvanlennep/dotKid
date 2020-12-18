@@ -1,4 +1,4 @@
-import { Share } from 'react-native';
+import {Alert, Share} from 'react-native';
 
 export default async (message) => {
   try {
@@ -7,7 +7,17 @@ export default async (message) => {
     });
     if (result.action === Share.sharedAction) {
       if (result.activityType) {
-        // shared
+        Alert.alert(
+          'Log Successfully Exported',
+          '',
+          [
+            {
+              text: 'OK',
+              onPress: () => null,
+            },
+          ],
+          {cancelable: false},
+        );
       } else if (result.action === Share.dismissedAction) {
         // dismissed
       }

@@ -7,9 +7,9 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import { LineChart, YAxis, XAxis } from 'react-native-svg-charts';
+import {LineChart, YAxis, XAxis} from 'react-native-svg-charts';
 import * as shape from 'd3-shape';
-import { Circle, G, Text } from 'react-native-svg';
+import {Circle, G, Text} from 'react-native-svg';
 
 import makeCentileChartData from '../brains/makeCentileChartData';
 
@@ -47,7 +47,7 @@ const CentileChart = ({
     kind,
     measurement,
     measurementType,
-    sex
+    sex,
   );
 
   const scheme = useColorScheme();
@@ -73,14 +73,14 @@ const CentileChart = ({
   if (Platform.OS === 'ios' && (kind === 'neonate' || kind === 'birth'))
     chartFontSize = 9;
 
-  const CentileLabels = ({ x, y }) => {
+  const CentileLabels = ({x, y}) => {
     const listDetails = centileLabelData.y;
     const textProps = {
       fill: chartForegroundColor,
       fontSize: chartFontSize,
       textAnchor: 'middle',
     };
-    const textItems = listDetails.map(({ label, coords }, index) => (
+    const textItems = listDetails.map(({label, coords}, index) => (
       <Text {...textProps} y={y(coords)} key={index}>
         {label}
       </Text>
@@ -92,7 +92,7 @@ const CentileChart = ({
     );
   };
 
-  const ExtraDot = ({ x, y }) => {
+  const ExtraDot = ({x, y}) => {
     return (
       <G>
         <G x={x(index)}>
@@ -112,35 +112,31 @@ const CentileChart = ({
     <View
       style={[
         styles.overallContainer,
-        { backgroundColor: chartBackgroundColor },
-      ]}
-    >
+        {backgroundColor: chartBackgroundColor},
+      ]}>
       <View style={[styles.fullChartContainer]}>
         <View
           style={[
             styles.smallerChartContainer,
-            { width: kind === 'birth' ? chartWidth / 2 : chartWidth },
-          ]}
-        >
+            {width: kind === 'birth' ? chartWidth / 2 : chartWidth},
+          ]}>
           <YAxis
             data={[bottomValueForY, topValueForY]}
-            contentInset={{ top: 5, bottom: 10 }}
+            contentInset={{top: 5, bottom: 10}}
             formatLabel={(value) => ` ${value} `}
             svg={{
               fill: chartForegroundColor,
               fontSize: chartFontSize,
             }}
             numberOfTicks={8}
-            formatLabel={(value) => `${value}`}
             style={styles.yAxis}
           />
           <LineChart
             data={data}
-            style={{ flex: 1 }}
-            svg={{ strokeWidth: 2 }}
-            contentInset={{ top: 5, bottom: 10, left: 3, right: 3 }}
-            curve={curvyChart ? shape.curveNatural : shape.curveLinear}
-          >
+            style={{flex: 1}}
+            svg={{strokeWidth: 2}}
+            contentInset={{top: 5, bottom: 10, left: 3, right: 3}}
+            curve={curvyChart ? shape.curveNatural : shape.curveLinear}>
             <ExtraDot />
             <CentileLabels />
           </LineChart>
@@ -150,13 +146,13 @@ const CentileChart = ({
             style={styles.xAxis}
             data={finalXLabels}
             formatLabel={(value, index) => finalXLabels[index]}
-            contentInset={{ left: 13, right: 13 }}
-            svg={{ fontSize: chartFontSize, fill: chartForegroundColor }}
+            contentInset={{left: 13, right: 13}}
+            svg={{fontSize: chartFontSize, fill: chartForegroundColor}}
           />
         )}
       </View>
       <View style={styles.textLabelXContainer}>
-        <AppText style={[styles.textLabelX, { color: chartForegroundColor }]}>
+        <AppText style={[styles.textLabelX, {color: chartForegroundColor}]}>
           {finalXKey}
         </AppText>
       </View>

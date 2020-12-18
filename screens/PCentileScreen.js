@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState, useEffect} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import {StyleSheet, View, Alert} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useNavigation} from '@react-navigation/native';
@@ -15,14 +15,17 @@ import FormResetButton from '../components/buttons/FormResetButton';
 import AppForm from '../components/AppForm';
 import calculateCentile from '../brains/calculateCentile';
 import routes from '../navigation/routes';
-import {GlobalStateContext} from '../components/GlobalStateContext';
+import {GlobalStatsContext} from '../components/GlobalStats';
 import ageChecker from '../brains/ageChecker';
-import zeit from '../brains/zeit';
+import useAgeEffect from '../brains/useAgeEffect';
+import {handleOldValues} from '../brains/oddBits';
 
 const PCentileScreen = () => {
   const navigation = useNavigation();
 
-  const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
+  const {globalStats, setGlobalStats, moveDataAcrossGlobal} = useContext(
+    GlobalStatsContext,
+  );
 
   const formikRef = useRef(null);
 
@@ -89,40 +92,7 @@ const PCentileScreen = () => {
     sex: '',
     gestationInDays: 280,
     dob: null,
-    tob: null,
     dom: null,
-    tom: null,
-  };
-
-  const moveDataAcrossGlobal = (movingTo, values) => {
-    setGlobalStats((globalStats) => {
-      const child = {...globalStats.child};
-      const neonate = {...globalStats.neonate};
-      for (const [key, value] of Object.entries(values)) {
-        if (key !== 'dom' || key !== 'domChanged') {
-          let newKey = key;
-          let newValue = value;
-          if (movingTo === 'neonate') {
-            if (key === 'height') {
-              newKey = 'length';
-            }
-            if (key === 'weight') {
-              newValue = value * 1000;
-            }
-            neonate[newKey] = newValue;
-          } else {
-            if (key === 'length') {
-              newKey = 'height';
-            }
-            if (key === 'weight') {
-              newValue = value / 1000;
-            }
-            child[newKey] = newValue;
-          }
-        }
-      }
-      return {child, neonate};
-    });
   };
 
   const handleFormikSubmit = (values) => {
@@ -139,102 +109,100 @@ const PCentileScreen = () => {
       );
     } else {
       const results = calculateCentile(values);
-      if (results.kind === 'birth') {
-        Alert.alert(
-          'Birth Centile Measurements Entered',
-          'Do you want to be taken to the correct calculator? Your measurements will be copied across.',
-          [
-            {
-              text: 'Cancel',
-              style: 'cancel',
-            },
-            {
-              text: 'OK',
-              onPress: () => {
-                moveDataAcrossGlobal('neonate', values);
-                navigation.navigate('RootN', {screen: 'BirthCentile'});
-              },
-            },
-          ],
-          {cancelable: false},
-        );
-      } else if (results.kind === 'neonate') {
-        Alert.alert(
-          'Preterm Centile Measurements Entered',
-          'Do you want to be taken to the correct calculator? Your measurements will be copied across.',
-          [
-            {
-              text: 'Cancel',
-              style: 'cancel',
-            },
-            {
-              text: 'OK',
-              onPress: () => {
-                moveDataAcrossGlobal('neonate', values);
-                navigation.navigate('RootN', {screen: 'NCentile'});
-              },
-            },
-          ],
-          {cancelable: false},
-        );
-      } else if (results.kind === 'child' && results.lessThan14) {
-        Alert.alert(
-          'Infant Less Than 2 Weeks Old',
-          'Centile measurements in infants less than 2 weeks of age can be difficult to interpret. Are you sure you want to continue?',
-          [
-            {
-              text: 'No',
-              style: 'cancel',
-            },
-            {
-              text: 'Yes',
-              onPress: () => {
-                const measurements = values;
-                const serialisedObject = JSON.stringify({
-                  measurements,
-                  results,
-                });
-                navigation.navigate(
-                  routes.PAEDIATRIC_CENTILE_RESULTS,
-                  serialisedObject,
-                );
-              },
-            },
-          ],
-          {cancelable: false},
-        );
-      } else {
+      const submitFunction = () => {
         const measurements = values;
-        const serialisedObject = JSON.stringify({measurements, results});
+        const serialisedObject = JSON.stringify({
+          measurements,
+          results,
+        });
         navigation.navigate(
           routes.PAEDIATRIC_CENTILE_RESULTS,
           serialisedObject,
         );
+      };
+      switch (true) {
+        case results.kind === 'birth':
+          Alert.alert(
+            'Birth Centile Measurements Entered',
+            'Do you want to be taken to the correct calculator? Your measurements will be copied across.',
+            [
+              {
+                text: 'Cancel',
+                style: 'cancel',
+              },
+              {
+                text: 'OK',
+                onPress: () => {
+                  moveDataAcrossGlobal('neonate', initialValues);
+                  navigation.navigate('RootN', {screen: 'BirthCentile'});
+                },
+              },
+            ],
+            {cancelable: false},
+          );
+          break;
+        case results.kind === 'neonate':
+          Alert.alert(
+            'Preterm Centile Measurements Entered',
+            'Do you want to be taken to the correct calculator? Your measurements will be copied across.',
+            [
+              {
+                text: 'Cancel',
+                style: 'cancel',
+              },
+              {
+                text: 'OK',
+                onPress: () => {
+                  moveDataAcrossGlobal('neonate', initialValues);
+                  navigation.navigate('RootN', {screen: 'NCentile'});
+                },
+              },
+            ],
+            {cancelable: false},
+          );
+          break;
+        case results.kind === 'child' && results.lessThan14:
+          Alert.alert(
+            'Infant Less Than 2 Weeks Old',
+            'Centile measurements in infants less than 2 weeks of age can be difficult to interpret. Are you sure you want to continue?',
+            [
+              {
+                text: 'No',
+                style: 'cancel',
+              },
+              {
+                text: 'Yes',
+                onPress: () => {
+                  handleOldValues(
+                    submitFunction,
+                    'child',
+                    setGlobalStats,
+                    globalStats.child,
+                    initialValues,
+                  );
+                },
+              },
+            ],
+            {cancelable: false},
+          );
+          break;
+        default:
+          handleOldValues(
+            submitFunction,
+            'child',
+            setGlobalStats,
+            globalStats.child,
+            initialValues,
+          );
       }
     }
   };
 
   const dob = globalStats.child.dob;
-  const dom = formikRef.current ? formikRef.current.values.dom : null;
-  let resetValues = true;
-  if (formikRef.current) {
-    if (formikRef.current.values !== formikRef.current.initialValues) {
-      resetValues = false;
-    }
-  }
+  const dom = globalStats.child.dom;
+  useAgeEffect(dob, dom, formikRef, setShowGestation);
 
-  useEffect(() => {
-    if (dob) {
-      const ageInDays = zeit(dob, 'days', dom);
-      if (ageInDays >= 0 && ageInDays < 848) {
-        setShowGestation(true);
-      } else {
-        setShowGestation(false);
-      }
-    } else if (resetValues || !dob) {
-      setShowGestation(false);
-    }
-  }, [dob, dom, resetValues]);
+  //console.log(globalStats.child.dom.value);
 
   return (
     <PCalcScreen style={{flex: 1}}>
@@ -242,8 +210,8 @@ const PCentileScreen = () => {
         <View style={styles.topContainer}>
           <AppForm
             initialValues={initialValues}
-            innerRef={formikRef}
             onSubmit={handleFormikSubmit}
+            innerRef={formikRef}
             validationSchema={validationSchema}>
             <DateTimeInputButton kind="child" type="birth" />
             {showGestation && (
@@ -272,7 +240,7 @@ const PCentileScreen = () => {
               kind="child"
             />
             <DateTimeInputButton kind="child" type="measured" />
-            <FormResetButton />
+            <FormResetButton kind="child" initialValues={initialValues} />
             <FormSubmitButton name="Calculate Child Centiles" kind="child" />
           </AppForm>
         </View>

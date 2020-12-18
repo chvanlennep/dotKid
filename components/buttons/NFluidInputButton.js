@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Alert,
   StyleSheet,
@@ -12,10 +12,10 @@ import colors from '../../config/colors';
 import ButtonIcon from './ButtonIcon';
 import defaultStyles from '../../config/styles';
 import NFluidInputModal from './NFluidInputModal';
-import { writeItemToStorage } from '../../brains/storage';
-import checkDefault from '../../brains/checkDefault';
+import {writeItemToStorage} from '../../brains/storage';
+import {checkDefault} from '../../brains/oddBits';
 
-const NFluidInputButton = ({ termObject, pretermObject }) => {
+const NFluidInputButton = ({termObject, pretermObject}) => {
   const defaults = {
     day1: '60',
     day2: '80',
@@ -46,14 +46,14 @@ const NFluidInputButton = ({ termObject, pretermObject }) => {
         text: 'Yes',
         onPress: () => {
           writeItemToStorage(
-            `term_fluid_requirements`,
+            'term_fluid_requirements',
             setTermValues,
-            defaults
+            defaults,
           );
           writeItemToStorage(
-            `preterm_fluid_requirements`,
+            'preterm_fluid_requirements',
             setPretermValues,
-            defaults
+            defaults,
           );
           setTermValues(defaults);
           setPretermValues(defaults);
@@ -84,8 +84,7 @@ const NFluidInputButton = ({ termObject, pretermObject }) => {
       <View style={styles.button}>
         <TouchableOpacity
           onPress={toggleSelection}
-          style={{ flexDirection: 'row' }}
-        >
+          style={{flexDirection: 'row'}}>
           <View
             style={[
               styles.textBox,
@@ -93,10 +92,9 @@ const NFluidInputButton = ({ termObject, pretermObject }) => {
                 width:
                   showTermReset || showPretermReset ? width - 100 : width - 55,
               },
-            ]}
-          >
+            ]}>
             <ButtonIcon name="cup-water" />
-            <AppText style={{ color: colors.white }}>
+            <AppText style={{color: colors.white}}>
               Daily Requirements...
             </AppText>
           </View>

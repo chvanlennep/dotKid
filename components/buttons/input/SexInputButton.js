@@ -1,9 +1,8 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useContext} from 'react';
 import {
   Platform,
   Modal,
   StyleSheet,
-  useColorScheme,
   View,
   TouchableOpacity,
 } from 'react-native';
@@ -16,136 +15,44 @@ import defaultStyles from '../../../config/styles';
 import ButtonIcon from '../ButtonIcon';
 import AppText from '../../AppText';
 import ErrorMessage from '../../ErrorMessage';
-import {GlobalStateContext} from '../../GlobalStateContext';
+import {GlobalStatsContext, initialState} from '../../GlobalStats';
+import useCombined from '../../../brains/useCombined';
 
 const modalWidth =
   defaultStyles.container.width > 350 ? 350 : defaultStyles.container.width;
 
-const SexInputButton = ({global = false, kind, name = 'sex'}) => {
+const SexInputButton = ({kind}) => {
   const ios = Platform.OS === 'ios' ? true : false;
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [buttonText, setButtonText] = useState('Sex');
-  const [showCancel, setShowCancel] = useState(false);
-  const [localSex, setLocalSex] = useState('');
+  const {globalStats} = useContext(GlobalStatsContext);
 
-  const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
-  const {setFieldValue, errors, touched, values} = useFormikContext();
-  const scheme = useColorScheme();
-  const dark = scheme === 'dark' ? true : false;
-  const darkBackgroundColor =
-    kind === 'child' ? colors.darkPrimary : colors.darkSecondary;
+  const {modalVisible, showCancel, value, sex} = globalStats[kind].sex;
 
-  const manageStats = {
-    read: function (kind, measurementType) {
-      return globalStats[kind][measurementType];
-    },
-    write: function (kind, measurementType, value) {
-      if (kind === 'child') {
-        setGlobalStats((globalStats) => {
-          const child = {...globalStats.child};
-          const neonate = {...globalStats.neonate};
-          child[measurementType] = value;
-          return {child, neonate};
-        });
-      } else if (kind === 'neonate')
-        setGlobalStats((globalStats) => {
-          const child = {...globalStats.child};
-          const neonate = {...globalStats.neonate};
-          neonate[measurementType] = value;
-          return {child, neonate};
-        });
-    },
-  };
+  const buttonText = value ? `Sex: ${value}` : 'Sex';
 
-  const globalSex = manageStats.read(kind, 'sex');
+  const {combinedSetter} = useCombined(kind, 'sex');
+
+  const {errors, touched} = useFormikContext();
 
   const toggleSexInput = () => {
     if (modalVisible) {
-      if (localSex) {
-        setButtonText(`Sex: ${localSex}`);
-        setShowCancel(true);
-        if (!global) {
-          setFieldValue(name, localSex);
-        }
-        manageStats.write(kind, 'sex', localSex);
-      } else {
-        setButtonText(`Sex`);
-        setShowCancel(false);
-      }
-      setModalVisible(false);
+      combinedSetter({
+        showCancel: true,
+        modalVisible: false,
+        value: sex,
+      });
     } else {
-      if (!localSex) {
-        setLocalSex('Female');
-      }
-      setModalVisible(true);
+      combinedSetter({modalVisible: true});
     }
   };
 
   const cancelInput = () => {
-    if (modalVisible) {
-      if (!globalSex) {
-        setModalVisible(false);
-        setLocalSex('');
-      }
-      if (globalSex) {
-        setLocalSex(globalSex);
-        setModalVisible(false);
-      }
+    if (modalVisible && value) {
+      combinedSetter({modalVisible: false, sex: value});
     } else {
-      setButtonText('Sex');
-      setLocalSex('');
-      if (!global) {
-        setFieldValue(name, '');
-      }
-      manageStats.write(kind, 'sex', '');
-      setShowCancel(false);
+      combinedSetter(initialState[kind].sex);
     }
   };
-
-  useEffect(() => {
-    // button has been filled in by user:
-    if (showCancel && localSex && !modalVisible) {
-      if (!global) {
-        // Reset by formik:
-        if (!values[name]) {
-          setShowCancel(false);
-          setButtonText('Sex');
-          manageStats.write(kind, 'sex', '');
-          setLocalSex('');
-        }
-      }
-      // Reset via global state:
-      if (!globalSex) {
-        setShowCancel(false);
-        setButtonText('Sex');
-        setLocalSex('');
-        if (!global) {
-          setFieldValue(name, '');
-        }
-      }
-      // value changed by global state (must put no show picker / input otherwise value stuck):
-      if (globalSex && globalSex !== localSex) {
-        if (!global) {
-          setFieldValue(name, globalSex);
-        }
-        setLocalSex(globalSex);
-        setButtonText(`Sex: ${globalSex}`);
-      }
-    }
-    // button has not been filled in by user:
-    if (!showCancel && !localSex && !modalVisible) {
-      // value updated via global state:
-      if (globalSex) {
-        if (!global) {
-          setFieldValue(name, globalSex);
-        }
-        setLocalSex(globalSex);
-        setButtonText(`Sex: ${globalSex}`);
-        setShowCancel(true);
-      }
-    }
-  });
 
   return (
     <React.Fragment>
@@ -171,22 +78,15 @@ const SexInputButton = ({global = false, kind, name = 'sex'}) => {
           visible={modalVisible}
           onRequestClose={cancelInput}>
           <View style={styles.centeredView}>
-            <View
-              style={[
-                styles.modalView,
-                {
-                  backgroundColor:
-                    dark && ios ? darkBackgroundColor : colors.light,
-                },
-              ]}>
+            <View style={styles.modalView}>
               <View style={styles.pickerContainer}>
                 <Picker
                   style={ios ? styles.iosPicker : styles.androidPicker}
-                  itemStyle={{color: dark ? colors.white : colors.black}}
+                  itemStyle={{color: colors.black}}
                   onValueChange={(itemValue, itemIndex) => {
-                    setLocalSex(itemValue);
+                    combinedSetter({sex: itemValue});
                   }}
-                  selectedValue={localSex}>
+                  selectedValue={sex}>
                   <Picker.Item label="Female" value="Female" />
                   <Picker.Item label="Male" value="Male" />
                 </Picker>
@@ -196,7 +96,7 @@ const SexInputButton = ({global = false, kind, name = 'sex'}) => {
                   <TouchableOpacity onPress={cancelInput}>
                     <MaterialCommunityIcons
                       name="close-circle"
-                      color={dark && ios ? colors.white : colors.black}
+                      color={colors.black}
                       size={40}
                     />
                   </TouchableOpacity>
@@ -205,7 +105,7 @@ const SexInputButton = ({global = false, kind, name = 'sex'}) => {
                   <TouchableOpacity onPress={toggleSexInput}>
                     <MaterialCommunityIcons
                       name="check-circle"
-                      color={dark && ios ? colors.white : colors.black}
+                      color={colors.black}
                       size={40}
                     />
                   </TouchableOpacity>
@@ -215,7 +115,7 @@ const SexInputButton = ({global = false, kind, name = 'sex'}) => {
           </View>
         </Modal>
       </View>
-      <ErrorMessage error={errors[name]} visible={touched[name]} />
+      <ErrorMessage error={errors.sex} visible={touched.sex} />
     </React.Fragment>
   );
 };
@@ -263,6 +163,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 20,
     paddingTop: 20,
+    backgroundColor: colors.light,
   },
   buttonContainer: {
     width: modalWidth,

@@ -1,50 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { useFormikContext } from 'formik';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
+import {useFormikContext} from 'formik';
 
 import colors from '../config/colors';
 import defaultStyles from '../config/styles';
 import AppText from './AppText';
 import zeit from '../brains/zeit';
+import {addOrdinalSuffix, decidePluralSuffix} from '../brains/oddBits';
 
 const CGAOutput = () => {
-  const { values } = useFormikContext();
+  const {values} = useFormikContext();
 
   const initialState = `Corrected Gestational Age: N/A`;
 
   const [cga, setCga] = useState(initialState);
   const [days, setDays] = useState('N/A days old');
-
-  const addPluralSuffix = (inputNumber) => {
-    if (inputNumber === 1) {
-      return '';
-    } else {
-      return 's';
-    }
-  };
-
-  const addOrdinalSuffix = (inputNumber) => {
-    let answerNumber = inputNumber;
-    if (Number.isInteger(inputNumber) === false) {
-      inputNumber *= 10;
-      if (Number.isInteger(inputNumber) === false) {
-        return 'Error: only integers or numbers to 1 decimal place are supported';
-      }
-    }
-    let remainder10 = inputNumber % 10;
-    let remainder100 = inputNumber % 100;
-    if (remainder10 === 1 && remainder100 != 11) {
-      return `${answerNumber}st`;
-    }
-    if (remainder10 === 2 && remainder100 != 12) {
-      return `${answerNumber}nd`;
-    }
-    if (remainder10 === 3 && remainder100 != 13) {
-      return `${answerNumber}rd`;
-    } else {
-      return `${answerNumber}th`;
-    }
-  };
 
   useEffect(() => {
     if (values.gestationInDays && values.dob) {
@@ -52,24 +22,24 @@ const CGAOutput = () => {
       const computedCga = values.gestationInDays + daysOld;
       if (computedCga && daysOld >= 0) {
         if (computedCga > 294) {
-          setCga(`Corrected Gestational Age: 42+`);
+          setCga('Corrected Gestational Age: 42+');
           setDays(
-            `${daysOld} day${addPluralSuffix(daysOld)} old (${addOrdinalSuffix(
-              daysOld + 1
-            )} day of life)`
+            `${daysOld} day${decidePluralSuffix(
+              daysOld,
+            )} old (${addOrdinalSuffix(daysOld + 1)} day of life)`,
           );
         } else {
-          const weeks = Math.floor(computedCga / 7);
-          const days = computedCga % 7;
-          setCga(`Corrected Gestational Age: ${weeks}+${days}`);
+          const gestWeeks = Math.floor(computedCga / 7);
+          const gestDays = computedCga % 7;
+          setCga(`Corrected Gestational Age: ${gestWeeks}+${gestDays}`);
           setDays(
-            `${daysOld} day${addPluralSuffix(daysOld)} old (${addOrdinalSuffix(
-              daysOld + 1
-            )} day of life)`
+            `${daysOld} day${decidePluralSuffix(
+              daysOld,
+            )} old (${addOrdinalSuffix(daysOld + 1)} day of life)`,
           );
         }
       } else {
-        setCga(`Corrected Gestational Age: N/A`);
+        setCga('Corrected Gestational Age: N/A');
         setDays('N/A days old');
       }
     }
@@ -80,7 +50,7 @@ const CGAOutput = () => {
       setCga(initialState);
       setDays('N/A days old');
     }
-  });
+  }, [cga, initialState, values]);
 
   return (
     <View style={styles.outputContainer}>
@@ -96,7 +66,7 @@ export default CGAOutput;
 
 const styles = StyleSheet.create({
   outputContainer: {
-    backgroundColor: colors.medium,
+    backgroundColor: colors.secondary,
     borderRadius: 10,
     alignSelf: 'center',
     flexDirection: 'row',

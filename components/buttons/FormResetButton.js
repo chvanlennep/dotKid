@@ -1,19 +1,19 @@
 import React from 'react';
-import {
-  Alert,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  useWindowDimensions,
-} from 'react-native';
-import { useFormikContext } from 'formik';
+import {Alert, StyleSheet, View, TouchableOpacity} from 'react-native';
 
 import AppText from '../AppText';
 import colors from '../../config/colors';
 import defaultStyles from '../../config/styles';
+import useCombined from '../../brains/useCombined';
 
-const SubmitButton = ({ name = 'Reset...', additionalMessage = '', style }) => {
-  const { handleReset } = useFormikContext();
+const FormResetButton = ({
+  kind,
+  name = 'Reset...',
+  additionalMessage = '',
+  initialValues,
+  style,
+}) => {
+  const {combinedReset} = useCombined(kind, 'weight');
 
   const handleResetAlert = () => {
     Alert.alert('Are you sure you want to reset?', `${additionalMessage}`, [
@@ -23,24 +23,24 @@ const SubmitButton = ({ name = 'Reset...', additionalMessage = '', style }) => {
       },
       {
         text: 'Yes',
-        onPress: () => handleReset(),
+        onPress: () => combinedReset(initialValues),
       },
     ]);
   };
 
   return (
     <TouchableOpacity onPress={handleResetAlert}>
-      <View style={[styles.submitButton, style]}>
-        <AppText style={{ color: colors.white }}>{name}</AppText>
+      <View style={[styles.FormResetButton, style]}>
+        <AppText style={{color: colors.white}}>{name}</AppText>
       </View>
     </TouchableOpacity>
   );
 };
 
-export default SubmitButton;
+export default FormResetButton;
 
 const styles = StyleSheet.create({
-  submitButton: {
+  FormResetButton: {
     alignItems: 'center',
     borderRadius: 5,
     backgroundColor: colors.medium,

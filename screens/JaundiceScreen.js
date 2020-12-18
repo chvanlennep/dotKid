@@ -1,8 +1,8 @@
-import React from 'react';
-import { Alert, StyleSheet, View, Platform } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import React, {useContext} from 'react';
+import {Alert, StyleSheet, View} from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import * as Yup from 'yup';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 import AppForm from '../components/AppForm';
 import NCalcScreen from '../components/NCalcScreen';
@@ -13,9 +13,10 @@ import FormSubmitButton from '../components/buttons/FormSubmitButton';
 import FormResetButton from '../components/buttons/FormResetButton';
 import colors from '../config/colors';
 import routes from '../navigation/routes';
-
 import calculateJaundice from '../brains/calculateJaundice';
 import ageChecker from '../brains/ageChecker';
+import {handleOldValues} from '../brains/oddBits';
+import {GlobalStatsContext} from '../components/GlobalStats';
 
 const JaundiceScreen = () => {
   const navigation = useNavigation();
@@ -23,13 +24,15 @@ const JaundiceScreen = () => {
     sbr: '',
     gestationInDays: 0,
     dob: null,
-    tob: null,
     dom: null,
-    tom: null,
   };
 
+  const {globalStats, setGlobalStats} = useContext(GlobalStatsContext);
+
   const validationSchema = Yup.object().shape({
-    sbr: Yup.number().required('↑ Please enter a serum bilirubin'),
+    sbr: Yup.number()
+      .required('↑ Please enter a serum bilirubin')
+      .max(1000, '↑ Are you sure about this measurement?'),
     gestationInDays: Yup.number()
       .min(161, '↑ Please select a birth gestation')
       .required()
@@ -37,11 +40,7 @@ const JaundiceScreen = () => {
       .label('Birth Gestation'),
     dob: Yup.date()
       .nullable()
-      .required(
-        `↑ Please enter a date ${
-          Platform.OS === 'ios' ? 'and time' : ''
-        } of birth`
-      )
+      .required('↑ Please enter a date and time birth')
       .label('Date of Birth'),
   });
 
@@ -51,31 +50,39 @@ const JaundiceScreen = () => {
       Alert.alert(
         'Time Travelling Patient',
         'Please check the dates entered',
-        [{ text: 'OK', onPress: () => null }],
-        { cancelable: false }
+        [{text: 'OK', onPress: () => null}],
+        {cancelable: false},
       );
     } else if (checkAge === 'Too old') {
       Alert.alert(
         'Patient Too Old',
         'This calculator can only be used until 14 days of age',
-        [{ text: 'OK', onPress: () => null }]
+        [{text: 'OK', onPress: () => null}],
       );
     } else {
-      const results = calculateJaundice(values);
-      const serialisedObject = JSON.stringify(results);
-      navigation.navigate(routes.JAUNDICE_RESULTS, serialisedObject);
+      const submitFunction = () => {
+        const results = calculateJaundice(values);
+        const serialisedObject = JSON.stringify(results);
+        navigation.navigate(routes.JAUNDICE_RESULTS, serialisedObject);
+      };
+      handleOldValues(
+        submitFunction,
+        'neonate',
+        setGlobalStats,
+        globalStats.neonate,
+        initialValues,
+      );
     }
   };
 
   return (
-    <NCalcScreen style={{ flex: 1 }}>
+    <NCalcScreen style={{flex: 1}}>
       <KeyboardAwareScrollView>
         <View style={styles.topContainer}>
           <AppForm
             initialValues={initialValues}
             onSubmit={handleFormikSubmit}
-            validationSchema={validationSchema}
-          >
+            validationSchema={validationSchema}>
             <DateTimeInputButton
               kind="neonate"
               type="birth"
@@ -88,14 +95,13 @@ const JaundiceScreen = () => {
               userLabel="Serum Bilirubin"
               unitsOfMeasurement="μmol/l"
               kind="neonate"
-              global={false}
             />
             <DateTimeInputButton
               kind="neonate"
               type="measured"
               renderTime={true}
             />
-            <FormResetButton />
+            <FormResetButton kind="neonate" initialValues={initialValues} />
             <FormSubmitButton
               name="Calculate Treatment Thresholds"
               backgroundColor={colors.secondary}

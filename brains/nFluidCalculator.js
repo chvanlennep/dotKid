@@ -1,29 +1,11 @@
 import zeit from './zeit';
 
 export default (measurementValues, referenceValues, gestation) => {
-  const { day1, day2, day3, day4, day5 } = referenceValues;
+  const {day1, day2, day3, day4, day5} = referenceValues;
   const referenceArray = [day1, day2, day3, day4, day5];
-  const { weight, correction, dob, tob, dom, tom } = measurementValues;
-  const kgWeight = weight / 1000;
-  const tempDob = dob;
-  const tempDom = dom || new Date();
-  const tempTob = tob || new Date();
-  const tempTom = tom || new Date();
-  const finalDob = new Date(
-    tempDob.getFullYear(),
-    tempDob.getMonth(),
-    tempDob.getDate(),
-    tempTob.getHours(),
-    tempTob.getMinutes()
-  );
-  const finalDom = new Date(
-    tempDom.getFullYear(),
-    tempDom.getMonth(),
-    tempDom.getDate(),
-    tempTom.getHours(),
-    tempTom.getMinutes()
-  );
-  const age = zeit(finalDob, 'days', finalDom);
+  const {weight, correction, dob, dom} = measurementValues;
+  const kgWeight = weight;
+  const age = zeit(dob, 'days', dom);
   const preCorrection24hr =
     age >= 5 ? kgWeight * day5 : kgWeight * referenceArray[age];
   const corrected24Hr = preCorrection24hr * (correction / 100);
@@ -36,7 +18,7 @@ export default (measurementValues, referenceValues, gestation) => {
     correction: correction,
     gestation: gestation,
     weight: weight,
-    stringAge: zeit(finalDob, 'string', finalDom),
+    stringAge: zeit(dob, 'string', dom),
     intAge: age,
     day1: day1,
     day2: day2,

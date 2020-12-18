@@ -10,6 +10,7 @@ import AgeButton from '../components/buttons/AgeButton';
 import Button from '../components/buttons/Button';
 import MoreCentileInfo from '../components/buttons/MoreCentileInfo';
 import CentileChartModal from '../components/CentileChartModal';
+import {calculateBMI} from '../brains/oddBits';
 
 const flexDirection = defaultStyles.container.width > 500 ? 'row' : 'column';
 
@@ -43,9 +44,7 @@ const PCentileResultsScreen = ({route, navigation}) => {
   let bmiTitle = 'BMI:';
   if (measurements.weight && measurements.height) {
     if (dayAgeForChart > 730 || monthAgeForChart >= 48) {
-      rawBmi =
-        measurements.weight /
-        ((measurements.height / 100) * (measurements.height / 100));
+      rawBmi = calculateBMI(measurements.weight, measurements.height);
       const niceLookingBmi = Number(rawBmi.toFixed(1));
       bmiTitle = `BMI (${niceLookingBmi}kg/m²):`;
     } else {

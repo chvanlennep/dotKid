@@ -1,32 +1,28 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-
+import React from 'react';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import AppForm from '../components/AppForm';
 import NCalcScreen from '../components/NCalcScreen';
 import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
 import GestationInputButton from '../components/buttons/input/GestationInputButton';
 import CGAOutput from '../components/CGAOutput';
+import FormResetButton from '../components/buttons/FormResetButton';
 
 const CGAScreen = () => {
-  const navigation = useNavigation();
-
   const initialValues = {
     gestationInDays: 0,
     dob: null,
-    tob: null,
     dom: null,
-    tom: null,
   };
 
   return (
-    <NCalcScreen style={{ flex: 1 }}>
+    <NCalcScreen style={{flex: 1}}>
       <ScrollView>
         <View style={styles.topContainer}>
           <AppForm initialValues={initialValues}>
             <DateTimeInputButton kind="neonate" type="birth" />
             <GestationInputButton kind="neonate" />
             <DateTimeInputButton kind="neonate" type="measured" />
+            <FormResetButton kind="neonate" initialValues={initialValues} />
             <CGAOutput />
           </AppForm>
         </View>

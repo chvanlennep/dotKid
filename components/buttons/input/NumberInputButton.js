@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useContext, useLayoutEffect} from 'react';
 import {
   Platform,
   StyleSheet,
@@ -8,179 +7,97 @@ import {
   TextInput,
 } from 'react-native';
 import {useFormikContext} from 'formik';
-import {GlobalStateContext} from '../../GlobalStateContext';
 
 import colors from '../../../config/colors';
 import defaultStyles from '../../../config/styles';
 import ButtonIcon from '../ButtonIcon';
 import AppText from '../../AppText';
 import ErrorMessage from '../../ErrorMessage';
+import {GlobalStatsContext, initialState} from '../../GlobalStats';
+import useCombined from '../../../brains/useCombined';
 
-// Must be a child of AppForm and GlobalStateContext
-// If global is set to false, values are only managed by Formik and not written to global state
+// Must be a child of AppForm and GlobalStatsContext
+
 const NumberInputButton = ({
   global = true,
   kind,
   iconName,
   name,
   unitsOfMeasurement,
-  defaultValue,
+  defaultValue = '',
   userLabel,
   userValue = '',
 }) => {
+  const {globalStats} = useContext(GlobalStatsContext);
+
   let width = defaultStyles.container.width;
-  if (unitsOfMeasurement === ' ml/kg/day') {
+  if (!global) {
     width = defaultStyles.container.width * 0.9;
   }
+  const original = initialState[kind][name].value;
+  const {showCancel, showTextInput, text, value} = globalStats[kind][name];
 
-  const firstValue = defaultValue ? defaultValue : '';
-  const firstButtonText = firstValue
-    ? `${userLabel}: ${firstValue}${unitsOfMeasurement}`
-    : `${userLabel}`;
-  const deleteIconName = firstValue ? 'refresh' : 'delete-forever';
+  const deleteIconName = original ? 'refresh' : 'delete-forever';
 
-  const [showTextInput, setShowTextInput] = useState(false);
-  const [showCancel, setShowCancel] = useState(false);
-  const [buttonText, setButtonText] = useState(firstButtonText);
-  const [localNumber, setLocalNumber] = useState(firstValue);
-  const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
+  const {combinedSetter} = useCombined(kind, name);
 
-  const {setFieldValue, errors, touched, values} = useFormikContext();
+  const {errors, touched} = useFormikContext();
 
   const placeHolderText =
     unitsOfMeasurement.charAt(0) === ' '
       ? `Enter here (in${unitsOfMeasurement})`
       : `Enter here (in ${unitsOfMeasurement})`;
 
-  const manageStats = {
-    read: function (kind, measurementType) {
-      return globalStats[kind][measurementType];
-    },
-    write: function (kind, measurementType, value) {
-      if (kind === 'child') {
-        setGlobalStats((globalStats) => {
-          const child = {...globalStats.child};
-          const neonate = {...globalStats.neonate};
-          child[measurementType] = value;
-          return {child, neonate};
-        });
-      } else if (kind === 'neonate')
-        setGlobalStats((globalStats) => {
-          const child = {...globalStats.child};
-          const neonate = {...globalStats.neonate};
-          neonate[measurementType] = value;
-          return {child, neonate};
-        });
-    },
-  };
+  const convertCommas = value.replace(/,/g, '.');
+  const numberToSubmit = convertCommas.replace(/[^0-9.]/g, '');
+
+  let localButtonText = userLabel;
+
+  if (value && (!defaultValue || (defaultValue && defaultValue !== value))) {
+    localButtonText = `${userLabel}: ${numberToSubmit}${unitsOfMeasurement}`;
+  } else if (value && defaultValue && defaultValue === value) {
+    localButtonText = `${userLabel}: ${value}${unitsOfMeasurement}`;
+  }
+
+  const localName = !global ? 'day' + name.charAt(1) : name;
 
   const cancelInput = () => {
-    setShowTextInput(false);
-    setButtonText(firstButtonText);
-    setShowCancel(false);
-    setFieldValue(name, defaultValue);
-    if (global) {
-      manageStats.write(kind, name, defaultValue);
-    }
-    setLocalNumber(defaultValue);
+    combinedSetter(initialState[kind][name]);
   };
 
   const toggleTextInput = () => {
     if (showTextInput) {
-      if (localNumber) {
-        const convertCommas = localNumber.replace(/,/g, '.');
-        const numberToSubmit = convertCommas.replace(/[^0-9.]/g, '');
-        setButtonText(`${userLabel}: ${numberToSubmit}${unitsOfMeasurement}`);
-        if ((firstValue && firstValue !== localNumber) || !firstValue) {
-          setShowCancel(true);
-        }
-        setFieldValue(name, numberToSubmit);
-        if (global) {
-          manageStats.write(kind, name, numberToSubmit);
-        }
+      if (text) {
+        const valueChanged =
+          (defaultValue && defaultValue !== text) || !defaultValue
+            ? true
+            : false;
+        combinedSetter({
+          showCancel: valueChanged,
+          showTextInput: false,
+          value: text,
+        });
+      } else {
+        combinedSetter({showTextInput: false});
       }
-      setShowTextInput(false);
     } else {
-      setShowTextInput(true);
+      combinedSetter({showTextInput: true});
     }
   };
 
-  useEffect(() => {
-    if (!defaultValue) {
-      const globalNumber = manageStats.read(kind, name)
-        ? `${manageStats.read(kind, name)}`
-        : '';
-      // button has been filled in by user:
-      if (showCancel && localNumber && !showTextInput) {
-        // Reset by formik:
-        if (!values[name]) {
-          setShowTextInput(false);
-          setShowCancel(false);
-          setButtonText(`${userLabel}`);
-          if (global) {
-            manageStats.write(kind, name, '');
-          }
-          setLocalNumber('');
-        }
-        if (global) {
-          // Reset via global state:
-          if (!globalNumber) {
-            setShowCancel(false);
-            setButtonText(`${userLabel}`);
-            setLocalNumber('');
-            setFieldValue(name, '');
-          }
-          // value changed by global state (must put no show picker / input otherwise value stuck):
-          if (globalNumber && globalNumber !== localNumber) {
-            setFieldValue(name, globalNumber);
-            setLocalNumber(globalNumber);
-            setButtonText(`${userLabel}: ${globalNumber}${unitsOfMeasurement}`);
-          }
-        }
-      }
-      if (global) {
-        // button has not been filled in by user:
-        if (!showCancel && !showTextInput) {
-          // value updated via global state:
-          if (globalNumber) {
-            setFieldValue(name, globalNumber);
-            setLocalNumber(globalNumber);
-            setButtonText(`${userLabel}: ${globalNumber}${unitsOfMeasurement}`);
-            setShowCancel(true);
-          }
-        }
+  // use in fluid req modal, if value from storage is different
+  useLayoutEffect(() => {
+    if (!global) {
+      if (userValue !== defaultValue) {
+        combinedSetter({
+          showCancel: true,
+          value: userValue,
+          text: userValue,
+        });
       }
     }
-  });
-
-  useEffect(() => {
-    if (defaultValue) {
-      if (userValue && userValue !== defaultValue) {
-        setButtonText(`${userLabel}: ${userValue}${unitsOfMeasurement}`);
-        setShowCancel(true);
-        setLocalNumber(userValue);
-      }
-    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (defaultValue === values[name] && !showTextInput) {
-      if (localNumber !== defaultValue) {
-        setLocalNumber(defaultValue);
-        setButtonText(`${userLabel}: ${defaultValue}${unitsOfMeasurement}`);
-        setShowCancel(false);
-      }
-    }
-  }, [
-    defaultValue,
-    values,
-    name,
-    localNumber,
-    showTextInput,
-    localNumber,
-    unitsOfMeasurement,
-    userLabel,
-  ]);
 
   return (
     <React.Fragment>
@@ -189,7 +106,7 @@ const NumberInputButton = ({
           <TouchableOpacity onPress={toggleTextInput}>
             <View style={[styles.buttonTextBox, {width: width - 55}]}>
               <ButtonIcon name={iconName} />
-              <AppText style={{color: colors.white}}>{buttonText}</AppText>
+              <AppText style={{color: colors.white}}>{localButtonText}</AppText>
             </View>
           </TouchableOpacity>
           {showCancel && (
@@ -204,9 +121,9 @@ const NumberInputButton = ({
           <TextInput
             style={styles.textInput}
             onChangeText={(text) => {
-              setLocalNumber(text);
+              combinedSetter({text: text});
             }}
-            value={localNumber}
+            value={text}
             autoFocus={true}
             clearTextOnFocus={false}
             keyboardType={'decimal-pad'}
@@ -219,7 +136,7 @@ const NumberInputButton = ({
           />
         </View>
       )}
-      <ErrorMessage error={errors[name]} visible={touched[name]} />
+      <ErrorMessage error={errors[localName]} visible={touched[localName]} />
     </React.Fragment>
   );
 };

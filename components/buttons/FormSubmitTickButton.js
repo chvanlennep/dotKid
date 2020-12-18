@@ -1,14 +1,22 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, View, useColorScheme, TouchableOpacity} from 'react-native';
 import {useFormikContext} from 'formik';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import useCombined from '../../brains/useCombined';
 import colors from '../../config/colors';
+import {checkDefault} from '../../brains/oddBits';
 
-const FormSubmitTickButton = (setModalVisible) => {
+const FormSubmitTickButton = ({initialValues, values}) => {
   const scheme = useColorScheme();
   const dark = scheme === 'dark' ? true : false;
   const {handleSubmit} = useFormikContext();
+  const {combinedReset} = useCombined('neonate', 'weight');
+  useEffect(() => {
+    if (checkDefault(values)) {
+      combinedReset(initialValues);
+    }
+  }, []);
   return (
     <View style={styles.acceptIcon}>
       <TouchableOpacity onPress={handleSubmit}>

@@ -14,13 +14,16 @@ import GestationInputButton from '../components/buttons/input/GestationInputButt
 import FormSubmitButton from '../components/buttons/FormSubmitButton';
 import FormResetButton from '../components/buttons/FormResetButton';
 import routes from '../navigation/routes';
-import {GlobalStateContext} from '../components/GlobalStateContext';
+import {GlobalStatsContext} from '../components/GlobalStats';
 import calculateCentile from '../brains/calculateCentile';
 import ageChecker from '../brains/ageChecker';
+import {handleOldValues} from '../brains/oddBits';
 
 const PCentileScreen = () => {
   const navigation = useNavigation();
-  const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
+  const {globalStats, setGlobalStats, moveDataAcrossGlobal} = useContext(
+    GlobalStatsContext,
+  );
 
   const oneMeasurementNeeded =
     "↑ We'll need at least one of these measurements";
@@ -42,14 +45,14 @@ const PCentileScreen = () => {
             .required(oneMeasurementNeeded),
         }),
       weight: Yup.number()
-        .min(100, wrongUnitsMessage('g'))
-        .max(8000, wrongUnitsMessage('g'))
+        .min(0.1, wrongUnitsMessage('kg'))
+        .max(8, wrongUnitsMessage('kg'))
         .when(['length', 'hc'], {
           is: (length, hc) => !length && !hc,
           then: Yup.number()
             .label('Weight')
-            .min(100, wrongUnitsMessage('g'))
-            .max(8000, wrongUnitsMessage('g'))
+            .min(0.1, wrongUnitsMessage('kg'))
+            .max(8, wrongUnitsMessage('kg'))
             .required(oneMeasurementNeeded),
         }),
       hc: Yup.number()
@@ -87,41 +90,10 @@ const PCentileScreen = () => {
     sex: '',
     gestationInDays: 0,
     dob: null,
-    tob: null,
     dom: null,
-    tom: null,
   };
 
-  const moveDataAcrossGlobal = (movingTo, values) => {
-    setGlobalStats((globalStats) => {
-      const child = {...globalStats.child};
-      const neonate = {...globalStats.neonate};
-      for (const [key, value] of Object.entries(values)) {
-        if (key !== 'domChanged') {
-          let newKey = key;
-          let newValue = value;
-          if (movingTo === 'neonate') {
-            if (key === 'height') {
-              newKey = 'length';
-            }
-            if (key === 'weight') {
-              newValue = value * 1000;
-            }
-            neonate[newKey] = newValue;
-          } else {
-            if (key === 'length') {
-              newKey = 'height';
-            }
-            if (key === 'weight') {
-              newValue = value / 1000;
-            }
-            child[newKey] = newValue;
-          }
-        }
-      }
-      return {child, neonate};
-    });
-  };
+  //console.log(globalStats.neonate);
 
   const handleFormikSubmit = (values) => {
     const ageCheck = ageChecker(values);
@@ -137,6 +109,11 @@ const PCentileScreen = () => {
       );
     } else {
       const results = calculateCentile(values);
+      const submitFunction = () => {
+        const measurements = values;
+        const serialisedObject = JSON.stringify({measurements, results});
+        navigation.navigate(routes.NEONATE_CENTILE_RESULTS, serialisedObject);
+      };
       if (results.kind === 'birth') {
         Alert.alert(
           'Birth Centile Measurements Entered',
@@ -167,7 +144,7 @@ const PCentileScreen = () => {
             {
               text: 'OK',
               onPress: () => {
-                moveDataAcrossGlobal('child', values);
+                moveDataAcrossGlobal('child', initialValues);
                 navigation.navigate('RootPaed', {screen: 'PCentile'});
               },
             },
@@ -186,14 +163,12 @@ const PCentileScreen = () => {
             {
               text: 'Yes',
               onPress: () => {
-                const measurements = values;
-                const serialisedObject = JSON.stringify({
-                  measurements,
-                  results,
-                });
-                navigation.navigate(
-                  routes.NEONATE_CENTILE_RESULTS,
-                  serialisedObject,
+                handleOldValues(
+                  submitFunction,
+                  'neonate',
+                  setGlobalStats,
+                  globalStats.neonate,
+                  initialValues,
                 );
               },
             },
@@ -201,9 +176,13 @@ const PCentileScreen = () => {
           {cancelable: false},
         );
       } else {
-        const measurements = values;
-        const serialisedObject = JSON.stringify({measurements, results});
-        navigation.navigate(routes.NEONATE_CENTILE_RESULTS, serialisedObject);
+        handleOldValues(
+          submitFunction,
+          'neonate',
+          setGlobalStats,
+          globalStats.neonate,
+          initialValues,
+        );
       }
     }
   };
@@ -223,7 +202,7 @@ const PCentileScreen = () => {
               name="weight"
               userLabel="Weight"
               iconName="chart-bar"
-              unitsOfMeasurement="g"
+              unitsOfMeasurement="kg"
               kind="neonate"
             />
             <NumberInputButton
@@ -241,7 +220,7 @@ const PCentileScreen = () => {
               kind="neonate"
             />
             <DateTimeInputButton kind="neonate" type="measured" />
-            <FormResetButton />
+            <FormResetButton kind="neonate" initialValues={initialValues} />
             <FormSubmitButton
               name="Calculate Preterm Centiles"
               kind="neonate"

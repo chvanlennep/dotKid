@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef} from 'react';
 import {Alert, FlatList, StyleSheet, View} from 'react-native';
 
 import PCalcScreen from '../components/PCalcScreen';
@@ -11,7 +11,6 @@ import ALSFunctionButton from '../components/buttons/ALSFunctionButton';
 import ALSListHeader from '../components/buttons/ALSListHeader';
 import Stopwatch from '../components/Stopwatch';
 import ALSTertiaryFunctionButton from '../components/buttons/ALSTertiaryFunctionButton';
-import AdrenalineTimer from '../components/AdrenalineTimer';
 
 import {
   flatListData,
@@ -344,7 +343,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.medium,
   },
   text: {
-    fontSize: defaultStyles.windowWidth < 375 ? 24 : 28,
+    fontSize: defaultStyles.windowWidth < 375 ? 24 : 27,
+    marginBottom: defaultStyles.windowHeight <= 812 ? 0 : 5,
+    marginTop: defaultStyles.windowHeight <= 812 ? 0 : 5,
   },
   textContainer: {
     marginLeft: 15,

@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState, useEffect} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import {Alert, StyleSheet, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import * as Yup from 'yup';
@@ -16,47 +16,21 @@ import NumberInputButton from '../components/buttons/input/NumberInputButton';
 import FormResetButton from '../components/buttons/FormResetButton';
 import AppForm from '../components/AppForm';
 import routes from '../navigation/routes';
-import {GlobalStateContext} from '../components/GlobalStateContext';
-
+import {GlobalStatsContext} from '../components/GlobalStats';
 import FormSubmitButton from '../components/buttons/FormSubmitButton';
 import zeit from '../brains/zeit';
+import useAgeEffect from '../brains/useAgeEffect';
+import {handleOldValues} from '../brains/oddBits';
 
 const FluidCalculatorScreen = () => {
   const navigation = useNavigation();
 
-  const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
+  const {globalStats, moveDataAcrossGlobal, setGlobalStats} = useContext(
+    GlobalStatsContext,
+  );
   const [showGestation, setShowGestation] = useState(false);
 
   const formikRef = useRef(null);
-
-  const moveDataAcrossGlobal = (movingTo, values) => {
-    setGlobalStats((globalStats) => {
-      const child = {...globalStats.child};
-      const neonate = {...globalStats.neonate};
-      for (const [key, value] of Object.entries(values)) {
-        let newKey = key;
-        let newValue = value;
-        if (movingTo === 'neonate') {
-          if (key === 'height') {
-            newKey = 'length';
-          }
-          if (key === 'weight') {
-            newValue = value * 1000;
-          }
-          neonate[newKey] = newValue;
-        } else {
-          if (key === 'length') {
-            newKey = 'height';
-          }
-          if (key === 'weight') {
-            newValue = value / 1000;
-          }
-          child[newKey] = newValue;
-        }
-      }
-      return {child, neonate};
-    });
-  };
 
   const oneMeasurementNeeded = "↑ We'll need this measurement too";
   const wrongUnitsMessage = (units) => {
@@ -68,7 +42,7 @@ const FluidCalculatorScreen = () => {
       .min(0.1, wrongUnitsMessage('kg'))
       .max(250, wrongUnitsMessage('kg'))
       .required(oneMeasurementNeeded),
-    percentage: Yup.number()
+    correction: Yup.number()
       .min(50, 'Minimum calculator correction = 50% of normal')
       .max(150, 'Maximum calculator correction = 150% of normal')
       .required(oneMeasurementNeeded),
@@ -84,8 +58,7 @@ const FluidCalculatorScreen = () => {
     sex: '',
     gestationInDays: 280,
     dob: null,
-    tob: null,
-    percentage: '100',
+    correction: '100',
     dom: null,
   };
 
@@ -93,7 +66,6 @@ const FluidCalculatorScreen = () => {
     const {gestationInDays} = values;
     const correctedGestation =
       gestationInDays + zeit(values.dob, 'days', values.dom);
-    const centileObject = calculateCentile(values);
     const ageCheck = ageChecker(values, 6575, 28);
     switch (true) {
       case ageCheck === 'Negative age':
@@ -125,7 +97,7 @@ const FluidCalculatorScreen = () => {
             {
               text: 'OK',
               onPress: () => {
-                moveDataAcrossGlobal('neonate', values);
+                moveDataAcrossGlobal('neonate', initialValues);
                 navigation.navigate('RootN', {screen: routes.NEONATE_FLUID});
               },
             },
@@ -133,42 +105,34 @@ const FluidCalculatorScreen = () => {
         );
         break;
       default:
-        const measurements = values;
-        const results = calculateFluid(
-          values.weight,
-          values.percentage,
-          values.sex,
+        const submitFunction = () => {
+          const results = calculateFluid(
+            values.weight,
+            values.correction,
+            values.sex,
+          );
+          const centileObject = calculateCentile(values);
+          const measurements = values;
+          const serialisedObject = JSON.stringify({
+            results,
+            centileObject,
+            measurements,
+          });
+          navigation.navigate(routes.FLUID_RESULTS, serialisedObject);
+        };
+        handleOldValues(
+          submitFunction,
+          'child',
+          setGlobalStats,
+          globalStats.child,
+          initialValues,
         );
-        const serialisedObject = JSON.stringify({
-          results,
-          centileObject,
-          measurements,
-        });
-        navigation.navigate(routes.FLUID_RESULTS, serialisedObject);
     }
   };
 
   const dob = globalStats.child.dob;
-  const dom = formikRef.current ? formikRef.current.values.dom : null;
-  let resetValues = true;
-  if (formikRef.current) {
-    if (formikRef.current.values !== formikRef.current.initialValues) {
-      resetValues = false;
-    }
-  }
-
-  useEffect(() => {
-    if (dob) {
-      const ageInDays = zeit(dob, 'days', dom);
-      if (ageInDays >= 0 && ageInDays < 848) {
-        setShowGestation(true);
-      } else {
-        setShowGestation(false);
-      }
-    } else if (resetValues || !dob) {
-      setShowGestation(false);
-    }
-  }, [dob, dom, resetValues]);
+  const dom = globalStats.child.dom;
+  useAgeEffect(dob, dom, formikRef, setShowGestation);
 
   return (
     <PCalcScreen style={{flex: 1}}>
@@ -192,15 +156,15 @@ const FluidCalculatorScreen = () => {
               kind="child"
             />
             <NumberInputButton
-              name="percentage"
+              name="correction"
               defaultValue="100"
-              global={false}
               userLabel="Correction Factor"
               iconName="triangle-outline"
               unitsOfMeasurement="%"
               kind="child"
             />
-            <FormResetButton />
+            <DateTimeInputButton kind="child" type="measured" />
+            <FormResetButton kind="child" initialValues={initialValues} />
             <FormSubmitButton name="Calculate IV fluid rate" kind="child" />
           </AppForm>
         </View>

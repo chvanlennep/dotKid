@@ -22,7 +22,7 @@ const calculateThresholdUnder38 = (
   hours,
   yIntercept,
   plateauThreshold,
-  mValue
+  mValue,
 ) => {
   if (hours < 72) {
     return yIntercept + mValue * hours;
@@ -69,47 +69,29 @@ const calculateFinalThresholds = (hours, gestationWeeks) => {
           hours,
           yInterceptPhoto,
           plateauThresholdPhoto,
-          mValuePhoto
-        )
+          mValuePhoto,
+        ),
       ),
       exchange: Math.round(
         calculateThresholdUnder38(
           hours,
           yInterceptExchange,
           plateauThresholdExchange,
-          mValueExchange
-        )
+          mValueExchange,
+        ),
       ),
     };
   }
 };
 
 const calculateJaundice = (object) => {
-  const tempDob = object.dob;
-  const tempDom = object.dom ? object.dom : new Date();
-  const tempTob = object.tob ? object.tob : new Date();
-  const tempTom = object.tom ? object.tom : new Date();
-  const dob = new Date(
-    tempDob.getFullYear(),
-    tempDob.getMonth(),
-    tempDob.getDate(),
-    tempTob.getHours(),
-    tempTob.getMinutes()
-  );
-  const dom = new Date(
-    tempDom.getFullYear(),
-    tempDom.getMonth(),
-    tempDom.getDate(),
-    tempTom.getHours(),
-    tempTom.getMinutes()
-  );
   const sbr = object.sbr;
   const gestationWeeks = Math.floor(object.gestationInDays / 7);
-  const floatHours = zeit(dob, 'hours', dom, false);
-  const stringAge = zeit(dob, 'string', dom);
-  const { phototherapy, exchange } = calculateFinalThresholds(
+  const floatHours = zeit(object.dob, 'hours', object.dom, false);
+  const stringAge = zeit(object.dob, 'string', object.dom);
+  const {phototherapy, exchange} = calculateFinalThresholds(
     floatHours,
-    gestationWeeks
+    gestationWeeks,
   );
   let mainConclusion = '';
   let activateYoungWarning = false;

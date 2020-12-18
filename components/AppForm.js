@@ -12,8 +12,8 @@ function AppForm({
     <Formik
       initialValues={initialValues}
       onSubmit={onSubmit}
-      validationSchema={validationSchema}
-      innerRef={innerRef}>
+      innerRef={innerRef}
+      validationSchema={validationSchema}>
       {() => <>{children}</>}
     </Formik>
   );

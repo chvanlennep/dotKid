@@ -25,11 +25,17 @@ const BirthCentileResultsScreen = ({route, navigation}) => {
   const [hc, exactHc] = results.centiles.hc;
 
   let weightTitle = 'Weight:';
-  if (measurements.weight) weightTitle = `Weight (${measurements.weight}g):`;
+  if (measurements.weight) {
+    weightTitle = `Weight (${measurements.weight}kg):`;
+  }
   let lengthTitle = 'Length:';
-  if (measurements.length) lengthTitle = `Length (${measurements.length}cm):`;
+  if (measurements.length) {
+    lengthTitle = `Length (${measurements.length}cm):`;
+  }
   let hcTitle = 'Head Circumference:';
-  if (measurements.hc) hcTitle = `Head Circumference (${measurements.hc}cm):`;
+  if (measurements.hc) {
+    hcTitle = `Head Circumference (${measurements.hc}cm):`;
+  }
 
   return (
     <NCalcScreen isResults={true} style={{flex: 1}}>
@@ -57,7 +63,7 @@ const BirthCentileResultsScreen = ({route, navigation}) => {
               <MoreCentileInfo exactCentile={exactWeight} />
               <CentileChartModal
                 measurementType="weight"
-                measurement={parameters.measurements.weight / 1000}
+                measurement={parameters.measurements.weight}
                 kind="birth"
                 gestationInDays={birthGestationInDays}
                 sex={parameters.measurements.sex}

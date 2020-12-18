@@ -1,8 +1,8 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import React, {useContext} from 'react';
+import {StyleSheet, View} from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import * as Yup from 'yup';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 import AppForm from '../components/AppForm';
 import colors from '../config/colors';
@@ -13,8 +13,9 @@ import GestationInputButton from '../components/buttons/input/GestationInputButt
 import FormSubmitButton from '../components/buttons/FormSubmitButton';
 import FormResetButton from '../components/buttons/FormResetButton';
 import routes from '../navigation/routes';
-
 import calculateCentile from '../brains/calculateCentile';
+import {handleOldValues} from '../brains/oddBits';
+import {GlobalStatsContext} from '../components/GlobalStats';
 
 const BirthCentileScreen = () => {
   const navigation = useNavigation();
@@ -38,14 +39,14 @@ const BirthCentileScreen = () => {
             .required(oneMeasurementNeeded),
         }),
       weight: Yup.number()
-        .min(100, wrongUnitsMessage('g'))
-        .max(8000, wrongUnitsMessage('g'))
+        .min(0.1, wrongUnitsMessage('kg'))
+        .max(8, wrongUnitsMessage('kg'))
         .when(['length', 'hc'], {
           is: (length, hc) => !length && !hc,
           then: Yup.number()
             .label('Weight')
-            .min(100, wrongUnitsMessage('g'))
-            .max(8000, wrongUnitsMessage('g'))
+            .min(0.1, wrongUnitsMessage('kg'))
+            .max(8, wrongUnitsMessage('kg'))
             .required(oneMeasurementNeeded),
         }),
       hc: Yup.number()
@@ -69,7 +70,7 @@ const BirthCentileScreen = () => {
       ['length', 'weight'],
       ['length', 'hc'],
       ['weight', 'hc'],
-    ]
+    ],
   );
 
   const initialValues = {
@@ -82,29 +83,47 @@ const BirthCentileScreen = () => {
     dom: new Date(1989, 0, 16),
   };
 
+  const valuesForTimeStamp = {
+    length: null,
+    weight: null,
+    hc: null,
+    sex: null,
+    gestationInDays: null,
+  };
+
+  const {globalStats, setGlobalStats} = useContext(GlobalStatsContext);
+
   const handleFormikSubmit = (values) => {
-    const results = calculateCentile(values);
-    const measurements = values;
-    const serialisedObject = JSON.stringify({ measurements, results });
-    navigation.navigate(routes.BIRTH_CENTILE_RESULTS, serialisedObject);
+    const submitFunction = () => {
+      const results = calculateCentile(values);
+      const measurements = values;
+      const serialisedObject = JSON.stringify({measurements, results});
+      navigation.navigate(routes.BIRTH_CENTILE_RESULTS, serialisedObject);
+    };
+    handleOldValues(
+      submitFunction,
+      'neonate',
+      setGlobalStats,
+      globalStats.neonate,
+      valuesForTimeStamp,
+    );
   };
 
   return (
-    <NCalcScreen style={{ flex: 1 }}>
+    <NCalcScreen style={{flex: 1}}>
       <KeyboardAwareScrollView>
         <View style={styles.topContainer}>
           <AppForm
             initialValues={initialValues}
             onSubmit={handleFormikSubmit}
-            validationSchema={validationSchema}
-          >
+            validationSchema={validationSchema}>
             <GestationInputButton name="gestationInDays" kind="neonate" />
             <SexInputButton name="sex" kind="neonate" />
             <NumberInputButton
               name="weight"
               userLabel="Birth Weight"
               iconName="chart-bar"
-              unitsOfMeasurement="g"
+              unitsOfMeasurement="kg"
               kind="neonate"
             />
             <NumberInputButton
@@ -121,7 +140,10 @@ const BirthCentileScreen = () => {
               unitsOfMeasurement="cm"
               kind="neonate"
             />
-            <FormResetButton />
+            <FormResetButton
+              kind="neonate"
+              initialValues={valuesForTimeStamp}
+            />
             <FormSubmitButton name="Calculate Birth Centiles" kind="neonate" />
           </AppForm>
         </View>

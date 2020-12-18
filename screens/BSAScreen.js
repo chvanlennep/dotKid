@@ -1,29 +1,28 @@
-import React, { useContext } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import React, {useContext} from 'react';
+import {ScrollView, StyleSheet, View} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import * as Yup from 'yup';
 
 import PCalcScreen from '../components/PCalcScreen';
 import colors from '../config/colors';
-import ageChecker from '../brains/ageChecker';
 import NumberInputButton from '../components/buttons/input/NumberInputButton';
 import FormSubmitButton from '../components/buttons/FormSubmitButton';
 import FormResetButton from '../components/buttons/FormResetButton';
 import AppForm from '../components/AppForm';
 import routes from '../navigation/routes';
-import { GlobalStateContext } from '../components/GlobalStateContext';
 import BodySurfaceArea from '../brains/BodySurfaceArea';
+import {handleOldValues} from '../brains/oddBits';
+import {GlobalStatsContext} from '../components/GlobalStats';
 
 const BSAScreen = () => {
-  navigation = useNavigation();
-
-  const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
+  const navigation = useNavigation();
 
   const oneMeasurementNeeded = "↑ We'll need this measurement too";
   const wrongUnitsMessage = (units) => {
     return `↑ Are you sure your input is in ${units}?`;
   };
+
+  const {globalStats, setGlobalStats} = useContext(GlobalStatsContext);
 
   const validationSchema = Yup.object().shape({
     height: Yup.number()
@@ -42,24 +41,32 @@ const BSAScreen = () => {
   };
 
   const handleFormikSubmit = (values) => {
-    const measurements = values;
-    const output = BodySurfaceArea(values.height, values.weight);
-    const serialisedObject = JSON.stringify({
-      output,
-      measurements,
-    });
-    navigation.navigate(routes.BSA_RESULTS, serialisedObject);
+    const submitFunction = () => {
+      const measurements = values;
+      const output = BodySurfaceArea(values.height, values.weight);
+      const serialisedObject = JSON.stringify({
+        output,
+        measurements,
+      });
+      navigation.navigate(routes.BSA_RESULTS, serialisedObject);
+    };
+    handleOldValues(
+      submitFunction,
+      'child',
+      setGlobalStats,
+      globalStats.child,
+      initialValues,
+    );
   };
 
   return (
-    <PCalcScreen style={{ flex: 1 }}>
+    <PCalcScreen style={{flex: 1}}>
       <ScrollView>
         <View style={styles.topContainer}>
           <AppForm
             initialValues={initialValues}
             onSubmit={handleFormikSubmit}
-            validationSchema={validationSchema}
-          >
+            validationSchema={validationSchema}>
             <NumberInputButton
               name="height"
               userLabel="Height / Length"
@@ -74,8 +81,7 @@ const BSAScreen = () => {
               unitsOfMeasurement="kg"
               kind="child"
             />
-
-            <FormResetButton />
+            <FormResetButton kind="child" initialValues={initialValues} />
             <FormSubmitButton name="Calculate Body Surface Area" kind="child" />
           </AppForm>
         </View>

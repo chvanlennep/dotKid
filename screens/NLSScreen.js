@@ -28,7 +28,6 @@ const NLSScreen = () => {
   const [logVisible, setLogVisible] = useState(false);
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [endEncounter, setEndEncounter] = useState(false);
-  const [resuscitationRequired, setResuscitationRequired] = useState(false);
   const [initialAssessmentComplete, setInitialAssessmentComplete] = useState(
     false,
   );
@@ -80,11 +79,6 @@ const NLSScreen = () => {
     setValue: setIsTimerActive,
   };
 
-  const resusState = {
-    value: resuscitationRequired,
-    setValue: setResuscitationRequired,
-  };
-
   //clears functionButtons object
   const resetLogTimes = (functionButtons) => {
     for (let value in functionButtons) {
@@ -95,7 +89,7 @@ const NLSScreen = () => {
 
   //reset button logic
   const handleReset = () => {
-    if (reset == true) {
+    if (reset === true) {
       setLogVisible(false);
       setFunctionButtons(resetLogTimes(functionButtons));
       setIsTimerActive(false);
@@ -105,7 +99,7 @@ const NLSScreen = () => {
   };
 
   useEffect(() => {
-    if (reset == true && logVisible == false) {
+    if (reset === true && logVisible === false) {
       setEndEncounter(false);
       handleReset();
     }
@@ -340,7 +334,9 @@ const styles = StyleSheet.create({
     //backgroundColor: 'yellow',
   },
   text: {
-    fontSize: defaultStyles.windowWidth < 375 ? 24 : 28,
+    fontSize: defaultStyles.windowWidth < 375 ? 24 : 27,
+    marginBottom: defaultStyles.windowHeight <= 812 ? 0 : 5,
+    marginTop: defaultStyles.windowHeight <= 812 ? 0 : 5,
   },
   textContainer: {
     marginLeft: 15,

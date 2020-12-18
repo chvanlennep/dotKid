@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState, useEffect} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import {Alert, StyleSheet, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -18,11 +18,13 @@ import routes from '../navigation/routes';
 import zeit from '../brains/zeit';
 import ageChecker from '../brains/ageChecker';
 import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
-import {GlobalStateContext} from '../components/GlobalStateContext';
+import {GlobalStatsContext} from '../components/GlobalStats';
+import useAgeEffect from '../brains/useAgeEffect';
+import {handleOldValues} from '../brains/oddBits';
 
 const BPScreen = () => {
   const navigation = useNavigation();
-  const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
+  const {globalStats, setGlobalStats} = useContext(GlobalStatsContext);
 
   const formikRef = useRef(null);
 
@@ -62,28 +64,25 @@ const BPScreen = () => {
   });
 
   const initialValues = {
-    height: '', //
+    height: '',
     sex: '',
     gestationInDays: 280,
     dob: null,
-    tob: null,
     systolic: '',
     diastolic: '',
     dom: null,
   };
 
   const handleFormikSubmit = (values) => {
-    let correctDays = 0;
-    if (values.gestationInDays < 224) {
-      correctDays = 280 - values.gestationInDays;
-    }
-    const ageCheck = ageChecker(values, 6574, 365);
+    const correctDays =
+      values.gestationInDays < 224 ? 280 - values.gestationInDays : 0;
+    const ageCheck = ageChecker(values, 6574, 365 - correctDays);
     switch (true) {
       case ageCheck === 'Negative age':
         Alert.alert(
           'Time Travelling Patient',
           'Please check the dates entered',
-          [{text: 'OK', onPress: () => 'OK'}],
+          [{text: 'OK', onPress: () => null}],
           {cancelable: false},
         );
         break;
@@ -91,19 +90,19 @@ const BPScreen = () => {
         Alert.alert(
           'Patient Too Old',
           'This calculator can only be used under 18 years of age',
-          {text: 'OK', onPress: () => 'OK'},
+          {text: 'OK', onPress: () => null},
 
           {cancelable: false},
         );
         break;
       case ageCheck === 'Too young':
         Alert.alert(
-          'Patient must be at least 1 year old.',
+          'This calculator only supports children from 1 year of age',
           '',
           [
             {
               text: 'OK',
-              onPress: () => 'OK',
+              onPress: () => null,
               style: 'cancel',
             },
           ],
@@ -111,51 +110,44 @@ const BPScreen = () => {
         );
         break;
       default:
-        const centileObject = calculateCentile(values);
-        let centileString = centileObject.centiles.height[1];
-        if (centileString.length > 10) {
-          centileString = centileObject.centiles.height[0];
-        }
-        const measurements = values;
-        const heightCentile = Math.round(centileString.replace(/[^0-9.]/g, ''));
-        const age = zeit(values.dob, 'years', values.dom);
-        const BPOutput = calculateBP(
-          heightCentile,
-          age,
-          values.systolic,
-          values.diastolic,
-          values.sex,
+        const submitFunction = () => {
+          const centileObject = calculateCentile(values);
+          let centileString = centileObject.centiles.height[1];
+          if (centileString.length > 10) {
+            centileString = centileObject.centiles.height[0];
+          }
+          const age = zeit(values.dob, 'years', values.dom, true, correctDays);
+          const measurements = values;
+          const heightCentile = Math.round(
+            centileString.replace(/[^0-9.]/g, ''),
+          );
+          const BPOutput = calculateBP(
+            heightCentile,
+            age,
+            values.systolic,
+            values.diastolic,
+            values.sex,
+          );
+          const serialisedObject = JSON.stringify({
+            BPOutput,
+            centileObject,
+            measurements,
+          });
+          navigation.navigate(routes.BLOOD_PRESSURE_RESULTS, serialisedObject);
+        };
+        handleOldValues(
+          submitFunction,
+          'child',
+          setGlobalStats,
+          globalStats.child,
+          initialValues,
         );
-        const serialisedObject = JSON.stringify({
-          BPOutput,
-          centileObject,
-          measurements,
-        });
-        navigation.navigate(routes.BLOOD_PRESSURE_RESULTS, serialisedObject);
     }
   };
 
   const dob = globalStats.child.dob;
-  const dom = formikRef.current ? formikRef.current.values.dom : null;
-  let resetValues = true;
-  if (formikRef.current) {
-    if (formikRef.current.values !== formikRef.current.initialValues) {
-      resetValues = false;
-    }
-  }
-
-  useEffect(() => {
-    if (dob) {
-      const ageInDays = zeit(dob, 'days', dom);
-      if (ageInDays >= 0 && ageInDays < 848) {
-        setShowGestation(true);
-      } else {
-        setShowGestation(false);
-      }
-    } else if (resetValues || !dob) {
-      setShowGestation(false);
-    }
-  }, [dob, dom, resetValues]);
+  const dom = globalStats.child.dom;
+  useAgeEffect(dob, dom, formikRef, setShowGestation);
 
   return (
     <PCalcScreen style={{flex: 1}}>
@@ -166,7 +158,7 @@ const BPScreen = () => {
             innerRef={formikRef}
             onSubmit={handleFormikSubmit}
             validationSchema={validationSchema}>
-            <DateTimeInputButton kind="child" type="birth" />
+            <DateTimeInputButton kind="child" type="birth" renderTime={false} />
             {showGestation && (
               <GestationInputButton name="gestationInDays" kind="child" />
             )}
@@ -184,7 +176,6 @@ const BPScreen = () => {
               iconName="chevron-double-up"
               unitsOfMeasurement="mmHg"
               kind="child"
-              global={false}
             />
             <NumberInputButton
               name="diastolic"
@@ -192,10 +183,9 @@ const BPScreen = () => {
               iconName="chevron-double-down"
               unitsOfMeasurement="mmHg"
               kind="child"
-              global={false}
             />
             <DateTimeInputButton kind="child" type="measured" />
-            <FormResetButton />
+            <FormResetButton kind="child" initialValues={initialValues} />
             <FormSubmitButton
               name="Calculate Blood Pressure Centiles"
               kind="child"

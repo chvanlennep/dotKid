@@ -3,36 +3,7 @@ import regression from 'regression';
 import centileData from './centileData';
 import zScores from './zScores';
 import zeit from './zeit';
-
-// kept separate for simplicity
-const calculateBMI = (weight, heightInCm) => {
-  const height = heightInCm / 100;
-  return weight / (height * height);
-};
-
-//adds correct ordinal suffix to integers and 1 decimal place numbers
-const addOrdinalSuffix = (inputNumber) => {
-  let answerNumber = inputNumber;
-  if (Number.isInteger(inputNumber) === false) {
-    inputNumber *= 10;
-    if (Number.isInteger(inputNumber) === false) {
-      return 'Error: only integers or numbers to 1 decimal place are supported';
-    }
-  }
-  let remainder10 = inputNumber % 10;
-  let remainder100 = inputNumber % 100;
-  if (remainder10 === 1 && remainder100 !== 11) {
-    return `${answerNumber}st`;
-  }
-  if (remainder10 === 2 && remainder100 !== 12) {
-    return `${answerNumber}nd`;
-  }
-  if (remainder10 === 3 && remainder100 !== 13) {
-    return `${answerNumber}rd`;
-  } else {
-    return `${answerNumber}th`;
-  }
-};
+import {addOrdinalSuffix, calculateBMI} from './oddBits';
 
 /*
  * If preterm centile cannot be calculated from LMS data directly (as data only given for whole week gestations), this function
@@ -49,7 +20,7 @@ const outputPretermMeasurements = (
   object,
   measurementType,
   floatWeeks,
-  zArray
+  zArray,
 ) => {
   const sex = object.sex;
   const lmsArray = centileData.neonate[sex][measurementType];
@@ -85,7 +56,7 @@ const outputPretermMeasurements = (
         workingLMSData[j][2] *
         Math.pow(
           zArray[i][0] * workingLMSData[j][1] * workingLMSData[j][3] + 1,
-          1 / workingLMSData[j][1]
+          1 / workingLMSData[j][1],
         );
       measurementSubArray.push(tempMeasurement);
     }
@@ -116,7 +87,7 @@ const outputPretermMeasurements = (
     finalMeasurementLimitsArray.push(
       measurementLimitsEquations[i][0] * Math.pow(floatWeeks, 2) +
         measurementLimitsEquations[i][1] * floatWeeks +
-        measurementLimitsEquations[i][2]
+        measurementLimitsEquations[i][2],
     );
   }
   return finalMeasurementLimitsArray;
@@ -126,15 +97,12 @@ const outputPretermMeasurements = (
 const outputCentileFromMeasurementsPreterm = (
   object,
   floatWeeks,
-  measurementType
+  measurementType,
 ) => {
   const wholeCentileZLimitsPart1 = centileData.neonate.wholeCentileZLimitsPart1;
   const wholeCentileZLimitsPart2 = centileData.neonate.wholeCentileZLimitsPart2;
 
   let measurement = object[measurementType];
-  if (measurement > 250 && measurementType === 'weight') {
-    measurement /= 1000;
-  }
   const extremeThresholdsZ = [
     [-2.432379059, '0.7th'],
     [2.432379059, '99.2nd'],
@@ -165,14 +133,14 @@ const outputCentileFromMeasurementsPreterm = (
     object,
     measurementType,
     floatWeeks,
-    [[0, 50]]
+    [[0, 50]],
   );
   const meanMeasurement = meanMeasurementArray[1];
   const measurementExtremeThresholds = outputPretermMeasurements(
     object,
     measurementType,
     floatWeeks,
-    extremeThresholdsZ
+    extremeThresholdsZ,
   );
   let finalThresholds = [];
   let belowMean = false;
@@ -201,7 +169,7 @@ const outputCentileFromMeasurementsPreterm = (
         object,
         measurementType,
         floatWeeks,
-        lowerTiny
+        lowerTiny,
       );
       arrayLength = finalThresholds.length;
       for (let i = 1; i < arrayLength; i++) {
@@ -215,7 +183,7 @@ const outputCentileFromMeasurementsPreterm = (
         object,
         measurementType,
         floatWeeks,
-        wholeCentileZLimitsPart1
+        wholeCentileZLimitsPart1,
       );
       arrayLength = finalThresholds.length;
       for (let i = 1; i < arrayLength; i++) {
@@ -229,7 +197,7 @@ const outputCentileFromMeasurementsPreterm = (
         object,
         measurementType,
         floatWeeks,
-        upperTiny
+        upperTiny,
       );
       if (measurement >= finalThresholds[finalThresholds.length - 1]) {
         return '+4SD';
@@ -247,7 +215,7 @@ const outputCentileFromMeasurementsPreterm = (
         object,
         measurementType,
         floatWeeks,
-        wholeCentileZLimitsPart2
+        wholeCentileZLimitsPart2,
       );
       arrayLength = finalThresholds.length;
       for (let i = 1; i < arrayLength; i++) {
@@ -267,7 +235,7 @@ const computeChildMeasurement = (zScore, workingLMSData) => {
     workingLMSData[2] *
     Math.pow(
       zScore * workingLMSData[1] * workingLMSData[3] + 1,
-      1 / workingLMSData[1]
+      1 / workingLMSData[1],
     )
   );
 };
@@ -277,7 +245,7 @@ const giveRange = (
   workingLMSData, // only for LMS centile route
   object,
   measurementType,
-  floatWeeks // only for regression route
+  floatWeeks, // only for regression route
 ) => {
   let childMeasurement;
   if (measurementType === 'bmi') {
@@ -288,13 +256,6 @@ const giveRange = (
     } else {
       childMeasurement = object[measurementType];
     }
-  }
-  if (
-    childMeasurement > 100 &&
-    measurementType === 'weight' &&
-    typeof object.length === 'string'
-  ) {
-    childMeasurement /= 1000;
   }
   const majorCentileLines = [
     [-2.652069808, '0.4th'],
@@ -318,13 +279,13 @@ const giveRange = (
         object,
         measurementType,
         floatWeeks,
-        zArray
+        zArray,
       );
       miniArray = [tempMeasurement, majorCentileLines[i][1]];
     } else {
       const tempMeasurement = computeChildMeasurement(
         majorCentileLines[i][0],
-        workingLMSData
+        workingLMSData,
       );
       miniArray = [tempMeasurement, majorCentileLines[i][1]];
     }
@@ -341,13 +302,13 @@ const giveRange = (
         object,
         measurementType,
         floatWeeks,
-        [[zFor03, '0.03']]
+        [[zFor03, '0.03']],
       );
       measurementFor03 = tempMeasurementFor03;
     } else {
       const tempMeasurementFor03 = computeChildMeasurement(
         zFor03,
-        workingLMSData
+        workingLMSData,
       );
       measurementFor03 = tempMeasurementFor03;
     }
@@ -363,13 +324,13 @@ const giveRange = (
         object,
         measurementType,
         floatWeeks,
-        [[zFor997, '99.7']]
+        [[zFor997, '99.7']],
       );
       measurementFor997 = tempMeasurementFor997;
     } else {
       const tempMeasurementFor997 = computeChildMeasurement(
         zFor997,
-        workingLMSData
+        workingLMSData,
       );
       measurementFor997 = tempMeasurementFor997;
     }
@@ -401,7 +362,7 @@ const outputCentileFloatGest = (
   centile,
   measurementType,
   floatWeeks,
-  object
+  object,
 ) => {
   if ((typeof centile === 'number') === false) {
     switch (true) {
@@ -556,7 +517,7 @@ const centileFromLms = (
   birthGestationInDays = 280,
   correctedGestationInDays = 280,
   kind,
-  object
+  object,
 ) => {
   let array;
   const sex = object.sex;
@@ -587,8 +548,7 @@ const centileFromLms = (
     }
     if (object.weight) {
       array = centileData[kind][sex]['weight'][gestWeeks - 23];
-      const newWeight = object.weight / 1000;
-      z = calculateZ(newWeight, array);
+      z = calculateZ(object.weight, array);
       weightCentile = outputCentile(z, object, 'weight', array);
     }
     return {
@@ -613,14 +573,14 @@ const centileFromLms = (
           'string',
           object.dom,
           true,
-          280 - birthGestationInDays
+          280 - birthGestationInDays,
         );
         dayAgeForChart = zeit(
           object.dob,
           'days',
           object.dom,
           true,
-          280 - birthGestationInDays
+          280 - birthGestationInDays,
         );
       } else {
         index = ageInDays;
@@ -647,10 +607,7 @@ const centileFromLms = (
       heightCentile = outputCentile(z, object, measurementLabel, array);
     }
     if (object.weight) {
-      let weight;
-      ageInDays === 0
-        ? (weight = object.weight / 1000)
-        : (weight = object.weight);
+      const weight = object.weight;
       array = centileData[kind][sex]['weight'][index];
       z = calculateZ(weight, array);
       weightCentile = outputCentile(z, object, 'weight', array);
@@ -697,7 +654,7 @@ const calculateCentile = (object) => {
       birthGestationInDays,
       correctedGestationInDays,
       kind,
-      object
+      object,
     );
     return {
       centiles: {
@@ -718,7 +675,7 @@ const calculateCentile = (object) => {
         birthGestationInDays,
         correctedGestationInDays,
         'neonate',
-        object
+        object,
       );
       return {
         centiles: calculatedValues,
@@ -738,14 +695,14 @@ const calculateCentile = (object) => {
         workingCentile = outputCentileFromMeasurementsPreterm(
           object,
           floatWeeks,
-          'hc'
+          'hc',
         );
 
         hcCentile = outputCentileFloatGest(
           workingCentile,
           'hc',
           floatWeeks,
-          object
+          object,
         );
       }
       if (object.length) {
@@ -753,13 +710,13 @@ const calculateCentile = (object) => {
           workingCentile = outputCentileFromMeasurementsPreterm(
             object,
             floatWeeks,
-            'length'
+            'length',
           );
           lengthCentile = outputCentileFloatGest(
             workingCentile,
             'length',
             floatWeeks,
-            object
+            object,
           );
         } else {
           lengthCentile = ['Cannot plot length when under 25 weeks', 'N/A'];
@@ -769,13 +726,13 @@ const calculateCentile = (object) => {
         workingCentile = outputCentileFromMeasurementsPreterm(
           object,
           floatWeeks,
-          'weight'
+          'weight',
         );
         weightCentile = outputCentileFloatGest(
           workingCentile,
           'weight',
           floatWeeks,
-          object
+          object,
         );
       }
       return {
@@ -799,7 +756,7 @@ const calculateCentile = (object) => {
       birthGestationInDays,
       correctedGestationInDays,
       kind,
-      object
+      object,
     );
     return {
       centiles: calculatedValues.centiles,

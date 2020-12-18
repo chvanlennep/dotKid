@@ -1,11 +1,5 @@
-import React from 'react';
-import {
-  Alert,
-  DrawerLayoutAndroidComponent,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import React, {useContext} from 'react';
+import {Alert, StyleSheet, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import * as Yup from 'yup';
@@ -22,6 +16,8 @@ import calculateQTC from '../brains/calculateQTC';
 import ageChecker from '../brains/ageChecker';
 import calculateCentile from '../brains/calculateCentile';
 import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
+import {handleOldValues} from '../brains/oddBits';
+import {GlobalStatsContext} from '../components/GlobalStats';
 
 const ECGScreen = () => {
   const navigation = useNavigation();
@@ -30,6 +26,8 @@ const ECGScreen = () => {
   const wrongUnitsMessage = (units) => {
     return `↑ Are you sure your input is in ${units}?`;
   };
+
+  const {globalStats, setGlobalStats} = useContext(GlobalStatsContext);
 
   const validationSchema = Yup.object().shape({
     dob: Yup.date()
@@ -53,17 +51,13 @@ const ECGScreen = () => {
     qtinterval: '',
     gestationInDays: 280,
     dob: null,
-    tob: null,
     dom: null,
-    tom: null,
   };
 
-  const handleFormikSubmit = (values) => {
+  const handleFormikSubmit = (values, {setFieldValue}) => {
     const dom = values.dom ? values.dom : new Date();
     const age = zeit(values.dob, 'months', dom, true, correctDays);
     const ageCheck = ageChecker(values);
-    const centileObject = calculateCentile(values);
-
     let correctDays = 0;
     switch (true) {
       case ageCheck === 'Negative age':
@@ -83,18 +77,28 @@ const ECGScreen = () => {
         );
         break;
       default:
-        const measurements = values;
-        const QTCOutput = calculateQTC(
-          age,
-          values.qtinterval,
-          values.rrinterval,
+        const submitFunction = () => {
+          const centileObject = calculateCentile(values);
+          const measurements = values;
+          const QTCOutput = calculateQTC(
+            age,
+            values.qtinterval,
+            values.rrinterval,
+          );
+          const serialisedObject = JSON.stringify({
+            QTCOutput,
+            centileObject,
+            measurements,
+          });
+          navigation.navigate(routes.ECG_RESULTS, serialisedObject);
+        };
+        handleOldValues(
+          submitFunction,
+          'child',
+          setGlobalStats,
+          globalStats.child,
+          initialValues,
         );
-        const serialisedObject = JSON.stringify({
-          QTCOutput,
-          centileObject,
-          measurements,
-        });
-        navigation.navigate(routes.ECG_RESULTS, serialisedObject);
     }
   };
 
@@ -113,7 +117,6 @@ const ECGScreen = () => {
               iconName="heart-flash"
               unitsOfMeasurement=" seconds"
               kind="child"
-              global={false}
             />
             <NumberInputButton
               name="rrinterval"
@@ -121,10 +124,9 @@ const ECGScreen = () => {
               iconName="heart-pulse"
               unitsOfMeasurement=" seconds"
               kind="child"
-              global={false}
             />
             <DateTimeInputButton kind="child" type="measured" />
-            <FormResetButton />
+            <FormResetButton kind="child" initialValues={initialValues} />
             <FormSubmitButton name="Calculate QTc" kind="child" />
           </AppForm>
         </View>

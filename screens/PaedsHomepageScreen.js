@@ -13,20 +13,30 @@ import defaultStyles from '../config/styles';
 import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
 
 const PaedsHomepageScreen = () => {
+  const initialValues = {
+    height: '',
+    length: '',
+    weight: '',
+    hc: '',
+    sex: '',
+    gestationInDays: 280,
+    dob: null,
+    dom: null,
+    systolic: '',
+    diastolic: '',
+    rrinterval: '',
+    qtinterval: '',
+    percentage: '100',
+  };
   return (
     <PCalcScreen isHomePage={true} style={{flex: 1}}>
       <View style={styles.topContainer}>
         <AppForm
           // dummy AppForm so useFormikContext line in components doesn't throw error here:
-          initialValues={{
-            dob: null,
-            tob: null,
-            gestationInDays: null,
-            sex: null,
-          }}>
-          <DateTimeInputButton global={true} kind="child" type="birth" />
-          <GestationInputButton global={true} kind="child" />
-          <SexInputButton global={true} kind="child" />
+          initialValues={initialValues}>
+          <DateTimeInputButton kind="child" type="birth" />
+          <GestationInputButton kind="child" />
+          <SexInputButton kind="child" />
         </AppForm>
       </View>
       <AppText style={styles.text}>Paediatric Calculators</AppText>
@@ -68,7 +78,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: defaultStyles.windowWidth < 375 ? 24 : 27,
-    marginBottom: 5,
+    marginBottom: defaultStyles.windowHeight <= 812 ? 3 : 8,
+    marginTop: defaultStyles.windowHeight <= 812 ? 0 : 5,
     marginLeft: 18,
   },
 });

@@ -1,117 +1,69 @@
 import React from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {
+  formatDate,
+  formatTime,
+  labelMaker,
+  updateLocalState,
+} from '../brains/oddBits';
 
-const BareDTPickerAndroid = ({ isDate, stateObject, type }) => {
+const BareDTPickerAndroid = ({isDate, stateObject, type}) => {
   const [state, setState] = stateObject;
-  const localState = isDate
-    ? state.date || new Date()
-    : state.time || new Date();
-
-  const manageState = (object) => {
-    setState((state) => {
-      const mutableState = { ...state };
-      for (const [key, value] of Object.entries(object)) {
-        mutableState[key] = value;
-      }
-      return mutableState;
-    });
-  };
-
-  const formatDate = (date) => {
-    if (!date) return null;
-    let month = '' + (date.getMonth() + 1);
-    let day = '' + date.getDate();
-    let yearArray = date.getFullYear().toString().split('');
-    let shortArray = [yearArray[2], yearArray[3]];
-    let year = shortArray.join('');
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
-    return [day, month, year].join('/');
-  };
-
-  const formatTime = (time) => {
-    if (!time) return null;
-    let hours = '' + time.getHours();
-    let workingMinutes = time.getMinutes();
-    let minutes = '' + Math.floor(workingMinutes / 15) * 15;
-    if (hours.length < 2) hours = '0' + hours;
-    if (minutes.length < 2) minutes = '0' + minutes;
-    return [hours, minutes].join(':');
-  };
-
-  const customiseLabel = (inputDate, inputTime) => {
-    if (inputDate && !inputTime) {
-      if (type === 'measured') {
-        if (formatDate(inputDate) === formatDate(new Date())) {
-          return `Measured: Today`;
-        } else {
-          return `Measured on ${formatDate(inputDate)}`;
-        }
-      } else {
-        return `Date of Birth: ${formatDate(inputDate)}`;
-      }
-    }
-    if (inputTime && !inputDate) {
-      if (type === 'measured') {
-        if (formatTime(inputTime) === formatTime(new Date())) {
-          return `Measured: now`;
-        } else {
-          return `Measured at ${formatTime(inputTime)}`;
-        }
-      } else {
-        return `Time of Birth: ${formatTime(inputTime)}`;
-      }
-    }
-  };
+  const localState = isDate ? state.date : state.time;
 
   const onChange = (event, selected) => {
     let workingObject = {};
     if (event.type === 'set') {
       const current = selected || localState;
+      const {text1, text2} = labelMaker(current, current, type, true, false);
+      if (isDate) {
+        workingObject.showCancel = true;
+        workingObject.date = current;
+        workingObject.showPickerDateAndroid = false;
+        workingObject.changedDate = true;
+        workingObject.text1 = text1;
+      } else {
+        workingObject.showCancelTime = true;
+        workingObject.time = current;
+        workingObject.showPickerTimeAndroid = false;
+        workingObject.changedTime = true;
+        workingObject.text2 = text2;
+      }
       if (
         isDate &&
         type === 'measured' &&
         formatDate(current) === formatDate(new Date())
       ) {
         workingObject.showCancel = false;
+        workingObject.date = null;
       } else if (
         !isDate &&
         type === 'measured' &&
         formatTime(current) === formatTime(new Date())
       ) {
         workingObject.showCancelTime = false;
-      } else {
-        isDate
-          ? (workingObject.text1 = customiseLabel(current, null))
-          : (workingObject.text2 = customiseLabel(null, current));
-        isDate
-          ? (workingObject.showCancel = true)
-          : (workingObject.showCancelTime = true);
+        workingObject.time = null;
       }
-      isDate ? (workingObject.date = current) : (workingObject.time = current);
-      isDate
-        ? (workingObject.showPickerDateAndroid = false)
-        : (workingObject.showPickerTimeAndroid = false);
-      isDate
-        ? (workingObject.changedDate = true)
-        : (workingObject.changedTime = true);
     } else {
       if (isDate) {
-        if (!state.showCancel) workingObject.date = null;
+        if (!state.showCancel) {
+          workingObject.date = null;
+        }
+        workingObject.showPickerDateAndroid = false;
       } else {
-        if (!state.showCancelTime) workingObject.time = null;
+        if (!state.showCancelTime) {
+          workingObject.time = null;
+        }
+        workingObject.showPickerTimeAndroid = false;
       }
-      isDate
-        ? (workingObject.showPickerDateAndroid = false)
-        : (workingObject.showPickerTimeAndroid = false);
     }
-    manageState(workingObject);
+    updateLocalState(workingObject, setState);
   };
 
   return (
     <DateTimePicker
       testID="datePicker"
-      value={localState}
+      value={localState || new Date()}
       mode={isDate ? 'date' : 'time'}
       display="spinner"
       onChange={onChange}

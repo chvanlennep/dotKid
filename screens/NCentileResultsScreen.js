@@ -26,7 +26,7 @@ const NCentileResultsScreen = ({route, navigation}) => {
   const [hc, exactHc] = results.centiles.hc;
 
   let weightTitle = 'Weight:';
-  if (measurements.weight) weightTitle = `Weight (${measurements.weight}g):`;
+  if (measurements.weight) weightTitle = `Weight (${measurements.weight}kg):`;
   let lengthTitle = 'Length:';
   if (measurements.length) lengthTitle = `Length (${measurements.length}cm):`;
   let hcTitle = 'Head Circumference:';
@@ -62,7 +62,7 @@ const NCentileResultsScreen = ({route, navigation}) => {
               <MoreCentileInfo exactCentile={exactWeight} />
               <CentileChartModal
                 measurementType="weight"
-                measurement={parameters.measurements.weight / 1000}
+                measurement={parameters.measurements.weight}
                 kind="neonate"
                 gestationInDays={correctedGestationInDays}
                 sex={parameters.measurements.sex}

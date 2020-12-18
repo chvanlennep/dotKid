@@ -20,11 +20,13 @@ import NumberInputButton from './input/NumberInputButton';
 import AppForm from '../AppForm';
 import FormSubmitTickButton from './FormSubmitTickButton';
 import {writeItemToStorage} from '../../brains/storage';
-import checkDefault from '../../brains/checkDefault';
+import {checkDefault} from '../../brains/oddBits';
 
 const windowHeight = Dimensions.get('window').height;
 let modalHeight = windowHeight * 0.7 > 570 ? 570 : windowHeight * 0.7;
-if (windowHeight < 570) modalHeight = windowHeight * 0.9;
+if (windowHeight < 570) {
+  modalHeight = windowHeight * 0.9;
+}
 
 const NFluidInputModal = ({name, valuesObject}) => {
   const scheme = useColorScheme();
@@ -99,39 +101,60 @@ const NFluidInputModal = ({name, valuesObject}) => {
   const commonProps = {
     unitsOfMeasurement: ' ml/kg/day',
     global: false,
+    kind: 'neonate',
+  };
+
+  let day1 = 't1';
+  let day2 = 't2';
+  let day3 = 't3';
+  let day4 = 't4';
+  let day5 = 't5';
+  if (name === 'Preterm') {
+    day1 = 'p1';
+    day2 = 'p2';
+    day3 = 'p3';
+    day4 = 'p4';
+    day5 = 'p5';
+  }
+  const initialValues = {
+    [day1]: '60',
+    [day2]: '80',
+    [day3]: '100',
+    [day4]: '120',
+    [day5]: '150',
   };
 
   const inputButtons = [
     {
-      name: 'day1',
+      name: day1,
       userLabel: '1st Day',
       iconName: 'numeric-1-circle',
       defaultValue: '60',
       userValue: values.day1 || defaults.day1,
     },
     {
-      name: 'day2',
+      name: day2,
       userLabel: '2nd Day',
       iconName: 'numeric-2-circle',
       defaultValue: '80',
       userValue: values.day2 || defaults.day2,
     },
     {
-      name: 'day3',
+      name: day3,
       userLabel: '3rd day',
       iconName: 'numeric-3-circle',
       defaultValue: '100',
       userValue: values.day3 || defaults.day3,
     },
     {
-      name: 'day4',
+      name: day4,
       userLabel: '4th Day',
       iconName: 'numeric-4-circle',
       defaultValue: '120',
       userValue: values.day4 || defaults.day4,
     },
     {
-      name: 'day5',
+      name: day5,
       userLabel: '5th+ Day',
       iconName: 'numeric-5-circle',
       defaultValue: '150',
@@ -215,7 +238,10 @@ const NFluidInputModal = ({name, valuesObject}) => {
                       />
                     </TouchableOpacity>
                   </View>
-                  <FormSubmitTickButton />
+                  <FormSubmitTickButton
+                    values={values}
+                    initialValues={initialValues}
+                  />
                 </View>
               </AppForm>
             </View>

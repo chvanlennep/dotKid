@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
-import {Alert, Modal, StyleSheet, View, TouchableOpacity} from 'react-native';
+import {Modal, StyleSheet, View, TouchableOpacity} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import AppText from '../AppText';
 import colors from '../../config/colors';
 import defaultStyles from '../../config/styles';
 import Icon from '../Icon';
+import {addOrdinalSuffix, decidePluralSuffix} from '../../brains/oddBits';
 
 const modalWidth =
   defaultStyles.container.width > 400 ? 400 : defaultStyles.container.width;
@@ -17,40 +18,9 @@ const SubmitButton = ({
   valueAfterCorrection,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const buttonWidth = defaultStyles.container.width;
   let outputString = '';
   let modalHeading = '';
   let modalMessage = '';
-  const addOrdinalSuffix = (inputNumber) => {
-    let answerNumber = inputNumber;
-    if (Number.isInteger(inputNumber) === false) {
-      inputNumber *= 10;
-      if (Number.isInteger(inputNumber) === false) {
-        return 'Error: only integers or numbers to 1 decimal place are supported';
-      }
-    }
-    let remainder10 = inputNumber % 10;
-    let remainder100 = inputNumber % 100;
-    if (remainder10 === 1 && remainder100 != 11) {
-      return `${answerNumber}st`;
-    }
-    if (remainder10 === 2 && remainder100 != 12) {
-      return `${answerNumber}nd`;
-    }
-    if (remainder10 === 3 && remainder100 != 13) {
-      return `${answerNumber}rd`;
-    } else {
-      return `${answerNumber}th`;
-    }
-  };
-  const decidePluralSuffix = (inputNumber) => {
-    if (inputNumber === 1) {
-      return '';
-    } else {
-      return 's';
-    }
-  };
-
   switch (kind) {
     case 'child':
       if (valueAfterCorrection !== 'not corrected') {
@@ -79,7 +49,9 @@ const SubmitButton = ({
       break;
     case 'jaundice':
       let outputGestation = gestationWeeks;
-      if (gestationWeeks >= 38) outputGestation = '38+';
+      if (gestationWeeks >= 38) {
+        outputGestation = '38+';
+      }
       outputString = `${valueBeforeCorrection} old, ${outputGestation} week chart`;
       break;
     case 'nFluid':
@@ -94,7 +66,8 @@ const SubmitButton = ({
       birthGestationDays = valueBeforeCorrection % 7;
       outputString = `Birth Gestation: ${birthGestationWeeks}+${birthGestationDays}`;
       modalHeading = outputString;
-      modalMessage = `As per RCPCH guidelines, infants born at term (37 weeks and higher) are compared against all term infants and not just infants born at their gestation.\n\nPreterm infants are compared against infants born at their specific gestation.`;
+      modalMessage =
+        'As per RCPCH guidelines, infants born at term (37 weeks and higher) are compared against all term infants and not just infants born at their gestation.\n\nPreterm infants are compared against infants born at their specific gestation.';
       break;
     default:
       console.log('error in AgeButton switch');
@@ -102,7 +75,7 @@ const SubmitButton = ({
   const buttonBackGroundColor =
     kind === 'child' ? colors.primary : colors.secondary;
 
-  if (kind !== 'jaundice')
+  if (kind !== 'jaundice') {
     return (
       <React.Fragment>
         <TouchableOpacity
@@ -161,7 +134,7 @@ const SubmitButton = ({
         </View>
       </React.Fragment>
     );
-  else
+  } else {
     return (
       <View
         style={[
@@ -173,6 +146,7 @@ const SubmitButton = ({
         <AppText style={{color: colors.white}}>{outputString}</AppText>
       </View>
     );
+  }
 };
 
 export default SubmitButton;

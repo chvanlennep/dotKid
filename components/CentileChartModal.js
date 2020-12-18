@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {
-  Appearance,
   Dimensions,
   LogBox,
   Modal,
@@ -20,8 +19,6 @@ const {height, width} = Dimensions.get('window');
 const aspectRatio = height / width;
 const chartWidth = aspectRatio > 1.6 ? width - 90 : width - 250;
 const chartHeight = chartWidth * 1.6;
-
-const scheme = Appearance.getColorScheme();
 
 LogBox.ignoreLogs(['Warning: Failed prop type:']);
 

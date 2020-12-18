@@ -1,11 +1,13 @@
-import { Platform, Dimensions } from 'react-native';
+import {Platform, Dimensions} from 'react-native';
 
 import colors from './colors';
 
 const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 export default {
   windowWidth,
+  windowHeight,
   colors,
   text: {
     fontSize: windowWidth < 375 ? 16 : 18,

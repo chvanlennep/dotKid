@@ -16,9 +16,10 @@ import NFluidInputButton from '../components/buttons/NFluidInputButton';
 import GestationInputButton from '../components/buttons/input/GestationInputButton';
 import ageChecker from '../brains/ageChecker';
 import nFluidCalculator from '../brains/nFluidCalculator';
-import {GlobalStateContext} from '../components/GlobalStateContext';
+import {GlobalStatsContext} from '../components/GlobalStats';
 import zeit from '../brains/zeit';
 import {readItemFromStorage} from '../brains/storage';
+import {handleOldValues} from '../brains/oddBits';
 
 const NFluidRequirementsScreen = () => {
   const navigation = useNavigation();
@@ -34,36 +35,9 @@ const NFluidRequirementsScreen = () => {
   const [termValues, setTermValues] = useState(defaults);
   const [pretermValues, setPretermValues] = useState(defaults);
 
-  const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
-
-  const moveDataAcrossGlobal = (movingTo, values) => {
-    setGlobalStats((globalStats) => {
-      const child = {...globalStats.child};
-      const neonate = {...globalStats.neonate};
-      for (const [key, value] of Object.entries(values)) {
-        let newKey = key;
-        let newValue = value;
-        if (movingTo === 'neonate') {
-          if (key === 'height') {
-            newKey = 'length';
-          }
-          if (key === 'weight') {
-            newValue = value * 1000;
-          }
-          neonate[newKey] = newValue;
-        } else {
-          if (key === 'length') {
-            newKey = 'height';
-          }
-          if (key === 'weight') {
-            newValue = value / 1000;
-          }
-          child[newKey] = newValue;
-        }
-      }
-      return {child, neonate};
-    });
-  };
+  const {globalStats, moveDataAcrossGlobal, setGlobalStats} = useContext(
+    GlobalStatsContext,
+  );
 
   const checkCorrection = '↑ Please check this value';
   const measurementNeeded = "↑ We'll need a weight to calculate";
@@ -75,11 +49,11 @@ const NFluidRequirementsScreen = () => {
     correction: Yup.number().min(30, checkCorrection).max(200, checkCorrection),
     dob: Yup.date()
       .nullable()
-      .required('↑ Please enter a date of birth')
+      .required('↑ Please enter a date and time of birth')
       .label('Date of Birth'),
     weight: Yup.number()
-      .min(100, wrongUnitsMessage('g'))
-      .max(8000, wrongUnitsMessage('g'))
+      .min(0.1, wrongUnitsMessage('kg'))
+      .max(8, wrongUnitsMessage('kg'))
       .required(measurementNeeded),
     gestationInDays: Yup.number()
       .min(161, '↑ Please select a birth gestation')
@@ -92,12 +66,10 @@ const NFluidRequirementsScreen = () => {
     weight: '',
     gestationInDays: 0,
     dob: null,
-    tob: null,
     dom: null,
-    tom: null,
   };
 
-  const handleFormikSubmit = async (values) => {
+  const handleFormikSubmit = (values) => {
     const {gestationInDays} = values;
     const correctedGestation =
       gestationInDays + zeit(values.dob, 'days', values.dom);
@@ -124,26 +96,36 @@ const NFluidRequirementsScreen = () => {
           {
             text: 'OK',
             onPress: () => {
-              moveDataAcrossGlobal('child', values);
+              moveDataAcrossGlobal('child', initialValues);
               navigation.navigate('RootPaed', {screen: 'FluidCalculator'});
             },
           },
         ],
       );
     } else {
-      const results = nFluidCalculator(values, workingValues, termEtc);
-      const serialisedObject = JSON.stringify(results);
-      navigation.navigate(routes.NEONATE_FLUID_RESULTS, serialisedObject);
+      const submitFunction = () => {
+        const results = nFluidCalculator(values, workingValues, termEtc);
+        const serialisedObject = JSON.stringify(results);
+        navigation.navigate(routes.NEONATE_FLUID_RESULTS, serialisedObject);
+      };
+      handleOldValues(
+        submitFunction,
+        'neonate',
+        setGlobalStats,
+        globalStats.neonate,
+        initialValues,
+      );
     }
   };
 
   useEffect(() => {
-    readItemFromStorage(`term_fluid_requirements`, setTermValues, defaults);
+    readItemFromStorage('term_fluid_requirements', setTermValues, defaults);
     readItemFromStorage(
-      `preterm_fluid_requirements`,
+      'preterm_fluid_requirements',
       setPretermValues,
       defaults,
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -164,7 +146,7 @@ const NFluidRequirementsScreen = () => {
               name="weight"
               userLabel="Weight"
               iconName="chart-bar"
-              unitsOfMeasurement="g"
+              unitsOfMeasurement="kg"
               kind="neonate"
             />
             <NumberInputButton
@@ -174,7 +156,6 @@ const NFluidRequirementsScreen = () => {
               unitsOfMeasurement="%"
               kind="neonate"
               defaultValue="100"
-              global={false}
             />
             <NFluidInputButton
               termObject={[termValues, setTermValues]}
@@ -185,7 +166,11 @@ const NFluidRequirementsScreen = () => {
               type="measured"
               renderTime={true}
             />
-            <FormResetButton additionalMessage="This will not reset any custom fluid requirements" />
+            <FormResetButton
+              kind="neonate"
+              initialValues={initialValues}
+              additionalMessage="This will not reset any custom fluid requirements"
+            />
             <FormSubmitButton
               name="Calculate Fluid Requirement"
               kind="neonate"

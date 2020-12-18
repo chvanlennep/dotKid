@@ -15,18 +15,12 @@ import FormResetButton from '../components/buttons/FormResetButton';
 import AppForm from '../components/AppForm';
 import calculateCentile from '../brains/calculateCentile';
 import routes from '../navigation/routes';
-import {GlobalStateContext} from '../components/GlobalStateContext';
 import ageChecker from '../brains/ageChecker';
+import {handleOldValues} from '../brains/oddBits';
+import {GlobalStatsContext} from '../components/GlobalStats';
 
 const WETFLAGScreen = () => {
   const navigation = useNavigation();
-
-  const [globalStats, setGlobalStats] = useContext(GlobalStateContext);
-
-  const oneMeasurementNeeded = "↑ We'll need this measurement";
-  const wrongUnitsMessage = (units) => {
-    return `↑ Are you sure your input is in ${units}?`;
-  };
 
   const validationSchema = Yup.object().shape({
     dob: Yup.date()
@@ -40,12 +34,12 @@ const WETFLAGScreen = () => {
     dob: null,
     sex: '',
     weight: '',
-    dom: null,
   };
+
+  const {globalStats, setGlobalStats} = useContext(GlobalStatsContext);
 
   const handleFormikSubmit = (values) => {
     const checkAge = ageChecker(values);
-    const centileObject = calculateCentile(values);
     switch (checkAge) {
       case 'Negative age':
         Alert.alert(
@@ -64,21 +58,29 @@ const WETFLAGScreen = () => {
         );
         break;
       default:
-        const centileObject = calculateCentile(values);
-        const measurements = values;
-        const output = WETFLAG(
-          values.dob,
-          values.dom,
-          values.sex,
-          values.weight,
+        const submitFunction = () => {
+          const centileObject = calculateCentile(values);
+          const measurements = values;
+          const output = WETFLAG(
+            values.dob,
+            values.dom,
+            values.sex,
+            values.weight,
+          );
+          const serialisedObject = JSON.stringify({
+            output,
+            centileObject,
+            measurements,
+          });
+          navigation.navigate(routes.WETFLAG_RESULTS, serialisedObject);
+        };
+        handleOldValues(
+          submitFunction,
+          'child',
+          setGlobalStats,
+          globalStats.child,
+          initialValues,
         );
-        const serialisedObject = JSON.stringify({
-          output,
-          centileObject,
-          measurements,
-        });
-
-        navigation.navigate(routes.WETFLAG_RESULTS, serialisedObject);
     }
   };
   return (
@@ -98,8 +100,7 @@ const WETFLAGScreen = () => {
               unitsOfMeasurement="kg"
               kind="child"
             />
-
-            <FormResetButton />
+            <FormResetButton kind="child" initialValues={initialValues} />
             <FormSubmitButton name="Calculate WETFLAG Values" kind="child" />
           </AppForm>
         </View>

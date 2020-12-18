@@ -6,7 +6,7 @@ export default (
   until, // closest date / time in the interval
   integer = true, // if returning as a number, defaults to an integer
   correctDays = 0, // number of days to take off interval
-  resus = false // if set to true, units must be "string". This outputs string interval for purposes of resus logs
+  resus = false, // if set to true, units must be "string". This outputs string interval for purposes of resus logs
 ) => {
   const untilObject = until || new Date();
   if (!from) {
@@ -139,7 +139,7 @@ export default (
         case wholeWeeks > 8 && rawYears < 1:
           // if a leap day adds 1 day, could appear 1 year old when they aren't
           if (rawYears > 0.9993) {
-            return `11 months and 3 weeks`;
+            return '11 months and 3 weeks';
           } else {
             return `${intAges.months} month${plurals.months} and ${intAges.remainderWeeks} week${plurals.remainderWeeks}`;
           }
