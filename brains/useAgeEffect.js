@@ -2,8 +2,14 @@ import {useLayoutEffect} from 'react';
 import zeit from './zeit';
 
 export default (dobObject, domObject, formikRef, setShowGestation) => {
-  const dob = dobObject.value;
-  const dom = domObject.value;
+  let dob;
+  let dom;
+  if (dobObject) {
+    dob = dobObject.hasOwnProperty('value') ? dobObject.value : dobObject;
+  }
+  if (domObject) {
+    dom = domObject.hasOwnProperty('value') ? domObject.value : domObject;
+  }
   useLayoutEffect(() => {
     let resetValues = true;
     if (formikRef.current) {

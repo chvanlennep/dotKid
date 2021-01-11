@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {
   Platform,
   StyleSheet,
@@ -15,7 +15,6 @@ import colors from '../../../config/colors';
 import ButtonIcon from '../ButtonIcon';
 import ErrorMessage from '../../ErrorMessage';
 import defaultStyles from '../../../config/styles';
-import {GlobalStatsContext, initialState} from '../../GlobalStats';
 import useCombined from '../../../brains/useCombined';
 
 const modalWidth =
@@ -24,13 +23,11 @@ const modalWidth =
 const GestationInputButton = ({kind, name = 'gestationInDays'}) => {
   const ios = Platform.OS === 'ios' ? true : false;
 
-  const {globalStats} = useContext(GlobalStatsContext);
-
-  const {combinedSetter} = useCombined(kind, name);
+  const {combinedSetter, buttonState, initialState} = useCombined(kind, name);
 
   const {errors, touched} = useFormikContext();
 
-  const {modalVisible, days, weeks, showReset, value} = globalStats[kind][name];
+  const {modalVisible, days, weeks, showReset, value} = buttonState;
 
   let buttonLabel;
   if (kind === 'neonate') {

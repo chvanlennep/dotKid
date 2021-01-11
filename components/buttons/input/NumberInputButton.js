@@ -1,4 +1,4 @@
-import React, {useContext, useLayoutEffect} from 'react';
+import React, {useLayoutEffect} from 'react';
 import {
   Platform,
   StyleSheet,
@@ -13,7 +13,6 @@ import defaultStyles from '../../../config/styles';
 import ButtonIcon from '../ButtonIcon';
 import AppText from '../../AppText';
 import ErrorMessage from '../../ErrorMessage';
-import {GlobalStatsContext, initialState} from '../../GlobalStats';
 import useCombined from '../../../brains/useCombined';
 
 // Must be a child of AppForm and GlobalStatsContext
@@ -28,18 +27,16 @@ const NumberInputButton = ({
   userLabel,
   userValue = '',
 }) => {
-  const {globalStats} = useContext(GlobalStatsContext);
-
   let width = defaultStyles.container.width;
   if (!global) {
     width = defaultStyles.container.width * 0.9;
   }
+
+  const {combinedSetter, buttonState, initialState} = useCombined(kind, name);
+  const {showCancel, showTextInput, text, value} = buttonState;
   const original = initialState[kind][name].value;
-  const {showCancel, showTextInput, text, value} = globalStats[kind][name];
 
   const deleteIconName = original ? 'refresh' : 'delete-forever';
-
-  const {combinedSetter} = useCombined(kind, name);
 
   const {errors, touched} = useFormikContext();
 
@@ -48,14 +45,9 @@ const NumberInputButton = ({
       ? `Enter here (in${unitsOfMeasurement})`
       : `Enter here (in ${unitsOfMeasurement})`;
 
-  const convertCommas = value.replace(/,/g, '.');
-  const numberToSubmit = convertCommas.replace(/[^0-9.]/g, '');
-
   let localButtonText = userLabel;
 
   if (value && (!defaultValue || (defaultValue && defaultValue !== value))) {
-    localButtonText = `${userLabel}: ${numberToSubmit}${unitsOfMeasurement}`;
-  } else if (value && defaultValue && defaultValue === value) {
     localButtonText = `${userLabel}: ${value}${unitsOfMeasurement}`;
   }
 
@@ -120,8 +112,8 @@ const NumberInputButton = ({
         <View style={[styles.inputBox, {width: width}]}>
           <TextInput
             style={styles.textInput}
-            onChangeText={(text) => {
-              combinedSetter({text: text});
+            onChangeText={(inputText) => {
+              combinedSetter({text: inputText});
             }}
             value={text}
             autoFocus={true}

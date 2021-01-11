@@ -14,6 +14,7 @@ import PaedsHomepageScreen from '../screens/PaedsHomepageScreen';
 import PCentileResultsScreen from '../screens/PCentileResultsScreen';
 import BPResultsScreen from '../screens/BPResultsScreen';
 import ECGResultsScreen from '../screens/ECGResultsScreen';
+import AgeScreen from '../screens/AgeScreen';
 
 const Stack = createStackNavigator();
 
@@ -26,6 +27,7 @@ const PaedsCalcNavigator = () => {
         headerShown: false,
       }}>
       <Stack.Screen name="PaedsHomepage" component={PaedsHomepageScreen} />
+      <Stack.Screen name="Age" component={AgeScreen} />
       <Stack.Screen name="BloodPressure" component={BPScreen} />
       <Stack.Screen name="BPResults" component={BPResultsScreen} />
       <Stack.Screen name="BSA" component={BSAScreen} />

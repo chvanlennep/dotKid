@@ -14,19 +14,9 @@ import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton
 
 const PaedsHomepageScreen = () => {
   const initialValues = {
-    height: '',
-    length: '',
-    weight: '',
-    hc: '',
     sex: '',
     gestationInDays: 280,
     dob: null,
-    dom: null,
-    systolic: '',
-    diastolic: '',
-    rrinterval: '',
-    qtinterval: '',
-    percentage: '100',
   };
   return (
     <PCalcScreen isHomePage={true} style={{flex: 1}}>
@@ -42,6 +32,9 @@ const PaedsHomepageScreen = () => {
       <AppText style={styles.text}>Paediatric Calculators</AppText>
       <View style={styles.bottomContainer}>
         <ScrollView>
+          <NavigateButton directions={routes.AGE}>
+            Age Calculator
+          </NavigateButton>
           <NavigateButton directions={routes.BLOOD_PRESSURE}>
             Blood Pressure Calculator
           </NavigateButton>

@@ -14,15 +14,9 @@ import defaultStyles from '../config/styles';
 
 const NeonateHomepageScreen = () => {
   const initialValues = {
-    length: '',
-    weight: '',
-    hc: '',
     sex: '',
     gestationInDays: 0,
     dob: null,
-    dom: null,
-    correction: '100',
-    sbr: '',
   };
 
   return (

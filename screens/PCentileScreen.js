@@ -129,6 +129,7 @@ const PCentileScreen = () => {
               {
                 text: 'Cancel',
                 style: 'cancel',
+                onPress: () => null,
               },
               {
                 text: 'OK',

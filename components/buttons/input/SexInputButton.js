@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {
   Platform,
   Modal,
@@ -15,7 +15,6 @@ import defaultStyles from '../../../config/styles';
 import ButtonIcon from '../ButtonIcon';
 import AppText from '../../AppText';
 import ErrorMessage from '../../ErrorMessage';
-import {GlobalStatsContext, initialState} from '../../GlobalStats';
 import useCombined from '../../../brains/useCombined';
 
 const modalWidth =
@@ -24,13 +23,11 @@ const modalWidth =
 const SexInputButton = ({kind}) => {
   const ios = Platform.OS === 'ios' ? true : false;
 
-  const {globalStats} = useContext(GlobalStatsContext);
+  const {combinedSetter, buttonState, initialState} = useCombined(kind, 'sex');
 
-  const {modalVisible, showCancel, value, sex} = globalStats[kind].sex;
+  const {modalVisible, showCancel, value, sex} = buttonState;
 
   const buttonText = value ? `Sex: ${value}` : 'Sex';
-
-  const {combinedSetter} = useCombined(kind, 'sex');
 
   const {errors, touched} = useFormikContext();
 

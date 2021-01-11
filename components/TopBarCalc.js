@@ -93,9 +93,14 @@ const TopBarCalc = ({
   };
 
   useFocusEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', androidBackHandler);
-    return () =>
-      BackHandler.removeEventListener('hardwareBackPress', androidBackHandler);
+    if (Platform.OS === 'android') {
+      BackHandler.addEventListener('hardwareBackPress', androidBackHandler);
+      return () =>
+        BackHandler.removeEventListener(
+          'hardwareBackPress',
+          androidBackHandler,
+        );
+    }
   });
 
   return (

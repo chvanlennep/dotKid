@@ -13,6 +13,7 @@ import AppText from '../components/AppText';
 import ReferenceBackgroundScreen from '../components/ReferenceBackgroundScreen';
 import colors from '../config/colors';
 import defaultStyles from '../config/styles';
+import {version} from '../../package.json';
 
 const AboutScreen = () => {
   const scheme = useColorScheme();
@@ -45,7 +46,7 @@ const AboutScreen = () => {
               styles.subheading,
               {color: dark ? colors.lightSecondary : colors.darkSecondary},
             ]}>
-            dotKid
+            {`dotKid (${version})`}
           </Text>
           <Text
             style={[

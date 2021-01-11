@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {
   Modal,
   Platform,
@@ -19,7 +19,6 @@ import defaultStyles from '../../../config/styles';
 import AppText from '../../AppText';
 import {formatDate, formatTime} from '../../../brains/oddBits';
 import useCombined from '../../../brains/useCombined';
-import {GlobalStatsContext, initialState} from '../../GlobalStats';
 
 const modalWidth =
   defaultStyles.container.width > 350 ? 350 : defaultStyles.container.width;
@@ -37,9 +36,10 @@ const DateTimeInputButton = ({kind, type, renderTime = false}) => {
   const fancyPicker =
     majorVersionIOS >= 14 && kind === 'neonate' ? true : false;
 
-  const {globalStats} = useContext(GlobalStatsContext);
-
-  const {combinedSetter} = useCombined(kind, dateName);
+  const {combinedSetter, buttonState, initialState} = useCombined(
+    kind,
+    dateName,
+  );
 
   const {
     date1,
@@ -52,7 +52,7 @@ const DateTimeInputButton = ({kind, type, renderTime = false}) => {
     showPickerTimeAndroid,
     text1,
     text2,
-  } = globalStats[kind][dateName];
+  } = buttonState;
 
   const blankDob = 'Date of Birth';
   const blankDobCombined = 'Date and Time of Birth';
@@ -144,6 +144,7 @@ const DateTimeInputButton = ({kind, type, renderTime = false}) => {
       combinedSetter(workingObject);
     }
   };
+
   const openPickerDateAndroid = () => {
     let workingObject = {};
     if (!date1) {

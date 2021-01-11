@@ -9,6 +9,7 @@ export default (kind, name) => {
   const {setFieldValue, handleReset} = useFormikContext();
   const [reset, setReset] = useState(false);
 
+  const buttonState = globalStats[kind][name];
   const value = globalStats[kind][name].value;
 
   const combinedSetter = (localState) => {
@@ -73,5 +74,5 @@ export default (kind, name) => {
     }
   }, [value, reset, kind, name, setFieldValue, handleReset]);
 
-  return {combinedSetter, combinedReset};
+  return {combinedSetter, combinedReset, buttonState, initialState};
 };

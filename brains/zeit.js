@@ -10,7 +10,6 @@ export default (
 ) => {
   const untilObject = until || new Date();
   if (!from) {
-    console.log('No date given to Zeit');
     return null;
   }
   const addDays = (date, days) => {
