@@ -61,17 +61,19 @@ const NFluidOutput = ({results}) => {
   );
   const [modalVisible, setModalVisible] = useState(false);
 
-  const title = `Neonatal Fluid Requirement:`;
+  const title = 'Neonatal Fluid Requirement:';
 
-  const modalTitle = `Weight used: ${weight}g`;
+  const modalTitle = `Weight used: ${weight}kg`;
 
   const isCorrected = correction === '100' ? ' (no correction)' : '';
 
   const requirementsUsed = `1st Day: ${day1} ml/kg/day\n2nd Day: ${day2} ml/kg/day\n3rd Day: ${day3} ml/kg/day\n4th Day: ${day4} ml/kg/day\n5th Day: ${day5} ml/kg/day\n\n`;
 
-  const modalParagraph = `Requirements for age have been calculated based on an increasing requirement until 5th day of life. If your local guidelines differ from the default values, please change them on the previous screen.\n\n`;
+  const modalParagraph =
+    'Requirements for age have been calculated based on an increasing requirement until 5th day of life. If your local guidelines differ from the default values, please change them on the previous screen.\n\n';
 
-  const gestationExplanation = `Fluid rates for infants born before 37 weeks gestation will be calculated on preterm values until 40 weeks corrected gestation is reached.\n\n`;
+  const gestationExplanation =
+    'Fluid rates for infants born before 37 weeks gestation will be calculated on preterm values until 40 weeks corrected gestation is reached.\n\n';
 
   const modalParagraph2 = `${gestation} infant values used:\n\n${requirementsUsed}Correction applied: ${correction}%${isCorrected}\n\nThe fluid requirement calculated is a combined total for intravenous and enteral fluids. The proportions are dependent on clinical needs at the time.`;
 
@@ -79,7 +81,7 @@ const NFluidOutput = ({results}) => {
     setOutput(
       `${valuesObject[values.interval]}ml${unitsObject[values.interval]}`,
     );
-  }, [values.interval]);
+  }, [values, unitsObject, valuesObject]);
 
   return (
     <View style={styles.outputContainer}>

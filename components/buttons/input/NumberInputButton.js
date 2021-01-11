@@ -47,7 +47,7 @@ const NumberInputButton = ({
 
   let localButtonText = userLabel;
 
-  if (value && (!defaultValue || (defaultValue && defaultValue !== value))) {
+  if (value) {
     localButtonText = `${userLabel}: ${value}${unitsOfMeasurement}`;
   }
 
