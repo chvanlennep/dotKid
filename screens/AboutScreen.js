@@ -54,8 +54,7 @@ const AboutScreen = () => {
               styles.text,
               {color: dark ? colors.white : colors.dark},
             ]}>
-            dotKid is an app to aid qualified paediatric and neonatal staff in
-            the functions of their professional role. Guidance is based on
+            dotKid is an app to aid qualified paediatric and neonatal staff for the purposes of teaching and training qualified staff and healtchare students. Guidance is based on
             clinical guidelines as detailed in the references section.
           </Text>
         </View>
@@ -156,11 +155,11 @@ const AboutScreen = () => {
             these terms please close and discontinue usage of this app.
             {'\n'}
             {'\n'}This app is for use by professional paediatric/neonatal staff
-            in the United Kingdom only and is intended as a guide/tool in the
-            aid of clinical care. This app is written according to evidence
+            in the United Kingdom only and is intended as a guide/tool in the teaching and training of delivery of 
+            clinical care. This app is written according to evidence
             based clinical guidelines and is designed with safety functions to
-            eliminate or reduce risks as far as possible. Neither this app nor
-            its contents or output should be used as a replacement for clinical
+            eliminate or reduce error as far as possible. Neither this app nor
+            its contents or output should be used directly in clinical care, nor as a replacement for clinical
             expertise, experience or judgement. This app, its contents and
             output should be handled in such a way that maintains patient
             confidentialty and in accordance with Caldicott Principles.
