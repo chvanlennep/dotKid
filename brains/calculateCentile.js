@@ -514,10 +514,10 @@ const outputBMICentile = (z, object, workingLMSData) => {
 const centileFromLms = (
   ageInDays,
   ageInMonths,
-  birthGestationInDays = 280,
-  correctedGestationInDays = 280,
   kind,
   object,
+  birthGestationInDays = 280,
+  correctedGestationInDays = 280,
 ) => {
   let array;
   const sex = object.sex;
@@ -633,6 +633,7 @@ const centileFromLms = (
   }
 };
 
+// object param being javascript object containing all measurements / dob / dom etc
 const calculateCentile = (object) => {
   const dob = object.dob;
   const dom = object.dom || new Date();
@@ -651,10 +652,10 @@ const calculateCentile = (object) => {
     const results = centileFromLms(
       ageInDays,
       ageInMonths,
-      birthGestationInDays,
-      correctedGestationInDays,
       kind,
       object,
+      birthGestationInDays,
+      correctedGestationInDays,
     );
     return {
       centiles: {
@@ -672,10 +673,10 @@ const calculateCentile = (object) => {
       const calculatedValues = centileFromLms(
         ageInDays,
         ageInMonths,
-        birthGestationInDays,
-        correctedGestationInDays,
         'neonate',
         object,
+        birthGestationInDays,
+        correctedGestationInDays,
       );
       return {
         centiles: calculatedValues,
@@ -753,10 +754,10 @@ const calculateCentile = (object) => {
     const calculatedValues = centileFromLms(
       ageInDays,
       ageInMonths,
-      birthGestationInDays,
-      correctedGestationInDays,
       kind,
       object,
+      birthGestationInDays,
+      correctedGestationInDays,
     );
     return {
       centiles: calculatedValues.centiles,
