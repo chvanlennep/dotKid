@@ -160,8 +160,10 @@ const ALSTeriaryFunctionButton = ({
     return functionButtons;
   };
 
+  const pressedColor = kind === 'child' ? colors.primary : colors.secondary;
+
   return (
-    <TouchableHighlight
+    <TouchableOpacity
       activeOpacity={0.5}
       underlayColor={colors.light}
       onPress={handlePress}
@@ -173,7 +175,7 @@ const ALSTeriaryFunctionButton = ({
           style,
           changeBackground && [
             {
-              backgroundColor: backgroundColorPressed || colors.secondary,
+              backgroundColor: backgroundColorPressed || pressedColor,
             },
           ],
         ]}>
@@ -198,7 +200,7 @@ const ALSTeriaryFunctionButton = ({
           </React.Fragment>
         )}
       </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 };
 

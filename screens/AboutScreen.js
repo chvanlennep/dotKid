@@ -15,6 +15,56 @@ import colors from '../config/colors';
 import defaultStyles from '../config/styles';
 import {version} from '../../package.json';
 
+const LegalText = ({style, modal}) => {
+  return (
+    <React.Fragment>
+      <Text style={style}>
+        By downloading and/or using dotKid {`(`}"this app"{`)`} you acknowledge
+        that you have read and agree to be bound by the terms of the disclaimer
+        outlined below. If you do not wish to be bound by these terms please
+        close and discontinue usage of this app.
+        {'\n'}
+        {'\n'}This app is for use by professional paediatric / neonatal staff in
+        the United Kingdom only and is intended as a guide / tool in the
+        teaching and training of delivery of clinical care. This app is written
+        according to evidence based clinical guidelines and is designed with
+        safety functions to eliminate or reduce error as far as possible.
+        Neither this app nor its contents or output should be used directly in
+        clinical care, nor as a replacement for clinical expertise, experience
+        or judgement. This app, its contents and output should be handled in
+        such a way that maintains patient confidentialty and in accordance with
+        Caldicott Principles.
+        {'\n'}
+        {'\n'}
+        This app, its content and output should not be used as a replacement for
+        local or organisational guidelines.
+        {'\n'}
+        {'\n'}The creators of dotKid will endeavour to keep dotKid accurate,
+        up-to-date and free from errors. However, no responsibility can be taken
+        by the creators of dotKid should this not be the case.
+        {'\n'}
+        {'\n'}The use of dotKid is at the users discretion and no responsibility
+        nor liability shall be taken by the creators of dotKid for the use or
+        misuse of this app, nor its contents or outputs.
+        {'\n'}
+        {'\n'}You agree to hold the creators of this app harmless and free from
+        fault for any claim, demand, cost, expense or legal pursuit where this
+        app is used not in accordance with the instructions for use and/or the
+        purposes intended and/or the actions you take as a result of this app,
+        its contents or output as outlined on this page.
+        {'\n'}
+        {'\n'}This disclaimer shall be governed by the laws of England and Wales
+        and any dispute shall be submitted to the English courts.
+      </Text>
+      {modal && (
+        <Text style={style}>
+          This disclaimer can be viewed any time in the Info tab in this app.
+        </Text>
+      )}
+    </React.Fragment>
+  );
+};
+
 const AboutScreen = () => {
   const scheme = useColorScheme();
   const dark = scheme === 'dark' ? true : false;
@@ -54,8 +104,10 @@ const AboutScreen = () => {
               styles.text,
               {color: dark ? colors.white : colors.dark},
             ]}>
-            dotKid is an app to aid qualified paediatric and neonatal staff for the purposes of teaching and training qualified staff and healtchare students. Guidance is based on
-            clinical guidelines as detailed in the references section.
+            dotKid is an app to aid qualified paediatric and neonatal staff for
+            the purposes of teaching and training qualified staff and healtchare
+            students. Guidance is based on clinical guidelines as detailed in
+            the references section.
           </Text>
         </View>
         <View
@@ -91,6 +143,27 @@ const AboutScreen = () => {
                 {'email here'}
               </Text>
             }{' '}
+            or{' '}
+            {
+              <React.Fragment>
+                <MaterialCommunityIcons
+                  name="twitter"
+                  color={'#1DA1F2'}
+                  size={16}
+                />{' '}
+                <Text
+                  style={[
+                    defaultStyles.text,
+                    styles.hyperlink,
+                    {color: dark ? colors.lightPrimary : colors.darkPrimary},
+                  ]}
+                  onPress={() =>
+                    Linking.openURL('https://twitter.com/charleshvl?lang=en')
+                  }>
+                  {'@charleshvl '}
+                </Text>
+              </React.Fragment>
+            }
             and Dr Ryan Samuels{' '}
             {
               <Text
@@ -105,7 +178,7 @@ const AboutScreen = () => {
             }{' '}
             or{' '}
             {
-              <>
+              <React.Fragment>
                 <MaterialCommunityIcons
                   name="twitter"
                   color={'#1DA1F2'}
@@ -122,7 +195,7 @@ const AboutScreen = () => {
                   }>
                   {'@DrRyanTalks'}
                 </Text>
-              </>
+              </React.Fragment>
             }
             .{'\n'}
             {'\n'}If you have any feedback or suggestions for dotKid then please
@@ -143,49 +216,13 @@ const AboutScreen = () => {
             ]}>
             Legal Disclaimer
           </Text>
-          <Text
+          <LegalText
             style={[
               defaultStyles.text,
               styles.text,
               {color: dark ? colors.white : colors.dark},
-            ]}>
-            By downloading and/or using dotKid {`(`}"this app"{`)`} you
-            acknowledge that you have read and agree to be bound by the terms of
-            the disclaimer outlined below. If you do not wish to be bound by
-            these terms please close and discontinue usage of this app.
-            {'\n'}
-            {'\n'}This app is for use by professional paediatric/neonatal staff
-            in the United Kingdom only and is intended as a guide/tool in the teaching and training of delivery of 
-            clinical care. This app is written according to evidence
-            based clinical guidelines and is designed with safety functions to
-            eliminate or reduce error as far as possible. Neither this app nor
-            its contents or output should be used directly in clinical care, nor as a replacement for clinical
-            expertise, experience or judgement. This app, its contents and
-            output should be handled in such a way that maintains patient
-            confidentialty and in accordance with Caldicott Principles.
-            {'\n'}
-            {'\n'}
-            This app, its content and output should not be used as a replacement
-            for local or organisational guidelines.
-            {'\n'}
-            {'\n'}The creators of dotKid will endeavour to keep dotKid accurate,
-            up-to-date and free from errors. However, no responsibility can be
-            taken by the creators of dotKid should this not be the case.
-            {'\n'}
-            {'\n'}The use of dotKid is at the users discretion and no
-            responsibility nor liability shall be taken by the creators of
-            dotKid for the use or misuse of this app, nor its contents or
-            outputs.
-            {'\n'}
-            {'\n'}You agree to hold the creators of this app harmless and free
-            from fault for any claim, demand, cost, expense or legal pursuit
-            where this app is used not in accordance with the instructions for
-            use and/or the purposes intended and/or the actions you take as a
-            result of this app, its contents or output as outlined on this page.
-            {'\n'}
-            {'\n'}This disclaimer shall be governed by the laws of England and
-            Wales and any dispute shall be submitted to the English courts.
-          </Text>
+            ]}
+          />
         </View>
       </ScrollView>
     </ReferenceBackgroundScreen>
@@ -193,6 +230,7 @@ const AboutScreen = () => {
 };
 
 export default AboutScreen;
+export {LegalText};
 
 const styles = StyleSheet.create({
   heading: {

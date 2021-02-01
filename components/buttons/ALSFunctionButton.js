@@ -184,16 +184,18 @@ const ALSFunctionButton = ({
       setClicks(0);
       setShowUndo(false);
     }
-  });
+  }, [reset]);
 
   useEffect(() => {
     if (setConfirm && changeBackground) {
       setConfirm(true);
     }
-  }, [changeBackground]);
+  }, [changeBackground, setConfirm]);
+
+  const pressedColor = kind === 'child' ? colors.primary : colors.secondary;
 
   return (
-    <TouchableHighlight
+    <TouchableOpacity
       activeOpacity={0.5}
       underlayColor={colors.light}
       onPress={handlePress}
@@ -205,7 +207,7 @@ const ALSFunctionButton = ({
           style,
           changeBackground && [
             {
-              backgroundColor: backgroundColorPressed || colors.secondary,
+              backgroundColor: backgroundColorPressed || pressedColor,
             },
           ],
         ]}>
@@ -228,7 +230,7 @@ const ALSFunctionButton = ({
           </React.Fragment>
         )}
       </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 };
 
