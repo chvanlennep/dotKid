@@ -1,19 +1,13 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import AppText from '../AppText';
 import colors from '../../config/colors';
 
-const ALSToolButton = ({ name, onPress, style }) => {
+const ALSToolButton = ({name, onPress, style}) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={[styles.container, style]}>
-        <AppText style={{ color: colors.white }}>{name}</AppText>
+        <AppText style={{color: colors.white}}>{name}</AppText>
       </View>
     </TouchableOpacity>
   );

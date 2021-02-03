@@ -14,7 +14,7 @@ import AppText from '../components/AppText';
 import {
   afterChestRise,
   flatListOneData,
-  functionButtons,
+  functionButtons as initialState,
 } from '../brains/nlsObjects';
 import LogModal from '../components/LogModal';
 import NoChestRiseModal from '../components/NoChestRiseModal';
@@ -23,8 +23,7 @@ import ALSTeriaryFunctionButton from '../components/buttons/ALSTertiaryFunctionB
 
 const NLSScreen = () => {
   const [reset, setReset] = useState(false);
-  const [fButtons, setFunctionButtons] = useState(functionButtons);
-  const [intervalTime, setIntervalTime] = useState(0);
+  const [functionButtons, setFunctionButtons] = useState(initialState);
   const [logVisible, setLogVisible] = useState(false);
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [endEncounter, setEndEncounter] = useState(false);
@@ -54,11 +53,6 @@ const NLSScreen = () => {
     setValue: setEndEncounter,
   };
 
-  const intervalState = {
-    value: intervalTime,
-    setValue: setIntervalTime,
-  };
-
   const logState = {
     value: functionButtons,
     setValue: setFunctionButtons,
@@ -79,32 +73,6 @@ const NLSScreen = () => {
     setValue: setIsTimerActive,
   };
 
-  //clears functionButtons object
-  const resetLogTimes = (functionButtons) => {
-    for (let value in functionButtons) {
-      functionButtons[value] = [];
-    }
-    return functionButtons;
-  };
-
-  //reset button logic
-  const handleReset = () => {
-    if (reset === true) {
-      setLogVisible(false);
-      setFunctionButtons(resetLogTimes(functionButtons));
-      setIsTimerActive(false);
-      setEndEncounter(false);
-      setReset(false);
-    }
-  };
-
-  useEffect(() => {
-    if (reset === true && logVisible === false) {
-      setEndEncounter(false);
-      handleReset();
-    }
-  });
-
   //reset button alert
   const resetLog = () => {
     Alert.alert(
@@ -115,7 +83,6 @@ const NLSScreen = () => {
           text: 'Reset',
           onPress: () => {
             setReset(true);
-            handleReset();
           },
         },
         {
@@ -127,13 +94,6 @@ const NLSScreen = () => {
       {cancelable: false},
     );
   };
-
-  useEffect(() => {
-    if (endEncounter === true) {
-      setLogVisible(true);
-      setIsTimerActive(false);
-    }
-  });
 
   const renderListItem = ({item}) => {
     if (item.type === 'preResusChecklist') {
@@ -200,12 +160,34 @@ const NLSScreen = () => {
 
   const scrollRef = useRef();
 
-  const scrollMe = (coordinate) => {
+  const scrollMe = (coordinate, animated = true) => {
     scrollRef.current?.scrollToOffset({
       offset: coordinate,
-      animated: true,
+      animated: animated ? true : false,
     });
   };
+
+  useEffect(() => {
+    if (reset) {
+      setFunctionButtons((old) => {
+        const newFunctionButtons = {...old};
+        for (let value in newFunctionButtons) {
+          newFunctionButtons[value] = [];
+        }
+        return newFunctionButtons;
+      });
+      scrollMe(0, false);
+      if (isTimerActive) {
+        setIsTimerActive(false);
+      }
+      if (endEncounter) {
+        setEndEncounter(false);
+      }
+      setReset(false);
+    } else if (endEncounter && logVisible) {
+      setIsTimerActive(false);
+    }
+  }, [reset, endEncounter, logVisible, isTimerActive]);
 
   return (
     <NCalcScreen isResus={true} style={{flex: 1}}>
@@ -215,6 +197,7 @@ const NLSScreen = () => {
         encounterState={encounterState}
         resetState={resetState}
         timerState={timerState}
+        setLogVisible={setLogVisible}
       />
       <View style={styles.middleContainer}>
         <View style={styles.verticalButtonContainer}>
@@ -222,14 +205,7 @@ const NLSScreen = () => {
             onPress={() => setIsTimerActive(true)}
             style={styles.button}>
             {!isTimerActive && 'Start Timer'}
-            {isTimerActive && (
-              <Stopwatch
-                intervalState={intervalState}
-                logState={logState}
-                resetState={resetState}
-                timerState={timerState}
-              />
-            )}
+            {isTimerActive && <Stopwatch logState={logState} />}
           </ALSDisplayButton>
           <GeneralAssessBaby
             assessmentState={assessmentState}
@@ -261,7 +237,7 @@ const NLSScreen = () => {
         </View>
       </View>
       <View style={styles.textContainer}>
-        <AppText style={styles.text}>NLS Runner</AppText>
+        <AppText style={styles.text}>NLS</AppText>
       </View>
       <View style={styles.bottomContainer}>
         <FlatList
@@ -280,7 +256,7 @@ const NLSScreen = () => {
           ListFooterComponent={
             <ALSTeriaryFunctionButton
               kind="neonate"
-              title={afterChestRise[afterChestRise.length - 1]['id']}
+              title={afterChestRise[afterChestRise.length - 1].id}
               logState={logState}
               encounterState={encounterState}
               resetState={resetState}

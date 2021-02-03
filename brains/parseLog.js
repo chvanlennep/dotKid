@@ -37,9 +37,15 @@ export default (functionButtons, type) => {
     let hours = '' + time.getHours();
     let minutes = '' + time.getMinutes();
     let seconds = '' + time.getSeconds();
-    if (hours.length < 2) hours = '0' + hours;
-    if (minutes.length < 2) minutes = '0' + minutes;
-    if (seconds.length < 2) seconds = '0' + seconds;
+    if (hours.length < 2) {
+      hours = '0' + hours;
+    }
+    if (minutes.length < 2) {
+      minutes = '0' + minutes;
+    }
+    if (seconds.length < 2) {
+      seconds = '0' + seconds;
+    }
     return `${hours}:${minutes}:${seconds}`; //removed .${milliseconds}
   };
   const formatDate = (date) => {
@@ -50,14 +56,25 @@ export default (functionButtons, type) => {
     if (day.length < 2) day = '0' + day;
     return [day, month, year].join('/');
   };
-  if (objectAsArray[0] === undefined) return null;
+  if (objectAsArray[0] === undefined) {
+    return null;
+  }
+  let startingItem = '';
+  if (objectAsArray[0][1] !== 'Start Time') {
+    startingItem = ` with '${objectAsArray[0][1]}'`;
+  }
   let outputString = `Log of ${type} encounter on ${formatDate(
-    objectAsArray[0][0]
-  )}:\n\n${formatTime(objectAsArray[0][0])}: Resuscitation Encounter Started`;
+    objectAsArray[0][0],
+  )}:\n\n${formatTime(
+    objectAsArray[0][0],
+  )}: Resuscitation Encounter started${startingItem}`;
   for (let i = 1; i < objectAsArray.length; i++) {
-    const newLine = `\n${formatTime(objectAsArray[i][0])}: ${
+    let newLine = `\n${formatTime(objectAsArray[i][0])}: ${
       objectAsArray[i][1]
     }`;
+    if (objectAsArray[i][1] === 'Start Time') {
+      newLine = `\n${formatTime(objectAsArray[i][0])}: Timer Started`;
+    }
     outputString += newLine;
   }
 
@@ -71,7 +88,7 @@ export default (functionButtons, type) => {
       objectAsArray[objectAsArray.length - 1][0],
       true,
       0,
-      true
+      true,
     )}`;
     return outputString;
   } else if (
@@ -86,7 +103,7 @@ export default (functionButtons, type) => {
       objectAsArray[objectAsArray.length - 1][0],
       true,
       0,
-      true
+      true,
     )}`;
     return outputString;
   } else {

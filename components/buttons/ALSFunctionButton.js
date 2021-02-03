@@ -1,11 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {
-  Alert,
-  StyleSheet,
-  TouchableHighlight,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, {useEffect} from 'react';
+import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 
 import colors from '../../config/colors';
 import AppText from '../AppText';
@@ -16,121 +10,55 @@ const ALSFunctionButton = ({
   encounterState,
   kind = 'child',
   logState,
-  resetState,
   style,
   backgroundColorPressed = null,
   timerState,
   title,
   type = 'function',
-  setConfirm = null,
 }) => {
-  const reset = resetState.value;
-  const setReset = resetState.setValue;
-
   const functionButtons = logState.value;
   const setFunctionButtons = logState.setValue;
 
   const endEncounter = encounterState.value;
-  const setEndEncounter = encounterState.setValue;
 
-  const [changeBackground, setChangeBackground] = useState(false);
+  const specificArray = functionButtons[title];
 
-  const isTimerActive = timerState.value;
+  const changeBackground = specificArray.length > 0 ? true : false;
+
   const setIsTimerActive = timerState.setValue;
-
-  const [showUndo, setShowUndo] = useState(false);
+  const isTimerActive = timerState.value;
 
   const movingChest = title === 'Chest is now moving' ? true : false;
 
-  //number of times pressed logic
-  const [clicks, setClicks] = useState(0);
-
   // logs time with event button
-  const updateTime = (title, oldState) => {
+  const updateTime = () => {
     if (type === 'function' && !endEncounter) {
-      setIsTimerActive(true);
-      const timeStamp = new Date();
-      const oldButtonArray = oldState[title];
-      const newButtonArray = oldButtonArray.concat(timeStamp);
+      if (!isTimerActive) {
+        setIsTimerActive(true);
+      }
       setFunctionButtons((oldState) => {
-        const updatingState = oldState;
+        const timeStamp = new Date();
+        const oldButtonArray = oldState[title];
+        const newButtonArray = oldButtonArray.concat(timeStamp);
+        const updatingState = {...oldState};
         updatingState[title] = newButtonArray;
         return updatingState;
       });
-    } else if (!endEncounter && type === 'checklist') {
-      const timeStamp = new Date();
-      const oldButtonArray = oldState[title];
-      const newButtonArray = oldButtonArray.concat(timeStamp);
+    } else if (type === 'checklist' && !endEncounter) {
       setFunctionButtons((oldState) => {
-        const updatingState = oldState;
+        const timeStamp = new Date();
+        const oldButtonArray = oldState[title];
+        const newButtonArray = oldButtonArray.concat(timeStamp);
+        const updatingState = {...oldState};
         updatingState[title] = newButtonArray;
         return updatingState;
       });
-    } else {
-      resetLog();
-    }
-  };
-  //reset button logic
-  const handleReset = () => {
-    setFunctionButtons(resetLogTimes(functionButtons));
-    setReset(true);
-    !isTimerActive ? setIsTimerActive(true) : setIsTimerActive(false);
-    setEndEncounter(false);
-    Alert.alert(
-      'Your APLS Log has been reset.',
-      '',
-      [
-        {
-          text: 'OK',
-          onPress: () => 'OK',
-          style: 'cancel',
-        },
-      ],
-      {cancelable: true},
-    );
-    setReset(false);
-  };
-
-  //reset button alert
-  const resetLog = () => {
-    Alert.alert(
-      'Do you wish to reset your APLS Log?',
-      '',
-      [
-        {text: 'Reset', onPress: () => handleReset()},
-        {
-          text: 'Cancel',
-          onPress: () => 'Cancel',
-          style: 'cancel',
-        },
-      ],
-      {cancelable: false},
-    );
-  };
-
-  const resetLogTimes = (functionButtons) => {
-    for (let value in functionButtons) {
-      functionButtons[value] = [];
-    }
-    return functionButtons;
-  };
-  //uses state to change background button color after selected
-  const handleChangeBackground = (changeBackground, oldState, title) => {
-    const oldButtonArray = oldState[title];
-    if (oldButtonArray.length < 2) {
-      setChangeBackground(false);
-      return changeBackground;
-    } else {
-      return changeBackground;
     }
   };
 
   const handlePress = () => {
-    if (clicks < 1) {
-      setChangeBackground(true);
-      updateTime(title, functionButtons);
-      setShowUndo(true);
-      setClicks(clicks + 1);
+    if (specificArray.length < 1) {
+      updateTime();
     } else {
       Alert.alert(
         'You can only select this once',
@@ -138,10 +66,10 @@ const ALSFunctionButton = ({
         [
           {
             text: 'Undo',
-            onPress: () => handleUndo(),
+            onPress: () => removeTime(),
             style: 'cancel',
           },
-          {text: 'OK', onPress: () => 'OK Pressed'},
+          {text: 'OK', onPress: () => null},
         ],
         {cancelable: false},
       );
@@ -149,48 +77,23 @@ const ALSFunctionButton = ({
   };
 
   // handles undo click - changes background if appropriate and removes last added time
-  const removeTime = (title, oldState) => {
-    const oldButtonArray = oldState[title];
+  const removeTime = () => {
+    const oldButtonArray = functionButtons[title];
     if (oldButtonArray.length < 2) {
       setFunctionButtons((oldState) => {
-        const updatingState = oldState;
+        const updatingState = {...oldState};
         updatingState[title] = [];
-        setShowUndo(false);
         return updatingState;
       });
     } else {
       const newButtonArray = oldButtonArray.slice(0, -1);
       setFunctionButtons((oldState) => {
-        const updatingState = oldState;
+        const updatingState = {...oldState};
         updatingState[title] = newButtonArray;
-        setShowUndo(true);
         return updatingState;
       });
     }
   };
-
-  // global undo click handling
-  const handleUndo = () => {
-    handleChangeBackground(changeBackground, functionButtons, title);
-    removeTime(title, functionButtons);
-    setClicks(clicks - 1);
-  };
-
-  // reset button logic
-
-  useEffect(() => {
-    if (reset === true) {
-      setChangeBackground(false);
-      setClicks(0);
-      setShowUndo(false);
-    }
-  }, [reset]);
-
-  useEffect(() => {
-    if (setConfirm && changeBackground) {
-      setConfirm(true);
-    }
-  }, [changeBackground, setConfirm]);
 
   const pressedColor = kind === 'child' ? colors.primary : colors.secondary;
 
@@ -212,15 +115,9 @@ const ALSFunctionButton = ({
           ],
         ]}>
         <AppText style={styles.text}>{title}</AppText>
-
-        {showUndo && !movingChest && (
+        {changeBackground && !movingChest && (
           <React.Fragment>
-            <TouchableOpacity
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              onPress={handleUndo}>
+            <TouchableOpacity style={styles.undo} onPress={removeTime}>
               <MaterialCommunityIcons
                 name="refresh"
                 color={colors.white}
@@ -251,6 +148,11 @@ const styles = StyleSheet.create({
     height: 25,
     color: colors.white,
     width: defaultStyles.container.width - 55,
-    //backgroundColor: 'black',
+  },
+  undo: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 35,
+    width: 35,
   },
 });

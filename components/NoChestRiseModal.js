@@ -25,28 +25,46 @@ const NoChestRiseModal = ({
   timerState,
   style,
 }) => {
+  const makeInitialState = () => {
+    const initialState = {};
+    for (let i = 0; i < noChestRise.length; i++) {
+      initialState[noChestRise[i].id] = [];
+    }
+    return initialState;
+  };
+
+  const [localLog, setLocalLog] = useState(makeInitialState());
   const [modalVisible, setModalVisible] = useState(false);
-  const [confirm, setConfirm] = useState(false);
+
+  const localLogState = {
+    value: localLog,
+    setValue: setLocalLog,
+  };
 
   const setIsTimerActive = timerState.setValue;
+  const isTimerActive = timerState.value;
+  const setFunctionButtons = logState.setValue;
 
   const renderListItem = ({item}) => {
     return (
       <ALSTertiaryFunctionButton
         kind="neonate"
         title={item.id}
-        logState={logState}
+        logState={localLogState}
         encounterState={encounterState}
         resetState={resetState}
         timerState={timerState}
         style={styles.buttons}
+        inModal
       />
     );
   };
 
   const handlePress = () => {
+    if (!isTimerActive) {
+      setIsTimerActive(true);
+    }
     setModalVisible(true);
-    setIsTimerActive(true);
   };
 
   const handleClose = () => {
@@ -61,6 +79,7 @@ const NoChestRiseModal = ({
         {
           text: 'Close Checklist',
           onPress: () => {
+            setLocalLog(makeInitialState());
             setModalVisible(false);
           },
         },
@@ -70,11 +89,21 @@ const NoChestRiseModal = ({
   };
 
   useEffect(() => {
-    if (confirm) {
+    if (localLog['Chest is now moving'].length > 0) {
+      setFunctionButtons((oldState) => {
+        const updatingState = {...oldState};
+        for (const [key, value] of Object.entries(localLog)) {
+          const timeStamp = value;
+          const oldArray = updatingState[key];
+          const newArray = oldArray.concat(timeStamp);
+          updatingState[key] = newArray;
+        }
+        return updatingState;
+      });
+      setLocalLog(makeInitialState());
       setModalVisible(false);
-      setConfirm(false);
     }
-  }, [confirm]);
+  }, [localLog, setFunctionButtons]);
 
   return (
     <React.Fragment>
@@ -114,25 +143,26 @@ const NoChestRiseModal = ({
                   ListHeaderComponent={
                     <ALSTertiaryFunctionButton
                       kind="neonate"
-                      title={noChestRise[0]['id']}
+                      title={noChestRise[0].id}
                       timerState={timerState}
-                      logState={logState}
+                      logState={localLogState}
                       encounterState={encounterState}
                       resetState={resetState}
                       style={styles.buttons}
+                      inModal
                     />
                   }
                   ListFooterComponent={
                     <ALSFunctionButton
                       kind="neonate"
                       title={'Chest is now moving'}
-                      logState={logState}
+                      logState={localLogState}
                       encounterState={encounterState}
                       timerState={timerState}
                       resetState={resetState}
                       style={[styles.buttons]}
                       backgroundColorPressed={colors.black}
-                      setConfirm={setConfirm}
+                      inModal
                     />
                   }
                 />
@@ -159,14 +189,6 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingBottom: 10,
   },
-  buttons: {
-    alignItems: 'center',
-    flexWrap: 'nowrap',
-    backgroundColor: colors.dark,
-    justifyContent: 'center',
-    padding: 2,
-    width: '50%',
-  },
   buttonPressed: {
     backgroundColor: colors.primary,
     flexWrap: 'nowrap',
@@ -174,7 +196,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     textAlign: 'center',
   },
-
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -201,7 +222,6 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 5,
-    backgroundColor: 'white',
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {

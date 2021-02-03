@@ -1,11 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
-  Alert,
-  Dimensions,
   Modal,
   StyleSheet,
   TouchableOpacity,
-  FlatList,
   useWindowDimensions,
   View,
 } from 'react-native';
@@ -17,15 +14,10 @@ import EndEncounterButton from '../components/buttons/EndEncounterButton';
 import AppText from './AppText';
 import ALSToolButton from './buttons/ALSToolButton';
 
-const EndEncounterModal = ({
-  logState,
-  encounterState,
-  resetState,
-  timerState,
-}) => {
+const EndEncounterModal = ({logState, encounterState, setLogVisible}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
-  modalState = {
+  const modalState = {
     value: modalVisible,
     setValue: setModalVisible,
   };
@@ -68,31 +60,28 @@ const EndEncounterModal = ({
                 <EndEncounterButton
                   kind="neonate"
                   title="Resuscitation complete"
-                  timerState={timerState}
                   logState={logState}
                   modalState={modalState}
                   encounterState={encounterState}
-                  resetState={resetState}
+                  setLogVisible={setLogVisible}
                   style={styles.buttons}
                 />
                 <EndEncounterButton
                   kind="neonate"
                   title="Transferred to NICU"
-                  timerState={timerState}
                   logState={logState}
                   modalState={modalState}
                   encounterState={encounterState}
-                  resetState={resetState}
+                  setLogVisible={setLogVisible}
                   style={styles.buttons}
                 />
                 <EndEncounterButton
                   kind="neonate"
                   title="RIP"
-                  timerState={timerState}
                   logState={logState}
                   modalState={modalState}
                   encounterState={encounterState}
-                  resetState={resetState}
+                  setLogVisible={setLogVisible}
                   style={styles.buttons}
                 />
               </View>

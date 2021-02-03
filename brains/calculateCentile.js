@@ -646,7 +646,7 @@ const calculateCentile = (object) => {
   const ageInMonths = zeit(dob, 'months', dom);
   const birthGestationInDays = object.gestationInDays;
   const correctedGestationInDays = birthGestationInDays + ageInDays;
-  // access birth centile data, which is in "child" if 37+:
+  // access birth centile data, if 37+:
   if (ageInDays === 0 && birthGestationInDays >= 259) {
     kind = 'birth';
     const results = centileFromLms(

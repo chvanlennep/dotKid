@@ -1,163 +1,64 @@
-import React, {useEffect, useState} from 'react';
-import {
-  Alert,
-  StyleSheet,
-  TouchableHighlight,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React from 'react';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../../config/colors';
 import AppText from '../AppText';
 import defaultStyles from '../../config/styles';
 
-const ALSTeriaryFunctionButton = ({
+const ALSTertiaryFunctionButton = ({
   kind = 'child',
-  encounterState,
   logState,
-  resetState,
   backgroundColorPressed = null,
   style,
   timerState,
   title,
+  inModal = false,
 }) => {
-  const reset = resetState.value;
-  const setReset = resetState.setValue;
-
-  const endEncounter = encounterState.value;
-  const setEndEncounter = encounterState.setValue;
-
   const isTimerActive = timerState.value;
   const setIsTimerActive = timerState.setValue;
 
   const functionButtons = logState.value;
   const setFunctionButtons = logState.setValue;
 
-  const [changeBackground, setChangeBackground] = useState(false);
+  const specificArray = functionButtons[title];
 
-  const [showUndo, setShowUndo] = useState(false);
+  const clicks = specificArray.length;
 
-  //number of times pressed logic
-  const [clicks, setClicks] = useState(0);
+  const changeBackground = clicks > 0 ? true : false;
 
   // logs time with event button
-  const updateTime = (title, oldState) => {
-    if (!endEncounter) {
+  const updateTime = () => {
+    if (!isTimerActive) {
       setIsTimerActive(true);
+    }
+    setFunctionButtons((oldState) => {
       const timeStamp = new Date();
       const oldButtonArray = oldState[title];
       const newButtonArray = oldButtonArray.concat(timeStamp);
-      setFunctionButtons((oldState) => {
-        const updatingState = oldState;
-        updatingState[title] = newButtonArray;
-        return updatingState;
-      });
-    } else {
-      resetLog();
-    }
-  };
-
-  //uses state to change background button color after selected
-  const handleChangeBackground = (changeBackground, oldState, title) => {
-    const oldButtonArray = oldState[title];
-    if (oldButtonArray.length < 2) {
-      setChangeBackground(false);
-      return changeBackground;
-    } else {
-      return changeBackground;
-    }
-  };
-
-  const handlePress = () => {
-    //some logic to prevent double pressing may need to go here
-    setClicks(clicks + 1);
-    setChangeBackground(true);
-    updateTime(title, functionButtons);
-    setShowUndo(true);
+      const updatingState = {...oldState};
+      updatingState[title] = newButtonArray;
+      return updatingState;
+    });
   };
 
   // handles undo click - changes background if appropriate and removes last added time
-  const removeTime = (title, oldState) => {
-    const oldButtonArray = oldState[title];
-    if (oldButtonArray.length < 2) {
+  const removeTime = () => {
+    const oldButtonArray = functionButtons[title];
+    if (oldButtonArray.length === 1) {
       setFunctionButtons((oldState) => {
-        const updatingState = oldState;
+        const updatingState = {...oldState};
         updatingState[title] = [];
-        setShowUndo(false);
         return updatingState;
       });
     } else {
       const newButtonArray = oldButtonArray.slice(0, -1);
       setFunctionButtons((oldState) => {
-        const updatingState = oldState;
+        const updatingState = {...oldState};
         updatingState[title] = newButtonArray;
-        setShowUndo(true);
         return updatingState;
       });
     }
-  };
-
-  // global undo click handling
-  const handleUndo = () => {
-    handleChangeBackground(changeBackground, functionButtons, title);
-    removeTime(title, functionButtons);
-    setClicks(clicks - 1);
-  };
-
-  // reset button logic
-
-  useEffect(() => {
-    if (reset === true) {
-      setChangeBackground(false);
-      setClicks(0);
-      setShowUndo(false);
-    }
-  });
-
-  //reset button logic
-  const handleReset = () => {
-    setFunctionButtons(resetLogTimes(functionButtons));
-    setReset(true);
-    !isTimerActive ? setIsTimerActive(true) : setIsTimerActive(false);
-    setEndEncounter(false);
-    Alert.alert(
-      'Your APLS Log has been reset.',
-      '',
-      [
-        {
-          text: 'OK',
-          onPress: () => 'OK',
-          style: 'cancel',
-        },
-      ],
-      {cancelable: true},
-    );
-    setReset(false);
-  };
-
-  //reset button alert
-  const resetLog = () => {
-    Alert.alert(
-      'Do you wish to reset your APLS Log?',
-      '',
-      [
-        {text: 'Reset', onPress: () => handleReset()},
-        {
-          text: 'Cancel',
-          onPress: () => 'Cancel',
-          style: 'cancel',
-        },
-      ],
-      {cancelable: false},
-    );
-  };
-
-  const resetLogTimes = (functionButtons) => {
-    for (let value in functionButtons) {
-      functionButtons[value] = [];
-    }
-    return functionButtons;
   };
 
   const pressedColor = kind === 'child' ? colors.primary : colors.secondary;
@@ -166,7 +67,7 @@ const ALSTeriaryFunctionButton = ({
     <TouchableOpacity
       activeOpacity={0.5}
       underlayColor={colors.light}
-      onPress={handlePress}
+      onPress={updateTime}
       pressed={changeBackground}
       title={title}>
       <View
@@ -179,18 +80,18 @@ const ALSTeriaryFunctionButton = ({
             },
           ],
         ]}>
-        <AppText style={styles.text}>{`${title} ${
-          clicks ? 'x' + clicks : ''
-        }`}</AppText>
-
-        {showUndo && (
+        <View
+          style={[
+            styles.textContainer,
+            {width: defaultStyles.container.width - (inModal ? 85 : 55)},
+          ]}>
+          <AppText style={styles.text}>{`${title} ${
+            clicks ? 'x' + clicks : ''
+          }`}</AppText>
+        </View>
+        {changeBackground && (
           <React.Fragment>
-            <TouchableOpacity
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              onPress={handleUndo}>
+            <TouchableOpacity style={styles.undo} onPress={removeTime}>
               <MaterialCommunityIcons
                 name="refresh"
                 color={colors.white}
@@ -204,7 +105,7 @@ const ALSTeriaryFunctionButton = ({
   );
 };
 
-export default ALSTeriaryFunctionButton;
+export default ALSTertiaryFunctionButton;
 
 const styles = StyleSheet.create({
   button: {
@@ -217,15 +118,17 @@ const styles = StyleSheet.create({
     margin: 5,
     padding: 10,
   },
-  content: {
-    flexDirection: 'row',
-    //justifyContent: 'center',
-    alignItems: 'center',
-  },
   text: {
     color: colors.white,
-    width: defaultStyles.container.width - 55,
-    marginRight: 5,
-    //backgroundColor: 'black',
+  },
+  textContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  undo: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 35,
+    width: 35,
   },
 });

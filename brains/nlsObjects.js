@@ -1,32 +1,30 @@
-import React, { useEffect, useRef, useState } from 'react';
-
 // NOTE: an array with nested objects
 
 const preResusChecklist = [
-  { id: 'Resuscitaire on' },
-  { id: 'Resuscitaire heater on' },
-  { id: 'Oxygen / air on' },
-  { id: 'PIP/PEEP correct for gestation' },
-  { id: 'Suction working' },
-  { id: 'Correct mask size' },
-  { id: 'Appropriate Hat' },
-  { id: 'Warm blankets' },
-  { id: 'Plastic wrap (if appropriate)' },
-  { id: 'O2 +/- ECG monitoring' },
-  { id: 'Stethoscope' },
-  { id: 'Laryngoscope available' },
-  { id: 'ET tube available' },
-  { id: 'CO2 detector available' },
-  { id: 'Resus drugs available' },
+  {id: 'Resuscitaire on'},
+  {id: 'Resuscitaire heater on'},
+  {id: 'Oxygen / air on'},
+  {id: 'PIP/PEEP correct for gestation'},
+  {id: 'Suction working'},
+  {id: 'Correct mask size'},
+  {id: 'Appropriate Hat'},
+  {id: 'Warm blankets'},
+  {id: 'Plastic wrap (if appropriate)'},
+  {id: 'O2 +/- ECG monitoring'},
+  {id: 'Stethoscope'},
+  {id: 'Laryngoscope available'},
+  {id: 'ET tube available'},
+  {id: 'CO2 detector available'},
+  {id: 'Resus drugs available'},
 ];
 
 // NOTE: an array with nested objects
 const resusRequired = [
-  { id: 'Open airway' },
-  { id: '5 inflation breaths' },
-  { id: 'Check for chest movement' },
-  { id: 'Consider O2 +/- ECG monitoring' },
-  { id: 'Consider help' },
+  {id: 'Open airway'},
+  {id: '5 inflation breaths'},
+  {id: 'Check for chest movement'},
+  {id: 'Consider O2 +/- ECG monitoring'},
+  {id: 'Consider help'},
 ];
 
 // NOTE: an object with nested arrays
@@ -59,29 +57,29 @@ const extraItems = {
 };
 
 const noChestRise = [
-  { id: 'Check head position' },
-  { id: 'Repeat inflation breaths' },
-  { id: '2-person airway control' },
-  { id: 'O2 +/- ECG monitoring' },
-  { id: 'Look for a response' },
-  { id: 'Consider help' },
-  { id: 'Airway inspection' },
-  { id: 'Suction under direct vision' },
-  { id: 'Meconium aspirator?' },
-  { id: 'Chest is now moving' },
+  {id: 'Check head position'},
+  {id: 'Repeat inflation breaths'},
+  {id: '2-person airway control'},
+  {id: 'O2 +/- ECG monitoring'},
+  {id: 'Look for a response'},
+  {id: 'Consider help'},
+  {id: 'Airway inspection'},
+  {id: 'Suction under direct vision'},
+  {id: 'Meconium aspirator?'},
+  {id: 'Chest is now moving'},
 ];
 
 const afterChestRise = [
-  { id: 'Check chest moving if HR<60' },
-  { id: '30s vent. breaths if HR <60' },
-  { id: 'Chest comp. 3:1 if HR<60' },
-  { id: 'Vent. breaths given' },
-  { id: 'PEEP +/- O2 if breathing' },
-  { id: 'Emergency vascular access' },
-  { id: 'Resuscitation drugs if approp.' },
-  { id: 'Patient intubated' },
-  { id: 'ET tube removed' },
-  { id: 'Colour change on CO2 detector' },
+  {id: 'Check chest moving if HR<60'},
+  {id: '30s vent. breaths if HR <60'},
+  {id: 'Chest comp. 3:1 if HR<60'},
+  {id: 'Vent. breaths given'},
+  {id: 'PEEP +/- O2 if breathing'},
+  {id: 'Emergency vascular access'},
+  {id: 'Resuscitation drugs if approp.'},
+  {id: 'Patient intubated'},
+  {id: 'ET tube removed'},
+  {id: 'Colour change on CO2 detector'},
 ];
 
 const makeFunctionButtonsObject = () => {
@@ -130,19 +128,19 @@ const makeKeyExtractorArray = () => {
   };
 
   for (let i = 1; i < preResusChecklist.length; i++) {
-    const { id } = preResusChecklist[i];
-    keyExtractorArray.push({ id, type: 'preResusChecklist' });
+    const {id} = preResusChecklist[i];
+    keyExtractorArray.push({id, type: 'preResusChecklist'});
   }
   keyExtractorArray.push(secondHeader);
   keyExtractorArray.push(thirdHeader);
   for (let i = 0; i < resusRequired.length; i++) {
-    const { id } = resusRequired[i];
-    keyExtractorArray.push({ id, type: 'resusRequired' });
+    const {id} = resusRequired[i];
+    keyExtractorArray.push({id, type: 'resusRequired'});
   }
   keyExtractorArray.push(fourthHeader);
   for (let i = 0; i < afterChestRise.length - 1; i++) {
-    const { id } = afterChestRise[i];
-    keyExtractorArray.push({ id, type: 'afterChestRise' });
+    const {id} = afterChestRise[i];
+    keyExtractorArray.push({id, type: 'afterChestRise'});
   }
 
   return keyExtractorArray;
@@ -151,8 +149,8 @@ const makeKeyExtractorArray = () => {
 const makeNoChestRiseKeyExtractorArray = () => {
   const keyExtractorArray = [];
   for (let i = 1; i < noChestRise.length - 1; i++) {
-    const { id } = noChestRise[i];
-    keyExtractorArray.push({ id, type: 'noChestRise' });
+    const {id} = noChestRise[i];
+    keyExtractorArray.push({id, type: 'noChestRise'});
   }
   return keyExtractorArray;
 };

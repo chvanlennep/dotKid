@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {Alert, FlatList, StyleSheet, View} from 'react-native';
 
 import PCalcScreen from '../components/PCalcScreen';
@@ -14,7 +14,7 @@ import ALSTertiaryFunctionButton from '../components/buttons/ALSTertiaryFunction
 
 import {
   flatListData,
-  functionButtons,
+  functionButtons as initialFunctionButtons,
   tertiaryButtons,
 } from '../brains/aplsObjects';
 import RhythmModal from '../components/RhythmModal';
@@ -23,8 +23,9 @@ import Adrenaline from '../components/buttons/Adrenaline';
 
 const APLSScreen = () => {
   const [reset, setReset] = useState(false);
-  const [fButtons, setFunctionButtons] = useState(functionButtons);
-  const [intervalTime, setIntervalTime] = useState(0);
+  const [functionButtons, setFunctionButtons] = useState(
+    initialFunctionButtons,
+  );
   const [logVisible, setLogVisible] = useState(false);
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [endEncounter, setEndEncounter] = useState(false);
@@ -32,11 +33,6 @@ const APLSScreen = () => {
   const encounterState = {
     value: endEncounter,
     setValue: setEndEncounter,
-  };
-
-  const intervalState = {
-    value: intervalTime,
-    setValue: setIntervalTime,
   };
 
   const logState = {
@@ -59,38 +55,25 @@ const APLSScreen = () => {
     setValue: setIsTimerActive,
   };
 
-  //clears functionButtons object
-  const resetLogTimes = (functionButtons) => {
-    for (let value in functionButtons) {
-      functionButtons[value] = [];
-    }
-    return functionButtons;
-  };
-
-  //reset button logic
-  const handleReset = () => {
-    setFunctionButtons(resetLogTimes(functionButtons));
-    setReset(true);
-    setIsTimerActive(false);
-    setEndEncounter(false);
-    setReset(false);
-  };
-
   //reset button alert
-  const resetLog = () => {
-    Alert.alert(
-      'Do you wish to reset your APLS encounter?',
-      '',
-      [
-        {text: 'Reset', onPress: () => handleReset()},
-        {
-          text: 'Cancel',
-          onPress: () => 'Cancel',
-          style: 'cancel',
-        },
-      ],
-      {cancelable: false},
-    );
+  const resetLog = (confirm = true) => {
+    if (confirm) {
+      Alert.alert(
+        'Do you wish to reset your APLS encounter?',
+        '',
+        [
+          {text: 'Reset', onPress: () => setReset(true)},
+          {
+            text: 'Cancel',
+            onPress: () => null,
+            style: 'cancel',
+          },
+        ],
+        {cancelable: false},
+      );
+    } else {
+      setReset(true);
+    }
   };
 
   // RIP Alert window
@@ -104,8 +87,8 @@ const APLSScreen = () => {
           onPress: () => {
             handleLogEvent(functionButtons, 'RIP');
             setLogVisible(true);
-            setIsTimerActive(false);
             setEndEncounter(true);
+            setIsTimerActive(false);
           },
         },
         {
@@ -127,8 +110,8 @@ const APLSScreen = () => {
           onPress: () => {
             handleLogEvent(functionButtons, 'ROSC');
             setLogVisible(true);
-            setIsTimerActive(false);
             setEndEncounter(true);
+            setIsTimerActive(false);
           },
         },
         {
@@ -212,12 +195,28 @@ const APLSScreen = () => {
 
   const scrollRef = useRef();
 
-  const scrollMe = (coordinate) => {
+  const scrollMe = (coordinate, animated = true) => {
     scrollRef.current?.scrollToOffset({
       offset: coordinate,
-      animated: true,
+      animated: animated ? true : false,
     });
   };
+
+  useEffect(() => {
+    if (reset) {
+      setFunctionButtons((old) => {
+        const newFunctionButtons = {...old};
+        for (let value in newFunctionButtons) {
+          newFunctionButtons[value] = [];
+        }
+        return newFunctionButtons;
+      });
+      setIsTimerActive(false);
+      setEndEncounter(false);
+      setReset(false);
+      scrollMe(0, false);
+    }
+  }, [reset]);
 
   return (
     <PCalcScreen isResus={true} style={{flex: 1}}>
@@ -228,14 +227,7 @@ const APLSScreen = () => {
             onPress={() => setIsTimerActive(true)}
             style={styles.button}>
             {!isTimerActive && 'Start Timer'}
-            {isTimerActive && (
-              <Stopwatch
-                intervalState={intervalState}
-                logState={logState}
-                resetState={resetState}
-                timerState={timerState}
-              />
-            )}
+            {isTimerActive && <Stopwatch logState={logState} />}
           </ALSDisplayButton>
           <Adrenaline
             removeTime={removeTime}
@@ -257,11 +249,12 @@ const APLSScreen = () => {
             logState={logState}
             resetState={resetState}
             style={styles.button}
+            timerState={timerState}
           />
         </View>
       </View>
       <View style={styles.textContainer}>
-        <AppText style={styles.text}>APLS Runner</AppText>
+        <AppText style={styles.text}>APLS</AppText>
       </View>
       <View style={styles.bottomContainer}>
         <FlatList

@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Dimensions,
-  LogBox,
-  Platform,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {LogBox, Platform, StyleSheet, useColorScheme, View} from 'react-native';
 import {LineChart, YAxis, XAxis} from 'react-native-svg-charts';
 import * as shape from 'd3-shape';
 import {Circle, G, Text} from 'react-native-svg';
@@ -67,11 +60,10 @@ const CentileChart = ({
     finalXKey = '';
   }
 
-  `Birth Gestation: ${Math.floor(gestationInDays / 7)}+${gestationInDays % 7}`;
-
   let chartFontSize = 10;
-  if (Platform.OS === 'ios' && (kind === 'neonate' || kind === 'birth'))
+  if (Platform.OS === 'ios' && (kind === 'neonate' || kind === 'birth')) {
     chartFontSize = 9;
+  }
 
   const CentileLabels = ({x, y}) => {
     const listDetails = centileLabelData.y;

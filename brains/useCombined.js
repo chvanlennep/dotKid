@@ -63,7 +63,7 @@ export default (kind, name) => {
 
   useEffect(() => {
     let localName = name;
-    if (localName.length === 2) {
+    if (localName.length === 2 && localName !== 'hc') {
       localName = 'day' + localName.charAt(1);
     }
     if (!reset) {

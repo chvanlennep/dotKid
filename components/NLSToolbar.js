@@ -1,29 +1,22 @@
 import React from 'react';
-import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import {StyleSheet, useWindowDimensions, View} from 'react-native';
 
 import ALSToolButton from './buttons/ALSToolButton';
 import EndEncounterModal from './EndEncounterModal';
 import colors from '../config/colors';
 
-const NLSToolbar = ({
-  reset,
-  logState,
-  encounterState,
-  resetState,
-  timerState,
-}) => {
+const NLSToolbar = ({reset, logState, encounterState, setLogVisible}) => {
   return (
     <View style={[styles.container]}>
       <ALSToolButton
         name="Reset"
         onPress={reset}
-        style={{ width: useWindowDimensions().width / 2 }}
+        style={{width: useWindowDimensions().width / 2}}
       />
       <EndEncounterModal
         logState={logState}
         encounterState={encounterState}
-        resetState={resetState}
-        timerState={timerState}
+        setLogVisible={setLogVisible}
       />
     </View>
   );

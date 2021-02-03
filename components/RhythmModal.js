@@ -10,12 +10,17 @@ import RhythmButton from './buttons/RhythmButton';
 import ALSDisplayButton from './buttons/ALSDisplayButton';
 import AnalyseRhythm from './AnalyseRhythm';
 
-const RhythmModal = ({logState, resetState, style}) => {
+const RhythmModal = ({logState, resetState, style, timerState}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [rhythmPressed, setRhythmPressed] = useState(false);
   const [rhythmTime, setRhythmTime] = useState(0);
   const [blink, setBlink] = useState(false);
   const [pressedBefore, setPressedBefore] = useState(false);
+
+  const isTimerActive = timerState.value;
+  const setIsTimerActive = timerState.setValue;
+
+  const functionButtons = logState.value;
 
   const modalState = {
     value: modalVisible,
@@ -58,23 +63,34 @@ const RhythmModal = ({logState, resetState, style}) => {
   };
 
   useEffect(() => {
+    if (
+      reset ||
+      functionButtons.ROSC.length > 0 ||
+      functionButtons.RIP.length > 0
+    ) {
+      setPressedBefore(false);
+      setRhythmPressed(false);
+      if (isTimerActive) {
+        setIsTimerActive(false);
+      }
+    }
+  }, [reset, functionButtons, isTimerActive, setIsTimerActive]);
+
+  useEffect(() => {
     if (rhythmPressed) {
       setPressedBefore(true);
+      if (!isTimerActive) {
+        setIsTimerActive(true);
+      }
     }
-  });
+  }, [rhythmPressed, isTimerActive, setIsTimerActive]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setBlink((blink) => !blink);
+      setBlink((oldBlink) => !oldBlink);
     }, 1000);
     return () => clearInterval(interval);
   }, []);
-
-  useEffect(() => {
-    if (reset) {
-      setPressedBefore(false);
-    }
-  }, [reset]);
 
   return (
     <React.Fragment>
@@ -126,13 +142,15 @@ const RhythmModal = ({logState, resetState, style}) => {
                     modalState={modalState}
                     resetState={resetState}
                     rhythmPressedState={rhythmPressedState}
-                    title={'Ventricular Fibrillation'}></RhythmButton>
+                    title={'Ventricular Fibrillation'}
+                  />
                   <RhythmButton
                     logState={logState}
                     modalState={modalState}
                     resetState={resetState}
                     rhythmPressedState={rhythmPressedState}
-                    title={'Pulseless VT'}></RhythmButton>
+                    title={'Pulseless VT'}
+                  />
                 </View>
               </View>
               <View style={styles.shocks}>
@@ -143,13 +161,15 @@ const RhythmModal = ({logState, resetState, style}) => {
                     modalState={modalState}
                     resetState={resetState}
                     rhythmPressedState={rhythmPressedState}
-                    title={'Asystole'}></RhythmButton>
+                    title={'Asystole'}
+                  />
                   <RhythmButton
                     logState={logState}
                     modalState={modalState}
                     resetState={resetState}
                     rhythmPressedState={rhythmPressedState}
-                    title={'PEA'}></RhythmButton>
+                    title={'PEA'}
+                  />
                 </View>
               </View>
             </View>
