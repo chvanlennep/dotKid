@@ -17,3 +17,5 @@ export default {
     width: windowWidth - 10,
   },
 };
+
+export {windowWidth, windowHeight};
