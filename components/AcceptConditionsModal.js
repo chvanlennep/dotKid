@@ -11,7 +11,7 @@ import {
 import AppText from '../components/AppText';
 import {LegalText} from '../screens/AboutScreen';
 
-const AcceptConditionsModal = ({setAccepted, modalVisible}) => {
+const AcceptConditionsModal = ({setAccepted, termsVisible}) => {
   const accept = () => setAccepted(true);
 
   const denied = () => {
@@ -24,7 +24,7 @@ const AcceptConditionsModal = ({setAccepted, modalVisible}) => {
     <Modal
       animationType="slide"
       transparent={true}
-      visible={modalVisible}
+      visible={termsVisible}
       onRequestClose={() => {
         Alert.alert('App Will Not Be Loaded', '', [
           {text: 'OK', onPress: () => null},

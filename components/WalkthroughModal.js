@@ -6,29 +6,33 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  useColorScheme,
 } from 'react-native';
 
 import AppText from '../components/AppText';
 import colors from '../config/colors';
 import {windowWidth} from '../config/styles';
 
+const WalkthroughModal = ({setWalkthroughAccepted, walkthroughVisible}) => {
+  const [currentPosition, setCurrentPosition] = useState(0);
 
-const walkthroughModal = ({setWalkthroughAccepted, walkthroughVisible}) => {
-    
-    
-    const [currentPosition, setCurrentPosition] = useState(0);
-   
-
-    
-
-    const accept = () => {
-        if (currentPosition === 2) {
-            setWalkthroughAccepted(true)
-            }
-        //walkthroughAccepted(true)}; come back to this
-        setCurrentPosition((old) => old + 1)
-        
+  const handlePress = (forward = true) => {
+    if (forward) {
+      if (currentPosition === 2) {
+        setWalkthroughAccepted(true);
+      } else {
+        setCurrentPosition((old) => old + 1);
       }
+    } else {
+      setCurrentPosition((old) => old - 1);
+    }
+  };
+
+  const scheme = useColorScheme();
+
+  const dark = scheme === 'dark' ? true : false;
+
+  const textColor = {color: dark ? 'black' : 'white'};
 
   return (
     <Modal
@@ -41,53 +45,72 @@ const walkthroughModal = ({setWalkthroughAccepted, walkthroughVisible}) => {
         ]);
       }}>
       <View style={styles.centeredView}>
-        <View style={styles.fullScreen}>
-          <AppText style={styles.title}>Walkthrough</AppText>
-          <View style={styles.centeredView}>
-          {currentPosition === 0 && (<AppText style={styles.additionalWarningText}>
-            Just a quick walkthrough...
-            </AppText>)
-
-        } 
-        {currentPosition === 1 && (
-            <Image style={styles.image} source={require('../assets/walkthrough/SwitchScreenshot.png') } />)
-        }
-        {currentPosition === 2 && (
-            <Image style={styles.image} source={require('../assets/walkthrough/ResusScreenshot.png') } />
-            )
-        }
-        
-        </View> 
-          {currentPosition === 1 && (
-            <View style={styles.walkthrough}>
-            <AppText style={styles.additionalWarningText}>
-            At the top of the screen, press here to change between paediatric and neonatal modes.
-            </AppText>
-            </View>
-             )}
-             {currentPosition === 2 && (
-                <View style={styles.walkthrough}>
-                <AppText style={styles.additionalWarningText}>
-                At the bottom of the screen, press here to access the resuscitation mode.
-                </AppText>
-                </View>
-                 )}
-                 
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity onPress={accept} style={styles.smallButton}>
-                <AppText style={{color: 'white'}}>Next</AppText>
+        <View
+          style={[
+            styles.fullScreen,
+            {backgroundColor: dark ? colors.light : colors.black},
+          ]}>
+          <AppText style={[styles.title, textColor]}>Walkthrough</AppText>
+          <View style={styles.middleView}>
+            {currentPosition === 0 && (
+              <AppText style={[styles.additionalWarningText, textColor]}>
+                Just a quick walkthrough...
+              </AppText>
+            )}
+            {currentPosition === 1 && (
+              <Image
+                style={styles.image}
+                source={
+                  dark
+                    ? require('../assets/walkthrough/top_dark.png')
+                    : require('../assets/walkthrough/top_light.png')
+                }
+              />
+            )}
+            {currentPosition === 2 && (
+              <AppText style={[styles.additionalWarningText, textColor]}>
+                At the bottom of the screen, press here to access the
+                resuscitation mode.
+              </AppText>
+            )}
+            {currentPosition === 2 && (
+              <Image
+                style={styles.image}
+                source={
+                  dark
+                    ? require('../assets/walkthrough/bottom_dark.png')
+                    : require('../assets/walkthrough/bottom_light.png')
+                }
+              />
+            )}
+            {currentPosition === 1 && (
+              <AppText style={[styles.additionalWarningText, textColor]}>
+                At the top of the screen, press here to change between
+                paediatric and neonatal modes.
+              </AppText>
+            )}
+          </View>
+          <View style={styles.buttonContainer}>
+            {currentPosition !== 0 && (
+              <TouchableOpacity
+                onPress={() => handlePress(false)}
+                style={styles.smallButton}>
+                <AppText style={styles.smallButtonText}>Previous</AppText>
               </TouchableOpacity>
-            </View>
-            <View>
-            
-            </View>
+            )}
+            <TouchableOpacity onPress={handlePress} style={styles.smallButton}>
+              <AppText style={styles.smallButtonText}>
+                {currentPosition === 2 ? 'Finish' : 'Next'}
+              </AppText>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>
   );
 };
 
-export default walkthroughModal;
+export default WalkthroughModal;
 
 const styles = StyleSheet.create({
   buttonContainer: {
@@ -101,38 +124,32 @@ const styles = StyleSheet.create({
   },
   image: {
     width: windowWidth * 0.9,
-    height: windowWidth * 0.7,
-    resizeMode: 'center',
-    borderRadius: 10,
-    overflow: 'hidden',
-},
+    height: windowWidth * 0.62,
+    resizeMode: 'contain',
+  },
   fullScreen: {
     height: '90%',
     width: '98%',
     justifyContent: 'center',
-    backgroundColor: 'black',
     alignItems: 'center',
     borderRadius: 15,
   },
   title: {
-      color: 'white',
-      fontSize: 28,
-      fontWeight: '500',
-      marginTop: 15,
-      marginBottom: 10,
-      textAlign: 'center',
-  },
-  mainMessage: {
+    fontSize: 28,
+    fontWeight: '500',
+    marginTop: 20,
+    marginBottom: 20,
     textAlign: 'center',
-    textAlignVertical: 'center',
-    fontSize: 16,
-    color: 'white',
-    padding: 10,
   },
   centeredView: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  middleView: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '70%',
   },
   smallButton: {
     alignItems: 'center',
@@ -141,19 +158,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.dark,
     height: 50,
     padding: 10,
+    margin: 10,
+  },
+  smallButtonText: {
+    color: 'white',
   },
   additionalWarningText: {
-    color: 'white',
     fontSize: 18,
     fontWeight: '500',
-    backgroundColor: 'black',
     textAlign: 'center',
-    marginTop: 5,
-    marginBottom: 10,
-    padding: 5,
-    borderRadius: 8,
-    overflow: 'hidden',
-    width: '100%',
+    margin: 30,
   },
   legalText: {
     color: 'white',
@@ -163,12 +177,12 @@ const styles = StyleSheet.create({
     margin: 15,
   },
   walkthrough: {
-      alignItems: 'center',
-      borderRadius: 10,
-      flex: 0.5,
-      flexDirection: 'row',
-      justifyContent: 'center',
-      padding: 10, 
-      width: '100%',
+    alignItems: 'center',
+    borderRadius: 10,
+    flex: 0.5,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    padding: 10,
+    width: '100%',
   },
 });
