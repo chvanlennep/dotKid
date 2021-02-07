@@ -3,7 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import {useFormikContext} from 'formik';
 
 import colors from '../config/colors';
-import defaultStyles from '../config/styles';
+import {containerWidth} from '../config/styles';
 import AppText from './AppText';
 import zeit from '../brains/zeit';
 import {addOrdinalSuffix, decidePluralSuffix} from '../brains/oddBits';
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: 10,
     height: 110,
-    width: defaultStyles.container.width,
+    width: containerWidth,
   },
   outputTextBox: {
     //backgroundColor: 'limegreen',

@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import {
-  Appearance,
   Modal,
   StyleSheet,
   TouchableOpacity,
   View,
+  ScrollView,
 } from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -14,7 +14,7 @@ import AppText from '../components/AppText';
 import colors from '../config/colors';
 import AgeButton from '../components/buttons/AgeButton';
 import Button from '../components/buttons/Button';
-import defaultStyles from '../config/styles';
+import {containerWidth} from '../config/styles';
 
 const WETFLAGResultsScreen = ({route, navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -80,7 +80,7 @@ const WETFLAGResultsScreen = ({route, navigation}) => {
                 </AppText>
                 <AppText style={styles.outputText}>Fluid bolus volume:</AppText>
                 <AppText style={styles.value}>
-                  {fluid}ml
+                  {fluid}ml of 0.9% NaCl
                   {'\n'}
                 </AppText>
                 <AppText style={styles.outputText}>Lorazepam:</AppText>
@@ -132,25 +132,31 @@ const WETFLAGResultsScreen = ({route, navigation}) => {
                           <AppText style={styles.heading}>
                             Reference Data
                           </AppText>
-                          <View style={styles.referenceOutput}>
+                          <ScrollView style={styles.referenceOutput}>
                             <AppText style={styles.referenceText}>
-                              Estimated weight is based on WHO/UK 50th centile
-                              data. {'\n'}
+                              Estimated weight is UK-WHO 50th centile data for
+                              the corresponding sex. {'\n'}
                               {'\n'}Defibrillator energy is based on Resus
                               Council UK APLS guidelines: {'\n'}4 x estimated
                               weight, to the nearest 10.{'\n'}Capped at 120
-                              joules if weight >40kgs and 120 - 150 joules if
+                              joules if weight > 40kgs and 120 - 150 joules if
                               age > 14 years. {'\n'}
                               {'\n'}Endotracheal tube size is calculated by (age
-                              x 4) + 4, rounded to half measures and capped at
+                              % 4) + 4, rounded to half measures and capped at
                               8.{'\n'}
+                              {'\n'}Fluid bolus volume is 20ml/kg.
                               {'\n'}
-                              Glucose bolus dose is calculated at 0.1ml/kg and
-                              capped at 50ml. {'\n'}
                               {'\n'}Lorazepam dose is calculated at 0.1mg/kg and
                               capped at 4mg.
+                              {'\n'}
+                              {'\n'}
+                              Adrenaline dose is 0.1ml/kg of 1 in 10,000 (10
+                              microgram/kg). {'\n'}
+                              {'\n'}
+                              Glucose bolus dose is calculated at 2ml/kg and
+                              capped at 50ml. {'\n'}
                             </AppText>
-                          </View>
+                          </ScrollView>
                         </View>
                       </View>
                     </Modal>
@@ -201,7 +207,9 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: colors.light,
+    width: containerWidth - 10,
+    height: containerWidth + 30,
     borderRadius: 10,
     padding: 10,
     shadowColor: '#000',
@@ -212,10 +220,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.7,
     shadowRadius: 4,
     elevation: 5,
-    width: defaultStyles.container.width - 10,
-    backgroundColor: colors.light,
   },
-  output: {},
   outputText: {
     fontSize: 16,
     fontWeight: 'bold',

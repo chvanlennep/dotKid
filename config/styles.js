@@ -4,8 +4,9 @@ import colors from './colors';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+const containerWidth = windowWidth - 10;
 
-export default {
+const defaultStyles = {
   windowWidth,
   windowHeight,
   colors,
@@ -14,8 +15,10 @@ export default {
     fontFamily: Platform.OS === 'ios' ? 'System' : 'Roboto',
   },
   container: {
-    width: windowWidth - 10,
+    width: containerWidth,
   },
 };
 
-export {windowWidth, windowHeight};
+export default defaultStyles;
+
+export {containerWidth, windowWidth, windowHeight};

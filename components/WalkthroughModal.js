@@ -13,13 +13,13 @@ import AppText from '../components/AppText';
 import colors from '../config/colors';
 import {windowWidth} from '../config/styles';
 
-const WalkthroughModal = ({setWalkthroughAccepted, walkthroughVisible}) => {
+const WalkthroughModal = ({setWalkthroughVisible, walkthroughVisible}) => {
   const [currentPosition, setCurrentPosition] = useState(0);
 
   const handlePress = (forward = true) => {
     if (forward) {
       if (currentPosition === 2) {
-        setWalkthroughAccepted(true);
+        setWalkthroughVisible(false);
       } else {
         setCurrentPosition((old) => old + 1);
       }

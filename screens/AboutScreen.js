@@ -105,7 +105,7 @@ const AboutScreen = () => {
               {color: dark ? colors.white : colors.dark},
             ]}>
             dotKid is an app to aid qualified paediatric and neonatal staff for
-            the purposes of teaching and training qualified staff and healtchare
+            the purposes of teaching and training qualified staff and healthcare
             students. Guidance is based on clinical guidelines as detailed in
             the references section.
           </Text>

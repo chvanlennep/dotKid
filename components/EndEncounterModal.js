@@ -9,7 +9,7 @@ import {
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../config/colors';
-import defaultStyles from '../config/styles';
+import {containerWidth} from '../config/styles';
 import EndEncounterButton from '../components/buttons/EndEncounterButton';
 import AppText from './AppText';
 import ALSToolButton from './buttons/ALSToolButton';
@@ -149,7 +149,6 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
@@ -161,7 +160,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     elevation: 5,
     //flex: 0.45,
-    width: defaultStyles.container.width - 10,
+    width: containerWidth - 10,
     backgroundColor: colors.darkSecondary,
   },
   options: {
