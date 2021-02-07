@@ -1,37 +1,38 @@
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React from 'react';
+import {StyleSheet} from 'react-native';
 
-import AppText from './AppText'
-import NCalcScreen from './NCalcScreen'
-import { colors } from 'react-native-elements'
-import { ScrollView } from 'react-native-gesture-handler'
-
-
+import AppText from './AppText';
+import NCalcScreen from './NCalcScreen';
+import {colors} from 'react-native-elements';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const NRefScreen = () => {
-    return (
-        <NCalcScreen>
-        <ScrollView style={styles.container}>
+  return (
+    <NCalcScreen>
+      <ScrollView style={styles.container}>
         <AppText style={styles.title}>References</AppText>
-        <AppText style={styles.text}>These APLS Guidelines were written in line with the Resus Council Advanced Life Support Algorithm </AppText>
-        </ScrollView>
-        </NCalcScreen>
-    )
-}
+        <AppText style={styles.text}>
+          These APLS Guidelines were written in line with the Resus Council
+          Advanced Life Support Algorithm{' '}
+        </AppText>
+      </ScrollView>
+    </NCalcScreen>
+  );
+};
 
-export default NRefScreen
+export default NRefScreen;
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 30,
-    },
-    text: {
-        color: colors.black,
-        fontSize: 17,
-        paddingTop: 10,
-    },
-    title: {
-        fontSize: 28,
-        color: colors.black,
-    }
-})
+  container: {
+    padding: 30,
+  },
+  text: {
+    color: colors.black,
+    fontSize: 17,
+    paddingTop: 10,
+  },
+  title: {
+    fontSize: 28,
+    color: colors.black,
+  },
+});

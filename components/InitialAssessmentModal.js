@@ -3,7 +3,7 @@ import {Alert, Modal, StyleSheet, TouchableOpacity, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../../app/config/colors';
-import defaultStyles from '../../app/config/styles';
+import {containerWidth} from '../../app/config/styles';
 import AppText from './AppText';
 import ALSListHeader from './buttons/ALSListHeader';
 import AppForm from '../components/AppForm';
@@ -138,14 +138,14 @@ const InitialAssessBabyModal = ({
   const togglePicker = (name) => {
     for (let i = 0; i < nameArray.length; i++) {
       if (name !== nameArray[i]) {
-        if (pickerState[nameArray[i]]['open']) {
-          if (!pickerState[nameArray[i]['color']]) {
+        if (pickerState[nameArray[i]].open) {
+          if (!pickerState[nameArray[i].color]) {
             //Alert.alert('');
           }
           changePickerState(nameArray[i], 'open', false);
           changePickerState(name, 'open', true);
           name === 'Saturations'
-            ? setPickerText(`Colour +/- Saturations`)
+            ? setPickerText('Colour +/- Saturations')
             : setPickerText(name);
           break;
         }
@@ -251,7 +251,7 @@ const InitialAssessBabyModal = ({
     if (reset === true) {
       setInitialAssessmentComplete(false);
     }
-  }, [reset]);
+  }, [reset, setInitialAssessmentComplete]);
 
   // tick button pressed
   useEffect(() => {
@@ -283,7 +283,7 @@ const InitialAssessBabyModal = ({
         break;
       }
     }
-  }, [pickerState]);
+  }, [pickerState, nameArray, submitForm]);
 
   // Cancel button pressed
   useEffect(() => {
@@ -301,7 +301,7 @@ const InitialAssessBabyModal = ({
         break;
       }
     }
-  }, [pickerState]);
+  }, [pickerState, nameArray]);
 
   return (
     <React.Fragment>
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
   },
   buttonPressed: {
     backgroundColor: colors.secondary,
-    width: defaultStyles.container.width - 5,
+    width: containerWidth - 5,
     alignSelf: 'center',
   },
   centeredView: {
@@ -393,11 +393,10 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 20,
     marginTop: -30,
-    marginBottom: 5,
     marginBottom: 10,
   },
   headingButton: {
-    width: defaultStyles.container.width - 5,
+    width: containerWidth - 5,
     alignSelf: 'center',
   },
   icon: {
@@ -406,7 +405,6 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
@@ -417,7 +415,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     paddingBottom: 10,
     elevation: 5,
-    width: defaultStyles.container.width - 10,
+    width: containerWidth - 10,
     backgroundColor: '#096534',
   },
   options: {

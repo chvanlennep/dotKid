@@ -1,7 +1,6 @@
 import React from 'react';
 import {TouchableWithoutFeedback, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import colors from '../config/colors';
 
 function TopIcon({
   backgroundColor,

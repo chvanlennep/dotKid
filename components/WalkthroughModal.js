@@ -40,7 +40,7 @@ const WalkthroughModal = ({setWalkthroughVisible, walkthroughVisible}) => {
       transparent={true}
       visible={walkthroughVisible}
       onRequestClose={() => {
-        Alert.alert('App Will Not Be Loaded', '', [
+        Alert.alert('Please complete the Walkthrough', '', [
           {text: 'OK', onPress: () => null},
         ]);
       }}>

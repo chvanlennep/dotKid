@@ -224,7 +224,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '500',
     color: colors.white,
-    textAlign: 'center',
   },
   modalTextHeadingWrapper: {
     borderRadius: 5,

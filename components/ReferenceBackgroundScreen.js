@@ -1,11 +1,11 @@
-import React from "react";
-import { Alert, StyleSheet, View, useColorScheme } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import React from 'react';
+import {Alert, StyleSheet, View, useColorScheme} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
-import Screen from "./Screen";
-import TopIcon from "./TopIcon";
-import colors from "../config/colors";
-import routes from "../navigation/routes";
+import Screen from './Screen';
+import TopIcon from './TopIcon';
+import colors from '../config/colors';
+import routes from '../navigation/routes';
 
 const ReferenceBackgroundScreen = ({
   children,
@@ -17,24 +17,26 @@ const ReferenceBackgroundScreen = ({
 
   const navigation = useNavigation();
   let renderBack;
-  if (!isHomePage) renderBack = true;
+  if (!isHomePage) {
+    renderBack = true;
+  }
 
   const handleBackPress = () => {
     if (isResus) {
       Alert.alert(
-        "Do you sure you want a different resuscitation screen?",
-        "This will reset your current resuscitation encounter",
+        'Do you sure you want a different resuscitation screen?',
+        'This will reset your current resuscitation encounter',
         [
           {
-            text: "Yes",
+            text: 'Yes',
             onPress: () => navigation.goBack(),
           },
           {
-            text: "Cancel",
-            onPress: () => "Cancel",
+            text: 'Cancel',
+            onPress: () => 'Cancel',
           },
         ],
-        { cancelable: false }
+        {cancelable: false},
       );
     } else {
       navigation.goBack();
@@ -45,9 +47,8 @@ const ReferenceBackgroundScreen = ({
     <Screen
       style={[
         styles.container,
-        { backgroundColor: scheme === "dark" ? colors.black : colors.white },
-      ]}
-    >
+        {backgroundColor: scheme === 'dark' ? colors.black : colors.white},
+      ]}>
       {renderBack && (
         <View style={styles.back}>
           <TopIcon
@@ -92,12 +93,12 @@ export default ReferenceBackgroundScreen;
 
 const styles = StyleSheet.create({
   baby: {
-    position: "absolute",
+    position: 'absolute',
     right: 120,
     top: 2,
   },
   back: {
-    position: "absolute",
+    position: 'absolute',
     left: 30,
     top: 10,
   },
@@ -105,9 +106,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topContainer: {
-    alignSelf: "center",
-    flexDirection: "row",
-    alignItems: "center",
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 5,
   },
 });

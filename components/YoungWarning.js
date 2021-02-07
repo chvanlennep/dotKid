@@ -1,10 +1,10 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
 import colors from '../config/colors';
 import AppText from './AppText';
 
-const YoungWarning = ({ children }) => {
+const YoungWarning = ({children}) => {
   if (!children) return null;
   else
     return (

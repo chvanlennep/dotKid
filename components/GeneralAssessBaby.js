@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Alert, Modal, StyleSheet, TouchableOpacity, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import colors from '../../app/config/colors';
-import defaultStyles from '../../app/config/styles';
+import {containerWidth} from '../../app/config/styles';
 import ALSDisplayButton from './buttons/ALSDisplayButton';
 import AppText from './AppText';
 import AppForm from '../components/AppForm';
@@ -276,7 +276,7 @@ const GeneralAssessBaby = ({
         break;
       }
     }
-  }, [pickerState]);
+  }, [pickerState, nameArray, submitForm]);
 
   // Cancel button pressed
   useEffect(() => {
@@ -294,13 +294,13 @@ const GeneralAssessBaby = ({
         break;
       }
     }
-  }, [pickerState]);
+  }, [pickerState, nameArray]);
 
   useEffect(() => {
     if (assessBaby) {
       setPressedBefore(true);
     }
-  });
+  }, [assessBaby]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -425,7 +425,6 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
@@ -436,7 +435,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     paddingBottom: 10,
     elevation: 5,
-    width: defaultStyles.container.width - 10,
+    width: containerWidth - 10,
     //height: 500,
     backgroundColor: colors.darkSecondary,
   },

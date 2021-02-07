@@ -3,6 +3,35 @@ import {StyleSheet} from 'react-native';
 import colors from '../config/colors';
 import AppText from './AppText';
 
+const secondsToHms = (seconds) => {
+  if (!seconds) {
+    return '';
+  }
+  let duration = seconds;
+  let hours = duration / 3600;
+  duration = duration % 3600;
+
+  let min = parseInt(duration / 60, 10);
+  duration = duration % 60;
+
+  let sec = parseInt(duration, 10);
+
+  if (sec < 10) {
+    sec = `0${sec}`;
+  }
+  if (min < 10) {
+    min = `0${min}`;
+  }
+
+  if (parseInt(hours, 10) > 0) {
+    return `${parseInt(hours, 10)}h ${min}m ${sec}s`;
+  } else if (min === '00') {
+    return `${sec}s`;
+  } else {
+    return `${min}m ${sec}s`;
+  }
+};
+
 const Stopwatch = ({logState}) => {
   const setFunctionButtons = logState.setValue;
   const functionButtons = logState.value;
@@ -12,7 +41,7 @@ const Stopwatch = ({logState}) => {
   const secondsPassed = useRef(0);
   const start = useRef(functionButtons['Start Time'][0] || new Date());
 
-  //adds start time
+  //adds start time or sets display time
   useEffect(() => {
     if (functionButtons['Start Time'].length < 1) {
       setFunctionButtons((old) => {
@@ -24,34 +53,6 @@ const Stopwatch = ({logState}) => {
         return updatingState;
       });
     } else {
-      const secondsToHms = (seconds) => {
-        if (!seconds) {
-          return '';
-        }
-        let duration = seconds;
-        let hours = duration / 3600;
-        duration = duration % 3600;
-
-        let min = parseInt(duration / 60, 10);
-        duration = duration % 60;
-
-        let sec = parseInt(duration, 10);
-
-        if (sec < 10) {
-          sec = `0${sec}`;
-        }
-        if (min < 10) {
-          min = `0${min}`;
-        }
-
-        if (parseInt(hours, 10) > 0) {
-          return `${parseInt(hours, 10)}h ${min}m ${sec}s`;
-        } else if (min === '00') {
-          return `${sec}s`;
-        } else {
-          return `${min}m ${sec}s`;
-        }
-      };
       setIntervalTime(secondsToHms(secondsPassed.current));
     }
   }, [functionButtons, setFunctionButtons, time]);
