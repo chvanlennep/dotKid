@@ -9,8 +9,10 @@ export default {
   lightSecondary: '#C4E9D1',
   black: '#000',
   white: '#fff',
-  medium: '#828282',
   light: '#c4c4c4',
+  medium: '#828282',
+  darkMedium: '#686868',
   dark: '#4f4f4f',
+  darkest: '#3b3b3b',
   danger: '#ff5252',
 };

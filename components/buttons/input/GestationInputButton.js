@@ -20,6 +20,18 @@ import useCombined from '../../../brains/useCombined';
 const modalWidth =
   defaultStyles.container.width > 350 ? 350 : defaultStyles.container.width;
 
+const weekLabels = [];
+for (let i = 23; i < 43; i++) {
+  weekLabels.push(i);
+}
+const dayLabels = [0, 1, 2, 3, 4, 5, 6];
+const weekLabelList = weekLabels.map((number, index) => (
+  <Picker.Item label={`${number}`} value={number} key={number} />
+));
+const dayLabelList = dayLabels.map((number, index) => (
+  <Picker.Item label={`${number}`} value={number} key={number} />
+));
+
 const GestationInputButton = ({kind, name = 'gestationInDays'}) => {
   const ios = Platform.OS === 'ios' ? true : false;
 
@@ -77,18 +89,6 @@ const GestationInputButton = ({kind, name = 'gestationInDays'}) => {
       combinedSetter(initialState[kind].gestationInDays);
     }
   };
-
-  const weekLabels = [];
-  for (let i = 23; i < 43; i++) {
-    weekLabels.push(i);
-  }
-  const dayLabels = [0, 1, 2, 3, 4, 5, 6];
-  const weekLabelList = weekLabels.map((number, index) => (
-    <Picker.Item label={`${number}`} value={number} key={number} />
-  ));
-  const dayLabelList = dayLabels.map((number, index) => (
-    <Picker.Item label={`${number}`} value={number} key={number} />
-  ));
 
   return (
     <React.Fragment>

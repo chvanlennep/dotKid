@@ -10,9 +10,10 @@ import Button from '../components/buttons/Button';
 
 const BPResultsScreen = ({route, navigation}) => {
   const parameters = JSON.parse(route.params);
-  const measurements = parameters.measurements;
 
-  let QTcTitle = `QT (${parameters.measurements.qtinterval} seconds)`;
+  const QTcTitle = `QT: ${
+    parameters.measurements.qtinterval * 1000
+  } milliseconds`;
   let ageBeforeCorrection = parameters.centileObject.ageBeforeCorrection;
   let ageAfterCorrection = parameters.centileObject.ageAfterCorrection;
   if (parameters.centileObject.kind === 'birth') {
@@ -45,13 +46,16 @@ const BPResultsScreen = ({route, navigation}) => {
                 <AppText style={styles.text}>{QTcTitle}</AppText>
               </View>
               <View style={styles.output}>
-                <AppText style={styles.outputText}>{QTc}</AppText>
+                <AppText style={styles.outputText}>{`QTc: ${QTc}`}</AppText>
               </View>
             </View>
           </View>
           <View style={styles.reference}>
             <AppText style={styles.referenceTitle}>Reference values:</AppText>
-            <AppText style={styles.referenceOutput}>{reference}</AppText>
+            <AppText
+              style={
+                styles.referenceOutput
+              }>{`${reference}\n\nCalculations based on small squares assumes a paper speed of 25mm/s`}</AppText>
           </View>
         </View>
       </KeyboardAwareScrollView>
@@ -92,7 +96,8 @@ const styles = StyleSheet.create({
     flex: 8,
   },
   outputText: {
-    fontSize: 16,
+    fontSize: 17,
+    fontWeight: '500',
     textAlign: 'left',
     color: colors.white,
     flexWrap: 'wrap',
@@ -108,13 +113,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: colors.medium,
     width: '80%',
+    padding: 10,
   },
   referenceTitle: {
     paddingTop: 15,
     paddingBottom: 5,
     color: colors.white,
     fontWeight: '500',
-    fontSize: 15,
+    fontSize: 16,
     textAlign: 'center',
   },
   referenceOutput: {
@@ -125,7 +131,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   text: {
-    fontSize: 18,
+    fontSize: 17,
     textAlign: 'left',
     fontWeight: '500',
     paddingBottom: 10,

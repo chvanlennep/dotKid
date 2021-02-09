@@ -14,31 +14,31 @@ import BodySurfaceArea from '../brains/BodySurfaceArea';
 import {handleOldValues} from '../brains/oddBits';
 import {GlobalStatsContext} from '../components/GlobalStats';
 
+const oneMeasurementNeeded = "↑ We'll need this measurement too";
+const wrongUnitsMessage = (units) => {
+  return `↑ Are you sure your input is in ${units}?`;
+};
+
+const validationSchema = Yup.object().shape({
+  height: Yup.number()
+    .min(30, wrongUnitsMessage('cm'))
+    .max(220, wrongUnitsMessage('cm'))
+    .required(oneMeasurementNeeded),
+  weight: Yup.number()
+    .min(0.1, wrongUnitsMessage('kg'))
+    .max(250, wrongUnitsMessage('kg'))
+    .required(oneMeasurementNeeded),
+});
+
+const initialValues = {
+  height: '',
+  weight: '',
+};
+
 const BSAScreen = () => {
   const navigation = useNavigation();
 
-  const oneMeasurementNeeded = "↑ We'll need this measurement too";
-  const wrongUnitsMessage = (units) => {
-    return `↑ Are you sure your input is in ${units}?`;
-  };
-
   const {globalStats, setGlobalStats} = useContext(GlobalStatsContext);
-
-  const validationSchema = Yup.object().shape({
-    height: Yup.number()
-      .min(30, wrongUnitsMessage('cm'))
-      .max(220, wrongUnitsMessage('cm'))
-      .required(oneMeasurementNeeded),
-    weight: Yup.number()
-      .min(0.1, wrongUnitsMessage('kg'))
-      .max(250, wrongUnitsMessage('kg'))
-      .required(oneMeasurementNeeded),
-  });
-
-  const initialValues = {
-    height: '',
-    weight: '',
-  };
 
   const handleFormikSubmit = (values) => {
     const submitFunction = () => {

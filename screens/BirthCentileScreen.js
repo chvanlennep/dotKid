@@ -17,79 +17,79 @@ import calculateCentile from '../brains/calculateCentile';
 import {handleOldValues} from '../brains/oddBits';
 import {GlobalStatsContext} from '../components/GlobalStats';
 
+const oneMeasurementNeeded = "↑ We'll at least one of these measurements";
+const wrongUnitsMessage = (units) => {
+  return `↑ Are you sure this is a neonatal measurement (in ${units})?`;
+};
+
+const validationSchema = Yup.object().shape(
+  {
+    length: Yup.number()
+      .min(30, wrongUnitsMessage('cm'))
+      .max(70, wrongUnitsMessage('cm'))
+      .when(['weight', 'hc'], {
+        is: (weight, hc) => !weight && !hc,
+        then: Yup.number()
+          .label('length')
+          .min(30, wrongUnitsMessage('cm'))
+          .max(70, wrongUnitsMessage('cm'))
+          .required(oneMeasurementNeeded),
+      }),
+    weight: Yup.number()
+      .min(0.1, wrongUnitsMessage('kg'))
+      .max(8, wrongUnitsMessage('kg'))
+      .when(['length', 'hc'], {
+        is: (length, hc) => !length && !hc,
+        then: Yup.number()
+          .label('Weight')
+          .min(0.1, wrongUnitsMessage('kg'))
+          .max(8, wrongUnitsMessage('kg'))
+          .required(oneMeasurementNeeded),
+      }),
+    hc: Yup.number()
+      .min(10, wrongUnitsMessage('cm'))
+      .max(100, wrongUnitsMessage('cm'))
+      .when(['length', 'weight'], {
+        is: (length, weight) => !length && !weight,
+        then: Yup.number()
+          .label('Head Circumference')
+          .min(10, wrongUnitsMessage('cm'))
+          .max(100, wrongUnitsMessage('cm'))
+          .required(oneMeasurementNeeded),
+      }),
+    sex: Yup.string().required('↑ Please select a sex').label('Sex'),
+    gestationInDays: Yup.number()
+      .min(161, '↑ Please select a birth gestation')
+      .required()
+      .label('Birth Gestation'),
+  },
+  [
+    ['length', 'weight'],
+    ['length', 'hc'],
+    ['weight', 'hc'],
+  ],
+);
+
+const initialValues = {
+  length: '',
+  weight: '',
+  hc: '',
+  sex: '',
+  gestationInDays: 0,
+  dob: new Date(1989, 0, 16),
+  dom: new Date(1989, 0, 16),
+};
+
+const valuesForTimeStamp = {
+  length: null,
+  weight: null,
+  hc: null,
+  sex: null,
+  gestationInDays: null,
+};
+
 const BirthCentileScreen = () => {
   const navigation = useNavigation();
-
-  const oneMeasurementNeeded = "↑ We'll at least one of these measurements";
-  const wrongUnitsMessage = (units) => {
-    return `↑ Are you sure this is a neonatal measurement (in ${units})?`;
-  };
-
-  const validationSchema = Yup.object().shape(
-    {
-      length: Yup.number()
-        .min(30, wrongUnitsMessage('cm'))
-        .max(70, wrongUnitsMessage('cm'))
-        .when(['weight', 'hc'], {
-          is: (weight, hc) => !weight && !hc,
-          then: Yup.number()
-            .label('length')
-            .min(30, wrongUnitsMessage('cm'))
-            .max(70, wrongUnitsMessage('cm'))
-            .required(oneMeasurementNeeded),
-        }),
-      weight: Yup.number()
-        .min(0.1, wrongUnitsMessage('kg'))
-        .max(8, wrongUnitsMessage('kg'))
-        .when(['length', 'hc'], {
-          is: (length, hc) => !length && !hc,
-          then: Yup.number()
-            .label('Weight')
-            .min(0.1, wrongUnitsMessage('kg'))
-            .max(8, wrongUnitsMessage('kg'))
-            .required(oneMeasurementNeeded),
-        }),
-      hc: Yup.number()
-        .min(10, wrongUnitsMessage('cm'))
-        .max(100, wrongUnitsMessage('cm'))
-        .when(['length', 'weight'], {
-          is: (length, weight) => !length && !weight,
-          then: Yup.number()
-            .label('Head Circumference')
-            .min(10, wrongUnitsMessage('cm'))
-            .max(100, wrongUnitsMessage('cm'))
-            .required(oneMeasurementNeeded),
-        }),
-      sex: Yup.string().required('↑ Please select a sex').label('Sex'),
-      gestationInDays: Yup.number()
-        .min(161, '↑ Please select a birth gestation')
-        .required()
-        .label('Birth Gestation'),
-    },
-    [
-      ['length', 'weight'],
-      ['length', 'hc'],
-      ['weight', 'hc'],
-    ],
-  );
-
-  const initialValues = {
-    length: '',
-    weight: '',
-    hc: '',
-    sex: '',
-    gestationInDays: 0,
-    dob: new Date(1989, 0, 16),
-    dom: new Date(1989, 0, 16),
-  };
-
-  const valuesForTimeStamp = {
-    length: null,
-    weight: null,
-    hc: null,
-    sex: null,
-    gestationInDays: null,
-  };
 
   const {globalStats, setGlobalStats} = useContext(GlobalStatsContext);
 

@@ -22,6 +22,36 @@ import zeit from '../brains/zeit';
 import useAgeEffect from '../brains/useAgeEffect';
 import {handleOldValues} from '../brains/oddBits';
 
+const oneMeasurementNeeded = "↑ We'll need this measurement too";
+const wrongUnitsMessage = (units) => {
+  return `↑ Are you sure your input is in ${units}?`;
+};
+
+const validationSchema = Yup.object().shape({
+  weight: Yup.number()
+    .min(0.1, wrongUnitsMessage('kg'))
+    .max(250, wrongUnitsMessage('kg'))
+    .required(oneMeasurementNeeded),
+  correction: Yup.number()
+    .min(50, 'Minimum calculator correction = 50% of normal')
+    .max(150, 'Maximum calculator correction = 150% of normal')
+    .required(oneMeasurementNeeded),
+  sex: Yup.string().required('↑ Please select a sex').label('Sex'),
+  dob: Yup.date()
+    .nullable()
+    .required('↑ Please enter a date of Birth')
+    .label('Date of Birth'),
+});
+
+const initialValues = {
+  weight: '',
+  sex: '',
+  gestationInDays: 280,
+  dob: null,
+  correction: '100',
+  dom: null,
+};
+
 const FluidCalculatorScreen = () => {
   const navigation = useNavigation();
 
@@ -31,36 +61,6 @@ const FluidCalculatorScreen = () => {
   const [showGestation, setShowGestation] = useState(false);
 
   const formikRef = useRef(null);
-
-  const oneMeasurementNeeded = "↑ We'll need this measurement too";
-  const wrongUnitsMessage = (units) => {
-    return `↑ Are you sure your input is in ${units}?`;
-  };
-
-  const validationSchema = Yup.object().shape({
-    weight: Yup.number()
-      .min(0.1, wrongUnitsMessage('kg'))
-      .max(250, wrongUnitsMessage('kg'))
-      .required(oneMeasurementNeeded),
-    correction: Yup.number()
-      .min(50, 'Minimum calculator correction = 50% of normal')
-      .max(150, 'Maximum calculator correction = 150% of normal')
-      .required(oneMeasurementNeeded),
-    sex: Yup.string().required('↑ Please select a sex').label('Sex'),
-    dob: Yup.date()
-      .nullable()
-      .required('↑ Please enter a date of Birth')
-      .label('Date of Birth'),
-  });
-
-  const initialValues = {
-    weight: '',
-    sex: '',
-    gestationInDays: 280,
-    dob: null,
-    correction: '100',
-    dom: null,
-  };
 
   const handleFormikSubmit = (values) => {
     const {gestationInDays} = values;

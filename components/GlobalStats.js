@@ -45,11 +45,10 @@ const blanksBoth = {
   },
   sex: {
     buttonText: 'Sex',
-    modalVisible: false,
-    showCancel: false,
+    showSwitch: false,
     timeStamp: null,
     value: '',
-    sex: 'Female',
+    isMale: false,
   },
   date: {
     showCancel: false,
@@ -120,7 +119,7 @@ const GlobalStatsProvider = ({children}) => {
       for (const [key, value] of Object.entries(oldMeasurements)) {
         let newKey = '';
         let newValue = {};
-        for (const [k, v] of Object.entries(initialFormikValues)) {
+        for (const k of Object.keys(initialFormikValues)) {
           if (k === key) {
             newKey = key;
             newValue = value;

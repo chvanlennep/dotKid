@@ -5,13 +5,13 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import NCalcScreen from '../components/NCalcScreen';
 import AppText from '../components/AppText';
 import colors from '../config/colors';
-import defaultStyles from '../config/styles';
+import {containerWidth} from '../config/styles';
 import AgeButton from '../components/buttons/AgeButton';
 import Button from '../components/buttons/Button';
 import MoreCentileInfo from '../components/buttons/MoreCentileInfo';
 import CentileChartModal from '../components/CentileChartModal';
 
-const flexDirection = defaultStyles.container.width > 500 ? 'row' : 'column';
+const flexDirection = containerWidth > 500 ? 'row' : 'column';
 
 const BirthCentileResultsScreen = ({route, navigation}) => {
   const parameters = JSON.parse(route.params);

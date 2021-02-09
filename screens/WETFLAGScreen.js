@@ -19,22 +19,22 @@ import ageChecker from '../brains/ageChecker';
 import {handleOldValues} from '../brains/oddBits';
 import {GlobalStatsContext} from '../components/GlobalStats';
 
+const validationSchema = Yup.object().shape({
+  dob: Yup.date()
+    .nullable()
+    .required('↑ Please enter a date of Birth')
+    .label('Date of Birth'),
+  sex: Yup.string().required('↑ Please select a sex').label('Sex'),
+});
+
+const initialValues = {
+  dob: null,
+  sex: '',
+  weight: '',
+};
+
 const WETFLAGScreen = () => {
   const navigation = useNavigation();
-
-  const validationSchema = Yup.object().shape({
-    dob: Yup.date()
-      .nullable()
-      .required('↑ Please enter a date of Birth')
-      .label('Date of Birth'),
-    sex: Yup.string().required('↑ Please select a sex').label('Sex'),
-  });
-
-  const initialValues = {
-    dob: null,
-    sex: '',
-    weight: '',
-  };
 
   const {globalStats, setGlobalStats} = useContext(GlobalStatsContext);
 

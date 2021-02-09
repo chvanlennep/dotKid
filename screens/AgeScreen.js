@@ -1,5 +1,6 @@
 import React, {useContext, useLayoutEffect, useState, useRef} from 'react';
-import {Alert, ScrollView, StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
+
 import AppForm from '../components/AppForm';
 import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
 import GestationInputButton from '../components/buttons/input/GestationInputButton';
@@ -10,15 +11,14 @@ import {GlobalStatsContext} from '../components/GlobalStats';
 import zeit from '../brains/zeit';
 import useAgeEffect from '../brains/useAgeEffect';
 import NavigateButton from '../components/buttons/NavigateButton';
-import colors from '../config/colors';
+
+const initialValues = {
+  gestationInDays: 280,
+  dob: null,
+  dom: null,
+};
 
 const AgeScreen = () => {
-  const initialValues = {
-    gestationInDays: 280,
-    dob: null,
-    dom: null,
-  };
-
   const {globalStats} = useContext(GlobalStatsContext);
 
   const dom = globalStats.child.dom.value;

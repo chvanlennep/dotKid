@@ -1,51 +1,45 @@
 import React from 'react';
-import {
-  Platform,
-  Modal,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-} from 'react-native';
-import {Picker} from '@react-native-picker/picker';
+import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import {useFormikContext} from 'formik';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../../../config/colors';
-import defaultStyles from '../../../config/styles';
+import {containerWidth} from '../../../config/styles';
 import ButtonIcon from '../ButtonIcon';
 import AppText from '../../AppText';
 import ErrorMessage from '../../ErrorMessage';
 import useCombined from '../../../brains/useCombined';
-
-const modalWidth =
-  defaultStyles.container.width > 350 ? 350 : defaultStyles.container.width;
+import UnitsSwitcher from '../UnitsSwitcher';
 
 const SexInputButton = ({kind}) => {
-  const ios = Platform.OS === 'ios' ? true : false;
-
   const {combinedSetter, buttonState, initialState} = useCombined(kind, 'sex');
 
-  const {modalVisible, showCancel, value, sex} = buttonState;
+  const {showSwitch, value, isMale} = buttonState;
 
   const buttonText = value ? `Sex: ${value}` : 'Sex';
+
+  const showCancel = value ? true : false;
 
   const {errors, touched} = useFormikContext();
 
   const toggleSexInput = () => {
-    if (modalVisible) {
+    if (showSwitch) {
       combinedSetter({
-        showCancel: true,
-        modalVisible: false,
-        value: sex,
+        showSwitch: false,
+        value: isMale ? 'Male' : 'Female',
       });
     } else {
-      combinedSetter({modalVisible: true});
+      combinedSetter({showSwitch: true});
     }
   };
 
   const cancelInput = () => {
-    if (modalVisible && value) {
-      combinedSetter({modalVisible: false, sex: value});
+    if (showSwitch) {
+      let tempValue = false;
+      if (value === 'Male') {
+        tempValue = true;
+      }
+      combinedSetter({showSwitch: false, isMale: tempValue});
     } else {
       combinedSetter(initialState[kind].sex);
     }
@@ -53,65 +47,48 @@ const SexInputButton = ({kind}) => {
 
   return (
     <React.Fragment>
-      <View>
-        <View style={styles.button}>
-          <TouchableOpacity onPress={toggleSexInput}>
-            <View style={styles.buttonTextBox}>
-              <ButtonIcon name="all-inclusive" />
-              <AppText style={{color: colors.white}}>{buttonText}</AppText>
-            </View>
+      <View style={styles.button}>
+        <TouchableOpacity onPress={toggleSexInput}>
+          <View style={styles.buttonTextBox}>
+            <ButtonIcon name="all-inclusive" />
+            <AppText style={{color: colors.white}}>{buttonText}</AppText>
+          </View>
+        </TouchableOpacity>
+        {showCancel && (
+          <TouchableOpacity onPress={cancelInput}>
+            <ButtonIcon name="delete-forever" />
           </TouchableOpacity>
-          {showCancel && (
-            <TouchableOpacity onPress={cancelInput}>
-              <ButtonIcon name="delete-forever" />
-            </TouchableOpacity>
-          )}
-        </View>
+        )}
       </View>
-      <View style={styles.centeredView}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={cancelInput}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  style={ios ? styles.iosPicker : styles.androidPicker}
-                  itemStyle={{color: colors.black}}
-                  onValueChange={(itemValue, itemIndex) => {
-                    combinedSetter({sex: itemValue});
-                  }}
-                  selectedValue={sex}>
-                  <Picker.Item label="Female" value="Female" />
-                  <Picker.Item label="Male" value="Male" />
-                </Picker>
-              </View>
-              <View style={styles.buttonContainer}>
-                <View style={styles.closeIcon}>
-                  <TouchableOpacity onPress={cancelInput}>
-                    <MaterialCommunityIcons
-                      name="close-circle"
-                      color={colors.black}
-                      size={40}
-                    />
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.acceptIcon}>
-                  <TouchableOpacity onPress={toggleSexInput}>
-                    <MaterialCommunityIcons
-                      name="check-circle"
-                      color={colors.black}
-                      size={40}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
+      {showSwitch && (
+        <UnitsSwitcher
+          backgroundColor={colors.medium}
+          trueUnits="Male"
+          falseUnits="Female"
+          isUnits={isMale}
+          setIsUnits={(newValue) => combinedSetter({isMale: newValue})}>
+          <View style={styles.acceptCancel}>
+            <View style={styles.closeIcon}>
+              <TouchableOpacity onPress={cancelInput}>
+                <MaterialCommunityIcons
+                  name="close-circle"
+                  color={colors.black}
+                  size={30}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.acceptIcon}>
+              <TouchableOpacity onPress={toggleSexInput}>
+                <MaterialCommunityIcons
+                  name="check-circle"
+                  color={colors.black}
+                  size={30}
+                />
+              </TouchableOpacity>
             </View>
           </View>
-        </Modal>
-      </View>
+        </UnitsSwitcher>
+      )}
       <ErrorMessage error={errors.sex} visible={touched.sex} />
     </React.Fragment>
   );
@@ -121,7 +98,7 @@ export default SexInputButton;
 
 const styles = StyleSheet.create({
   button: {
-    ...defaultStyles.container,
+    width: containerWidth,
     alignItems: 'center',
     backgroundColor: colors.dark,
     borderRadius: 5,
@@ -131,69 +108,29 @@ const styles = StyleSheet.create({
     margin: 5,
     padding: 10,
   },
-  iosPicker: {
-    height: 200,
-    width: modalWidth - 50,
-  },
-  androidPicker: {
-    height: 100,
-    width: modalWidth - 20,
-  },
-  pickerContainer: {
-    alignSelf: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  modalView: {
-    margin: 20,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.7,
-    shadowRadius: 4,
-    elevation: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingBottom: 20,
-    paddingTop: 20,
-    backgroundColor: colors.light,
-  },
-  buttonContainer: {
-    width: modalWidth,
-    //backgroundColor: 'orange',
+  acceptCancel: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   closeIcon: {
-    height: 50,
-    width: 50,
+    height: 40,
+    width: 40,
     alignItems: 'center',
     justifyContent: 'center',
     //backgroundColor: 'red',
-    paddingRight: 10,
   },
   acceptIcon: {
-    height: 50,
-    width: 50,
+    height: 40,
+    width: 40,
     alignItems: 'center',
     justifyContent: 'center',
     //backgroundColor: 'red',
-    paddingLeft: 10,
   },
   buttonTextBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: defaultStyles.container.width - 55,
+    width: containerWidth - 55,
     height: 57,
     //backgroundColor: 'green',
     alignSelf: 'center',

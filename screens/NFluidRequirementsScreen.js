@@ -21,16 +21,46 @@ import zeit from '../brains/zeit';
 import {readItemFromStorage} from '../brains/storage';
 import {handleOldValues} from '../brains/oddBits';
 
+const checkCorrection = '↑ Please check this value';
+const measurementNeeded = "↑ We'll need a weight to calculate";
+const wrongUnitsMessage = (units) => {
+  return `↑ Are you sure this is a neonatal measurement (in ${units})?`;
+};
+
+const validationSchema = Yup.object().shape({
+  correction: Yup.number().min(30, checkCorrection).max(200, checkCorrection),
+  dob: Yup.date()
+    .nullable()
+    .required('↑ Please enter a date and time of birth')
+    .label('Date of Birth'),
+  weight: Yup.number()
+    .min(0.1, wrongUnitsMessage('kg'))
+    .max(8, wrongUnitsMessage('kg'))
+    .required(measurementNeeded),
+  gestationInDays: Yup.number()
+    .min(161, '↑ Please select a birth gestation')
+    .required()
+    .label('Birth Gestation'),
+});
+
+const initialValues = {
+  correction: '100',
+  weight: '',
+  gestationInDays: 0,
+  dob: null,
+  dom: null,
+};
+
+const defaults = {
+  day1: '60',
+  day2: '80',
+  day3: '100',
+  day4: '120',
+  day5: '150',
+};
+
 const NFluidRequirementsScreen = () => {
   const navigation = useNavigation();
-
-  const defaults = {
-    day1: '60',
-    day2: '80',
-    day3: '100',
-    day4: '120',
-    day5: '150',
-  };
 
   const [termValues, setTermValues] = useState(defaults);
   const [pretermValues, setPretermValues] = useState(defaults);
@@ -38,36 +68,6 @@ const NFluidRequirementsScreen = () => {
   const {globalStats, moveDataAcrossGlobal, setGlobalStats} = useContext(
     GlobalStatsContext,
   );
-
-  const checkCorrection = '↑ Please check this value';
-  const measurementNeeded = "↑ We'll need a weight to calculate";
-  const wrongUnitsMessage = (units) => {
-    return `↑ Are you sure this is a neonatal measurement (in ${units})?`;
-  };
-
-  const validationSchema = Yup.object().shape({
-    correction: Yup.number().min(30, checkCorrection).max(200, checkCorrection),
-    dob: Yup.date()
-      .nullable()
-      .required('↑ Please enter a date and time of birth')
-      .label('Date of Birth'),
-    weight: Yup.number()
-      .min(0.1, wrongUnitsMessage('kg'))
-      .max(8, wrongUnitsMessage('kg'))
-      .required(measurementNeeded),
-    gestationInDays: Yup.number()
-      .min(161, '↑ Please select a birth gestation')
-      .required()
-      .label('Birth Gestation'),
-  });
-
-  const initialValues = {
-    correction: '100',
-    weight: '',
-    gestationInDays: 0,
-    dob: null,
-    dom: null,
-  };
 
   const handleFormikSubmit = (values) => {
     const {gestationInDays} = values;

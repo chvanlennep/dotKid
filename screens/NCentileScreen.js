@@ -19,81 +19,78 @@ import calculateCentile from '../brains/calculateCentile';
 import ageChecker from '../brains/ageChecker';
 import {handleOldValues} from '../brains/oddBits';
 
+const oneMeasurementNeeded = "↑ We'll need at least one of these measurements";
+const wrongUnitsMessage = (units) => {
+  return `↑ Are you sure this is a neonatal measurement (in ${units})?`;
+};
+
+const validationSchema = Yup.object().shape(
+  {
+    length: Yup.number()
+      .min(30, wrongUnitsMessage('cm'))
+      .max(70, wrongUnitsMessage('cm'))
+      .when(['weight', 'hc'], {
+        is: (weight, hc) => !weight && !hc,
+        then: Yup.number()
+          .label('length')
+          .min(30, wrongUnitsMessage('cm'))
+          .max(70, wrongUnitsMessage('cm'))
+          .required(oneMeasurementNeeded),
+      }),
+    weight: Yup.number()
+      .min(0.1, wrongUnitsMessage('kg'))
+      .max(8, wrongUnitsMessage('kg'))
+      .when(['length', 'hc'], {
+        is: (length, hc) => !length && !hc,
+        then: Yup.number()
+          .label('Weight')
+          .min(0.1, wrongUnitsMessage('kg'))
+          .max(8, wrongUnitsMessage('kg'))
+          .required(oneMeasurementNeeded),
+      }),
+    hc: Yup.number()
+      .min(10, wrongUnitsMessage('cm'))
+      .max(100, wrongUnitsMessage('cm'))
+      .when(['length', 'weight'], {
+        is: (length, weight) => !length && !weight,
+        then: Yup.number()
+          .label('Head Circumference')
+          .min(10, wrongUnitsMessage('cm'))
+          .max(100, wrongUnitsMessage('cm'))
+          .required(oneMeasurementNeeded),
+      }),
+    sex: Yup.string().required('↑ Please select a sex').label('Sex'),
+    gestationInDays: Yup.number()
+      .min(161, '↑ Please select a birth gestation')
+      .required()
+      .label('Birth Gestation'),
+    dob: Yup.date()
+      .nullable()
+      .required('↑ Please enter a date of birth')
+      .label('Date of Birth'),
+  },
+  [
+    ['length', 'weight'],
+    ['length', 'hc'],
+    ['weight', 'hc'],
+  ],
+);
+
+const initialValues = {
+  length: '',
+  weight: '',
+  hc: '',
+  sex: '',
+  gestationInDays: 0,
+  dob: null,
+  dom: null,
+};
+
 const PCentileScreen = () => {
   const navigation = useNavigation();
   const {globalStats, setGlobalStats, moveDataAcrossGlobal} = useContext(
     GlobalStatsContext,
   );
-
-  const oneMeasurementNeeded =
-    "↑ We'll need at least one of these measurements";
-  const wrongUnitsMessage = (units) => {
-    return `↑ Are you sure this is a neonatal measurement (in ${units})?`;
-  };
-
-  const validationSchema = Yup.object().shape(
-    {
-      length: Yup.number()
-        .min(30, wrongUnitsMessage('cm'))
-        .max(70, wrongUnitsMessage('cm'))
-        .when(['weight', 'hc'], {
-          is: (weight, hc) => !weight && !hc,
-          then: Yup.number()
-            .label('length')
-            .min(30, wrongUnitsMessage('cm'))
-            .max(70, wrongUnitsMessage('cm'))
-            .required(oneMeasurementNeeded),
-        }),
-      weight: Yup.number()
-        .min(0.1, wrongUnitsMessage('kg'))
-        .max(8, wrongUnitsMessage('kg'))
-        .when(['length', 'hc'], {
-          is: (length, hc) => !length && !hc,
-          then: Yup.number()
-            .label('Weight')
-            .min(0.1, wrongUnitsMessage('kg'))
-            .max(8, wrongUnitsMessage('kg'))
-            .required(oneMeasurementNeeded),
-        }),
-      hc: Yup.number()
-        .min(10, wrongUnitsMessage('cm'))
-        .max(100, wrongUnitsMessage('cm'))
-        .when(['length', 'weight'], {
-          is: (length, weight) => !length && !weight,
-          then: Yup.number()
-            .label('Head Circumference')
-            .min(10, wrongUnitsMessage('cm'))
-            .max(100, wrongUnitsMessage('cm'))
-            .required(oneMeasurementNeeded),
-        }),
-      sex: Yup.string().required('↑ Please select a sex').label('Sex'),
-      gestationInDays: Yup.number()
-        .min(161, '↑ Please select a birth gestation')
-        .required()
-        .label('Birth Gestation'),
-      dob: Yup.date()
-        .nullable()
-        .required('↑ Please enter a date of birth')
-        .label('Date of Birth'),
-    },
-    [
-      ['length', 'weight'],
-      ['length', 'hc'],
-      ['weight', 'hc'],
-    ],
-  );
-
-  const initialValues = {
-    length: '',
-    weight: '',
-    hc: '',
-    sex: '',
-    gestationInDays: 0,
-    dob: null,
-    dom: null,
-  };
-
-  //console.log(globalStats.neonate);
 
   const handleFormikSubmit = (values) => {
     const ageCheck = ageChecker(values);

@@ -18,31 +18,32 @@ import ageChecker from '../brains/ageChecker';
 import {handleOldValues} from '../brains/oddBits';
 import {GlobalStatsContext} from '../components/GlobalStats';
 
+const validationSchema = Yup.object().shape({
+  sbr: Yup.number()
+    .required('↑ Please enter a serum bilirubin')
+    .max(1000, '↑ Are you sure about this measurement?'),
+  gestationInDays: Yup.number()
+    .min(161, '↑ Please select a birth gestation')
+    .required()
+    .nullable()
+    .label('Birth Gestation'),
+  dob: Yup.date()
+    .nullable()
+    .required('↑ Please enter a date and time birth')
+    .label('Date of Birth'),
+});
+
+const initialValues = {
+  sbr: '',
+  gestationInDays: 0,
+  dob: null,
+  dom: null,
+};
+
 const JaundiceScreen = () => {
   const navigation = useNavigation();
-  const initialValues = {
-    sbr: '',
-    gestationInDays: 0,
-    dob: null,
-    dom: null,
-  };
 
   const {globalStats, setGlobalStats} = useContext(GlobalStatsContext);
-
-  const validationSchema = Yup.object().shape({
-    sbr: Yup.number()
-      .required('↑ Please enter a serum bilirubin')
-      .max(1000, '↑ Are you sure about this measurement?'),
-    gestationInDays: Yup.number()
-      .min(161, '↑ Please select a birth gestation')
-      .required()
-      .nullable()
-      .label('Birth Gestation'),
-    dob: Yup.date()
-      .nullable()
-      .required('↑ Please enter a date and time birth')
-      .label('Date of Birth'),
-  });
 
   const handleFormikSubmit = (values) => {
     const checkAge = ageChecker(values, 14);

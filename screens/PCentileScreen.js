@@ -20,6 +20,68 @@ import ageChecker from '../brains/ageChecker';
 import useAgeEffect from '../brains/useAgeEffect';
 import {handleOldValues} from '../brains/oddBits';
 
+const oneMeasurementNeeded = "↑ We'll need at least one of these measurements";
+const wrongUnitsMessage = (units) => {
+  return `↑ Are you sure your input is in ${units}?`;
+};
+const validationSchema = Yup.object().shape(
+  {
+    height: Yup.number()
+      .min(30, wrongUnitsMessage('cm'))
+      .max(220, wrongUnitsMessage('cm'))
+      .when(['weight', 'hc'], {
+        is: (weight, hc) => !weight && !hc,
+        then: Yup.number()
+          .label('Height')
+          .min(30, wrongUnitsMessage('cm'))
+          .max(220, wrongUnitsMessage('cm'))
+          .required(oneMeasurementNeeded),
+      }),
+    weight: Yup.number()
+      .min(0.1, wrongUnitsMessage('kg'))
+      .max(250, wrongUnitsMessage('kg'))
+      .when(['height', 'hc'], {
+        is: (height, hc) => !height && !hc,
+        then: Yup.number()
+          .label('Weight')
+          .min(0.1, wrongUnitsMessage('kg'))
+          .max(250, wrongUnitsMessage('kg'))
+          .required(oneMeasurementNeeded),
+      }),
+    hc: Yup.number()
+      .min(10, wrongUnitsMessage('cm'))
+      .max(100, wrongUnitsMessage('cm'))
+      .when(['height', 'weight'], {
+        is: (height, weight) => !height && !weight,
+        then: Yup.number()
+          .label('Head Circumference')
+          .min(10, wrongUnitsMessage('cm'))
+          .max(100, wrongUnitsMessage('cm'))
+          .required(oneMeasurementNeeded),
+      }),
+    sex: Yup.string().required('↑ Please select a sex').label('Sex'),
+    dob: Yup.date()
+      .nullable()
+      .required('↑ Please enter a date of birth')
+      .label('Date of Birth'),
+  },
+  [
+    ['height', 'weight'],
+    ['height', 'hc'],
+    ['weight', 'hc'],
+  ],
+);
+
+const initialValues = {
+  height: '',
+  weight: '',
+  hc: '',
+  sex: '',
+  gestationInDays: 280,
+  dob: null,
+  dom: null,
+};
+
 const PCentileScreen = () => {
   const navigation = useNavigation();
 
@@ -29,71 +91,7 @@ const PCentileScreen = () => {
 
   const formikRef = useRef(null);
 
-  const oneMeasurementNeeded =
-    "↑ We'll need at least one of these measurements";
-  const wrongUnitsMessage = (units) => {
-    return `↑ Are you sure your input is in ${units}?`;
-  };
-
   const [showGestation, setShowGestation] = useState(false);
-
-  const validationSchema = Yup.object().shape(
-    {
-      height: Yup.number()
-        .min(30, wrongUnitsMessage('cm'))
-        .max(220, wrongUnitsMessage('cm'))
-        .when(['weight', 'hc'], {
-          is: (weight, hc) => !weight && !hc,
-          then: Yup.number()
-            .label('Height')
-            .min(30, wrongUnitsMessage('cm'))
-            .max(220, wrongUnitsMessage('cm'))
-            .required(oneMeasurementNeeded),
-        }),
-      weight: Yup.number()
-        .min(0.1, wrongUnitsMessage('kg'))
-        .max(250, wrongUnitsMessage('kg'))
-        .when(['height', 'hc'], {
-          is: (height, hc) => !height && !hc,
-          then: Yup.number()
-            .label('Weight')
-            .min(0.1, wrongUnitsMessage('kg'))
-            .max(250, wrongUnitsMessage('kg'))
-            .required(oneMeasurementNeeded),
-        }),
-      hc: Yup.number()
-        .min(10, wrongUnitsMessage('cm'))
-        .max(100, wrongUnitsMessage('cm'))
-        .when(['height', 'weight'], {
-          is: (height, weight) => !height && !weight,
-          then: Yup.number()
-            .label('Head Circumference')
-            .min(10, wrongUnitsMessage('cm'))
-            .max(100, wrongUnitsMessage('cm'))
-            .required(oneMeasurementNeeded),
-        }),
-      sex: Yup.string().required('↑ Please select a sex').label('Sex'),
-      dob: Yup.date()
-        .nullable()
-        .required('↑ Please enter a date of birth')
-        .label('Date of Birth'),
-    },
-    [
-      ['height', 'weight'],
-      ['height', 'hc'],
-      ['weight', 'hc'],
-    ],
-  );
-
-  const initialValues = {
-    height: '',
-    weight: '',
-    hc: '',
-    sex: '',
-    gestationInDays: 280,
-    dob: null,
-    dom: null,
-  };
 
   const handleFormikSubmit = (values) => {
     const ageCheck = ageChecker(values);
@@ -202,8 +200,6 @@ const PCentileScreen = () => {
   const dob = globalStats.child.dob;
   const dom = globalStats.child.dom;
   useAgeEffect(dob, dom, formikRef, setShowGestation);
-
-  //console.log(globalStats.child.dom.value);
 
   return (
     <PCalcScreen style={{flex: 1}}>

@@ -22,6 +22,49 @@ import {GlobalStatsContext} from '../components/GlobalStats';
 import useAgeEffect from '../brains/useAgeEffect';
 import {handleOldValues} from '../brains/oddBits';
 
+const oneMeasurementNeeded = "↑ We'll need this measurement too";
+
+const wrongUnitsMessage = (units) => {
+  return `↑ Are you sure your input is in ${units}?`;
+};
+
+const validationSchema = Yup.object().shape({
+  height: Yup.number()
+    .min(30, wrongUnitsMessage('cm'))
+    .max(220, wrongUnitsMessage('cm'))
+    .required(oneMeasurementNeeded),
+  systolic: Yup.number()
+    .min(30, wrongUnitsMessage('mmHg'))
+    .max(250, wrongUnitsMessage('mmHg'))
+    .required(oneMeasurementNeeded),
+  diastolic: Yup.number()
+    .min(10, wrongUnitsMessage('mmHg'))
+    .max(180, wrongUnitsMessage('mmHg'))
+    .when('systolic', {
+      is: (systolic) => !systolic,
+      then: Yup.number()
+        .label('Diastolic')
+        .min(10, wrongUnitsMessage('mmHg'))
+        .max(180, wrongUnitsMessage('mmHg'))
+        .required(oneMeasurementNeeded),
+    }),
+  sex: Yup.string().required('↑ Please select a sex').label('Sex'),
+  dob: Yup.date()
+    .nullable()
+    .required('↑ Please enter a date of Birth')
+    .label('Date of Birth'),
+});
+
+const initialValues = {
+  height: '',
+  sex: '',
+  gestationInDays: 280,
+  dob: null,
+  systolic: '',
+  diastolic: '',
+  dom: null,
+};
+
 const BPScreen = () => {
   const navigation = useNavigation();
   const {globalStats, setGlobalStats} = useContext(GlobalStatsContext);
@@ -29,49 +72,6 @@ const BPScreen = () => {
   const formikRef = useRef(null);
 
   const [showGestation, setShowGestation] = useState(false);
-
-  const oneMeasurementNeeded = "↑ We'll need this measurement too";
-
-  const wrongUnitsMessage = (units) => {
-    return `↑ Are you sure your input is in ${units}?`;
-  };
-
-  const validationSchema = Yup.object().shape({
-    height: Yup.number()
-      .min(30, wrongUnitsMessage('cm'))
-      .max(220, wrongUnitsMessage('cm'))
-      .required(oneMeasurementNeeded),
-    systolic: Yup.number()
-      .min(30, wrongUnitsMessage('mmHg'))
-      .max(250, wrongUnitsMessage('mmHg'))
-      .required(oneMeasurementNeeded),
-    diastolic: Yup.number()
-      .min(10, wrongUnitsMessage('mmHg'))
-      .max(180, wrongUnitsMessage('mmHg'))
-      .when('systolic', {
-        is: (systolic) => !systolic,
-        then: Yup.number()
-          .label('Diastolic')
-          .min(10, wrongUnitsMessage('mmHg'))
-          .max(180, wrongUnitsMessage('mmHg'))
-          .required(oneMeasurementNeeded),
-      }),
-    sex: Yup.string().required('↑ Please select a sex').label('Sex'),
-    dob: Yup.date()
-      .nullable()
-      .required('↑ Please enter a date of Birth')
-      .label('Date of Birth'),
-  });
-
-  const initialValues = {
-    height: '',
-    sex: '',
-    gestationInDays: 280,
-    dob: null,
-    systolic: '',
-    diastolic: '',
-    dom: null,
-  };
 
   const handleFormikSubmit = (values) => {
     const correctDays =

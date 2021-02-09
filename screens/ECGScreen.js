@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {Alert, StyleSheet, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -18,16 +18,31 @@ import calculateCentile from '../brains/calculateCentile';
 import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
 import {handleOldValues} from '../brains/oddBits';
 import {GlobalStatsContext} from '../components/GlobalStats';
+import UnitsSwitcher from '../components/buttons/UnitsSwitcher';
+
+const oneMeasurementNeeded = "↑ We'll need this measurement too";
+const wrongUnitsMessage = (units) => {
+  return `↑ Are you sure this is in ${units}?`;
+};
+
+const initialValues = {
+  rrinterval: '',
+  qtinterval: '',
+  gestationInDays: 280,
+  dob: null,
+  dom: null,
+};
 
 const ECGScreen = () => {
   const navigation = useNavigation();
 
-  const oneMeasurementNeeded = "↑ We'll need this measurement too";
-  const wrongUnitsMessage = (units) => {
-    return `↑ Are you sure your input is in ${units}?`;
-  };
-
   const {globalStats, setGlobalStats} = useContext(GlobalStatsContext);
+
+  const [isMilliseconds, setIsMilliseconds] = useState(false);
+
+  const units = isMilliseconds ? 'milliseconds' : 'small squares';
+
+  const validationFactor = isMilliseconds ? 1 : 40;
 
   const validationSchema = Yup.object().shape({
     dob: Yup.date()
@@ -35,26 +50,18 @@ const ECGScreen = () => {
       .required('↑ Please enter a date of Birth')
       .label('Date of Birth'),
     qtinterval: Yup.number()
-      .min(0.1, wrongUnitsMessage('seconds'))
-      .max(20, wrongUnitsMessage('seconds'))
+      .min(100 / validationFactor, wrongUnitsMessage(units))
+      .max(2000 / validationFactor, wrongUnitsMessage(units))
       .label('QT Interval')
       .required(oneMeasurementNeeded),
     rrinterval: Yup.number()
-      .min(0.15, wrongUnitsMessage('seconds'))
-      .max(3, wrongUnitsMessage('seconds'))
+      .min(150 / validationFactor, wrongUnitsMessage(units))
+      .max(3000 / validationFactor, wrongUnitsMessage(units))
       .label('R-R Interval')
       .required(oneMeasurementNeeded),
   });
 
-  const initialValues = {
-    rrinterval: '',
-    qtinterval: '',
-    gestationInDays: 280,
-    dob: null,
-    dom: null,
-  };
-
-  const handleFormikSubmit = (values, {setFieldValue}) => {
+  const handleFormikSubmit = (values) => {
     const dom = values.dom ? values.dom : new Date();
     const age = zeit(values.dob, 'months', dom, true, correctDays);
     const ageCheck = ageChecker(values);
@@ -78,13 +85,14 @@ const ECGScreen = () => {
         break;
       default:
         const submitFunction = () => {
+          const qt = values.qtinterval / (isMilliseconds ? 1000 : 25);
+          const rr = values.rrinterval / (isMilliseconds ? 1000 : 25);
           const centileObject = calculateCentile(values);
-          const measurements = values;
-          const QTCOutput = calculateQTC(
-            age,
-            values.qtinterval,
-            values.rrinterval,
-          );
+          const measurements = {
+            ...values,
+            ...{qtinterval: qt.toString(), rrinterval: rr.toString()},
+          };
+          const QTCOutput = calculateQTC(age, qt, rr);
           const serialisedObject = JSON.stringify({
             QTCOutput,
             centileObject,
@@ -115,17 +123,23 @@ const ECGScreen = () => {
               name="qtinterval"
               userLabel="QT Interval"
               iconName="heart-flash"
-              unitsOfMeasurement=" seconds"
+              unitsOfMeasurement={` ${units}`}
               kind="child"
             />
             <NumberInputButton
               name="rrinterval"
               userLabel="R-R Interval"
               iconName="heart-pulse"
-              unitsOfMeasurement=" seconds"
+              unitsOfMeasurement={` ${units}`}
               kind="child"
             />
             <DateTimeInputButton kind="child" type="measured" />
+            <UnitsSwitcher
+              isUnits={isMilliseconds}
+              setIsUnits={setIsMilliseconds}
+              falseUnits="Small Squares"
+              trueUnits="Milliseconds"
+            />
             <FormResetButton kind="child" initialValues={initialValues} />
             <FormSubmitButton name="Calculate QTc" kind="child" />
           </AppForm>
