@@ -15,6 +15,7 @@ import PCentileResultsScreen from '../screens/PCentileResultsScreen';
 import BPResultsScreen from '../screens/BPResultsScreen';
 import ECGResultsScreen from '../screens/ECGResultsScreen';
 import AgeScreen from '../screens/AgeScreen';
+import NormalRangesScreen from '../screens/NormalRangesScreen';
 
 const Stack = createStackNavigator();
 
@@ -41,6 +42,7 @@ const PaedsCalcNavigator = () => {
       <Stack.Screen name="ECG" component={ECGScreen} />
       <Stack.Screen name="ECGResults" component={ECGResultsScreen} />
       <Stack.Screen name="FluidCalculator" component={FluidCalculatorScreen} />
+      <Stack.Screen name="NormalRanges" component={NormalRangesScreen} />
       <Stack.Screen name="WETFLAGScreen" component={WETFLAGScreen} />
       <Stack.Screen name="WETFLAGResults" component={WETFLAGResultsScreen} />
     </Stack.Navigator>

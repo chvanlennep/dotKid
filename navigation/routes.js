@@ -17,6 +17,7 @@ export default Object.freeze({
   WETFLAG_RESULTS: 'WETFLAGResults',
   NEONATE_HOMEPAGE: 'RootN',
   NEONATE_START: 'NeonateHomepage',
+  NORMAL_RANGES: 'NormalRanges',
   BIRTH_CENTILE: 'BirthCentile',
   BIRTH_CENTILE_RESULTS: 'BirthCentileResults',
   NEONATE_CENTILE: 'NCentile',
