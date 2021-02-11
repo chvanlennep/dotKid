@@ -1,8 +1,8 @@
 import {useNetInfo} from '@react-native-community/netinfo';
+import {primary} from '../../apiKey';
 
 const addressForCentileCalculation =
   'https://api.rcpch.ac.uk/growth/v1/uk-who/calculation';
-const manna = 'not kept here';
 
 const makeApiArgument = (
   dob,
@@ -83,7 +83,7 @@ const useApi = () => {
           fetch(addressForCentileCalculation, {
             method: 'POST',
             headers: {
-              'Primary-Subscription-Key': manna,
+              'Primary-Subscription-Key': primary,
               'Content-Type': 'application/json',
               'Cache-Control': 'no-cache',
             },
