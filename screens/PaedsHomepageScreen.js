@@ -44,11 +44,14 @@ const PaedsHomepageScreen = () => {
           <NavigateButton directions={routes.PAEDIATRIC_CENTILE}>
             Child Centile Calculator
           </NavigateButton>
-          <NavigateButton directions={routes.ECG}>
-            QTc Calculator
-          </NavigateButton>
           <NavigateButton directions={routes.FLUID_CALCULATOR}>
             IV Fluid Calculator
+          </NavigateButton>
+          <NavigateButton directions={routes.NORMAL_RANGES}>
+            Normal Observation Ranges
+          </NavigateButton>
+          <NavigateButton directions={routes.ECG}>
+            QTc Calculator
           </NavigateButton>
           <NavigateButton directions={routes.WETFLAG}> WETFLAG </NavigateButton>
         </ScrollView>
