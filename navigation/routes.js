@@ -1,6 +1,7 @@
 export default Object.freeze({
   ABOUT_SCREEN: 'AboutScreen',
   AGE: 'Age',
+  APGAR: 'APGAR',
   BLOOD_PRESSURE_RESULTS: 'BPResults',
   ECG_RESULTS: 'ECGResults',
   PAEDS_HOMEPAGE: 'RootPaed',

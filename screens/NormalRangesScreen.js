@@ -28,29 +28,34 @@ const NormalRangesScreen = () => {
 
   const formikRef = useRef(null);
 
-  let inputAge = zeit(dob, 'years', dom);
-  let targetValues;
-
-  const valueFinder = () => {
-    for (let i = 0; i < obsRanges.length; i++) {
-      const refData = obsRanges[i];
-      if (inputAge < refData.age) {
-        targetValues = refData.data;
-        setOutput(
-          `\n\nHeart Rate: ${targetValues.HR} bpm \nRespiratory Rate: ${targetValues.RR} breaths per minute \nSats: ≥95%\nTemperature: 36 - 37.9°C`,
-        );
-        break;
-      }
-    }
-  };
+  const inputAge = zeit(dob, 'years', dom);
 
   useLayoutEffect(() => {
+    const valueFinder = () => {
+      let targetValues;
+      for (let i = 0; i < obsRanges.length; i++) {
+        const refData = obsRanges[i];
+        if (inputAge < refData.age) {
+          targetValues = refData.data;
+          setOutput(
+            `\n\nHeart Rate: ${targetValues.HR} bpm \nRespiratory Rate: ${targetValues.RR} breaths per minute \nSats: ≥95%\nTemperature: 36 - 37.9°C`,
+          );
+          break;
+        }
+      }
+    };
     if (dob) {
       const ageInMonths = zeit(dob, 'months', dom);
       if (ageInMonths >= 0) {
         valueFinder();
         const beforeString = zeit(dob, 'string', dom);
         setBefore(beforeString);
+      } else if (ageInMonths < 217) {
+        setBefore('N/A');
+        setAfter('not corrected');
+        setOutput(
+          '\n\nThis calculator is only designed for use in those under 18 years of age.',
+        );
       } else {
         setBefore('N/A');
         setAfter('not corrected');
@@ -65,7 +70,7 @@ const NormalRangesScreen = () => {
     if (dob === null) {
       setOutput('\n\nPlease enter a date of birth');
     }
-  }, [dom, dob, valueFinder]);
+  }, [dom, dob]);
 
   return (
     <PCalcScreen style={{flex: 1}}>
