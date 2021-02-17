@@ -10,6 +10,9 @@ import {GlobalStatsContext} from '../components/GlobalStats';
 import zeit from '../brains/zeit';
 import obsRanges from '../brains/obsRanges';
 import ObsButton from '../components/buttons/ObsButton';
+import AppText from '../components/AppText';
+import defaultStyles from '../config/styles';
+import colors from '../config/colors';
 
 const initialValues = {
   gestationInDays: 280,
@@ -50,6 +53,10 @@ const NormalRangesScreen = () => {
         valueFinder();
         const beforeString = zeit(dob, 'string', dom);
         setBefore(beforeString);
+      } else if (ageInMonths < 0) {
+        setBefore('N/A');
+        setAfter('not corrected');
+        setOutput("\n\nIt looks like you've added a date in the future!");
       } else if (ageInMonths < 217) {
         setBefore('N/A');
         setAfter('not corrected');
@@ -85,7 +92,14 @@ const NormalRangesScreen = () => {
               valueBeforeCorrection={before}
               valueAfterCorrection={after}
             />
-            <ObsButton output={output} />
+            {dob === null && (
+              <View style={styles.button}>
+                <AppText style={styles.outputText}>
+                  ↑ Please enter a date of birth above
+                </AppText>
+              </View>
+            )}
+            {dob !== null && <ObsButton output={output} />}
           </AppForm>
         </View>
       </ScrollView>
@@ -96,6 +110,20 @@ const NormalRangesScreen = () => {
 export default NormalRangesScreen;
 
 const styles = StyleSheet.create({
+  button: {
+    ...defaultStyles.container,
+    alignItems: 'center',
+    backgroundColor: colors.dark,
+    borderRadius: 5,
+    color: colors.white,
+    flexDirection: 'row',
+    height: 57,
+    margin: 5,
+    padding: 15,
+  },
+  outputText: {
+    color: colors.white,
+  },
   topContainer: {
     alignSelf: 'center',
     alignItems: 'center',
