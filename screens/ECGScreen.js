@@ -140,7 +140,11 @@ const ECGScreen = () => {
               falseUnits="Small Squares"
               trueUnits="Milliseconds"
             />
-            <FormResetButton kind="child" initialValues={initialValues} />
+            <FormResetButton
+              kind="child"
+              initialValues={initialValues}
+              setIsValue={setIsMilliseconds}
+            />
             <FormSubmitButton name="Calculate QTc" kind="child" />
           </AppForm>
         </View>

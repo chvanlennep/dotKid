@@ -44,11 +44,10 @@ const blanksBoth = {
     days: 0,
   },
   sex: {
-    buttonText: 'Sex',
     showSwitch: false,
     timeStamp: null,
     value: '',
-    isMale: false,
+    isTrueValue: false,
   },
   date: {
     showCancel: false,
@@ -60,6 +59,12 @@ const blanksBoth = {
     timeStamp: null,
     date1: null,
     date2: null,
+  },
+  deficit: {
+    showSwitch: false,
+    timeStamp: null,
+    value: '',
+    isTrueValue: false,
   },
 };
 const gestChild = {

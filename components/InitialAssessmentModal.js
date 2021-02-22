@@ -139,14 +139,8 @@ const InitialAssessBabyModal = ({
     for (let i = 0; i < nameArray.length; i++) {
       if (name !== nameArray[i]) {
         if (pickerState[nameArray[i]].open) {
-          if (!pickerState[nameArray[i].color]) {
-            //Alert.alert('');
-          }
           changePickerState(nameArray[i], 'open', false);
           changePickerState(name, 'open', true);
-          name === 'Saturations'
-            ? setPickerText('Colour +/- Saturations')
-            : setPickerText(name);
           break;
         }
       }

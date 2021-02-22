@@ -151,7 +151,7 @@ const ReferenceScreen = () => {
               styles.subheading,
               {color: dark ? colors.lightSecondary : colors.darkSecondary},
             ]}>
-            ECG Calculator
+            QTc Calculator
           </Text>
           <Text
             style={[
@@ -196,8 +196,10 @@ const ReferenceScreen = () => {
               styles.text,
               {color: dark ? colors.white : colors.dark},
             ]}>
-            - Fluid requirement calculators based on NICE guidelines for IV
-            fluid therapy in children and young people
+            - Fluid requirement calculators (maintenance) based on NICE
+            guidelines for IV fluid therapy in children and young people{'\n'}-
+            Deficit correction calculator is based on NICE guidelines for
+            treatment of dehydration in under 5 year olds
           </Text>
           <Text
             style={[
@@ -211,6 +213,21 @@ const ReferenceScreen = () => {
               )
             }>
             {'NICE: Principles & Protocols for IV Fluid Therapy'}
+          </Text>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.hyperlink,
+              {color: dark ? colors.lightPrimary : colors.darkPrimary},
+            ]}
+            onPress={() =>
+              Linking.openURL(
+                'https://www.nice.org.uk/guidance/cg84/chapter/1-Guidance#fluid-management',
+              )
+            }>
+            {
+              'NICE: Diarrhoea and vomiting caused by gastroenteritis in under 5s: diagnosis and management'
+            }
           </Text>
         </View>
         <View

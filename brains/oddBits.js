@@ -3,10 +3,10 @@ import {Alert} from 'react-native';
 // input a number and outputs a string with ordinal suffix attached
 const addOrdinalSuffix = (inputNumber) => {
   const answerNumber = inputNumber;
-  let workingNumber = inputNumber;
-  if (Number.isInteger(inputNumber) === false) {
+  let workingNumber = Number(inputNumber);
+  if (Number.isInteger(workingNumber) === false) {
     workingNumber *= 10;
-    if (Number.isInteger(inputNumber) === false) {
+    if (Number.isInteger(workingNumber) === false) {
       return 'Error: only integers or numbers to 1 decimal place are supported';
     }
   }
@@ -49,9 +49,7 @@ const checkTimeStamps = (globalObject, initialFormikValues, minsAgo = 2) => {
   const nameArray = [];
   const now = new Date();
   for (const [key, value] of Object.entries(globalObject)) {
-    for (const [formikKey, formikObject] of Object.entries(
-      initialFormikValues,
-    )) {
+    for (const formikKey of Object.keys(initialFormikValues)) {
       if (value.timeStamp && key === formikKey) {
         const timeStamp = value.timeStamp;
         const millisecondDifference = now.getTime() - timeStamp.getTime();
@@ -127,6 +125,7 @@ const handleOldValues = (
   const oldValueArray = checkTimeStamps(globalValues, initialFormikValues);
   if (oldValueArray.length > 0) {
     const nameLookup = {
+      deficit: 'Dehydration',
       height: 'Height',
       length: 'Length',
       weight: 'Weight',

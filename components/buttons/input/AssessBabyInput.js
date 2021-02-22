@@ -52,7 +52,7 @@ const AssessBabyInput = ({pickerDetails, pickerStateObject}) => {
 
   return (
     <React.Fragment>
-      {pickerState[name]['open'] && (
+      {pickerState[name].open && (
         <React.Fragment>
           <View style={styles.lightPickerContainer}>
             <Picker

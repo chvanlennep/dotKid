@@ -151,7 +151,7 @@ const NFluidRequirementsScreen = () => {
             />
             <NumberInputButton
               name="correction"
-              userLabel="Correction Factor"
+              userLabel="Percentage of Normal"
               iconName="triangle-outline"
               unitsOfMeasurement="%"
               kind="neonate"

@@ -11,7 +11,6 @@ import ageChecker from '../brains/ageChecker';
 import calculateFluid from '../brains/calculateFluid';
 import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
 import GestationInputButton from '../components/buttons/input/GestationInputButton';
-import SexInputButton from '../components/buttons/input/SexInputButton';
 import NumberInputButton from '../components/buttons/input/NumberInputButton';
 import FormResetButton from '../components/buttons/FormResetButton';
 import AppForm from '../components/AppForm';
@@ -21,27 +20,13 @@ import FormSubmitButton from '../components/buttons/FormSubmitButton';
 import zeit from '../brains/zeit';
 import useAgeEffect from '../brains/useAgeEffect';
 import {handleOldValues} from '../brains/oddBits';
+import UnitsSwitcher from '../components/buttons/UnitsSwitcher';
+import BinarySelector from '../components/buttons/input/BinarySelector';
 
-const oneMeasurementNeeded = "↑ We'll need this measurement too";
+const oneMeasurementNeeded = "↑ We'll need this measurement";
 const wrongUnitsMessage = (units) => {
   return `↑ Are you sure your input is in ${units}?`;
 };
-
-const validationSchema = Yup.object().shape({
-  weight: Yup.number()
-    .min(0.1, wrongUnitsMessage('kg'))
-    .max(250, wrongUnitsMessage('kg'))
-    .required(oneMeasurementNeeded),
-  correction: Yup.number()
-    .min(50, 'Minimum calculator correction = 50% of normal')
-    .max(150, 'Maximum calculator correction = 150% of normal')
-    .required(oneMeasurementNeeded),
-  sex: Yup.string().required('↑ Please select a sex').label('Sex'),
-  dob: Yup.date()
-    .nullable()
-    .required('↑ Please enter a date of Birth')
-    .label('Date of Birth'),
-});
 
 const initialValues = {
   weight: '',
@@ -50,6 +35,7 @@ const initialValues = {
   dob: null,
   correction: '100',
   dom: null,
+  deficit: '',
 };
 
 const FluidCalculatorScreen = () => {
@@ -59,8 +45,29 @@ const FluidCalculatorScreen = () => {
     GlobalStatsContext,
   );
   const [showGestation, setShowGestation] = useState(false);
+  const [isDeficit, setIsDeficit] = useState(false);
 
   const formikRef = useRef(null);
+
+  const validationSchema = Yup.object().shape({
+    weight: Yup.number()
+      .min(0.1, wrongUnitsMessage('kg'))
+      .max(250, wrongUnitsMessage('kg'))
+      .required(oneMeasurementNeeded),
+    correction: Yup.number()
+      .min(50, 'Minimum calculator correction = 50% of normal')
+      .max(150, 'Maximum calculator correction = 150% of normal'),
+    sex: Yup.string().required('↑ Please select a sex').label('Sex'),
+    deficit: isDeficit
+      ? Yup.string()
+          .required('↑ Please select a dehydration severity')
+          .label('Dehydration')
+      : Yup.string(),
+    dob: Yup.date()
+      .nullable()
+      .required('↑ Please enter a date of Birth')
+      .label('Date of Birth'),
+  });
 
   const handleFormikSubmit = (values) => {
     const {gestationInDays} = values;
@@ -106,10 +113,19 @@ const FluidCalculatorScreen = () => {
         break;
       default:
         const submitFunction = () => {
+          let correction = values.correction;
+          let mode = 'percentage';
+          if (isDeficit) {
+            correction = values.deficit === 'Moderate' ? 5 : 10;
+            mode = 'deficit';
+          }
+          const ageInYears = zeit(values.dob, 'years', values.dom);
           const results = calculateFluid(
             values.weight,
-            values.correction,
             values.sex,
+            mode,
+            correction,
+            ageInYears,
           );
           const centileObject = calculateCentile(values);
           const measurements = values;
@@ -147,7 +163,14 @@ const FluidCalculatorScreen = () => {
             {showGestation && (
               <GestationInputButton name="gestationInDays" kind="child" />
             )}
-            <SexInputButton name="sex" kind="child" />
+            <BinarySelector
+              kind="child"
+              name="sex"
+              userLabel="Sex"
+              trueValue="Male"
+              falseValue="Female"
+              iconName="all-inclusive"
+            />
             <NumberInputButton
               name="weight"
               userLabel="Weight"
@@ -155,16 +178,38 @@ const FluidCalculatorScreen = () => {
               unitsOfMeasurement="kg"
               kind="child"
             />
-            <NumberInputButton
-              name="correction"
-              defaultValue="100"
-              userLabel="Correction Factor"
-              iconName="triangle-outline"
-              unitsOfMeasurement="%"
-              kind="child"
-            />
+            {isDeficit && (
+              <BinarySelector
+                kind="child"
+                name="deficit"
+                userLabel="Dehydration"
+                trueValue="Severe"
+                falseValue="Moderate"
+                iconName="water"
+              />
+            )}
+            {!isDeficit && (
+              <NumberInputButton
+                name="correction"
+                defaultValue="100"
+                userLabel="Percentage of Normal"
+                iconName="triangle-outline"
+                unitsOfMeasurement="%"
+                kind="child"
+              />
+            )}
             <DateTimeInputButton kind="child" type="measured" />
-            <FormResetButton kind="child" initialValues={initialValues} />
+            <UnitsSwitcher
+              isUnits={isDeficit}
+              setIsUnits={setIsDeficit}
+              falseUnits="Maintenance"
+              trueUnits="Deficit"
+            />
+            <FormResetButton
+              kind="child"
+              initialValues={initialValues}
+              setIsValue={setIsDeficit}
+            />
             <FormSubmitButton name="Calculate IV fluid rate" kind="child" />
           </AppForm>
         </View>

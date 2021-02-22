@@ -10,9 +10,10 @@ import defaultStyles from '../../config/styles';
 const modalWidth =
   defaultStyles.container.width > 400 ? 400 : defaultStyles.container.width;
 
-const MoreCentileInfo = ({exactCentile}) => {
+const MoreCentileInfo = ({exactCentile, sds}) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const modalHeading = `Exact centile: ${exactCentile}`;
+  const modalHeading1 = `Exact centile: ${exactCentile}`;
+  const modalHeading2 = sds ? `Z score: ${sds.toFixed(3)}` : null;
   const modalMessage = `The default answer follows RCPCH guidelines based on major centile lines (50th, 75th etc.): \n
   If a centile measurement is within 1/4 of the distance between 2 major centile lines, the measurement is considered to lie 'on' the nearest major centile line. Otherwise it is either considered to lie between, above or below.\n
     This may lead to some confusion when viewing the graph or exact centile, as for example a reading on the 56th centile will be categorised as 'on' the 50th centile line.`;
@@ -56,9 +57,16 @@ const MoreCentileInfo = ({exactCentile}) => {
               </TouchableOpacity>
               <View style={styles.modalTextHeadingWrapper}>
                 <AppText style={styles.modalTextHeadings}>
-                  {modalHeading}
+                  {modalHeading1}
                 </AppText>
               </View>
+              {modalHeading2 && (
+                <View style={styles.modalTextHeadingWrapper}>
+                  <AppText style={styles.modalTextHeadings}>
+                    {modalHeading2}
+                  </AppText>
+                </View>
+              )}
               <AppText style={styles.modalTextParagraph}>
                 {modalMessage}
               </AppText>

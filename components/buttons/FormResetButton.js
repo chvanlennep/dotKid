@@ -12,8 +12,16 @@ const FormResetButton = ({
   additionalMessage = '',
   initialValues,
   style,
+  setIsValue,
 }) => {
   const {combinedReset} = useCombined(kind, 'weight');
+
+  const handlePress = () => {
+    if (setIsValue) {
+      setIsValue(false);
+    }
+    combinedReset(initialValues);
+  };
 
   const handleResetAlert = () => {
     Alert.alert('Are you sure you want to reset?', `${additionalMessage}`, [
@@ -23,7 +31,7 @@ const FormResetButton = ({
       },
       {
         text: 'Yes',
-        onPress: () => combinedReset(initialValues),
+        onPress: () => handlePress(),
       },
     ]);
   };
