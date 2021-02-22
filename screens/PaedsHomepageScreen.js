@@ -11,6 +11,7 @@ import AppForm from '../components/AppForm';
 
 import defaultStyles from '../config/styles';
 import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
+import renderExperimental from '../config/checkDev';
 
 const PaedsHomepageScreen = () => {
   const initialValues = {
@@ -44,6 +45,11 @@ const PaedsHomepageScreen = () => {
           <NavigateButton directions={routes.PAEDIATRIC_CENTILE}>
             Child Centile Calculator
           </NavigateButton>
+          {renderExperimental && (
+            <NavigateButton directions={routes.EXP_PCENTILE}>
+              *Exp* Child Centile Calculator
+            </NavigateButton>
+          )}
           <NavigateButton directions={routes.FLUID_CALCULATOR}>
             IV Fluid Calculator
           </NavigateButton>

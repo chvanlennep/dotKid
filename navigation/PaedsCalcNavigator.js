@@ -16,6 +16,8 @@ import BPResultsScreen from '../screens/BPResultsScreen';
 import ECGResultsScreen from '../screens/ECGResultsScreen';
 import AgeScreen from '../screens/AgeScreen';
 import NormalRangesScreen from '../screens/NormalRangesScreen';
+import ExpPCentileScreen from '../screens/ExpPCentileScreen';
+import ExpPCentileResults from '../screens/ExpPCentileResults';
 
 const Stack = createStackNavigator();
 
@@ -45,6 +47,8 @@ const PaedsCalcNavigator = () => {
       <Stack.Screen name="NormalRanges" component={NormalRangesScreen} />
       <Stack.Screen name="WETFLAGScreen" component={WETFLAGScreen} />
       <Stack.Screen name="WETFLAGResults" component={WETFLAGResultsScreen} />
+      <Stack.Screen name="ExpPCentile" component={ExpPCentileScreen} />
+      <Stack.Screen name="ExpPCentileResults" component={ExpPCentileResults} />
     </Stack.Navigator>
   );
 };

@@ -31,4 +31,6 @@ export default Object.freeze({
   APLS: 'APLSScreen',
   NLS: 'NLSScreen',
   CGA: 'CGA',
+  EXP_PCENTILE: 'ExpPCentile',
+  EXP_PCENTILE_RESULTS: 'ExpPCentileResults',
 });
