@@ -254,7 +254,9 @@ const InitialAssessBabyModal = ({
         // checks for all buttons filled in and starts logic to submit and close modal if true:
         let completed = 0;
         for (let i = 0; i < nameArray.length; i++) {
-          if (pickerState[nameArray[i]]['color']) completed++;
+          if (pickerState[nameArray[i]]['color']) {
+            completed++;
+          }
         }
         if (completed === nameArray.length - 1 && !submitForm) {
           setSubmitForm(true);
@@ -310,42 +312,40 @@ const InitialAssessBabyModal = ({
         ]}
         title="Initial Assessment..."
       />
-      <View style={styles.centeredView}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={handleClosePress}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <TouchableOpacity
-                style={styles.touchable}
-                onPress={handleClosePress}>
-                <View style={styles.closeIcon}>
-                  <MaterialCommunityIcons
-                    name="close-circle"
-                    color={colors.white}
-                    size={30}
-                  />
-                </View>
-              </TouchableOpacity>
-              <AppText style={styles.heading}>Initial Assessment</AppText>
-              <AppForm
-                initialValues={initialValues}
-                onSubmit={handleFormikSubmit}>
-                <View style={styles.buttonRow}>{renderTopButtons}</View>
-                <AssessBabyTitle
-                  submitObject={[submitForm, setSubmitForm]}
-                  resetObject={[
-                    resetForm,
-                    setResetForm,
-                  ]}>{`${pickerText}:`}</AssessBabyTitle>
-                {renderInputs}
-              </AppForm>
-            </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={handleClosePress}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TouchableOpacity
+              style={styles.touchable}
+              onPress={handleClosePress}>
+              <View style={styles.closeIcon}>
+                <MaterialCommunityIcons
+                  name="close-circle"
+                  color={colors.white}
+                  size={30}
+                />
+              </View>
+            </TouchableOpacity>
+            <AppText style={styles.heading}>Initial Assessment</AppText>
+            <AppForm
+              initialValues={initialValues}
+              onSubmit={handleFormikSubmit}>
+              <View style={styles.buttonRow}>{renderTopButtons}</View>
+              <AssessBabyTitle
+                submitObject={[submitForm, setSubmitForm]}
+                resetObject={[
+                  resetForm,
+                  setResetForm,
+                ]}>{`${pickerText}:`}</AssessBabyTitle>
+              {renderInputs}
+            </AppForm>
           </View>
-        </Modal>
-      </View>
+        </View>
+      </Modal>
     </React.Fragment>
   );
 };

@@ -11,6 +11,7 @@ import NCentileResultsScreen from '../screens/NCentileResultsScreen';
 import NFluidRequirementsScreen from '../screens/NFluidRequirementsScreen';
 import NFluidRequirementsResultsScreen from '../screens/NFluidRequirementsResultsScreen';
 import CGAScreen from '../screens/CGAScreen';
+import APGARScreen from '../screens/APGARScreen';
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,7 @@ const NCalcNavigator = () => {
         headerShown: false,
       }}>
       <Stack.Screen name="NeonateHomepage" component={NeonateHomepageScreen} />
+      <Stack.Screen name="APGAR" component={APGARScreen} />
       <Stack.Screen name="BirthCentile" component={BirthCentileScreen} />
       <Stack.Screen
         name="BirthCentileResults"

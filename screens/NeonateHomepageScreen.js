@@ -33,20 +33,21 @@ const NeonateHomepageScreen = () => {
       <AppText style={styles.text}>Neonatal Calculators</AppText>
       <View style={styles.bottomContainer}>
         <ScrollView>
-          <NavigateButton directions={routes.CGA}>
-            Corrected Gestation Calculator
-          </NavigateButton>
+          <NavigateButton directions={routes.APGAR}>APGAR</NavigateButton>
           <NavigateButton directions={routes.BIRTH_CENTILE}>
             Birth Centile Calculator
           </NavigateButton>
-          <NavigateButton directions={routes.NEONATE_CENTILE}>
-            Preterm Centile Calculator
+          <NavigateButton directions={routes.CGA}>
+            Corrected Gestation Calculator
           </NavigateButton>
           <NavigateButton directions={routes.NEONATE_FLUID}>
             Fluid Requirement Calculator
           </NavigateButton>
           <NavigateButton directions={routes.JAUNDICE}>
             Jaundice Calculator
+          </NavigateButton>
+          <NavigateButton directions={routes.NEONATE_CENTILE}>
+            Preterm Centile Calculator
           </NavigateButton>
         </ScrollView>
       </View>

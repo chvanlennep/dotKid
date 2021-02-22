@@ -10,6 +10,9 @@ import {GlobalStatsContext} from '../components/GlobalStats';
 import zeit from '../brains/zeit';
 import obsRanges from '../brains/obsRanges';
 import ObsButton from '../components/buttons/ObsButton';
+import AppText from '../components/AppText';
+import defaultStyles from '../config/styles';
+import colors from '../config/colors';
 
 const initialValues = {
   gestationInDays: 280,
@@ -28,29 +31,38 @@ const NormalRangesScreen = () => {
 
   const formikRef = useRef(null);
 
-  let inputAge = zeit(dob, 'years', dom);
-  let targetValues;
-
-  const valueFinder = () => {
-    for (let i = 0; i < obsRanges.length; i++) {
-      const refData = obsRanges[i];
-      if (inputAge < refData.age) {
-        targetValues = refData.data;
-        setOutput(
-          `\n\nHeart Rate: ${targetValues.HR} bpm \nRespiratory Rate: ${targetValues.RR} breaths per minute \nSats: ≥95%\nTemperature: 36 - 37.9°C`,
-        );
-        break;
-      }
-    }
-  };
+  const inputAge = zeit(dob, 'years', dom);
 
   useLayoutEffect(() => {
+    const valueFinder = () => {
+      let targetValues;
+      for (let i = 0; i < obsRanges.length; i++) {
+        const refData = obsRanges[i];
+        if (inputAge < refData.age) {
+          targetValues = refData.data;
+          setOutput(
+            `\n\nHeart Rate: ${targetValues.HR} bpm \nRespiratory Rate: ${targetValues.RR} breaths per minute \nSats: ≥95%\nTemperature: 36 - 37.9°C`,
+          );
+          break;
+        }
+      }
+    };
     if (dob) {
       const ageInMonths = zeit(dob, 'months', dom);
       if (ageInMonths >= 0) {
         valueFinder();
         const beforeString = zeit(dob, 'string', dom);
         setBefore(beforeString);
+      } else if (ageInMonths < 0) {
+        setBefore('N/A');
+        setAfter('not corrected');
+        setOutput("\n\nIt looks like you've added a date in the future!");
+      } else if (ageInMonths < 217) {
+        setBefore('N/A');
+        setAfter('not corrected');
+        setOutput(
+          '\n\nThis calculator is only designed for use in those under 18 years of age.',
+        );
       } else {
         setBefore('N/A');
         setAfter('not corrected');
@@ -65,7 +77,7 @@ const NormalRangesScreen = () => {
     if (dob === null) {
       setOutput('\n\nPlease enter a date of birth');
     }
-  }, [dom, dob, valueFinder]);
+  }, [dom, dob]);
 
   return (
     <PCalcScreen style={{flex: 1}}>
@@ -80,7 +92,14 @@ const NormalRangesScreen = () => {
               valueBeforeCorrection={before}
               valueAfterCorrection={after}
             />
-            <ObsButton output={output} />
+            {dob === null && (
+              <View style={styles.button}>
+                <AppText style={styles.outputText}>
+                  ↑ Please enter a date of birth above
+                </AppText>
+              </View>
+            )}
+            {dob !== null && <ObsButton output={output} />}
           </AppForm>
         </View>
       </ScrollView>
@@ -91,6 +110,20 @@ const NormalRangesScreen = () => {
 export default NormalRangesScreen;
 
 const styles = StyleSheet.create({
+  button: {
+    ...defaultStyles.container,
+    alignItems: 'center',
+    backgroundColor: colors.dark,
+    borderRadius: 5,
+    color: colors.white,
+    flexDirection: 'row',
+    height: 57,
+    margin: 5,
+    padding: 15,
+  },
+  outputText: {
+    color: colors.white,
+  },
   topContainer: {
     alignSelf: 'center',
     alignItems: 'center',
