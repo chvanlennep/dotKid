@@ -1,96 +1,145 @@
 // Replacing moment.js
 
-export default (
-  from, // furthest away date / time in the interval
-  units, // units to output, can be outputted as a string
-  until, // closest date / time in the interval
-  integer = true, // if returning as a number, defaults to an integer
-  correctDays = 0, // number of days to take off interval
-  resus = false, // if set to true, units must be "string". This outputs string interval for purposes of resus logs
-) => {
-  const untilObject = until || new Date();
-  if (!from) {
-    return null;
-  }
-  const addDays = (date, days) => {
-    const result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
-  };
-  const fromObject = correctDays ? addDays(from, correctDays) : from;
-  const millisecondDifference = untilObject.getTime() - fromObject.getTime();
-  const milliseconds = 1000;
-  const seconds = 60;
-  const minutes = 60;
-  const hours = 24;
-  const days = 7;
-  const months = 365 / 12;
-  const exactYears = 365.25;
-  const rawSeconds = millisecondDifference / milliseconds;
-  const rawMinutes = millisecondDifference / (milliseconds * seconds);
-  const rawHours = millisecondDifference / (milliseconds * seconds * minutes);
-  const rawDays =
-    millisecondDifference / (milliseconds * seconds * minutes * hours);
-  const rawWeeks =
-    millisecondDifference / (milliseconds * seconds * minutes * hours * days);
-  const rawMonths =
-    millisecondDifference / (milliseconds * seconds * minutes * hours * months);
-  const rawYears =
-    millisecondDifference /
-    (milliseconds * seconds * minutes * hours * exactYears);
-  const yearBitLeft = rawYears - Math.floor(rawYears);
-  const remainderMonths = Math.floor(yearBitLeft * 12);
-  const monthBitLeft = rawMonths - Math.floor(rawMonths);
-  const remainderWeeks = Math.floor(monthBitLeft * 4);
-  let birthday = false;
-  if (
-    `${fromObject.getDate()}${fromObject.getMonth()}` ===
-    `${untilObject.getDate()}${untilObject.getMonth()}`
+import {formatDate} from './oddBits';
+
+const addDays = (date, moreDays) => {
+  const result = new Date(date);
+  result.setDate(result.getDate() + moreDays);
+  return result;
+};
+class Zeit {
+  constructor(
+    from, // furthest away date / time in the interval
+    until, // closest date / time in the interval
+    birthGestationInDays = 280, // self-explanatory (default is 40 weeks)
   ) {
-    birthday = true;
+    if (!from) {
+      throw new Error('Zeit requires a from date');
+    }
+    let fromDate = from;
+    let untilDate = until || new Date();
+    const msDifference = untilDate.getTime() - fromDate.getTime();
+    // 14 days in milliseconds:
+    if (msDifference > 1209600000) {
+      // removes hh:mm:ss etc from date objects
+      fromDate = new Date(formatDate(fromDate, true, true));
+      untilDate = new Date(formatDate(untilDate, true, true));
+    }
+    this.from = fromDate;
+    this.until = untilDate;
+    this.birthGestationInDays = birthGestationInDays;
+    const correctDays =
+      birthGestationInDays < 259 ? 280 - birthGestationInDays : 0;
+    this.fromObjectCorrected = correctDays ? addDays(from, correctDays) : from;
+    this.msDifferenceCorrected =
+      this.until.getTime() - this.fromObjectCorrected.getTime();
+    this.msDifferenceRaw = this.until.getTime() - this.from.getTime();
   }
-  let rawAnswer;
-  switch (true) {
-    case units === 'minutes':
-      rawAnswer = rawMinutes;
-      break;
-    case units === 'hours':
-      rawAnswer = rawHours;
-      break;
-    case units === 'days':
-      // fudge to catch 3 year 11 month old plotting at 4 years old on chart
-      if (Math.round(rawDays) === 1460 && remainderMonths === 11) {
-        rawAnswer = 1459;
-      } else {
-        rawAnswer = rawDays;
+  calculate(
+    units, // for output, must be specified
+    correct = true, // correct for gestation
+    integer = true, // returns an integer age or not
+    digitalClockOutput = false, // returns output for used for resuscitation, units must be set to string
+  ) {
+    const milliseconds = 1000;
+    const seconds = 60;
+    const minutes = 60;
+    const hours = 24;
+    const days = 7;
+    const months = 365.25 / 12;
+    const exactYears = 365.25;
+    let millisecondDifference = this.msDifferenceRaw;
+    let from = this.from;
+    if (correct) {
+      const tempDays = Math.floor(
+        this.msDifferenceRaw / (milliseconds * seconds * minutes * hours),
+      );
+      if (
+        (tempDays <= 366 && this.birthGestationInDays < 259) ||
+        (tempDays <= 731 && this.birthGestationInDays < 224)
+      ) {
+        millisecondDifference = this.msDifferenceCorrected;
+        from = this.fromObjectCorrected;
       }
-      break;
-    case units === 'weeks':
-      rawAnswer = rawWeeks;
-      break;
-    case units === 'months':
-      birthday ? (rawAnswer = Math.round(rawMonths)) : (rawAnswer = rawMonths);
-      break;
-    case units === 'years':
-      birthday ? (rawAnswer = Math.round(rawYears)) : (rawAnswer = rawYears);
-      break;
-    case units === 'string':
+    }
+    const rawValues = {
+      seconds: function () {
+        return millisecondDifference / milliseconds;
+      },
+      minutes: function () {
+        return millisecondDifference / (milliseconds * seconds);
+      },
+      hours: function () {
+        return millisecondDifference / (milliseconds * seconds * minutes);
+      },
+      days: function () {
+        return (
+          millisecondDifference / (milliseconds * seconds * minutes * hours)
+        );
+      },
+      weeks: function () {
+        return (
+          millisecondDifference /
+          (milliseconds * seconds * minutes * hours * days)
+        );
+      },
+      months: function () {
+        return (
+          millisecondDifference /
+          (milliseconds * seconds * minutes * hours * months)
+        );
+      },
+      years: function () {
+        return (
+          millisecondDifference /
+          (milliseconds * seconds * minutes * hours * exactYears)
+        );
+      },
+    };
+    if (units !== 'string') {
+      try {
+        const rawAnswer = rawValues[units]();
+        if (integer === true) {
+          return Math.floor(rawAnswer);
+        } else {
+          return rawAnswer;
+        }
+      } catch (error) {
+        throw new Error('Invalid units given to Zeit');
+      }
+    } else {
+      let rawYears = rawValues.years();
+      let rawMonths = rawValues.months();
+      // String age could appear a year younger on their birthday (due to pesky .25), so to stop this:
+      if (
+        '' + from.getDate() + from.getMonth() ===
+        '' + this.until.getDate() + this.until.getMonth()
+      ) {
+        if (Math.round(rawValues.years()) !== Math.floor(rawValues.years())) {
+          rawYears = Math.round(rawYears);
+          rawMonths = Math.round(rawMonths);
+        }
+      }
+      const yearBitLeft = rawYears - Math.floor(rawYears);
+      const remainderMonths = Math.floor(yearBitLeft * 12);
+      const monthBitLeft = rawMonths - Math.floor(rawMonths);
+      const remainderWeeks = Math.floor(monthBitLeft * 4);
       const intAges = {
-        seconds: Math.floor(rawSeconds),
-        remainderSeconds: Math.floor(rawSeconds) % 60,
-        minutes: Math.floor(rawMinutes),
-        remainderMinutes: Math.floor(rawMinutes) % 60,
-        hours: Math.floor(rawHours),
-        remainderHours: Math.floor(rawHours) % 24,
-        days: Math.floor(rawDays),
-        remainderDays: Math.floor(rawDays) % 7,
-        weeks: Math.floor(rawWeeks),
+        seconds: Math.floor(rawValues.seconds()),
+        remainderSeconds: Math.floor(rawValues.seconds()) % 60,
+        minutes: Math.floor(rawValues.minutes()),
+        remainderMinutes: Math.floor(rawValues.minutes()) % 60,
+        hours: Math.floor(rawValues.hours()),
+        remainderHours: Math.floor(rawValues.hours()) % 24,
+        days: Math.floor(rawValues.days()),
+        remainderDays: Math.floor(rawValues.days()) % 7,
+        weeks: Math.floor(rawValues.weeks()),
         remainderWeeks: remainderWeeks,
         months: Math.floor(rawMonths),
         remainderMonths: remainderMonths,
         years: Math.floor(rawYears),
       };
-      if (resus) {
+      if (digitalClockOutput) {
         let outputHours = '';
         let outputMinutes = '';
         let outputSeconds = '';
@@ -127,36 +176,20 @@ export default (
           plurals[key] = 's';
         }
       }
-      const wholeWeeks = Math.floor(rawWeeks);
       switch (true) {
-        case rawDays < 1:
+        case intAges.days < 1:
           return `${intAges.remainderHours} hour${plurals.remainderHours}`;
-        case wholeWeeks <= 2:
+        case intAges.days < 14:
           return `${intAges.days} day${plurals.days} and ${intAges.remainderHours} hour${plurals.remainderHours}`;
-        case wholeWeeks > 2 && wholeWeeks <= 8:
+        case intAges.weeks >= 2 && intAges.weeks < 8:
           return `${intAges.weeks} week${plurals.weeks} and ${intAges.remainderDays} day${plurals.remainderDays}`;
-        case wholeWeeks > 8 && rawYears < 1:
-          // if a leap day adds 1 day, could appear 1 year old when they aren't
-          if (rawYears > 0.9993) {
-            return '11 months and 3 weeks';
-          } else {
-            return `${intAges.months} month${plurals.months} and ${intAges.remainderWeeks} week${plurals.remainderWeeks}`;
-          }
+        case intAges.weeks >= 8 && rawYears < 1:
+          return `${intAges.months} month${plurals.months} and ${intAges.remainderWeeks} week${plurals.remainderWeeks}`;
         default:
-          if (birthday) {
-            return `${Math.round(rawYears)} year${plurals.years} and 0 months`;
-          } else {
-            return `${intAges.years} year${plurals.years} and ${intAges.remainderMonths} month${plurals.remainderMonths}`;
-          }
+          return `${intAges.years} year${plurals.years} and ${intAges.remainderMonths} month${plurals.remainderMonths}`;
       }
-    case units === undefined:
-      return 'Error: please specify units for output';
-    default:
-      return 'Error: invalid parameter for units';
+    }
   }
-  if (integer === true) {
-    return Math.floor(rawAnswer);
-  } else {
-    return rawAnswer;
-  }
-};
+}
+
+export default Zeit;
