@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Linking,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   useColorScheme,
   View,
 } from 'react-native';
@@ -14,6 +15,7 @@ import ReferenceBackgroundScreen from '../components/ReferenceBackgroundScreen';
 import colors from '../config/colors';
 import defaultStyles from '../config/styles';
 import {version} from '../../package.json';
+import EnableApi from '../components/EnableApi';
 
 const LegalText = ({style, modal}) => {
   return (
@@ -69,8 +71,16 @@ const AboutScreen = () => {
   const scheme = useColorScheme();
   const dark = scheme === 'dark' ? true : false;
 
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const openModal = () => setModalVisible(true);
+
   return (
-    <ReferenceBackgroundScreen>
+    <ReferenceBackgroundScreen style={{flex: 1}}>
+      <EnableApi
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+      />
       <ScrollView>
         <View style={styles.headingContainer}>
           <AppText style={styles.heading}>Important Information</AppText>
@@ -202,11 +212,25 @@ const AboutScreen = () => {
             get in touch!
           </Text>
         </View>
+        <TouchableOpacity
+          style={[
+            styles.outputContainer,
+            {backgroundColor: dark ? colors.dark : '#EBEBEB'},
+          ]}
+          onPress={openModal}>
+          <Text
+            style={[
+              defaultStyles.text,
+              styles.subheading,
+              {color: dark ? colors.lightSecondary : colors.darkSecondary},
+            ]}>
+            RCPCH Growth Project...
+          </Text>
+        </TouchableOpacity>
         <View
           style={[
             styles.outputContainer,
             {backgroundColor: dark ? colors.dark : '#EBEBEB'},
-            {marginBottom: 100},
           ]}>
           <Text
             style={[

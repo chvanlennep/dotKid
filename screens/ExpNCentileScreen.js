@@ -93,7 +93,7 @@ const PCentileScreen = () => {
   );
 
   const handleFormikSubmit = (values) => {
-    const ageCheck = ageChecker(values);
+    const ageCheck = ageChecker(values, 7305);
     if (ageCheck === 'Negative age') {
       Alert.alert('Time Travelling Patient', 'Please check the dates entered', [
         {text: 'OK', onPress: () => null},
@@ -101,7 +101,7 @@ const PCentileScreen = () => {
     } else if (ageCheck === 'Too old') {
       Alert.alert(
         'Patient Too Old',
-        'This calculator can only be used under 18 years of age',
+        'This calculator can only be used under 20 years of age',
         [{text: 'OK', onPress: () => null}],
       );
     } else {
@@ -109,7 +109,7 @@ const PCentileScreen = () => {
       const submitFunction = () => {
         const measurements = values;
         const serialisedObject = JSON.stringify({measurements, results});
-        navigation.navigate(routes.NEONATE_CENTILE_RESULTS, serialisedObject);
+        navigation.navigate(routes.EXP_NCENTILE_RESULTS, serialisedObject);
       };
       if (results.kind === 'birth') {
         Alert.alert(
@@ -142,7 +142,7 @@ const PCentileScreen = () => {
               text: 'OK',
               onPress: () => {
                 moveDataAcrossGlobal('child', initialValues);
-                navigation.navigate('RootPaed', {screen: 'PCentile'});
+                navigation.navigate('RootPaed', {screen: 'ExpPCentile'});
               },
             },
           ],
@@ -219,8 +219,8 @@ const PCentileScreen = () => {
             <DateTimeInputButton kind="neonate" type="measured" />
             <FormResetButton kind="neonate" initialValues={initialValues} />
             <FormSubmitButton
-              name="Calculate Preterm Centiles"
-              kind="neonate"
+              name="Calculate RCPCH Preterm Centiles"
+              kind="rcpch"
             />
           </AppForm>
         </View>

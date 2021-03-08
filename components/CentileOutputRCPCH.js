@@ -9,16 +9,7 @@ import AppText from './AppText';
 import MoreCentileInfo from './buttons/MoreCentileInfo';
 import CentileChartModal from './CentileChartModal';
 
-const errorsObject = {
-  422: 'The server was unable to process the measurements. This is probably a bug in dotKid.',
-  500: 'The server encountered a problem.',
-  'Network request failed':
-    'The request to the server failed. Please check your internet connection.',
-  'Timeout exceeded': 'Request to the server timed out.',
-};
-
-const makeErrorPretty = (error) =>
-  errorsObject[error.message] || `Other error: ${error.message}`;
+const devAddress = 'local';
 
 const parseExactCentile = (exact) => {
   if (!exact) {
@@ -43,28 +34,51 @@ const CentileOutputRCPCH = ({
   measurementsObject,
   measurement,
   refreshState,
+  monthAgeForChart,
+  dayAgeForChart,
+  correctedGestationInDays,
+  kind = 'child',
 }) => {
   let measurementValue = measurementsObject[measurement];
+  let defaultOutput = 'No measurement given';
   if (!measurementValue) {
     if (
       measurement === 'bmi' &&
       measurementsObject.weight &&
-      measurementsObject.height
+      measurementsObject.height &&
+      kind === 'child'
     ) {
       measurementValue = calculateBMI(
         measurementsObject.weight,
         measurementsObject.height,
       );
+    } else if (measurementsObject.length && measurement === 'height') {
+      measurementValue = measurementsObject.length;
     } else {
       measurementValue = null;
     }
   }
+  if (
+    correctedGestationInDays < 175 &&
+    measurementsObject.length &&
+    measurement === 'height'
+  ) {
+    measurementValue = null;
+    defaultOutput =
+      'UK-WHO length data does not exist in infants below 25 weeks gestation';
+  }
 
-  const [defaultOutput, setDefaultOutput] = useState(
-    measurementValue ? '' : 'No measurement given',
-  );
-  const [fullAnswer, setFullAnswer] = useState({});
+  class InternalState {
+    constructor() {
+      this.defaultOutput = measurementValue ? '' : defaultOutput;
+      this.fullAnswer = {};
+      this.isLoading = true;
+    }
+  }
+
   const [refresh, setRefresh] = refreshState;
+
+  const [internalState, setInternalState] = useState(new InternalState());
 
   const {getSingleCentileData} = useApi();
 
@@ -81,38 +95,60 @@ const CentileOutputRCPCH = ({
         titleText = `BMI: ${measurementValue.toFixed(1)}kg/m²`;
         break;
       default:
-        titleText = `Height: ${measurementValue}cm`;
+        titleText = `${userLabelNames[measurement]}: ${measurementValue}cm`;
     }
   }
 
-  let sds;
-  let centile = '';
-  if (fullAnswer.measurement_calculated_values !== undefined) {
-    sds = fullAnswer.measurement_calculated_values.sds;
-    centile = fullAnswer.measurement_calculated_values.centile;
-  }
+  const sds = internalState.fullAnswer.measurement_calculated_values?.sds || '';
+  const centile =
+    internalState.fullAnswer.measurement_calculated_values?.centile || '';
+
+  const specificRefreshState = refresh[measurement];
+  const isLoading = internalState.isLoading;
 
   useEffect(() => {
-    if (measurementValue && refresh === 'try') {
+    let ignore = false;
+    if (measurementValue && specificRefreshState === 'try') {
+      if (!isLoading) {
+        setInternalState((old) => {
+          return {...old, ...{isLoading: true}};
+        });
+      }
       getSingleCentileData(
-        measurementsObject.dob,
-        measurementsObject.dom,
-        measurementsObject.gestationInDays,
+        measurementsObject,
         measurement,
-        measurementValue,
-        measurementsObject.sex,
+        __DEV__ ? devAddress : 'real',
       )
         .then((result) => {
-          setDefaultOutput(result.measurement_calculated_values.centile_band);
-          setFullAnswer(result);
-          setRefresh('success');
+          if (!ignore) {
+            setInternalState({
+              defaultOutput: result.measurement_calculated_values.centile_band,
+              isLoading: false,
+              fullAnswer: result,
+            });
+            setRefresh((old) => {
+              return {...old, ...{[measurement]: 'success'}};
+            });
+          }
         })
         .catch((error) => {
-          setDefaultOutput(`Error: ${makeErrorPretty(error)}`);
-          setRefresh('fail');
+          if (!ignore) {
+            setInternalState((old) => {
+              return {
+                ...old,
+                ...{defaultOutput: error.message, isLoading: false},
+              };
+            });
+            setRefresh((old) => {
+              return {...old, ...{[measurement]: 'fail'}};
+            });
+          }
         });
     }
-  }, [refresh]);
+    return () => {
+      ignore = true;
+    };
+  }, [specificRefreshState]);
 
   return (
     <View style={styles.outputContainer}>
@@ -121,18 +157,27 @@ const CentileOutputRCPCH = ({
           <AppText style={styles.text}>{titleText}</AppText>
         </View>
         <View>
-          <AppText style={styles.outputText}>{defaultOutput}</AppText>
+          <AppText style={styles.outputText}>
+            {isLoading && measurementValue
+              ? 'Loading answer...'
+              : internalState.defaultOutput}
+          </AppText>
         </View>
       </View>
       <View style={styles.buttonContainer}>
         <MoreCentileInfo exactCentile={parseExactCentile(centile)} sds={sds} />
         <CentileChartModal
-          measurementType="weight"
-          measurement={null}
-          kind="child"
-          ageInDays={2}
-          ageInMonths={0}
-          sex="Female"
+          measurementType={
+            measurement === 'height' && kind === 'neonate'
+              ? 'length'
+              : measurement
+          }
+          measurement={measurementValue}
+          kind={kind}
+          ageInDays={dayAgeForChart}
+          ageInMonths={monthAgeForChart}
+          sex={measurementsObject.sex}
+          gestationInDays={correctedGestationInDays}
         />
       </View>
     </View>
@@ -143,7 +188,7 @@ export default CentileOutputRCPCH;
 
 const styles = StyleSheet.create({
   outputContainer: {
-    backgroundColor: colors.medium,
+    backgroundColor: colors.darkest,
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',

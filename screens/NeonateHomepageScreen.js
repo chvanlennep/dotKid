@@ -11,8 +11,10 @@ import NavigateButton from '../components/buttons/NavigateButton';
 import AppForm from '../components/AppForm';
 
 import defaultStyles from '../config/styles';
+import useApi from '../brains/useApi';
 
 const NeonateHomepageScreen = () => {
+  const {key} = useApi();
   const initialValues = {
     sex: '',
     gestationInDays: 0,
@@ -49,6 +51,11 @@ const NeonateHomepageScreen = () => {
           <NavigateButton directions={routes.NEONATE_CENTILE}>
             Preterm Centile Calculator
           </NavigateButton>
+          {key !== '' && (
+            <NavigateButton directions={routes.EXP_NCENTILE}>
+              RCPCH Preterm Centile Calculator
+            </NavigateButton>
+          )}
         </ScrollView>
       </View>
     </NCalcScreen>

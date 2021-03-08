@@ -34,4 +34,6 @@ export default Object.freeze({
   CGA: 'CGA',
   EXP_PCENTILE: 'ExpPCentile',
   EXP_PCENTILE_RESULTS: 'ExpPCentileResults',
+  EXP_NCENTILE: 'ExpNCentile',
+  EXP_NCENTILE_RESULTS: 'ExpNCentileResults',
 });

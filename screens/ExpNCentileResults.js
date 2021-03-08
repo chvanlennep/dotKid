@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
-import PCalcScreen from '../components/PCalcScreen';
+import NCalcScreen from '../components/NCalcScreen';
 import colors from '../config/colors';
 import defaultStyles from '../config/styles';
 import AgeButton from '../components/buttons/AgeButton';
@@ -20,16 +20,11 @@ class Refresh {
   }
 }
 
-const ExpPCentileResults = ({route, navigation}) => {
+const NCentileResultsScreen = ({route, navigation}) => {
   const all = JSON.parse(route.params);
   const {measurements, results} = all;
 
-  const {
-    monthAgeForChart,
-    dayAgeForChart,
-    ageAfterCorrection,
-    ageBeforeCorrection,
-  } = results;
+  const {birthGestationInDays, correctedGestationInDays} = results;
 
   const [refresh, setRefresh] = useState(new Refresh());
 
@@ -55,12 +50,12 @@ const ExpPCentileResults = ({route, navigation}) => {
   }
 
   return (
-    <PCalcScreen isResults={true} style={{flex: 1}}>
+    <NCalcScreen isResults={true} style={{flex: 1}}>
       <View style={styles.topContainer}>
         <AgeButton
-          kind="child"
-          valueBeforeCorrection={ageBeforeCorrection}
-          valueAfterCorrection={ageAfterCorrection}
+          kind="neonate"
+          valueBeforeCorrection={birthGestationInDays}
+          valueAfterCorrection={correctedGestationInDays}
         />
         <Button
           label="← Calculate Again"
@@ -80,44 +75,33 @@ const ExpPCentileResults = ({route, navigation}) => {
       <KeyboardAwareScrollView>
         <View style={styles.bottomContainer}>
           <CentileOutputRCPCH
-            kind="child"
+            kind="neonate"
             measurementsObject={measurements}
             measurement="weight"
             refreshState={refreshState}
-            monthAgeForChart={monthAgeForChart}
-            dayAgeForChart={dayAgeForChart}
+            correctedGestationInDays={correctedGestationInDays}
           />
           <CentileOutputRCPCH
-            kind="child"
+            kind="neonate"
             measurementsObject={measurements}
             measurement="height"
             refreshState={refreshState}
-            monthAgeForChart={monthAgeForChart}
-            dayAgeForChart={dayAgeForChart}
+            correctedGestationInDays={correctedGestationInDays}
           />
           <CentileOutputRCPCH
-            kind="child"
-            measurementsObject={measurements}
-            measurement="bmi"
-            refreshState={refreshState}
-            monthAgeForChart={monthAgeForChart}
-            dayAgeForChart={dayAgeForChart}
-          />
-          <CentileOutputRCPCH
-            kind="child"
+            kind="neonate"
             measurementsObject={measurements}
             measurement="hc"
             refreshState={refreshState}
-            monthAgeForChart={monthAgeForChart}
-            dayAgeForChart={dayAgeForChart}
+            correctedGestationInDays={correctedGestationInDays}
           />
         </View>
       </KeyboardAwareScrollView>
-    </PCalcScreen>
+    </NCalcScreen>
   );
 };
 
-export default ExpPCentileResults;
+export default NCentileResultsScreen;
 
 const styles = StyleSheet.create({
   bottomContainer: {

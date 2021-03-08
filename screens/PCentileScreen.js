@@ -13,7 +13,7 @@ import GestationInputButton from '../components/buttons/input/GestationInputButt
 import FormSubmitButton from '../components/buttons/FormSubmitButton';
 import FormResetButton from '../components/buttons/FormResetButton';
 import AppForm from '../components/AppForm';
-import calculateCentile from '../brains/calculateCentile';
+import calculateCentile from '../brains/newCalculateCentile';
 import routes from '../navigation/routes';
 import {GlobalStatsContext} from '../components/GlobalStats';
 import ageChecker from '../brains/ageChecker';
@@ -94,7 +94,7 @@ const PCentileScreen = () => {
   const [showGestation, setShowGestation] = useState(false);
 
   const handleFormikSubmit = (values) => {
-    const ageCheck = ageChecker(values);
+    const ageCheck = ageChecker(values, 7305);
     if (ageCheck === 'Negative age') {
       Alert.alert('Time Travelling Patient', 'Please check the dates entered', [
         {text: 'OK', onPress: () => null},
@@ -102,7 +102,7 @@ const PCentileScreen = () => {
     } else if (ageCheck === 'Too old') {
       Alert.alert(
         'Patient Too Old',
-        'This calculator can only be used under 18 years of age',
+        'This calculator can only be used under 20 years of age',
         [{text: 'OK', onPress: () => null}],
       );
     } else {

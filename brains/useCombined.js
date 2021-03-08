@@ -16,7 +16,12 @@ export default (kind, name) => {
     setGlobalStats((state) => {
       const merge = {...state[kind][name], ...localState};
       if (name === 'dob' || name === 'dom') {
-        if (merge.date1 && !merge.modalVisible) {
+        if (
+          merge.date1 &&
+          !merge.modalVisible &&
+          !merge.showPickerDateAndroid &&
+          !merge.showPickerTimeAndroid
+        ) {
           if (merge.date2) {
             merge.value = new Date(
               merge.date1.getFullYear(),

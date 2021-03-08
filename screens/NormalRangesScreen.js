@@ -1,5 +1,5 @@
-import React, {useContext, useLayoutEffect, useState, useRef} from 'react';
-import {ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
+import React, {useContext, useLayoutEffect, useState} from 'react';
+import {ScrollView, StyleSheet, View} from 'react-native';
 
 import AppForm from '../components/AppForm';
 import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
@@ -7,7 +7,7 @@ import FormResetButton from '../components/buttons/FormResetButton';
 import AgeButton from '../components/buttons/AgeButton';
 import PCalcScreen from '../components/PCalcScreen';
 import {GlobalStatsContext} from '../components/GlobalStats';
-import zeit from '../brains/zeit';
+import Zeit from '../brains/Zeit';
 import obsRanges from '../brains/obsRanges';
 import ObsButton from '../components/buttons/ObsButton';
 import AppText from '../components/AppText';
@@ -27,55 +27,41 @@ const NormalRangesScreen = () => {
 
   const [after, setAfter] = useState('not corrected');
   const [before, setBefore] = useState('N/A');
-  const [output, setOutput] = useState('\n\nPlease enter a date of birth');
-
-  const formikRef = useRef(null);
-
-  const inputAge = zeit(dob, 'years', dom);
+  const [output, setOutput] = useState('');
 
   useLayoutEffect(() => {
-    const valueFinder = () => {
-      let targetValues;
-      for (let i = 0; i < obsRanges.length; i++) {
-        const refData = obsRanges[i];
-        if (inputAge < refData.age) {
-          targetValues = refData.data;
-          setOutput(
-            `\n\nHeart Rate: ${targetValues.HR} bpm \nRespiratory Rate: ${targetValues.RR} breaths per minute \nSats: ≥95%\nTemperature: 36 - 37.9°C`,
-          );
-          break;
-        }
-      }
-    };
     if (dob) {
-      const ageInMonths = zeit(dob, 'months', dom);
-      if (ageInMonths >= 0) {
-        valueFinder();
-        const beforeString = zeit(dob, 'string', dom);
+      const ageObject = new Zeit(dob, dom);
+      const inputAge = ageObject.calculate('years');
+      const beforeString = ageObject.calculate('string');
+      if (inputAge >= 0 && inputAge < 18) {
+        let targetValues;
+        for (let i = 0; i < obsRanges.length; i++) {
+          const refData = obsRanges[i];
+          if (inputAge < refData.age) {
+            targetValues = refData.data;
+            setOutput(
+              `\n\nHeart Rate: ${targetValues.HR} bpm \nRespiratory Rate: ${targetValues.RR} breaths per minute \nSats: ≥95%\nTemperature: 36 - 37.9°C`,
+            );
+            break;
+          }
+        }
         setBefore(beforeString);
-      } else if (ageInMonths < 0) {
+      } else if (inputAge < 0) {
         setBefore('N/A');
         setAfter('not corrected');
         setOutput("\n\nIt looks like you've added a date in the future!");
-      } else if (ageInMonths < 217) {
-        setBefore('N/A');
+      } else if (inputAge >= 18) {
+        setBefore(beforeString);
         setAfter('not corrected');
         setOutput(
-          '\n\nThis calculator is only designed for use in those under 18 years of age.',
-        );
-      } else {
-        setBefore('N/A');
-        setAfter('not corrected');
-        setOutput(
-          '\n\nPlease enter a valid date of birth and date of measurement.',
+          '\n\nThis calculator is designed for patients under 18 years of age.',
         );
       }
     } else {
-      setBefore('N/A');
       setAfter('not corrected');
-    }
-    if (dob === null) {
-      setOutput('\n\nPlease enter a date of birth');
+      setBefore('N/A');
+      setOutput('');
     }
   }, [dom, dob]);
 
@@ -83,7 +69,7 @@ const NormalRangesScreen = () => {
     <PCalcScreen style={{flex: 1}}>
       <ScrollView>
         <View style={styles.topContainer}>
-          <AppForm initialValues={initialValues} innerRef={formikRef}>
+          <AppForm initialValues={initialValues}>
             <DateTimeInputButton kind="child" type="birth" />
             <DateTimeInputButton kind="child" type="measured" />
             <FormResetButton kind="child" initialValues={initialValues} />
@@ -92,14 +78,15 @@ const NormalRangesScreen = () => {
               valueBeforeCorrection={before}
               valueAfterCorrection={after}
             />
-            {dob === null && (
+            {dob === null ? (
               <View style={styles.button}>
                 <AppText style={styles.outputText}>
                   ↑ Please enter a date of birth above
                 </AppText>
               </View>
+            ) : (
+              <ObsButton output={output} />
             )}
-            {dob !== null && <ObsButton output={output} />}
           </AppForm>
         </View>
       </ScrollView>
@@ -120,6 +107,7 @@ const styles = StyleSheet.create({
     height: 57,
     margin: 5,
     padding: 15,
+    justifyContent: 'center',
   },
   outputText: {
     color: colors.white,

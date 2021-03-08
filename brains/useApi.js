@@ -1,36 +1,26 @@
-// import {useNetInfo} from '@react-native-community/netinfo';
-// import {primary} from '../../apiKey';
+import {useState, useCallback} from 'react';
 
-const apiSingleMeasurement =
-  'https://api.rcpch.ac.uk/growth/v1/uk-who/calculation';
+import {Alert} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 
-const singleMeasurement = 'http://192.168.86.34:5000/uk-who/calculation';
-///const chartCoords = 'http://192.168.86.34:5000/uk-who/chart-coordinates';
-const plottableChild = 'http://192.168.86.34:5000/uk-who/plottable-child-data';
+import {API_CALC_LOCAL_URL, API_CALC_LAN_URL, API_CALC_REAL_URL} from '@env';
+import {calculateBMI, formatDate} from './oddBits';
+import {readItemFromStorage, writeItemToStorage} from './storage';
 
-const makeApiArgument = (
-  dob,
-  dom,
-  gestationInDays,
-  measurementType,
-  measurement,
-  inputSex,
-) => {
-  const makeStandardisedDateString = (dateObject) => {
-    let month = `${dateObject.getMonth() + 1}`;
-    let day = `${dateObject.getDate()}`;
-    const year = `${dateObject.getFullYear()}`;
-    if (month.length < 2) {
-      month = '0' + month;
-    }
-    if (day.length < 2) {
-      day = '0' + day;
-    }
-    return [year, month, day].join('-');
-  };
-  const birthDate = makeStandardisedDateString(new Date(dob));
-  const observationDate = makeStandardisedDateString(
+//parses dotKid measurements object into format recognised by the api
+const makeApiArgument = (inputObject, measurementType) => {
+  const {dob, dom, gestationInDays, sex} = inputObject;
+  let measurement = inputObject[measurementType];
+  if (!measurement && measurementType === 'bmi') {
+    measurement = calculateBMI(inputObject.weight, inputObject.height);
+  } else if (!measurement && inputObject.length) {
+    measurement = inputObject.length;
+  }
+  const birthDate = formatDate(new Date(dob), true, true);
+  const observationDate = formatDate(
     dom ? new Date(dom) : new Date(),
+    true,
+    true,
   );
   const gestationDays = gestationInDays % 7;
   const gestationWeeks = Math.floor(gestationInDays / 7);
@@ -42,7 +32,7 @@ const makeApiArgument = (
     measurementMethod = 'height';
   }
   const observationValue = Number(measurement);
-  const sex = inputSex.toLowerCase();
+  const parsedSex = sex.toLowerCase();
   return {
     birth_date: birthDate,
     gestation_days: gestationDays,
@@ -50,10 +40,11 @@ const makeApiArgument = (
     measurement_method: measurementMethod,
     observation_date: observationDate,
     observation_value: observationValue,
-    sex: sex,
+    sex: parsedSex,
   };
 };
 
+// timeout wrapper for fetch call, so fetch times out and doesn't go on forever
 const timeoutForFetch = async (milliseconds, promise) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -63,33 +54,48 @@ const timeoutForFetch = async (milliseconds, promise) => {
   });
 };
 
+//to make common errors pretty
+const errorsObject = {
+  401: "The server responded with 'Not authorised'. Please check your API key.",
+  422: 'The server was unable to process the measurements. This is probably a bug in dotKid.',
+  500: 'The server encountered a problem.',
+  'Network request failed':
+    'The request to the server failed. Please check your internet connection.',
+  'Timeout exceeded': 'Request to the server timed out.',
+};
+
+// urls in use
+const urlObjectSingle = {
+  local: API_CALC_LOCAL_URL,
+  lan: API_CALC_LAN_URL,
+  real: API_CALC_REAL_URL,
+};
+
 const useApi = () => {
-  const getSingleCentileData = async (
-    dob,
-    dom,
-    gestationInDays,
-    measurementType,
-    measurement,
-    inputSex,
-  ) => {
-    const apiArgument = makeApiArgument(
-      dob,
-      dom,
-      gestationInDays,
-      measurementType,
-      measurement,
-      inputSex,
-    );
+  const [key, setKey] = useState('');
+
+  useFocusEffect(
+    useCallback(() => {
+      readItemFromStorage('api_key', setKey, '');
+    }, []),
+  );
+
+  const getSingleCentileData = async (inputObject, measurementType, url) => {
+    const singleMeasurementUrl = urlObjectSingle[url];
+    const headersObject = {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache',
+    };
+    if (url === 'real') {
+      headersObject['Primary-Subscription-Key'] = key;
+    }
+    const apiArgument = makeApiArgument(inputObject, measurementType);
     try {
       const serverResponse = await timeoutForFetch(
         6000,
-        fetch(singleMeasurement, {
+        fetch(singleMeasurementUrl, {
           method: 'POST',
-          headers: {
-            // 'Primary-Subscription-Key': primary,
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache',
-          },
+          headers: headersObject,
           body: JSON.stringify(apiArgument),
           redirect: 'follow',
         }),
@@ -101,11 +107,80 @@ const useApi = () => {
         return JSON.parse(stringObject);
       }
     } catch (error) {
-      throw new Error(error.message);
+      const errorMessage =
+        errorsObject[error.message] || `Error: ${error.message}`;
+      throw new Error(errorMessage);
     }
   };
 
-  return {getSingleCentileData};
+  const setApiKey = async (newKey, setModalVisible, clearKey = false) => {
+    if (!clearKey) {
+      try {
+        const serverResponse = await timeoutForFetch(
+          6000,
+          fetch(API_CALC_REAL_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Cache-Control': 'no-cache',
+              'Primary-Subscription-Key': newKey,
+            },
+            body: JSON.stringify(referenceArgumentsSingleMeasurement),
+            redirect: 'follow',
+          }),
+        );
+        if (serverResponse.ok) {
+          writeItemToStorage('api_key', setKey, newKey);
+          Alert.alert(
+            'API subscription key accepted',
+            'The key has been saved to your phone. The RCPCH calculators are now visible in dotKid.',
+            [
+              {
+                text: 'OK',
+                onPress: () => setModalVisible(false),
+              },
+            ],
+            {cancelable: false},
+          );
+        } else {
+          throw new Error('The server rejected your key');
+        }
+      } catch (error) {
+        Alert.alert(
+          'Error:',
+          `${error.message}`,
+          [
+            {
+              text: 'OK',
+              onPress: () => null,
+            },
+          ],
+          {cancelable: false},
+        );
+      }
+    } else {
+      Alert.alert(
+        'Are you sure you want to disable?',
+        'This will erase your subscription key from your phone',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              writeItemToStorage('api_key', setKey, '');
+              setModalVisible(false);
+            },
+          },
+          {
+            text: 'Cancel',
+            onPress: () => null,
+          },
+        ],
+        {cancelable: false},
+      );
+    }
+  };
+
+  return {getSingleCentileData, key, setApiKey};
 };
 
 const referenceArgumentsSingleMeasurement = {

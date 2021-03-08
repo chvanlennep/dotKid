@@ -11,7 +11,7 @@ import AppForm from '../components/AppForm';
 
 import defaultStyles from '../config/styles';
 import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
-import renderExperimental from '../config/checkDev';
+import useApi from '../brains/useApi';
 
 const PaedsHomepageScreen = () => {
   const initialValues = {
@@ -19,6 +19,7 @@ const PaedsHomepageScreen = () => {
     gestationInDays: 280,
     dob: null,
   };
+  const {key} = useApi();
   return (
     <PCalcScreen isHomePage={true} style={{flex: 1}}>
       <View style={styles.topContainer}>
@@ -45,9 +46,9 @@ const PaedsHomepageScreen = () => {
           <NavigateButton directions={routes.PAEDIATRIC_CENTILE}>
             Child Centile Calculator
           </NavigateButton>
-          {renderExperimental && (
+          {key !== '' && (
             <NavigateButton directions={routes.EXP_PCENTILE}>
-              *Exp* Child Centile Calculator
+              RCPCH Child Centile Calculator
             </NavigateButton>
           )}
           <NavigateButton directions={routes.FLUID_CALCULATOR}>

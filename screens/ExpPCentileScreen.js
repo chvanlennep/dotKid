@@ -94,7 +94,7 @@ const ExpPCentileScreen = () => {
   const [showGestation, setShowGestation] = useState(false);
 
   const handleFormikSubmit = (values) => {
-    const ageCheck = ageChecker(values);
+    const ageCheck = ageChecker(values, 7305);
     if (ageCheck === 'Negative age') {
       Alert.alert('Time Travelling Patient', 'Please check the dates entered', [
         {text: 'OK', onPress: () => null},
@@ -102,13 +102,16 @@ const ExpPCentileScreen = () => {
     } else if (ageCheck === 'Too old') {
       Alert.alert(
         'Patient Too Old',
-        'This calculator can only be used under 18 years of age',
+        'This calculator can only be used under 20 years of age',
         [{text: 'OK', onPress: () => null}],
       );
     } else {
       const results = calculateCentile(values);
       const submitFunction = () => {
-        const serialisedObject = JSON.stringify(values);
+        const serialisedObject = JSON.stringify({
+          measurements: values,
+          results: results,
+        });
         navigation.navigate(routes.EXP_PCENTILE_RESULTS, serialisedObject);
       };
       switch (true) {
@@ -146,7 +149,7 @@ const ExpPCentileScreen = () => {
                 text: 'OK',
                 onPress: () => {
                   moveDataAcrossGlobal('neonate', initialValues);
-                  navigation.navigate('RootN', {screen: 'NCentile'});
+                  navigation.navigate('RootN', {screen: 'ExpNCentile'});
                 },
               },
             ],
@@ -232,8 +235,8 @@ const ExpPCentileScreen = () => {
             <DateTimeInputButton kind="child" type="measured" />
             <FormResetButton kind="child" initialValues={initialValues} />
             <FormSubmitButton
-              name="Exp Calculate Child Centiles"
-              kind="child"
+              name="Calculate RCPCH Child Centiles"
+              kind="rcpch"
             />
           </AppForm>
         </View>

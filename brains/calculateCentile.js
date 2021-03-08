@@ -2,7 +2,7 @@ import regression from 'regression';
 
 import centileData from './centileData';
 import zScores from './zScores';
-import zeit from './zeit';
+import Zeit from './Zeit';
 import {addOrdinalSuffix, calculateBMI} from './oddBits';
 
 /*
@@ -527,7 +527,8 @@ const centileFromLms = (
   let heightCentile = ['N/A', 'N/A'];
   let lengthCentile = ['N/A', 'N/A'];
   let weightCentile = ['N/A', 'N/A'];
-  let ageBeforeCorrection = zeit(object.dob, 'string', object.dom);
+  const ageObject = new Zeit(object.dob, object.dom, birthGestationInDays);
+  let ageBeforeCorrection = ageObject.calculate('string', false);
   let ageAfterCorrection = 'not corrected';
   let z;
   if (kind === 'neonate') {
@@ -568,25 +569,17 @@ const centileFromLms = (
         (birthGestationInDays < 224 && ageInMonths <= 24)
       ) {
         index = ageInDays - (280 - birthGestationInDays);
-        ageAfterCorrection = zeit(
-          object.dob,
-          'string',
-          object.dom,
-          true,
-          280 - birthGestationInDays,
-        );
-        dayAgeForChart = zeit(
-          object.dob,
-          'days',
-          object.dom,
-          true,
-          280 - birthGestationInDays,
-        );
+        ageAfterCorrection = ageObject.calculate('string');
+        dayAgeForChart = ageObject.calculate('days');
       } else {
         index = ageInDays;
       }
     } else {
-      index = ageInMonths + 1412;
+      // round to nearest month, not round down
+      const monthAgeForLookup = Math.round(
+        ageObject.calculate('months', false, false),
+      );
+      index = monthAgeForLookup + 1412;
     }
     if (object.hc) {
       if (index <= 730) {
@@ -637,13 +630,14 @@ const centileFromLms = (
 const calculateCentile = (object) => {
   const dob = object.dob;
   const dom = object.dom || new Date();
-  let ageInDays = zeit(dob, 'days', dom);
+  const ageObject = new Zeit(dob, dom);
+  let ageInDays = ageObject.calculate('days');
   let lessThan14;
   let kind;
   if (ageInDays < 14) {
     lessThan14 = true;
   }
-  const ageInMonths = zeit(dob, 'months', dom);
+  const ageInMonths = ageObject.calculate('months');
   const birthGestationInDays = object.gestationInDays;
   const correctedGestationInDays = birthGestationInDays + ageInDays;
   // access birth centile data, if 37+:

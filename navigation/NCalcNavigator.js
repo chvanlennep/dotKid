@@ -5,6 +5,8 @@ import NeonateHomepageScreen from '../screens/NeonateHomepageScreen';
 import BirthCentileScreen from '../screens/BirthCentileScreen';
 import BirthCentileResultsScreen from '../screens/BirthCentileResultsScreen';
 import NCentileScreen from '../screens/NCentileScreen';
+import ExpNCentileScreen from '../screens/ExpNCentileScreen';
+import ExpNCentileResults from '../screens/ExpNCentileResults';
 import JaundiceScreen from '../screens/JaundiceScreen';
 import JaundiceResultsScreen from '../screens/JaundiceResultsScreen';
 import NCentileResultsScreen from '../screens/NCentileResultsScreen';
@@ -32,6 +34,8 @@ const NCalcNavigator = () => {
       />
       <Stack.Screen name="NCentile" component={NCentileScreen} />
       <Stack.Screen name="NCentileResults" component={NCentileResultsScreen} />
+      <Stack.Screen name="ExpNCentile" component={ExpNCentileScreen} />
+      <Stack.Screen name="ExpNCentileResults" component={ExpNCentileResults} />
       <Stack.Screen
         name="NFluidCalculator"
         component={NFluidRequirementsScreen}

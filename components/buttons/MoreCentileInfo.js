@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Alert, Modal, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Modal, StyleSheet, TouchableOpacity, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import AppText from '../AppText';
@@ -12,11 +12,10 @@ const modalWidth =
 
 const MoreCentileInfo = ({exactCentile, sds}) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const modalHeading1 = `Exact centile: ${exactCentile}`;
+  const modalHeading1 = `Centile: ${exactCentile}`;
   const modalHeading2 = sds ? `Z score: ${sds.toFixed(3)}` : null;
-  const modalMessage = `The default answer follows RCPCH guidelines based on major centile lines (50th, 75th etc.): \n
-  If a centile measurement is within 1/4 of the distance between 2 major centile lines, the measurement is considered to lie 'on' the nearest major centile line. Otherwise it is either considered to lie between, above or below.\n
-    This may lead to some confusion when viewing the graph or exact centile, as for example a reading on the 56th centile will be categorised as 'on' the 50th centile line.`;
+  const modalMessage =
+    'The default answer follows RCPCH guidelines based on major centile lines (50th, 75th etc.): \n\n If a centile measurement is within 1/4 of the distance between 2 major centile lines, the measurement is considered to lie on or near the nearest major centile line. Otherwise it is either considered to lie between, above or below.';
   return (
     <React.Fragment>
       <View style={styles.mainContainer}>

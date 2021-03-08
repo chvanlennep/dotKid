@@ -34,7 +34,7 @@ const PCentileResultsScreen = ({route, navigation}) => {
   if (measurements.height) {
     heightTitleAddition = ` (${measurements.height}cm)`;
   }
-  dayAgeForChart > 730 || dayAgeForChart === null
+  monthAgeForChart >= 48 || dayAgeForChart === null
     ? (heightTitle = `Height${heightTitleAddition}:`)
     : (heightTitle = `Length${heightTitleAddition}:`);
   let weightTitle;
@@ -43,7 +43,7 @@ const PCentileResultsScreen = ({route, navigation}) => {
     : (weightTitle = 'Weight:');
   let bmiTitle = 'BMI:';
   if (measurements.weight && measurements.height) {
-    if (dayAgeForChart > 730 || monthAgeForChart >= 48) {
+    if (monthAgeForChart >= 48) {
       rawBmi = calculateBMI(measurements.weight, measurements.height);
       const niceLookingBmi = Number(rawBmi.toFixed(1));
       bmiTitle = `BMI (${niceLookingBmi}kg/m²):`;
@@ -56,10 +56,10 @@ const PCentileResultsScreen = ({route, navigation}) => {
     hcTitle = `Head Circumference (${measurements.hc}cm):`;
   }
 
-  const [weight, exactWeight] = centiles.weight;
-  const [height, exactHeight] = centiles.height;
-  const [hc, exactHc] = centiles.hc;
-  const [bmi, exactBmi] = centiles.bmi;
+  const [weight, exactWeight, sdsWeight] = centiles.weight;
+  const [height, exactHeight, sdsHeight] = centiles.height;
+  const [hc, exactHc, sdsHc] = centiles.hc;
+  const [bmi, exactBmi, sdsBmi] = centiles.bmi;
 
   return (
     <PCalcScreen isResults={true} style={{flex: 1}}>
@@ -88,7 +88,7 @@ const PCentileResultsScreen = ({route, navigation}) => {
               </View>
             </View>
             <View style={styles.buttonContainer}>
-              <MoreCentileInfo exactCentile={exactWeight} />
+              <MoreCentileInfo exactCentile={exactWeight} sds={sdsWeight} />
               <CentileChartModal
                 measurementType="weight"
                 measurement={parameters.measurements.weight}
@@ -109,7 +109,7 @@ const PCentileResultsScreen = ({route, navigation}) => {
               </View>
             </View>
             <View style={styles.buttonContainer}>
-              <MoreCentileInfo exactCentile={exactHeight} />
+              <MoreCentileInfo exactCentile={exactHeight} sds={sdsHeight} />
               <CentileChartModal
                 measurementType="height"
                 measurement={parameters.measurements.height}
@@ -130,7 +130,7 @@ const PCentileResultsScreen = ({route, navigation}) => {
               </View>
             </View>
             <View style={styles.buttonContainer}>
-              <MoreCentileInfo exactCentile={exactBmi} />
+              <MoreCentileInfo exactCentile={exactBmi} sds={sdsBmi} />
               <CentileChartModal
                 measurementType="bmi"
                 measurement={rawBmi}
@@ -151,7 +151,7 @@ const PCentileResultsScreen = ({route, navigation}) => {
               </View>
             </View>
             <View style={styles.buttonContainer}>
-              <MoreCentileInfo exactCentile={exactHc} />
+              <MoreCentileInfo exactCentile={exactHc} sds={sdsHc} />
               <CentileChartModal
                 measurementType="hc"
                 measurement={parameters.measurements.hc}
