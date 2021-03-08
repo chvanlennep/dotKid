@@ -1,10 +1,11 @@
-import zeit from './zeit';
+import Zeit from './Zeit';
 
 // note: minimumAgeInDays is in addition to negative age checking
 // if no maximumAgeInDays specified, defaults to checking 18 years of age
 export default (object, maximumAgeInDays, minimumAgeInDays) => {
   const max = maximumAgeInDays || 6574;
-  const ageInDays = zeit(object.dob, 'days', object.dom);
+  const dateObject = new Zeit(object.dob, object.dom);
+  const ageInDays = dateObject.calculate('days');
   if (ageInDays < 0) {
     return 'Negative age';
   } else if (minimumAgeInDays) {

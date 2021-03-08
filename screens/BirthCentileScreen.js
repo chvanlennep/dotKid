@@ -13,7 +13,7 @@ import GestationInputButton from '../components/buttons/input/GestationInputButt
 import FormSubmitButton from '../components/buttons/FormSubmitButton';
 import FormResetButton from '../components/buttons/FormResetButton';
 import routes from '../navigation/routes';
-import calculateCentile from '../brains/calculateCentile';
+import calculateCentile from '../brains/newCalculateCentile';
 import {handleOldValues} from '../brains/oddBits';
 import {GlobalStatsContext} from '../components/GlobalStats';
 

@@ -1,4 +1,4 @@
-import zeit from './zeit';
+import Zeit from './Zeit';
 
 // functionButtons is object from the resus page logic
 export default (functionButtons, type) => {
@@ -52,8 +52,12 @@ export default (functionButtons, type) => {
     let month = '' + (date.getMonth() + 1);
     let day = '' + date.getDate();
     const year = '' + date.getFullYear();
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
+    if (month.length < 2) {
+      month = '0' + month;
+    }
+    if (day.length < 2) {
+      day = '0' + day;
+    }
     return [day, month, year].join('/');
   };
   if (objectAsArray[0] === undefined) {
@@ -77,32 +81,21 @@ export default (functionButtons, type) => {
     }
     outputString += newLine;
   }
-
+  const dateObject = new Zeit(
+    objectAsArray[0][0],
+    objectAsArray[objectAsArray.length - 1][0],
+  );
   if (
-    functionButtons.ROSC &&
-    (functionButtons.RIP.length === 1 || functionButtons.ROSC.length === 1)
+    functionButtons.RIP?.length === 1 ||
+    functionButtons.ROSC?.length === 1 ||
+    functionButtons.RIP?.length === 1 ||
+    functionButtons['Resuscitation complete']?.length === 1 ||
+    functionButtons['Transferred to NICU']?.length === 1
   ) {
-    outputString += `\nTotal elapsed time of resuscitation encounter: ${zeit(
-      objectAsArray[0][0],
+    outputString += `\nTotal elapsed time of resuscitation encounter: ${dateObject.calculate(
       'string',
-      objectAsArray[objectAsArray.length - 1][0],
       true,
-      0,
       true,
-    )}`;
-    return outputString;
-  } else if (
-    functionButtons['Resuscitation complete'] &&
-    (functionButtons.RIP.length === 1 ||
-      functionButtons['Resuscitation complete'].length === 1 ||
-      functionButtons['Transferred to NICU'].length === 1)
-  ) {
-    outputString += `\nTotal elapsed time of resuscitation encounter: ${zeit(
-      objectAsArray[0][0],
-      'string',
-      objectAsArray[objectAsArray.length - 1][0],
-      true,
-      0,
       true,
     )}`;
     return outputString;

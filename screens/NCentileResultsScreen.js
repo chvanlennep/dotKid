@@ -21,16 +21,22 @@ const NCentileResultsScreen = ({route, navigation}) => {
   const birthGestationInDays = results.birthGestationInDays;
   const correctedGestationInDays = results.correctedGestationInDays;
 
-  const [weight, exactWeight] = results.centiles.weight;
-  const [length, exactLength] = results.centiles.length;
-  const [hc, exactHc] = results.centiles.hc;
+  const [weight, exactWeight, sdsWeight] = results.centiles.weight;
+  const [length, exactLength, sdsLength] = results.centiles.length;
+  const [hc, exactHc, sdsHc] = results.centiles.hc;
 
   let weightTitle = 'Weight:';
-  if (measurements.weight) weightTitle = `Weight (${measurements.weight}kg):`;
+  if (measurements.weight) {
+    weightTitle = `Weight (${measurements.weight}kg):`;
+  }
   let lengthTitle = 'Length:';
-  if (measurements.length) lengthTitle = `Length (${measurements.length}cm):`;
+  if (measurements.length) {
+    lengthTitle = `Length (${measurements.length}cm):`;
+  }
   let hcTitle = 'Head Circumference:';
-  if (measurements.hc) hcTitle = `Head Circumference (${measurements.hc}cm):`;
+  if (measurements.hc) {
+    hcTitle = `Head Circumference (${measurements.hc}cm):`;
+  }
 
   return (
     <NCalcScreen isResults={true} style={{flex: 1}}>
@@ -59,7 +65,7 @@ const NCentileResultsScreen = ({route, navigation}) => {
               </View>
             </View>
             <View style={styles.buttonContainer}>
-              <MoreCentileInfo exactCentile={exactWeight} />
+              <MoreCentileInfo exactCentile={exactWeight} sds={sdsWeight} />
               <CentileChartModal
                 measurementType="weight"
                 measurement={parameters.measurements.weight}
@@ -79,7 +85,7 @@ const NCentileResultsScreen = ({route, navigation}) => {
               </View>
             </View>
             <View style={styles.buttonContainer}>
-              <MoreCentileInfo exactCentile={exactLength} />
+              <MoreCentileInfo exactCentile={exactLength} sds={sdsLength} />
               <CentileChartModal
                 measurementType="length"
                 measurement={parameters.measurements.length}
@@ -99,7 +105,7 @@ const NCentileResultsScreen = ({route, navigation}) => {
               </View>
             </View>
             <View style={styles.buttonContainer}>
-              <MoreCentileInfo exactCentile={exactHc} />
+              <MoreCentileInfo exactCentile={exactHc} sds={sdsHc} />
               <CentileChartModal
                 measurementType="hc"
                 measurement={parameters.measurements.hc}

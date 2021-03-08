@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 import PCalcScreen from '../components/PCalcScreen';
 import colors from '../config/colors';
 import AppForm from '../components/AppForm';
-import zeit from '../brains/zeit';
+import Zeit from '../brains/Zeit';
 import NumberInputButton from '../components/buttons/input/NumberInputButton';
 import FormResetButton from '../components/buttons/FormResetButton';
 import FormSubmitButton from '../components/buttons/FormSubmitButton';
@@ -62,10 +62,9 @@ const ECGScreen = () => {
   });
 
   const handleFormikSubmit = (values) => {
-    const dom = values.dom ? values.dom : new Date();
-    const age = zeit(values.dob, 'months', dom, true, correctDays);
+    const dateObject = new Zeit(values.dob, values.dom, values.gestationInDays);
+    const age = dateObject.calculate('months');
     const ageCheck = ageChecker(values);
-    let correctDays = 0;
     switch (true) {
       case ageCheck === 'Negative age':
         Alert.alert(

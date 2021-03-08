@@ -1,4 +1,4 @@
-export default obsRanges = [
+const obsRanges = [
   {
     age: 1,
     data: {
@@ -21,10 +21,10 @@ export default obsRanges = [
     },
   },
   {
-    age: 13,
+    age: 12,
     data: {
       HR: '80 - 120',
-      RR: '25 - 30',
+      RR: '20 - 25',
     },
   },
   {
@@ -42,3 +42,5 @@ export default obsRanges = [
     },
   },
 ];
+
+export default obsRanges;

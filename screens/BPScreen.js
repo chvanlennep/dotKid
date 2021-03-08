@@ -9,13 +9,13 @@ import colors from '../config/colors';
 import GestationInputButton from '../components/buttons/input/GestationInputButton';
 import SexInputButton from '../components/buttons/input/SexInputButton';
 import AppForm from '../components/AppForm';
-import calculateCentile from '../brains/calculateCentile';
+import calculateCentile from '../brains/newCalculateCentile';
 import calculateBP from '../brains/calculateBP';
 import NumberInputButton from '../components/buttons/input/NumberInputButton';
 import FormResetButton from '../components/buttons/FormResetButton';
 import FormSubmitButton from '../components/buttons/FormSubmitButton';
 import routes from '../navigation/routes';
-import zeit from '../brains/zeit';
+import Zeit from '../brains/Zeit';
 import ageChecker from '../brains/ageChecker';
 import DateTimeInputButton from '../components/buttons/input/DateTimeInputButton';
 import {GlobalStatsContext} from '../components/GlobalStats';
@@ -116,7 +116,12 @@ const BPScreen = () => {
           if (centileString.length > 10) {
             centileString = centileObject.centiles.height[0];
           }
-          const age = zeit(values.dob, 'years', values.dom, true, correctDays);
+          const ageObject = new Zeit(
+            values.dob,
+            values.dom,
+            values.gestationInDays,
+          );
+          const age = ageObject.calculate('years');
           const measurements = values;
           const heightCentile = Math.round(
             centileString.replace(/[^0-9.]/g, ''),

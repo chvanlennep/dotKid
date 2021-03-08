@@ -8,7 +8,7 @@ import FormResetButton from '../components/buttons/FormResetButton';
 import AgeButton from '../components/buttons/AgeButton';
 import PCalcScreen from '../components/PCalcScreen';
 import {GlobalStatsContext} from '../components/GlobalStats';
-import zeit from '../brains/zeit';
+import Zeit from '../brains/Zeit';
 import useAgeEffect from '../brains/useAgeEffect';
 import NavigateButton from '../components/buttons/NavigateButton';
 
@@ -34,11 +34,12 @@ const AgeScreen = () => {
 
   useLayoutEffect(() => {
     if (dob) {
-      const ageInMonths = zeit(dob, 'months', dom);
+      const dateObject = new Zeit(dob, dom, gestationInDays);
+      const ageInMonths = dateObject.calculate('months');
       if (ageInMonths >= 0) {
-        const beforeString = zeit(dob, 'string', dom);
-        const ageInDays = zeit(dob, 'days', dom);
-        if (gestationInDays < 259 && gestationInDays + ageInDays < 280) {
+        const beforeString = dateObject.calculate('string', false);
+        const ageInDays = dateObject.calculate('days');
+        if (gestationInDays < 259 && ageInDays < 14) {
           setAfter('Not Calculated');
           setBefore('Not Calculated');
           setShowThePath(true);
@@ -48,13 +49,7 @@ const AgeScreen = () => {
             ageInMonths <= 12) ||
           (gestationInDays < 224 && ageInMonths <= 24)
         ) {
-          const afterString = zeit(
-            dob,
-            'string',
-            dom,
-            true,
-            280 - gestationInDays,
-          );
+          const afterString = dateObject.calculate('string');
           setAfter(afterString);
           setBefore(beforeString);
           setShowThePath(false);

@@ -1,4 +1,4 @@
-import zeit from './zeit';
+import Zeit from './Zeit';
 
 const under38Data = [
   [23, 40, 130, 1.25, 80, 230, 2.083333333],
@@ -87,8 +87,9 @@ const calculateFinalThresholds = (hours, gestationWeeks) => {
 const calculateJaundice = (object) => {
   const sbr = object.sbr;
   const gestationWeeks = Math.floor(object.gestationInDays / 7);
-  const floatHours = zeit(object.dob, 'hours', object.dom, false);
-  const stringAge = zeit(object.dob, 'string', object.dom);
+  const dateObject = new Zeit(object.dob, object.dom);
+  const floatHours = dateObject.calculate('hours', false, true);
+  const stringAge = dateObject.calculate('string');
   const {phototherapy, exchange} = calculateFinalThresholds(
     floatHours,
     gestationWeeks,
@@ -125,9 +126,10 @@ const calculateJaundice = (object) => {
       mainConclusion = '50 or more below phototherapy threshold';
   }
   let youngWarning = '';
-  if (floatHours < 24 && activateYoungWarning)
+  if (floatHours < 24 && activateYoungWarning) {
     youngWarning =
       'Warning: this baby was less than 24 hours old when SBR taken';
+  }
   return {
     stringAge: stringAge,
     phototherapy: phototherapy,

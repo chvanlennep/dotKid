@@ -27,6 +27,9 @@ const addOrdinalSuffix = (inputNumber) => {
 
 // as it says on the tin. Kept separate for simplicity
 const calculateBMI = (weight, heightInCm) => {
+  if (!weight || !heightInCm) {
+    throw new Error('BMI calc did not receive valid arguments');
+  }
   const height = heightInCm / 100;
   return weight / (height * height);
 };
@@ -73,7 +76,7 @@ const decidePluralSuffix = (inputNumber) => {
 };
 
 // format date object to date DD/MM/YY, can also do to YYYY
-const formatDate = (inputDate, fullYear = false) => {
+const formatDate = (inputDate, fullYear = false, standardised = false) => {
   if (!inputDate) {
     return null;
   }
@@ -83,14 +86,18 @@ const formatDate = (inputDate, fullYear = false) => {
   let fourDigitYear = date.getFullYear();
   let yearArray = date.getFullYear().toString().split('');
   let shortArray = [yearArray[2], yearArray[3]];
-  const year = fullYear ? fourDigitYear : shortArray.join('');
+  const year = fullYear || standardised ? fourDigitYear : shortArray.join('');
   if (month.length < 2) {
     month = '0' + month;
   }
   if (day.length < 2) {
     day = '0' + day;
   }
-  return [day, month, year].join('/');
+  if (standardised) {
+    return [year, month, day].join('-');
+  } else {
+    return [day, month, year].join('/');
+  }
 };
 
 // format date object to time to hh:mm

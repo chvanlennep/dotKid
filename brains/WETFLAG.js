@@ -1,9 +1,9 @@
 import weightOn50th from './weightOn50th';
-import zeit from './zeit';
+import Zeit from './Zeit';
 
 export default WETFLAG = (dob, dom, sex, weight) => {
-  let ageInDays = zeit(dob, 'days', dom);
-  let ageInMonths = zeit(dob, 'months', dom);
+  const ageObject = new Zeit(dob, dom);
+  const ageInMonths = ageObject.calculate('months');
 
   // rounds in 0.5 intervals for ETTube
   function round(value, step) {
@@ -16,7 +16,7 @@ export default WETFLAG = (dob, dom, sex, weight) => {
   let finalWeight;
   let weightIsEstimated = false;
   if (!weight) {
-    const estWeight = weightOn50th(ageInDays, ageInMonths, sex);
+    const estWeight = weightOn50th(ageObject, sex);
     finalWeight = estWeight < 10 ? estWeight.toFixed(1) : Math.round(estWeight);
     weightIsEstimated = true;
   } else {

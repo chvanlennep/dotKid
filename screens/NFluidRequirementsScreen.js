@@ -17,7 +17,7 @@ import GestationInputButton from '../components/buttons/input/GestationInputButt
 import ageChecker from '../brains/ageChecker';
 import nFluidCalculator from '../brains/nFluidCalculator';
 import {GlobalStatsContext} from '../components/GlobalStats';
-import zeit from '../brains/zeit';
+import Zeit from '../brains/Zeit';
 import {readItemFromStorage} from '../brains/storage';
 import {handleOldValues} from '../brains/oddBits';
 
@@ -71,8 +71,8 @@ const NFluidRequirementsScreen = () => {
 
   const handleFormikSubmit = (values) => {
     const {gestationInDays} = values;
-    const correctedGestation =
-      gestationInDays + zeit(values.dob, 'days', values.dom);
+    const ageObject = new Zeit(values.dob, values.dom);
+    const correctedGestation = gestationInDays + ageObject.calculate('days');
     const termEtc =
       correctedGestation < 280 && gestationInDays < 259 ? 'Preterm' : 'Term';
     const workingValues = termEtc === 'Term' ? termValues : pretermValues;

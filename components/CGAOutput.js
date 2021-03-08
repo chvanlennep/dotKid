@@ -5,7 +5,7 @@ import {useFormikContext} from 'formik';
 import colors from '../config/colors';
 import {containerWidth} from '../config/styles';
 import AppText from './AppText';
-import zeit from '../brains/zeit';
+import Zeit from '../brains/Zeit';
 import {addOrdinalSuffix, decidePluralSuffix} from '../brains/oddBits';
 
 const CGAOutput = () => {
@@ -18,7 +18,8 @@ const CGAOutput = () => {
 
   useEffect(() => {
     if (values.gestationInDays && values.dob) {
-      const daysOld = zeit(values.dob, 'days', values.dom);
+      const dateObject = new Zeit(values.dob, values.dom);
+      const daysOld = dateObject.calculate('days');
       const computedCga = values.gestationInDays + daysOld;
       if (computedCga && daysOld >= 0) {
         if (computedCga > 294) {

@@ -17,7 +17,7 @@ import AppForm from '../components/AppForm';
 import routes from '../navigation/routes';
 import {GlobalStatsContext} from '../components/GlobalStats';
 import FormSubmitButton from '../components/buttons/FormSubmitButton';
-import zeit from '../brains/zeit';
+import Zeit from '../brains/Zeit';
 import useAgeEffect from '../brains/useAgeEffect';
 import {handleOldValues} from '../brains/oddBits';
 import UnitsSwitcher from '../components/buttons/UnitsSwitcher';
@@ -71,8 +71,8 @@ const FluidCalculatorScreen = () => {
 
   const handleFormikSubmit = (values) => {
     const {gestationInDays} = values;
-    const correctedGestation =
-      gestationInDays + zeit(values.dob, 'days', values.dom);
+    const ageObject = new Zeit(values.dob, values.dom);
+    const correctedGestation = gestationInDays + ageObject.calculate('days');
     const ageCheck = ageChecker(values, 6575, 28);
     switch (true) {
       case ageCheck === 'Negative age':
@@ -119,7 +119,7 @@ const FluidCalculatorScreen = () => {
             correction = values.deficit === 'Moderate' ? 5 : 10;
             mode = 'deficit';
           }
-          const ageInYears = zeit(values.dob, 'years', values.dom);
+          const ageInYears = ageObject.calculate('years');
           const results = calculateFluid(
             values.weight,
             values.sex,

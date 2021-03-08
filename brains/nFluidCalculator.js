@@ -1,11 +1,12 @@
-import zeit from './zeit';
+import Zeit from './Zeit';
 
 export default (measurementValues, referenceValues, gestation) => {
   const {day1, day2, day3, day4, day5} = referenceValues;
   const referenceArray = [day1, day2, day3, day4, day5];
   const {weight, correction, dob, dom} = measurementValues;
   const kgWeight = weight;
-  const age = zeit(dob, 'days', dom);
+  const ageObject = new Zeit(dob, dom);
+  const age = ageObject('days');
   const preCorrection24hr =
     age >= 5 ? kgWeight * day5 : kgWeight * referenceArray[age];
   const corrected24Hr = preCorrection24hr * (correction / 100);

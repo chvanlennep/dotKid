@@ -38,13 +38,9 @@ const allPickerDetails = [
     ],
   },
   {
-    name: 'Grimace',
+    name: 'Response to stimulation',
     iconName: 'emoticon-cry-outline',
-    pickerContent: [
-      {value: 'No response'},
-      {value: 'Aggressive stimulation'},
-      {value: 'Crying'},
-    ],
+    pickerContent: [{value: 'No response'}, {value: 'Grimace'}, {value: 'Cry'}],
   },
   {
     name: 'Activity',
@@ -69,7 +65,7 @@ const allPickerDetails = [
 const apgarArray = [
   'Appearance',
   'Pulse rate',
-  'Grimace',
+  'Response to stimulation',
   'Activity',
   'Respiratory Effort',
 ];
@@ -90,6 +86,8 @@ const makeInitialPickerState = () => {
   return workingObject;
 };
 
+const fontSize = defaultStyles.windowWidth < 375 ? 18 : 20;
+
 const APGARScreen = () => {
   const [pickerState, setPickerState] = useState(makeInitialPickerState());
   const [pickerText, setPickerText] = useState(apgarArray[0]);
@@ -107,11 +105,11 @@ const APGARScreen = () => {
           styles.miniButton,
           {
             backgroundColor:
-              (pickerState[item.name]['color'] &&
-                !pickerState[item.name]['open'] &&
+              (pickerState[item.name].color &&
+                !pickerState[item.name].open &&
                 colors.secondary) ||
-              (!pickerState[item.name]['open'] && colors.dark) ||
-              (pickerState[item.name]['open'] && colors.black),
+              (!pickerState[item.name].open && colors.dark) ||
+              (pickerState[item.name].open && colors.black),
           },
         ]}>
         <MaterialCommunityIcons
@@ -134,8 +132,8 @@ const APGARScreen = () => {
   });
 
   const changePickerState = (name, key, value) => {
-    setPickerState((pickerState) => {
-      const workingState = {...pickerState};
+    setPickerState((old) => {
+      const workingState = {...old};
       workingState[name][key] = value;
       return workingState;
     });
@@ -189,7 +187,7 @@ const APGARScreen = () => {
         // checks for all buttons filled in and starts logic to submit and close modal if true:
         let completed = 0;
         for (let i = 0; i < apgarArray.length; i++) {
-          if (pickerState[apgarArray[i]]['color']) {
+          if (pickerState[apgarArray[i]].color) {
             completed++;
           }
         }
@@ -212,7 +210,7 @@ const APGARScreen = () => {
         break;
       }
     }
-  }, [pickerState, apgarArray, submitForm]);
+  }, [pickerState, submitForm]);
 
   // Cancel button pressed
   useEffect(() => {
@@ -369,31 +367,29 @@ const styles = StyleSheet.create({
   },
   outputBox: {
     backgroundColor: colors.light,
-    height: 350,
     margin: 10,
     borderRadius: 15,
     padding: 10,
   },
   text: {
-    fontSize: defaultStyles.windowWidth < 375 ? 16 : 20,
-    marginBottom: defaultStyles.windowHeight <= 812 ? 3 : 8,
-    marginTop: defaultStyles.windowHeight <= 812 ? 0 : 5,
-    marginLeft: 18,
+    fontSize: fontSize,
+    marginLeft: 10,
     color: colors.black,
+    marginTop: 20,
   },
   textBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: defaultStyles.container.width - 55,
+    width: containerWidth - 55,
     height: 57,
     //backgroundColor: 'green',
     alignSelf: 'center',
   },
   title: {
-    fontSize: defaultStyles.windowWidth < 375 ? 20 : 24,
-    marginBottom: defaultStyles.windowHeight <= 812 ? 5 : 10,
-    marginTop: defaultStyles.windowHeight <= 812 ? 0 : 5,
-    marginLeft: 18,
+    marginTop: 20,
+    fontSize: fontSize,
+    fontWeight: '600',
+    marginLeft: 10,
     color: colors.black,
   },
   touchable: {

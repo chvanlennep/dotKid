@@ -1,15 +1,9 @@
 import {useLayoutEffect} from 'react';
-import zeit from './zeit';
+import Zeit from './Zeit';
 
 export default (dobObject, domObject, formikRef, setShowGestation) => {
-  let dob;
-  let dom;
-  if (dobObject) {
-    dob = dobObject.hasOwnProperty('value') ? dobObject.value : dobObject;
-  }
-  if (domObject) {
-    dom = domObject.hasOwnProperty('value') ? domObject.value : domObject;
-  }
+  const dob = dobObject?.hasOwnProperty('value') ? dobObject.value : dobObject;
+  const dom = domObject?.hasOwnProperty('value') ? domObject.value : domObject;
   useLayoutEffect(() => {
     let resetValues = true;
     if (formikRef.current) {
@@ -18,7 +12,8 @@ export default (dobObject, domObject, formikRef, setShowGestation) => {
       }
     }
     if (dob) {
-      const ageInDays = zeit(dob, 'days', dom);
+      const dateObject = new Zeit(dob, dom);
+      const ageInDays = dateObject.calculate('days');
       if (ageInDays >= 0 && ageInDays < 731) {
         setShowGestation(true);
       } else {
