@@ -273,15 +273,15 @@ const giveRange = (z) => {
   const measurementPosition = arrayForOrdering.findIndex(isChildZ);
   if (measurementPosition === 0) {
     if (z < zFor03) {
-      return 'Less than the 0.4th Centile';
+      return 'Less than the 0.4th centile';
     } else {
-      return 'On or near the 0.4th Centile';
+      return 'On or near the 0.4th centile';
     }
   } else if (measurementPosition === 9) {
     if (z > zFor997) {
-      return 'Greater than the 99.6th Centile';
+      return 'Greater than the 99.6th centile';
     } else {
-      return 'On or near the 99.6th Centile';
+      return 'On or near the 99.6th centile';
     }
   } else if (measurementPosition === undefined) {
     throw new Error('Error with giveRange array search');
@@ -291,16 +291,16 @@ const giveRange = (z) => {
     if (z - lower <= (upper - lower) / 4) {
       return `On or near the ${
         arrayForOrdering[measurementPosition - 1][1]
-      } Centile`;
+      } centile`;
     }
     if (upper - z <= (upper - lower) / 4) {
       return `On or near the ${
         arrayForOrdering[measurementPosition + 1][1]
-      } Centile`;
+      } centile`;
     } else {
       return `Between the ${
         arrayForOrdering[measurementPosition - 1][1]
-      } and the ${arrayForOrdering[measurementPosition + 1][1]} Centiles`;
+      } and the ${arrayForOrdering[measurementPosition + 1][1]} centiles`;
     }
   }
 };
