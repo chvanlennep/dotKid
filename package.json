@@ -20,6 +20,8 @@
     "@react-navigation/stack": "^6.2.1",
     "formik": "^2.2.9",
     "material-design-icons": "^3.0.1",
+    "mobx": "^6.5.0",
+    "mobx-react": "^7.3.0",
     "react": "17.0.2",
     "react-native": "0.68.0",
     "react-native-bootsplash": "^4.1.4",
