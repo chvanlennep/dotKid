@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Alert, StyleSheet, View, useColorScheme} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
@@ -6,6 +6,7 @@ import Screen from './Screen';
 import TopIcon from './TopIcon';
 import colors from '../config/colors';
 import routes from '../navigation/routes';
+import {aplsStore} from '../brains/stateManagement/aplsState.store';
 
 const ReferenceBackgroundScreen = ({
   children,
@@ -21,27 +22,32 @@ const ReferenceBackgroundScreen = ({
     renderBack = true;
   }
 
-  const handleBackPress = () => {
-    if (isResus) {
-      Alert.alert(
-        'Do you sure you want a different resuscitation screen?',
-        'This will reset your current resuscitation encounter',
-        [
-          {
-            text: 'Yes',
-            onPress: () => navigation.goBack(),
-          },
-          {
-            text: 'Cancel',
-            onPress: () => 'Cancel',
-          },
-        ],
-        {cancelable: false},
-      );
-    } else {
-      navigation.goBack();
-    }
+  const handleBackPress = e => {
+    Alert.alert(
+      'Are you sure you want a different resuscitation screen?',
+      'This will reset your current resuscitation encounter',
+      [
+        {
+          text: 'Yes',
+          onPress: () => navigation.dispatch(e.data.action),
+        },
+        {
+          text: 'Cancel',
+          onPress: () => 'Cancel',
+        },
+      ],
+      {cancelable: false},
+    );
   };
+
+  useEffect(() => {
+    navigation.addListener('beforeRemove', e => {
+      if (aplsStore.timerIsRunning) {
+        e.preventDefault();
+        handleBackPress(e);
+      }
+    });
+  }, []);
 
   return (
     <Screen

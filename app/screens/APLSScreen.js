@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {Alert, FlatList, StyleSheet, View} from 'react-native';
 
 import PCalcScreen from '../components/PCalcScreen';
@@ -17,6 +17,7 @@ import {flatListData, tertiaryButtons} from '../brains/aplsObjects';
 import RhythmModal from '../components/RhythmModal';
 import LogModal from '../components/LogModal';
 import Adrenaline from '../components/buttons/Adrenaline';
+import {useNavigation} from '@react-navigation/native';
 
 const APLSScreen = () => {
   const [logVisible, setLogVisible] = useState(false);
@@ -125,13 +126,49 @@ const APLSScreen = () => {
     });
   };
 
+  const handleBackPress = e => {
+    Alert.alert(
+      'Are you sure you want a different resuscitation screen?',
+      'This will reset your current resuscitation encounter',
+      [
+        {
+          text: 'Yes',
+          onPress: () => navigation.dispatch(e.data.action),
+        },
+        {
+          text: 'Cancel',
+          onPress: () => 'Cancel',
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.addListener('beforeRemove', e => {
+      if (aplsStore.timerIsRunning) {
+        e.preventDefault();
+        handleBackPress(e);
+      }
+    });
+  }, []);
+
+  // clears the cache on page unmounting
+  useEffect(() => {
+    return () => {
+      aplsStore.resetLog();
+    };
+  }, []);
+
   return (
     <PCalcScreen isResus={true} style={{flex: 1}}>
       <ALSToolbar reset={resetLog} rip={RIPAPLS} rosc={ROSCAPLS} />
       <View style={styles.middleContainer}>
         <View style={[styles.verticalButtonContainer]}>
           <ALSDisplayButton
-            onPress={() => aplsStore.startTimer()}
+            onPress={aplsStore.startTimer()}
             style={styles.button}>
             <Stopwatch />
           </ALSDisplayButton>

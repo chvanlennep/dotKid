@@ -73,13 +73,15 @@ class AplsStore {
   _intervalRef: NodeJS.Timer | null = null;
 
   @action startTimer = () => {
-    this.timerIsRunning = true;
-    this.addTime('Start Time');
-    this.startTime = new Date().getTime();
-    this._intervalRef = setInterval(
-      action(() => (this.currentTime = new Date().getTime())),
-      1000,
-    );
+    if (this.timerIsRunning === false) {
+      this.timerIsRunning = true;
+      this.addTime('Start Time');
+      this.startTime = new Date().getTime();
+      this._intervalRef = setInterval(
+        action(() => (this.currentTime = new Date().getTime())),
+        1000,
+      );
+    }
   };
 
   @computed get stopwatchDisplay() {
