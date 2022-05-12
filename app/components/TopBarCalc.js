@@ -36,9 +36,9 @@ const TopBarCalc = ({
   const oppositeResusPage = child ? routes.NLS : routes.APLS;
   const iconColor = child ? colors.primary : colors.secondary;
 
-  const handleDangerousPress = (back) => {
+  const handleDangerousPress = back => {
     Alert.alert(
-      'Do you sure you want a different resuscitation screen?',
+      'Are you sure you want a different resuscitation screen?',
       'This may reset your current resuscitation encounter',
       [
         {

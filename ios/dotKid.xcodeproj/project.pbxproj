@@ -28,6 +28,8 @@
 		3B025516280827D000D87B38 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3B025506280827D000D87B38 /* EvilIcons.ttf */; };
 		3B025517280827D000D87B38 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3B025507280827D000D87B38 /* SimpleLineIcons.ttf */; };
 		3B025518280827D000D87B38 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3B025508280827D000D87B38 /* MaterialIcons.ttf */; };
+		3B5A999E282AC6D4002397A2 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3B5A999D282AC6D4002397A2 /* BootSplash.storyboard */; };
+		3B5A99A6282BA437002397A2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B5A99A5282BA436002397A2 /* Images.xcassets */; };
 		7699B88040F8A987B510C191 /* libPods-dotKid-dotKidTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-dotKid-dotKidTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
@@ -70,6 +72,8 @@
 		3B025507280827D000D87B38 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SimpleLineIcons.ttf; sourceTree = "<group>"; };
 		3B025508280827D000D87B38 /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MaterialIcons.ttf; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-dotKid.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-dotKid.debug.xcconfig"; path = "Target Support Files/Pods-dotKid/Pods-dotKid.debug.xcconfig"; sourceTree = "<group>"; };
+		3B5A999D282AC6D4002397A2 /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = dotKid/BootSplash.storyboard; sourceTree = "<group>"; };
+		3B5A99A5282BA436002397A2 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ../../../../../Downloads/Images.xcassets; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-dotKid.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-dotKid.release.xcconfig"; path = "Target Support Files/Pods-dotKid/Pods-dotKid.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-dotKid-dotKidTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-dotKid-dotKidTests.debug.xcconfig"; path = "Target Support Files/Pods-dotKid-dotKidTests/Pods-dotKid-dotKidTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-dotKid.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-dotKid.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -118,9 +122,11 @@
 		13B07FAE1A68108700A75B9A /* dotKid */ = {
 			isa = PBXGroup;
 			children = (
+				3B5A999D282AC6D4002397A2 /* BootSplash.storyboard */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
+				3B5A99A5282BA436002397A2 /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
@@ -302,11 +308,13 @@
 				3B025509280827D000D87B38 /* Fontisto.ttf in Resources */,
 				3B025514280827D000D87B38 /* FontAwesome.ttf in Resources */,
 				3B025510280827D000D87B38 /* Foundation.ttf in Resources */,
+				3B5A999E282AC6D4002397A2 /* BootSplash.storyboard in Resources */,
 				3B025513280827D000D87B38 /* FontAwesome5_Regular.ttf in Resources */,
 				3B025511280827D000D87B38 /* Ionicons.ttf in Resources */,
 				3B025516280827D000D87B38 /* EvilIcons.ttf in Resources */,
 				3B02550C280827D000D87B38 /* Entypo.ttf in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				3B5A99A6282BA437002397A2 /* Images.xcassets in Resources */,
 				3B025515280827D000D87B38 /* Zocial.ttf in Resources */,
 				3B025517280827D000D87B38 /* SimpleLineIcons.ttf in Resources */,
 				3B02550B280827D000D87B38 /* Feather.ttf in Resources */,

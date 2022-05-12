@@ -168,7 +168,7 @@ const APLSScreen = () => {
       <View style={styles.middleContainer}>
         <View style={[styles.verticalButtonContainer]}>
           <ALSDisplayButton
-            onPress={aplsStore.startTimer()}
+            onPress={aplsStore.startTimer}
             style={styles.button}>
             <Stopwatch />
           </ALSDisplayButton>
