@@ -3,6 +3,7 @@ import {useColorScheme} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import RNBootSplash from 'react-native-bootsplash';
+import {debugMobxActions} from 'mobx-action-flipper';
 
 import {lightTheme, darkTheme} from './app/navigation/navigationTheme';
 import AppNavigator from './app/navigation/AppNavigator';
@@ -12,8 +13,13 @@ import AcceptConditionsModal from './app/components/AcceptConditionsModal';
 import {timeout} from './app/brains/oddBits';
 import WalkthroughModal from './app/components/WalkthroughModal';
 import ErrorBoundary from './app/components/ErrorBoundary';
+import {aplsStore} from './app/brains/stateManagement/aplsState.store';
+
+debugMobxActions({aplsStore});
 
 export default () => {
+  // Any number of stores can be passed in as an object:
+
   const scheme = useColorScheme();
 
   const [accepted, setAccepted] = useState(true);
