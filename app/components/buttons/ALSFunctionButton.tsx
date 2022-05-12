@@ -1,14 +1,30 @@
-import React from 'react';
-import {Alert, StyleSheet, View, TouchableOpacity} from 'react-native';
+import React, {FC} from 'react';
+import {
+  Alert,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 
 import colors from '../../config/colors';
 import AppText from '../AppText';
 import defaultStyles from '../../config/styles';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {observer} from 'mobx-react';
 import {aplsStore} from '../../brains/stateManagement/aplsState.store';
 
-export const ALSFunctionButton = observer(
+type ALSFunctionButtonsProps = {
+  backgroundColorPressed: string | null;
+  kind: 'child' | 'neonate';
+  style: StyleProp<ViewStyle>;
+  title: string;
+  type: 'function' | 'checklist';
+};
+
+export const ALSFunctionButton: FC<ALSFunctionButtonsProps> = observer(
   ({
     kind = 'child',
     style,
@@ -22,6 +38,9 @@ export const ALSFunctionButton = observer(
 
     const movingChest = title === 'Chest is now moving' ? true : false;
     // logs time with event button
+
+    const pressedColor = kind === 'child' ? colors.primary : colors.secondary;
+
     const updateTime = () => {
       if (type === 'function' && aplsStore.endEncounter === false) {
         aplsStore.addTimeHandler(title);
@@ -50,8 +69,6 @@ export const ALSFunctionButton = observer(
       }
     };
 
-    const pressedColor = kind === 'child' ? colors.primary : colors.secondary;
-
     const handleRemovePress = () => {
       aplsStore.removeTime(title);
     };
@@ -70,7 +87,7 @@ export const ALSFunctionButton = observer(
           ]}>
           <AppText style={styles.text}>{title}</AppText>
           {changeBackground && !movingChest && (
-            <React.Fragment>
+            <>
               <TouchableOpacity style={styles.undo} onPress={handleRemovePress}>
                 <MaterialCommunityIcons
                   name="refresh"
@@ -78,7 +95,7 @@ export const ALSFunctionButton = observer(
                   size={20}
                 />
               </TouchableOpacity>
-            </React.Fragment>
+            </>
           )}
         </View>
       </TouchableOpacity>

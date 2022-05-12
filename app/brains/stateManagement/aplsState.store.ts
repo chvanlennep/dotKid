@@ -47,16 +47,16 @@ class AplsStore {
   //TIMERS
 
   @action secondsConverter(seconds: number): string {
-    let hours = Math.floor(seconds / 3600);
+    const hours = Math.floor(seconds / 3600);
     let remainingDuration = seconds % 3600;
 
-    let min = Math.floor(remainingDuration / 60);
+    const min = Math.floor(remainingDuration / 60);
     remainingDuration = remainingDuration % 60;
 
-    let sec = remainingDuration;
+    const sec = remainingDuration;
 
     if (hours > 0) {
-      return `${`${hours}`}h ${min}m ${sec}s`;
+      return `${hours}h ${min}m ${sec}s`;
     } else if (min < 1) {
       return `${sec}s`;
     } else if (min > 0) {
@@ -78,13 +78,15 @@ class AplsStore {
       this.addTime('Start Time');
       this.startTime = new Date().getTime();
       this._intervalRef = setInterval(
-        action(() => (this.currentTime = new Date().getTime())),
+        action(() => {
+          this.currentTime = new Date().getTime();
+        }),
         1000,
       );
     }
   };
 
-  @computed get stopwatchDisplay() {
+  @computed get stopwatchDisplay(): string {
     if (
       this.currentTime &&
       this.startTime &&
@@ -93,6 +95,7 @@ class AplsStore {
       const seconds = Math.floor((this.currentTime - this.startTime) / 1000);
       return this.secondsConverter(seconds);
     }
+    return '';
   }
 
   @action stopTimer = () => {
@@ -123,16 +126,14 @@ class AplsStore {
         (this.currentTime - lastAdrenalineTime) / 1000,
       );
       if (this.getFunctionButtonTime('Adrenaline Administered').length > 0) {
-        let timeToNextAdrenaline = repeatTime - secDiff;
+        const timeToNextAdrenaline = repeatTime - secDiff;
         if (timeToNextAdrenaline >= 0 && timeToNextAdrenaline < 180) {
           return (adrenalineOutputTime =
             this.secondsConverter(timeToNextAdrenaline));
         } else {
-          return (adrenalineOutputTime = '');
+          return '';
         }
       }
-    } else {
-      return adrenalineOutputTime;
     }
     return adrenalineOutputTime;
   }
@@ -154,9 +155,10 @@ class AplsStore {
       if (this.getFunctionButtonTime('Rhythm Analysed').length > 0) {
         let timeToNextRhythm = repeatTime - secDiff;
         if (timeToNextRhythm >= 0 && timeToNextRhythm < 120) {
-          return (rhythmOutputTime = this.secondsConverter(timeToNextRhythm));
+          rhythmOutputTime = this.secondsConverter(timeToNextRhythm);
+          return rhythmOutputTime;
         } else {
-          return (rhythmOutputTime = '');
+          return '';
         }
       }
     }
