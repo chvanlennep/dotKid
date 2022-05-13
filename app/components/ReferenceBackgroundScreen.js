@@ -22,33 +22,6 @@ const ReferenceBackgroundScreen = ({
     renderBack = true;
   }
 
-  const handleBackPress = e => {
-    Alert.alert(
-      'Are you sure you want a different resuscitation screen?',
-      'This will reset your current resuscitation encounter',
-      [
-        {
-          text: 'Yes',
-          onPress: () => navigation.dispatch(e.data.action),
-        },
-        {
-          text: 'Cancel',
-          onPress: () => 'Cancel',
-        },
-      ],
-      {cancelable: false},
-    );
-  };
-
-  useEffect(() => {
-    navigation.addListener('beforeRemove', e => {
-      if (aplsStore.timerIsRunning) {
-        e.preventDefault();
-        handleBackPress(e);
-      }
-    });
-  }, []);
-
   return (
     <Screen
       style={[

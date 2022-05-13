@@ -1,36 +1,18 @@
 import React from 'react';
 import {StyleSheet, TouchableHighlight, View} from 'react-native';
-import {aplsStore} from '../../brains/stateManagement/aplsState.store';
+import {nlsStore} from '../../brains/stateManagement/nlsState.store';
 
 import colors from '../../config/colors';
 import AppText from '../AppText';
 
-const EndEncounterButton = ({
-  logState,
-  modalState,
-  setLogVisible,
-  style,
-  title,
-}) => {
-  const setFunctionButtons = logState.setValue;
+const EndEncounterButton = ({modalState, setLogVisible, style, title}) => {
   const setModal = modalState.setValue;
 
-  // logs time with event button
-  const updateTime = () => {
-    setFunctionButtons(oldState => {
-      const timeStamp = new Date();
-      const oldButtonArray = oldState[title];
-      const newButtonArray = oldButtonArray.concat(timeStamp);
-      const updatingState = oldState;
-      updatingState[title] = newButtonArray;
-      return updatingState;
-    });
-  };
-
   const handlePress = () => {
-    updateTime();
-    aplsStore.setEndEncounter(true);
+    nlsStore.addTime(title);
+    nlsStore.setEndEncounter(true);
     setModal(false);
+    nlsStore.stopTimer();
     setLogVisible(true);
   };
 

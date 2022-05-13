@@ -15,6 +15,7 @@ import defaultStyles from '../../config/styles';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {observer} from 'mobx-react';
 import {aplsStore} from '../../brains/stateManagement/aplsState.store';
+import {nlsStore} from '../../brains/stateManagement/nlsState.store';
 
 type ALSFunctionButtonsProps = {
   backgroundColorPressed: string | null;
@@ -25,14 +26,10 @@ type ALSFunctionButtonsProps = {
 };
 
 export const ALSFunctionButton: FC<ALSFunctionButtonsProps> = observer(
-  ({
-    kind = 'child',
-    style,
-    backgroundColorPressed = null,
-    title,
-    type = 'function',
-  }) => {
-    const specificArray = aplsStore.getFunctionButtonTime(title);
+  ({kind, style, backgroundColorPressed = null, title, type = 'function'}) => {
+    const store = kind === 'child' ? aplsStore : nlsStore;
+
+    let specificArray = store.getFunctionButtonTime(title);
 
     const changeBackground = specificArray.length > 0 ? true : false;
 
@@ -41,11 +38,13 @@ export const ALSFunctionButton: FC<ALSFunctionButtonsProps> = observer(
 
     const pressedColor = kind === 'child' ? colors.primary : colors.secondary;
 
+    kind === 'child';
+
     const updateTime = () => {
-      if (type === 'function' && aplsStore.endEncounter === false) {
-        aplsStore.addTimeHandler(title);
-      } else if (type === 'checklist' && aplsStore.endEncounter === false) {
-        //**work in progress for nlsStore**
+      if (type === 'function' && store.endEncounter === false) {
+        store.addTimeHandler(title);
+      } else if (type === 'checklist' && store.endEncounter === false) {
+        nlsStore.addTime(title);
       }
     };
 
@@ -59,7 +58,7 @@ export const ALSFunctionButton: FC<ALSFunctionButtonsProps> = observer(
           [
             {
               text: 'Undo',
-              onPress: () => aplsStore.removeTime(title),
+              onPress: () => store.removeTime(title),
               style: 'cancel',
             },
             {text: 'OK', onPress: () => null},
@@ -70,7 +69,7 @@ export const ALSFunctionButton: FC<ALSFunctionButtonsProps> = observer(
     };
 
     const handleRemovePress = () => {
-      aplsStore.removeTime(title);
+      store.removeTime(title);
     };
 
     return (

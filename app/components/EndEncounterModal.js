@@ -14,7 +14,7 @@ import EndEncounterButton from '../components/buttons/EndEncounterButton';
 import AppText from './AppText';
 import ALSToolButton from './buttons/ALSToolButton';
 
-const EndEncounterModal = ({logState, setLogVisible}) => {
+const EndEncounterModal = ({setLogVisible}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const modalState = {
@@ -61,7 +61,6 @@ const EndEncounterModal = ({logState, setLogVisible}) => {
                 <EndEncounterButton
                   kind="neonate"
                   title="Resuscitation complete"
-                  logState={logState}
                   modalState={modalState}
                   setLogVisible={setLogVisible}
                   style={styles.buttons}
@@ -69,7 +68,6 @@ const EndEncounterModal = ({logState, setLogVisible}) => {
                 <EndEncounterButton
                   kind="neonate"
                   title="Transferred to NICU"
-                  logState={logState}
                   modalState={modalState}
                   setLogVisible={setLogVisible}
                   style={styles.buttons}
@@ -77,7 +75,6 @@ const EndEncounterModal = ({logState, setLogVisible}) => {
                 <EndEncounterButton
                   kind="neonate"
                   title="RIP"
-                  logState={logState}
                   modalState={modalState}
                   setLogVisible={setLogVisible}
                   style={styles.buttons}

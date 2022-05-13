@@ -7,6 +7,7 @@ import AppText from '../AppText';
 import defaultStyles from '../../config/styles';
 import {aplsStore} from '../../brains/stateManagement/aplsState.store';
 import {observer} from 'mobx-react';
+import {nlsStore} from '../../brains/stateManagement/nlsState.store';
 
 type ALSFunctionButtonType = {
   kind?: string | undefined;
@@ -15,14 +16,13 @@ type ALSFunctionButtonType = {
   inModal?: boolean | undefined;
 };
 export const ALSTertiaryFunctionButton: FC<ALSFunctionButtonType> = observer(
-  ({kind = 'child', style, title, inModal = false}) => {
-    const clicks = aplsStore.getFunctionButtonTime(title).length;
-
+  ({kind, style, title, inModal = false}) => {
+    const store = kind === 'child' ? aplsStore : nlsStore;
+    const clicks = store.getFunctionButtonTime(title).length;
     const changeBackground = clicks > 0 ? true : false;
 
     const handlePress = () => {
-      aplsStore.addTimeHandler(title);
-      console.log(aplsStore.getFunctionButtonTime(title).length);
+      store.addTimeHandler(title);
     };
 
     const pressedColor = kind === 'child' ? colors.primary : colors.secondary;
@@ -52,7 +52,7 @@ export const ALSTertiaryFunctionButton: FC<ALSFunctionButtonType> = observer(
             <React.Fragment>
               <TouchableOpacity
                 style={styles.undo}
-                onPress={() => aplsStore.removeTime(title)}>
+                onPress={() => store.removeTime(title)}>
                 <MaterialCommunityIcons
                   name="refresh"
                   color={colors.white}

@@ -17,6 +17,7 @@ import parseLog from '../brains/parseLog';
 import onShare from '../brains/onShare';
 import {readItemFromStorage, writeItemToStorage} from '../brains/storage';
 import {aplsStore} from '../brains/stateManagement/aplsState.store';
+import {nlsStore} from '../brains/stateManagement/nlsState.store';
 
 const LogModal = ({logInput, logVisibleState, kind, style}) => {
   const scheme = useColorScheme();
@@ -28,6 +29,8 @@ const LogModal = ({logInput, logVisibleState, kind, style}) => {
   const storageKey = `${logType}_log`;
   const firstEverLogMessage = 'No log entries found';
   const [log, setLog] = useState(firstEverLogMessage);
+
+  const store = kind === 'child' ? aplsStore : nlsStore;
 
   useEffect(() => {
     const rawLog = parseLog(logInput, logType);
@@ -45,11 +48,11 @@ const LogModal = ({logInput, logVisibleState, kind, style}) => {
   }, [log, firstEverLogMessage, storageKey]);
 
   const handleClose = () => {
-    if (aplsStore.endEncounter === false) {
+    if (store.endEncounter === false) {
       setModalVisible(false);
     } else {
       setModalVisible(false);
-      aplsStore.setEndEncounter(true);
+      store.setEndEncounter(true);
     }
   };
 

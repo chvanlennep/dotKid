@@ -6,7 +6,7 @@ import NLSToolbar from '../components/NLSToolbar';
 import colors from '../config/colors';
 import defaultStyles from '../config/styles';
 import ALSDisplayButton from '../components/buttons/ALSDisplayButton';
-import ALSFunctionButton from '../components/buttons/ALSFunctionButton';
+import {ALSFunctionButton} from '../components/buttons/ALSFunctionButton';
 import ALSListHeader from '../components/buttons/ALSListHeader';
 import Stopwatch from '../components/Stopwatch';
 import GeneralAssessBaby from '../components/GeneralAssessBaby';
@@ -19,7 +19,9 @@ import {
 import LogModal from '../components/LogModal';
 import NoChestRiseModal from '../components/NoChestRiseModal';
 import InitialAssessmentModal from '../components/InitialAssessmentModal';
-import ALSTeriaryFunctionButton from '../components/buttons/ALSTertiaryFunctionButton';
+import {ALSTertiaryFunctionButton} from '../components/buttons/ALSTertiaryFunctionButton';
+import {nlsStore} from '../brains/stateManagement/nlsState.store';
+import {useNavigation} from '@react-navigation/native';
 
 const NLSScreen = () => {
   const [reset, setReset] = useState(false);
@@ -27,9 +29,8 @@ const NLSScreen = () => {
   const [logVisible, setLogVisible] = useState(false);
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [endEncounter, setEndEncounter] = useState(false);
-  const [initialAssessmentComplete, setInitialAssessmentComplete] = useState(
-    false,
-  );
+  const [initialAssessmentComplete, setInitialAssessmentComplete] =
+    useState(false);
   const [assessBaby, setAssessBaby] = useState(false);
   const [assessTime, setAssessTime] = useState(0);
 
@@ -82,7 +83,7 @@ const NLSScreen = () => {
         {
           text: 'Reset',
           onPress: () => {
-            setReset(true);
+            nlsStore.nlsReset();
           },
         },
         {
@@ -101,10 +102,6 @@ const NLSScreen = () => {
         <ALSFunctionButton
           kind="neonate"
           title={item.id}
-          logState={logState}
-          encounterState={encounterState}
-          resetState={resetState}
-          timerState={timerState}
           type="checklist"
           style={styles.listButton}
         />
@@ -114,22 +111,14 @@ const NLSScreen = () => {
         <ALSFunctionButton
           kind="neonate"
           title={item.id}
-          logState={logState}
-          encounterState={encounterState}
-          resetState={resetState}
-          timerState={timerState}
           style={styles.listButton}
         />
       );
     } else if (item.type === 'afterChestRise') {
       return (
-        <ALSTeriaryFunctionButton
+        <ALSTertiaryFunctionButton
           kind="neonate"
           title={item.id}
-          logState={logState}
-          encounterState={encounterState}
-          resetState={resetState}
-          timerState={timerState}
           style={styles.listButton}
         />
       );
@@ -167,45 +156,50 @@ const NLSScreen = () => {
     });
   };
 
+  const handleBackPress = e => {
+    Alert.alert(
+      'Are you sure you want a different resuscitation screen?',
+      'This will reset your current resuscitation encounter',
+      [
+        {
+          text: 'Yes',
+          onPress: () => navigation.dispatch(e.data.action),
+        },
+        {
+          text: 'Cancel',
+          onPress: () => 'Cancel',
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
+  const navigation = useNavigation();
+
   useEffect(() => {
-    if (reset) {
-      setFunctionButtons((old) => {
-        const newFunctionButtons = {...old};
-        for (let value in newFunctionButtons) {
-          newFunctionButtons[value] = [];
-        }
-        return newFunctionButtons;
-      });
-      scrollMe(0, false);
-      if (isTimerActive) {
-        setIsTimerActive(false);
+    navigation.addListener('beforeRemove', e => {
+      if (nlsStore.timerIsRunning) {
+        e.preventDefault();
+        handleBackPress(e);
       }
-      if (endEncounter) {
-        setEndEncounter(false);
-      }
-      setReset(false);
-    } else if (endEncounter && logVisible) {
-      setIsTimerActive(false);
-    }
-  }, [reset, endEncounter, logVisible, isTimerActive]);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // clears the cache on page unmounting
+  useEffect(() => {
+    return () => {
+      nlsStore.nlsReset();
+    };
+  }, []);
 
   return (
     <NCalcScreen isResus={true} style={{flex: 1}}>
-      <NLSToolbar
-        reset={resetLog}
-        logState={logState}
-        encounterState={encounterState}
-        resetState={resetState}
-        timerState={timerState}
-        setLogVisible={setLogVisible}
-      />
+      <NLSToolbar reset={resetLog} setLogVisible={setLogVisible} />
       <View style={styles.middleContainer}>
         <View style={styles.verticalButtonContainer}>
-          <ALSDisplayButton
-            onPress={() => setIsTimerActive(true)}
-            style={styles.button}>
-            {!isTimerActive && 'Start Timer'}
-            {isTimerActive && <Stopwatch logState={logState} />}
+          <ALSDisplayButton onPress={nlsStore.startTimer} style={styles.button}>
+            <Stopwatch kind="neonate" />
           </ALSDisplayButton>
           <GeneralAssessBaby
             assessmentState={assessmentState}
@@ -219,10 +213,8 @@ const NLSScreen = () => {
         <View style={styles.verticalButtonContainer}>
           <LogModal
             kind="neonate"
-            encounterState={encounterState}
-            logInput={functionButtons}
+            logInput={nlsStore.functionButtons}
             logVisibleState={logVisibleState}
-            resetState={resetState}
             style={styles.button}
           />
 
@@ -242,25 +234,21 @@ const NLSScreen = () => {
       <View style={styles.bottomContainer}>
         <FlatList
           data={flatListOneData}
-          keyExtractor={(flatListOneData) => flatListOneData.id.toString()}
+          keyExtractor={flatListOneData => flatListOneData.id.toString()}
           renderItem={renderListItem}
           ref={scrollRef}
           ListHeaderComponent={
             <ALSListHeader
-              onDownPress={() => scrollMe(1000)}
+              title="Pre-Resus Checklist:"
               downArrow={true}
-              title={'Pre-Resus Checklist:'}
+              onDownPress={() => scrollMe(600)}
               style={styles.headingButton}
             />
           }
           ListFooterComponent={
-            <ALSTeriaryFunctionButton
+            <ALSTertiaryFunctionButton
               kind="neonate"
-              title={afterChestRise[afterChestRise.length - 1].id}
-              logState={logState}
-              encounterState={encounterState}
-              resetState={resetState}
-              timerState={timerState}
+              title={afterChestRise[afterChestRise.length - 1]['id']}
               style={styles.listButton}
             />
           }

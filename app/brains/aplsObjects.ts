@@ -2,7 +2,7 @@ import deepCopy from './deepCopy';
 
 export type FunctionButtonsType = {[buttonTitle: string]: Date[]};
 
-interface headerType {
+export interface headerType {
   id: string;
   type: string;
   downArrow?: boolean;
@@ -11,7 +11,7 @@ interface headerType {
   upPressLocation?: number;
 }
 
-type ButtonRecord = {id: string}[];
+export type ButtonRecord = {id: string}[];
 
 // NOTE: an array with nested objects
 const primaryButtons: ButtonRecord = [
@@ -68,7 +68,7 @@ const extraItems: FunctionButtonsType = {
 
 const outputObject = deepCopy(extraItems);
 
-export const makeFunctionButtonsObject = (): FunctionButtonsType => {
+export const makeAplsFunctionButtonsObject = (): FunctionButtonsType => {
   const allItems = [...primaryButtons, ...secondaryButtons, ...tertiaryButtons];
 
   allItems.forEach(({id}) => {
@@ -112,7 +112,7 @@ const makeKeyExtractorArray = () => {
 };
 
 const flatListData = makeKeyExtractorArray();
-const functionButtons = makeFunctionButtonsObject();
+const functionButtons = makeAplsFunctionButtonsObject();
 
 export {
   outputObject,
@@ -122,5 +122,3 @@ export {
   tertiaryButtons,
   functionButtons,
 };
-
-export type {headerType};

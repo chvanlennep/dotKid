@@ -13,9 +13,9 @@ import colors from '../config/colors';
 import defaultStyles from '../config/styles';
 import ALSDisplayButton from './buttons/ALSDisplayButton';
 import {chestRiseFlatList, noChestRise} from '../brains/nlsObjects';
-import ALSFunctionButton from '../components/buttons/ALSFunctionButton';
+import {ALSFunctionButton} from '../components/buttons/ALSFunctionButton';
 import AppText from './AppText';
-import ALSTertiaryFunctionButton from './buttons/ALSTertiaryFunctionButton';
+import {ALSTertiaryFunctionButton} from './buttons/ALSTertiaryFunctionButton';
 
 const NoChestRiseModal = ({
   afterClose,
@@ -90,7 +90,7 @@ const NoChestRiseModal = ({
 
   useEffect(() => {
     if (localLog['Chest is now moving'].length > 0) {
-      setFunctionButtons((oldState) => {
+      setFunctionButtons(oldState => {
         const updatingState = {...oldState};
         for (const [key, value] of Object.entries(localLog)) {
           const timeStamp = value;
@@ -136,7 +136,7 @@ const NoChestRiseModal = ({
               <View style={styles.assessment}>
                 <FlatList
                   data={chestRiseFlatList}
-                  keyExtractor={(chestRiseFlatList) =>
+                  keyExtractor={chestRiseFlatList =>
                     chestRiseFlatList.id.toString()
                   }
                   renderItem={renderListItem}

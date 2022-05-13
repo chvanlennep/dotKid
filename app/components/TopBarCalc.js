@@ -33,28 +33,7 @@ const TopBarCalc = ({
   const opposite = child
     ? {root: 'RootN', home: 'NeonateHomePage'}
     : {root: 'RootPaed', home: 'PaedsHomePage'};
-  const oppositeResusPage = child ? routes.NLS : routes.APLS;
   const iconColor = child ? colors.primary : colors.secondary;
-
-  const handleDangerousPress = back => {
-    Alert.alert(
-      'Are you sure you want a different resuscitation screen?',
-      'This may reset your current resuscitation encounter',
-      [
-        {
-          text: 'Yes',
-          onPress: () => {
-            back ? navigation.goBack() : navigation.navigate(oppositeResusPage);
-          },
-        },
-        {
-          text: 'Cancel',
-          onPress: () => null,
-        },
-      ],
-      {cancelable: false},
-    );
-  };
 
   const androidBackHandler = () => {
     switch (true) {
@@ -75,9 +54,6 @@ const TopBarCalc = ({
           navigation.navigate(routes.PAEDS_START);
         }
         break;
-      case isResus:
-        handleDangerousPress(true);
-        break;
       default:
         navigation.navigate(homeCalcPage);
     }
@@ -86,7 +62,7 @@ const TopBarCalc = ({
 
   const backPressHandler = () => {
     if (isResus) {
-      handleDangerousPress(true);
+      navigation.goBack();
     } else {
       isResults ? navigation.goBack() : navigation.navigate(homeCalcPage);
     }
@@ -139,7 +115,7 @@ const TopBarCalc = ({
             iconColor={colors.medium}
             onPress={() =>
               isResus
-                ? handleDangerousPress(false)
+                ? backPressHandler()
                 : navigation.navigate(opposite.root, {screen: opposite.home})
             }
           />

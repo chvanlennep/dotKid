@@ -2,12 +2,15 @@ import {observer} from 'mobx-react';
 import React from 'react';
 import {StyleSheet} from 'react-native';
 import {aplsStore} from '../brains/stateManagement/aplsState.store';
+import {nlsStore} from '../brains/stateManagement/nlsState.store';
 import colors from '../config/colors';
 import AppText from './AppText';
 
-const Stopwatch = observer(() => {
-  if (aplsStore.timerIsRunning) {
-    return <AppText style={styles.text}>{aplsStore.stopwatchDisplay}</AppText>;
+const Stopwatch = observer(kind => {
+  const store = kind === 'child' ? aplsStore : nlsStore;
+
+  if (store.timerIsRunning) {
+    return <AppText style={styles.text}>{store.stopwatchDisplay}</AppText>;
   } else {
     return <AppText style={styles.text}>Start Timer</AppText>;
   }

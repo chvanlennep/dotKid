@@ -34,7 +34,7 @@ const APLSScreen = () => {
         'Do you wish to reset your APLS encounter?',
         '',
         [
-          {text: 'Reset', onPress: () => aplsStore.resetLog()},
+          {text: 'Reset', onPress: () => aplsStore.aplsReset()},
           {
             text: 'Cancel',
             onPress: () => null,
@@ -97,7 +97,13 @@ const APLSScreen = () => {
 
   const renderListItem = ({item}) => {
     if (item.type === 'primaryButton' || item.type === 'secondaryButton') {
-      return <ALSFunctionButton title={item.id} style={styles.listButton} />;
+      return (
+        <ALSFunctionButton
+          kind="child"
+          title={item.id}
+          style={styles.listButton}
+        />
+      );
     }
     if (item.type === 'listHeader') {
       return (
@@ -112,7 +118,11 @@ const APLSScreen = () => {
       );
     } else {
       return (
-        <ALSTertiaryFunctionButton title={item.id} style={styles.listButton} />
+        <ALSTertiaryFunctionButton
+          kind="child"
+          title={item.id}
+          style={styles.listButton}
+        />
       );
     }
   };
@@ -153,12 +163,13 @@ const APLSScreen = () => {
         handleBackPress(e);
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // clears the cache on page unmounting
   useEffect(() => {
     return () => {
-      aplsStore.resetLog();
+      aplsStore.aplsReset();
     };
   }, []);
 
@@ -170,7 +181,7 @@ const APLSScreen = () => {
           <ALSDisplayButton
             onPress={aplsStore.startTimer}
             style={styles.button}>
-            <Stopwatch />
+            <Stopwatch kind="child" />
           </ALSDisplayButton>
           <Adrenaline />
         </View>
@@ -203,6 +214,7 @@ const APLSScreen = () => {
           }
           ListFooterComponent={
             <ALSTertiaryFunctionButton
+              kind="child"
               title={tertiaryButtons[tertiaryButtons.length - 1]['id']}
               style={styles.listButton}
             />
