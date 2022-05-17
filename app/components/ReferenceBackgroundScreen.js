@@ -6,7 +6,6 @@ import Screen from './Screen';
 import TopIcon from './TopIcon';
 import colors from '../config/colors';
 import routes from '../navigation/routes';
-import {aplsStore} from '../brains/stateManagement/aplsState.store';
 
 const ReferenceBackgroundScreen = ({
   children,

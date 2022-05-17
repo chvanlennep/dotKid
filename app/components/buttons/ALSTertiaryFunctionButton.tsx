@@ -33,11 +33,9 @@ export const ALSTertiaryFunctionButton: FC<ALSFunctionButtonType> = observer(
           style={[
             styles.button,
 
-            changeBackground && [
-              {
-                backgroundColor: pressedColor,
-              },
-            ],
+            changeBackground && {
+              backgroundColor: pressedColor,
+            },
           ]}>
           <View
             style={[

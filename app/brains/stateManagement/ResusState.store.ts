@@ -4,7 +4,7 @@ import {FunctionButtonsType} from '../aplsObjects';
 export class ResusStore {
   @observable functionButtons: FunctionButtonsType = {};
 
-  //gets time entry for APLS interaction
+  //gets time entry for  interaction
   @observable getFunctionButtonTime(title: string) {
     return this.functionButtons[title];
   }
@@ -15,17 +15,17 @@ export class ResusStore {
     this.endEncounter = value;
   }
 
-  //adds time to APLS interaction
+  //adds time to  interaction
   @action addTime(title: string) {
     this.functionButtons[title].push(new Date());
   }
 
-  //removes time from APLS interaction
+  //removes time from interaction
   @action removeTime(title: string) {
     this.functionButtons[title].splice(-1, 1);
   }
 
-  //resets time from APLS object
+  //resets time from object
   resetLogMaker(
     makeFunctionButtonsObject: () => FunctionButtonsType,
     thisContext: ResusStore,
@@ -66,7 +66,7 @@ export class ResusStore {
     }
   }
 
-  //APLS Timer
+  //Timer
   @observable startTime: number | null = null;
   @observable timerIsRunning = false;
   @observable currentTime: number | null = null;

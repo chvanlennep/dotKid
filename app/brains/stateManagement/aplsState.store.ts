@@ -6,9 +6,7 @@ class AplsStore extends ResusStore {
   constructor() {
     super();
     makeObservable(this);
-
     this.functionButtons = makeAplsFunctionButtonsObject();
-
     this.aplsReset = this.resetLogMaker(
       () => makeAplsFunctionButtonsObject(),
       this,

@@ -87,9 +87,8 @@ const afterChestRise: ButtonRecord = [
   {id: 'Colour change on CO2 detector'},
 ];
 
-const outputObject = deepCopy(extraItems);
-
 export const makeNlsFunctionButtonsObject = (): FunctionButtonsType => {
+  const outputObject = deepCopy(extraItems);
   const allItems = [
     ...preResusChecklist,
     ...resusRequired,
@@ -102,6 +101,14 @@ export const makeNlsFunctionButtonsObject = (): FunctionButtonsType => {
   });
 
   return outputObject;
+};
+
+export const makeChestRiseButtons = () => {
+  const chestRiseOutput: Record<string, boolean> = {};
+  noChestRise.forEach(({id}) => {
+    chestRiseOutput[id] = false;
+  });
+  return chestRiseOutput;
 };
 
 const makeKeyExtractorArray = () => {
@@ -161,7 +168,6 @@ const chestRiseFlatList = makeNoChestRiseKeyExtractorArray();
 const functionButtons = makeNlsFunctionButtonsObject();
 
 export {
-  outputObject,
   afterChestRise,
   chestRiseFlatList,
   flatListOneData,

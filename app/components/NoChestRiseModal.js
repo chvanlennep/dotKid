@@ -16,12 +16,13 @@ import {chestRiseFlatList, noChestRise} from '../brains/nlsObjects';
 import {ALSFunctionButton} from '../components/buttons/ALSFunctionButton';
 import AppText from './AppText';
 import {ALSTertiaryFunctionButton} from './buttons/ALSTertiaryFunctionButton';
+import {nlsStore} from '../brains/stateManagement/nlsState.store';
+import {ChestRiseSubmitButton} from './buttons/ChestRiseSubmitButton';
+import {ChestRiseButton} from './buttons/ChestRiseButton';
 
 const NoChestRiseModal = ({
   afterClose,
-  logState,
-  encounterState,
-  resetState,
+
   timerState,
   style,
 }) => {
@@ -33,31 +34,18 @@ const NoChestRiseModal = ({
     return initialState;
   };
 
-  const [localLog, setLocalLog] = useState(makeInitialState());
   const [modalVisible, setModalVisible] = useState(false);
 
-  const localLogState = {
-    value: localLog,
-    setValue: setLocalLog,
+  const modalState = {
+    value: modalVisible,
+    setValue: setModalVisible,
   };
 
   const setIsTimerActive = timerState.setValue;
   const isTimerActive = timerState.value;
-  const setFunctionButtons = logState.setValue;
 
   const renderListItem = ({item}) => {
-    return (
-      <ALSTertiaryFunctionButton
-        kind="neonate"
-        title={item.id}
-        logState={localLogState}
-        encounterState={encounterState}
-        resetState={resetState}
-        timerState={timerState}
-        style={styles.buttons}
-        inModal
-      />
-    );
+    return <ChestRiseButton title={item.id} />;
   };
 
   const handlePress = () => {
@@ -79,7 +67,7 @@ const NoChestRiseModal = ({
         {
           text: 'Close Checklist',
           onPress: () => {
-            setLocalLog(makeInitialState());
+            nlsStore.resetChestRiseColor();
             setModalVisible(false);
           },
         },
@@ -87,23 +75,6 @@ const NoChestRiseModal = ({
       {cancelable: false},
     );
   };
-
-  useEffect(() => {
-    if (localLog['Chest is now moving'].length > 0) {
-      setFunctionButtons(oldState => {
-        const updatingState = {...oldState};
-        for (const [key, value] of Object.entries(localLog)) {
-          const timeStamp = value;
-          const oldArray = updatingState[key];
-          const newArray = oldArray.concat(timeStamp);
-          updatingState[key] = newArray;
-        }
-        return updatingState;
-      });
-      setLocalLog(makeInitialState());
-      setModalVisible(false);
-    }
-  }, [localLog, setFunctionButtons]);
 
   return (
     <React.Fragment>
@@ -141,29 +112,10 @@ const NoChestRiseModal = ({
                   }
                   renderItem={renderListItem}
                   ListHeaderComponent={
-                    <ALSTertiaryFunctionButton
-                      kind="neonate"
-                      title={noChestRise[0].id}
-                      timerState={timerState}
-                      logState={localLogState}
-                      encounterState={encounterState}
-                      resetState={resetState}
-                      style={styles.buttons}
-                      inModal
-                    />
+                    <ChestRiseButton title={noChestRise[0].id} />
                   }
                   ListFooterComponent={
-                    <ALSFunctionButton
-                      kind="neonate"
-                      title={'Chest is now moving'}
-                      logState={localLogState}
-                      encounterState={encounterState}
-                      timerState={timerState}
-                      resetState={resetState}
-                      style={[styles.buttons]}
-                      backgroundColorPressed={colors.black}
-                      inModal
-                    />
+                    <ChestRiseSubmitButton modalState={modalState} />
                   }
                 />
               </View>

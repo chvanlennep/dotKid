@@ -14,8 +14,9 @@ import {timeout} from './app/brains/oddBits';
 import WalkthroughModal from './app/components/WalkthroughModal';
 import ErrorBoundary from './app/components/ErrorBoundary';
 import {aplsStore} from './app/brains/stateManagement/aplsState.store';
+import {nlsStore} from './app/brains/stateManagement/nlsState.store';
 
-debugMobxActions({aplsStore});
+debugMobxActions({aplsStore, nlsStore});
 
 export default () => {
   // Any number of stores can be passed in as an object:
