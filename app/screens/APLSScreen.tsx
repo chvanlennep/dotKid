@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {Alert, FlatList, StyleSheet, View} from 'react-native';
+import {Alert, FlatList, ListRenderItem, StyleSheet, View} from 'react-native';
 
 import PCalcScreen from '../components/PCalcScreen';
 import ALSToolbar from '../components/ALSToolbar';
@@ -10,7 +10,6 @@ import ALSDisplayButton from '../components/buttons/ALSDisplayButton';
 import {ALSFunctionButton} from '../components/buttons/ALSFunctionButton';
 import ALSListHeader from '../components/buttons/ALSListHeader';
 import Stopwatch from '../components/Stopwatch';
-import {ALSTertiaryFunctionButton} from '../components/buttons/ALSTertiaryFunctionButton';
 import {aplsStore} from '../brains/stateManagement/aplsState.store';
 
 import {flatListData, tertiaryButtons} from '../brains/aplsObjects';
@@ -95,11 +94,12 @@ const APLSScreen = () => {
     );
   };
 
-  const renderListItem = ({item}) => {
+  const renderListItem: ListRenderItem<any> = ({item}) => {
     if (item.type === 'primaryButton' || item.type === 'secondaryButton') {
       return (
         <ALSFunctionButton
           kind="child"
+          type="function"
           title={item.id}
           style={styles.listButton}
         />
@@ -118,9 +118,11 @@ const APLSScreen = () => {
       );
     } else {
       return (
-        <ALSTertiaryFunctionButton
+        <ALSFunctionButton
+          acceptsMultipleClicks={true}
           kind="child"
           title={item.id}
+          type={'function'}
           style={styles.listButton}
         />
       );
@@ -129,7 +131,7 @@ const APLSScreen = () => {
 
   const scrollRef = useRef();
 
-  const scrollMe = (coordinate, animated = true) => {
+  const scrollMe = (coordinate: string, animated = true) => {
     scrollRef.current?.scrollToOffset({
       offset: coordinate,
       animated: animated ? true : false,
@@ -213,10 +215,12 @@ const APLSScreen = () => {
             />
           }
           ListFooterComponent={
-            <ALSTertiaryFunctionButton
+            <ALSFunctionButton
+              acceptsMultipleClicks={true}
               kind="child"
               title={tertiaryButtons[tertiaryButtons.length - 1]['id']}
               style={styles.listButton}
+              type={'function'}
             />
           }
         />

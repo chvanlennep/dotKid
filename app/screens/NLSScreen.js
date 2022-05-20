@@ -84,6 +84,7 @@ const NLSScreen = () => {
           text: 'Reset',
           onPress: () => {
             nlsStore.nlsReset();
+            scrollMe(0);
           },
         },
         {
@@ -116,7 +117,8 @@ const NLSScreen = () => {
       );
     } else if (item.type === 'afterChestRise') {
       return (
-        <ALSTertiaryFunctionButton
+        <ALSFunctionButton
+          acceptsMultipleClicks={true}
           kind="neonate"
           title={item.id}
           style={styles.listButton}
@@ -220,10 +222,6 @@ const NLSScreen = () => {
 
           <NoChestRiseModal
             afterClose={() => scrollMe(1470)}
-            encounterState={encounterState}
-            logState={logState}
-            resetState={resetState}
-            timerState={timerState}
             style={styles.button}
           />
         </View>
@@ -246,7 +244,8 @@ const NLSScreen = () => {
             />
           }
           ListFooterComponent={
-            <ALSTertiaryFunctionButton
+            <ALSFunctionButton
+              acceptsMultipleClicks={true}
               kind="neonate"
               title={afterChestRise[afterChestRise.length - 1]['id']}
               style={styles.listButton}

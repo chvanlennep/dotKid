@@ -103,6 +103,91 @@ export const makeNlsFunctionButtonsObject = (): FunctionButtonsType => {
   return outputObject;
 };
 
+export const initialAssessmentDetails = [
+  {
+    name: 'Dry and Wrap Baby',
+    iconName: 'tumble-dryer',
+    pickerContent: [{value: 'Done'}, {value: 'Not Done'}],
+  },
+  {
+    name: 'Hat On',
+    iconName: 'hat-fedora',
+    pickerContent: [{value: 'Done'}, {value: 'Not Done'}],
+  },
+  {
+    name: 'Heart Rate',
+    iconName: 'heart-pulse',
+    pickerContent: [{value: '<60'}, {value: '60-100'}, {value: '>100'}],
+  },
+  {
+    name: 'Breathing',
+    iconName: 'weather-windy',
+    pickerContent: [
+      {value: 'Apnoeic'},
+      {value: 'Inadequate Breathing'},
+      {value: 'Adequate Breathing'},
+    ],
+  },
+  {
+    name: 'Colour',
+    iconName: 'percent',
+    pickerContent: [
+      {value: 'Pale'},
+      {value: 'Blue'},
+      {value: 'Blue extremities'},
+      {value: 'Pink'},
+    ],
+  },
+  {
+    name: 'Tone',
+    iconName: 'human-handsdown',
+    pickerContent: [
+      {value: 'Floppy'},
+      {value: 'Poor Tone'},
+      {value: 'Good Tone'},
+    ],
+  },
+];
+
+export const assessBabyPickerDetails = [
+  {
+    name: 'Chest Movement',
+    iconName: 'circle-expand',
+    pickerContent: [{value: 'Chest Not Moving'}, {value: 'Chest Moving'}],
+  },
+  {
+    name: 'Breathing',
+    iconName: 'weather-windy',
+    pickerContent: [
+      {value: 'Apnoeic'},
+      {value: 'Inadequate Breathing'},
+      {value: 'Adequate Breathing'},
+    ],
+  },
+  {
+    name: 'Heart Rate',
+    iconName: 'heart-pulse',
+    pickerContent: [{value: '<60'}, {value: '60-100'}, {value: '>100'}],
+  },
+  {
+    name: 'Saturations',
+    iconName: 'percent',
+  },
+  {
+    name: 'Inhaled O2',
+    iconName: 'gas-cylinder',
+  },
+  {
+    name: 'Tone',
+    iconName: 'human-handsdown',
+    pickerContent: [
+      {value: 'Floppy'},
+      {value: 'Poor Tone'},
+      {value: 'Good Tone'},
+    ],
+  },
+];
+
 export const makeChestRiseButtons = () => {
   const chestRiseOutput: Record<string, boolean> = {};
   noChestRise.forEach(({id}) => {

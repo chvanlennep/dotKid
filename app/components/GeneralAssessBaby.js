@@ -10,38 +10,26 @@ import O2Slider from './buttons/input/O2Slider';
 import AssessBabyTimer from './AssessBabyTimer';
 import AssessBabyInput from '../components/buttons/input/AssessBabyInput';
 import AssessBabyTitle from './AssessBabyTitle';
+import {assessBabyPickerDetails} from '../brains/nlsObjects';
+import {nlsStore} from '../brains/stateManagement/nlsState.store';
 
-const GeneralAssessBaby = ({
-  assessmentState,
-  assessmentTime,
-  logState,
-  resetState,
-  timerState,
-}) => {
+const GeneralAssessBaby = ({assessmentState, assessmentTime, resetState}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
-  const nameArray = [
-    'Chest Movement',
-    'Breathing',
-    'Heart Rate',
-    'Saturations',
-    'Inhaled O2',
-    'Tone',
-  ];
+  const nameArray = assessBabyPickerDetails.map(({name}) => name);
 
   const makeInitialPickerState = () => {
-    let i = 0;
     const workingObject = {};
-    while (i < nameArray.length) {
-      workingObject[nameArray[i]] = {
-        open: nameArray[i] === 'Chest Movement' ? true : false,
+    nameArray.forEach(name => {
+      workingObject[name] = {
+        open: name === 'Chest Movement' ? true : false,
         color: false,
         filled: false,
         cancelled: false,
         submit: false,
       };
-      i++;
-    }
+    });
+
     return workingObject;
   };
 
@@ -54,44 +42,8 @@ const GeneralAssessBaby = ({
 
   const reset = resetState.value;
 
-  const allPickerDetails = [
-    {
-      name: 'Chest Movement',
-      iconName: 'circle-expand',
-      pickerContent: [{value: 'Chest Not Moving'}, {value: 'Chest Moving'}],
-    },
-    {
-      name: 'Breathing',
-      iconName: 'weather-windy',
-      pickerContent: [
-        {value: 'Apnoeic'},
-        {value: 'Inadequate Breathing'},
-        {value: 'Adequate Breathing'},
-      ],
-    },
-    {
-      name: 'Heart Rate',
-      iconName: 'heart-pulse',
-      pickerContent: [{value: '<60'}, {value: '60-100'}, {value: '>100'}],
-    },
-    {
-      name: 'Saturations',
-      iconName: 'percent',
-    },
-    {
-      name: 'Inhaled O2',
-      iconName: 'gas-cylinder',
-    },
-    {
-      name: 'Tone',
-      iconName: 'human-handsdown',
-      pickerContent: [
-        {value: 'Floppy'},
-        {value: 'Poor Tone'},
-        {value: 'Good Tone'},
-      ],
-    },
-  ];
+  const allPickerDetails = assessBabyPickerDetails;
+
   const renderTopButtons = allPickerDetails.map((item, index) => (
     <TouchableOpacity onPress={() => togglePicker(item.name)} key={index}>
       <View
@@ -144,56 +96,37 @@ const GeneralAssessBaby = ({
   });
 
   const changePickerState = (name, key, value) => {
-    setPickerState((pickerState) => {
+    setPickerState(pickerState => {
       const workingState = {...pickerState};
       workingState[name][key] = value;
       return workingState;
     });
   };
 
-  const functionButtons = logState.value;
-  const setFunctionButtons = logState.setValue;
-
   const assessBaby = assessmentState.value;
   const setAssessBaby = assessmentState.setValue;
 
-  const setIsTimerActive = timerState.setValue;
-
   const initialValues = {};
-  nameArray.map((item) => (initialValues[item] = ''));
+  nameArray.map(item => (initialValues[item] = ''));
 
   // logs time with event button
-  const updateTime = (title, oldState, oxygen) => {
-    const timeStamp = new Date();
+  const updateTime = (title, oxygen) => {
     if (title === 'Inhaled O2' || title === 'Saturations') {
-      oldState[`${title}: ${oxygen}%`] = [];
-      const oldButtonArray = oldState[`${title}: ${oxygen}%`];
-      const newButtonArray = oldButtonArray.concat(timeStamp);
-      setFunctionButtons((oldState) => {
-        const updatingState = oldState;
-        updatingState[`${title}: ${oxygen}%`] = newButtonArray;
-        return updatingState;
-      });
+      nlsStore.addPickerTime(`${title}: ${oxygen}%`);
     } else {
-      const oldButtonArray = oldState[title];
-      const newButtonArray = oldButtonArray.concat(timeStamp);
-      setFunctionButtons((oldState) => {
-        const updatingState = oldState;
-        updatingState[title] = newButtonArray;
-        return updatingState;
-      });
+      nlsStore.addPickerTime(title);
     }
   };
 
   //form submission
-  const handleFormikSubmit = (values) => {
+  const handleFormikSubmit = values => {
     for (const [key, value] of Object.entries(values)) {
       if (key === 'Inhaled O2') {
-        updateTime('Inhaled O2', functionButtons, value);
+        updateTime('Inhaled O2', value);
       } else if (key === 'Saturations') {
-        updateTime('Saturations', functionButtons, value);
+        updateTime('Saturations', value);
       } else {
-        updateTime(value, functionButtons);
+        updateTime(value);
       }
     }
     setModalVisible(false);
@@ -204,8 +137,9 @@ const GeneralAssessBaby = ({
 
   //starts timer and opens modal
   const handlePress = () => {
+    nlsStore.addPickerTime('Baby Assessed:');
     setModalVisible(true);
-    setIsTimerActive(true);
+    nlsStore.startTimer();
   };
 
   // user tries to close modal before completion:
@@ -221,6 +155,7 @@ const GeneralAssessBaby = ({
         {
           text: 'Cancel Assessment',
           onPress: () => {
+            nlsStore.removeTime('Baby Assessed:');
             setResetForm(true);
             setPickerText(nameArray[0]);
             setModalVisible(false);
@@ -232,22 +167,6 @@ const GeneralAssessBaby = ({
     );
   };
 
-  const togglePicker = (name) => {
-    for (let i = 0; i < nameArray.length; i++) {
-      if (name !== nameArray[i]) {
-        if (pickerState[nameArray[i]]['open']) {
-          if (!pickerState[nameArray[i]['color']]) {
-            //Alert.alert('');
-          }
-          changePickerState(nameArray[i], 'open', false);
-          changePickerState(name, 'open', true);
-          setPickerText(name);
-          break;
-        }
-      }
-    }
-  };
-
   // Logic for when the tick button is pressed:
   useEffect(() => {
     for (let i = 0; i < nameArray.length; i++) {
@@ -257,7 +176,7 @@ const GeneralAssessBaby = ({
         for (let i = 0; i < nameArray.length; i++) {
           if (pickerState[nameArray[i]]['color']) completed++;
         }
-        if (completed === nameArray.length - 1 && !submitForm) {
+        if (completed === nameArray.at(-1) && !submitForm) {
           setSubmitForm(true);
           break;
         }
@@ -304,7 +223,7 @@ const GeneralAssessBaby = ({
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setBlink((blink) => !blink);
+      setBlink(blink => !blink);
     }, 1000);
     return () => clearInterval(interval);
   }, []);
@@ -325,7 +244,7 @@ const GeneralAssessBaby = ({
             (pressedBefore && blink && styles.buttonBlink),
         ]}>
         Assess Baby
-        {assessBaby && (
+        {Boolean(assessBaby) && (
           <AssessBabyTimer
             assessmentState={assessmentState}
             assessmentTime={assessmentTime}

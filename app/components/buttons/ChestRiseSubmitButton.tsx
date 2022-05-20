@@ -15,8 +15,11 @@ import {nlsStore} from '../../brains/stateManagement/nlsState.store';
 import {observer} from 'mobx-react';
 
 type ChestRiseButtonProps = {
-  style: StyleProp<ViewStyle>;
-  modalState: object;
+  style?: StyleProp<ViewStyle>;
+  modalState: {
+    value: boolean;
+    setValue: React.Dispatch<React.SetStateAction<boolean>>;
+  };
 };
 
 export const ChestRiseSubmitButton: FC<ChestRiseButtonProps> = observer(

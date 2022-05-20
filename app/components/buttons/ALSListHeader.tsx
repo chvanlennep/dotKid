@@ -14,11 +14,11 @@ import {ViewStyle} from 'react-native';
 
 interface ALSListHeaderType extends headerType {
   title: string;
-  onPress: () => void;
-  isModal: boolean;
-  iconColor: string;
-  onUpPress: () => void;
-  onDownPress: () => void;
+  onPress?: () => void;
+  isModal?: boolean;
+  iconColor?: string;
+  onUpPress?: () => void;
+  onDownPress?: () => void;
   style: ViewStyle;
 }
 

@@ -6,6 +6,7 @@ import {
 } from '../nlsObjects';
 
 class NlsStore extends ResusStore {
+  assessBabyTimer: () => string | null;
   constructor() {
     super();
     makeObservable(this);
@@ -15,11 +16,19 @@ class NlsStore extends ResusStore {
       () => makeNlsFunctionButtonsObject(),
       this,
     );
+    this.assessBabyTimer = this.customTimerMaker(30, 'Baby Assessed:', this);
   }
   nlsReset: () => void;
   @observable chestRiseOutput: Record<string, boolean>;
   @action toggleChestRiseColor(title: string) {
     this.chestRiseOutput[title] = !this.chestRiseOutput[title];
+  }
+
+  @action addPickerTime(logInput: string) {
+    if (!this.functionButtons[logInput]) {
+      this.functionButtons[logInput] = [];
+    }
+    this.addTime(logInput);
   }
 
   @action resetChestRiseColor() {

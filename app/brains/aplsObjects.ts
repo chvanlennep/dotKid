@@ -3,8 +3,8 @@ import deepCopy from './deepCopy';
 export type FunctionButtonsType = {[buttonTitle: string]: Date[]};
 
 export interface headerType {
-  id: string;
-  type: string;
+  id?: string;
+  type?: string;
   downArrow?: boolean;
   downPressLocation?: number;
   upArrow?: boolean;

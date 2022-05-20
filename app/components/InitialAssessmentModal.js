@@ -9,6 +9,7 @@ import ALSListHeader from './buttons/ALSListHeader';
 import AppForm from '../components/AppForm';
 import AssessBabyInput from '../components/buttons/input/AssessBabyInput';
 import AssessBabyTitle from './AssessBabyTitle';
+import {initialAssessmentDetails} from '../brains/nlsObjects';
 
 const InitialAssessBabyModal = ({
   initialAssessmentState,
@@ -17,28 +18,20 @@ const InitialAssessBabyModal = ({
   resetState,
   timerState,
 }) => {
-  const nameArray = [
-    'Dry and Wrap Baby',
-    'Hat On',
-    'Heart Rate',
-    'Breathing',
-    'Colour',
-    'Tone',
-  ];
+  const nameArray = initialAssessmentDetails.map(({name}) => name);
 
   const makeInitialPickerState = () => {
-    let i = 0;
     const workingObject = {};
-    while (i < nameArray.length) {
-      workingObject[nameArray[i]] = {
-        open: nameArray[i] === 'Dry and Wrap Baby' ? true : false,
+    nameArray.forEach(name => {
+      workingObject[name] = {
+        open: name === 'Dry and Wrap Baby' ? true : false,
         color: false,
         filled: false,
         cancelled: false,
-        submitForm: false,
+        submit: false,
       };
-      i++;
-    }
+    });
+
     return workingObject;
   };
 
@@ -49,51 +42,7 @@ const InitialAssessBabyModal = ({
   const [submitForm, setSubmitForm] = useState(false);
   const [resetForm, setResetForm] = useState(false);
 
-  const allPickerDetails = [
-    {
-      name: 'Dry and Wrap Baby',
-      iconName: 'tumble-dryer',
-      pickerContent: [{value: 'Done'}, {value: 'Not Done'}],
-    },
-    {
-      name: 'Hat On',
-      iconName: 'hat-fedora',
-      pickerContent: [{value: 'Done'}, {value: 'Not Done'}],
-    },
-    {
-      name: 'Heart Rate',
-      iconName: 'heart-pulse',
-      pickerContent: [{value: '<60'}, {value: '60-100'}, {value: '>100'}],
-    },
-    {
-      name: 'Breathing',
-      iconName: 'weather-windy',
-      pickerContent: [
-        {value: 'Apnoeic'},
-        {value: 'Inadequate Breathing'},
-        {value: 'Adequate Breathing'},
-      ],
-    },
-    {
-      name: 'Colour',
-      iconName: 'percent',
-      pickerContent: [
-        {value: 'Pale'},
-        {value: 'Blue'},
-        {value: 'Blue extremities'},
-        {value: 'Pink'},
-      ],
-    },
-    {
-      name: 'Tone',
-      iconName: 'human-handsdown',
-      pickerContent: [
-        {value: 'Floppy'},
-        {value: 'Poor Tone'},
-        {value: 'Good Tone'},
-      ],
-    },
-  ];
+  const allPickerDetails = initialAssessmentDetails;
   const renderTopButtons = allPickerDetails.map((item, index) => (
     <TouchableOpacity onPress={() => togglePicker(item.name)} key={index}>
       <View
@@ -128,14 +77,14 @@ const InitialAssessBabyModal = ({
   });
 
   const changePickerState = (name, key, value) => {
-    setPickerState((pickerState) => {
+    setPickerState(pickerState => {
       const workingState = {...pickerState};
       workingState[name][key] = value;
       return workingState;
     });
   };
 
-  const togglePicker = (name) => {
+  const togglePicker = name => {
     for (let i = 0; i < nameArray.length; i++) {
       if (name !== nameArray[i]) {
         if (pickerState[nameArray[i]].open) {
@@ -164,7 +113,7 @@ const InitialAssessBabyModal = ({
   const setIsTimerActive = timerState.setValue;
 
   const initialValues = {};
-  nameArray.map((item) => (initialValues[item] = ''));
+  nameArray.map(item => (initialValues[item] = ''));
 
   // logs time with event button. This has been modified from the others to make sure dry / wrap and hat on appear in order
   const updateTime = (submitArray, oldState) => {
@@ -177,7 +126,7 @@ const InitialAssessBabyModal = ({
       const title = submitArray[i];
       const oldButtonArray = oldState[title];
       const newButtonArray = oldButtonArray.concat(timeStamp);
-      setFunctionButtons((oldState) => {
+      setFunctionButtons(oldState => {
         const updatingState = oldState;
         updatingState[title] = newButtonArray;
         return updatingState;
@@ -185,7 +134,7 @@ const InitialAssessBabyModal = ({
     }
   };
 
-  const handleFormikSubmit = (values) => {
+  const handleFormikSubmit = values => {
     let submitArray = [];
     for (let i = 0; i < nameArray.length; i++) {
       const key = nameArray[i];

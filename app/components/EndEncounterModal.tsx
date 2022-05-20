@@ -1,39 +1,23 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, FC} from 'react';
 import {
-  Alert,
   Modal,
   StyleSheet,
   TouchableOpacity,
-  FlatList,
+  useWindowDimensions,
   View,
 } from 'react-native';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../config/colors';
-import defaultStyles from '../config/styles';
-import ALSDisplayButton from './buttons/ALSDisplayButton';
-import {chestRiseFlatList, noChestRise} from '../brains/nlsObjects';
-import {ALSFunctionButton} from '../components/buttons/ALSFunctionButton';
+import {containerWidth} from '../config/styles';
+import EndEncounterButton from './buttons/EndEncounterButton';
 import AppText from './AppText';
-import {ALSTertiaryFunctionButton} from './buttons/ALSTertiaryFunctionButton';
-import {nlsStore} from '../brains/stateManagement/nlsState.store';
-import {ChestRiseSubmitButton} from './buttons/ChestRiseSubmitButton';
-import {ChestRiseButton} from './buttons/ChestRiseButton';
+import ALSToolButton from './buttons/ALSToolButton';
 
-const NoChestRiseModal = ({
-  afterClose,
-
-  timerState,
-  style,
-}) => {
-  const makeInitialState = () => {
-    const initialState = {};
-    for (let i = 0; i < noChestRise.length; i++) {
-      initialState[noChestRise[i].id] = [];
-    }
-    return initialState;
-  };
-
+const EndEncounterModal: FC<{
+  setLogVisible: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({setLogVisible}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const modalState = {
@@ -41,55 +25,29 @@ const NoChestRiseModal = ({
     setValue: setModalVisible,
   };
 
-  const setIsTimerActive = timerState.setValue;
-  const isTimerActive = timerState.value;
-
-  const renderListItem = ({item}) => {
-    return <ChestRiseButton title={item.id} />;
-  };
-
-  const handlePress = () => {
-    if (!isTimerActive) {
-      setIsTimerActive(true);
-    }
-    setModalVisible(true);
-  };
-
-  const handleClose = () => {
-    Alert.alert(
-      'Chest Rise Not Confirmed',
-      '',
-      [
-        {
-          text: 'Return to Checklist',
-          style: 'cancel',
-        },
-        {
-          text: 'Close Checklist',
-          onPress: () => {
-            nlsStore.resetChestRiseColor();
-            setModalVisible(false);
-          },
-        },
-      ],
-      {cancelable: false},
-    );
-  };
-
+  //This is used in NLS (not APLS)
   return (
     <React.Fragment>
-      <ALSDisplayButton onPress={handlePress} style={style}>
-        No Chest Rise
-      </ALSDisplayButton>
+      <ALSToolButton
+        name="End Encounter"
+        onPress={() => setModalVisible(true)}
+        style={{width: useWindowDimensions().width / 2}}
+      />
       <View style={styles.centeredView}>
         <Modal
           animationType="slide"
           transparent={true}
           visible={modalVisible}
-          onShow={afterClose}>
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <TouchableOpacity style={styles.touchable} onPress={handleClose}>
+              <TouchableOpacity
+                style={styles.touchable}
+                onPress={() => {
+                  setModalVisible(!modalVisible);
+                }}>
                 <View style={styles.closeIcon}>
                   <MaterialCommunityIcons
                     name="close-circle"
@@ -98,25 +56,28 @@ const NoChestRiseModal = ({
                   />
                 </View>
               </TouchableOpacity>
-              <AppText style={styles.heading}>No Chest Movement</AppText>
+              <AppText style={styles.heading}>End Encounter</AppText>
               <View style={styles.sats}>
-                <AppText style={styles.text}>
-                  Do not move on until you have seen chest movement
-                </AppText>
+                <AppText style={styles.text}>Please choose an outcome:</AppText>
               </View>
               <View style={styles.assessment}>
-                <FlatList
-                  data={chestRiseFlatList}
-                  keyExtractor={chestRiseFlatList =>
-                    chestRiseFlatList.id.toString()
-                  }
-                  renderItem={renderListItem}
-                  ListHeaderComponent={
-                    <ChestRiseButton title={noChestRise[0].id} />
-                  }
-                  ListFooterComponent={
-                    <ChestRiseSubmitButton modalState={modalState} />
-                  }
+                <EndEncounterButton
+                  title="Resuscitation complete"
+                  modalState={modalState}
+                  setLogVisible={setLogVisible}
+                  style={styles.buttons}
+                />
+                <EndEncounterButton
+                  title="Transferred to NICU"
+                  modalState={modalState}
+                  setLogVisible={setLogVisible}
+                  style={styles.buttons}
+                />
+                <EndEncounterButton
+                  title="RIP"
+                  modalState={modalState}
+                  setLogVisible={setLogVisible}
+                  style={styles.buttons}
                 />
               </View>
             </View>
@@ -127,7 +88,7 @@ const NoChestRiseModal = ({
   );
 };
 
-export default NoChestRiseModal;
+export default EndEncounterModal;
 
 const styles = StyleSheet.create({
   assessment: {
@@ -135,11 +96,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.light,
     borderRadius: 5,
+    flexDirection: 'column',
     flexWrap: 'nowrap',
-    flex: 1,
-    margin: 5,
-    padding: 5,
-    paddingBottom: 10,
+    //flex: 1,
+    margin: 10,
+    padding: 7,
+  },
+  button: {
+    alignItems: 'center',
+    flexWrap: 'nowrap',
+    backgroundColor: colors.dark,
+    justifyContent: 'center',
+    padding: 2,
+    width: '50%',
   },
   buttonPressed: {
     backgroundColor: colors.primary,
@@ -148,6 +117,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     textAlign: 'center',
   },
+
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -173,7 +143,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   modalView: {
-    margin: 5,
+    margin: 20,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
@@ -182,9 +152,10 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.7,
     shadowRadius: 4,
-    paddingBottom: 5,
+    paddingBottom: 10,
     elevation: 5,
-    flex: 0.8,
+    //flex: 0.45,
+    width: containerWidth - 10,
     backgroundColor: colors.darkSecondary,
   },
   options: {
@@ -193,9 +164,9 @@ const styles = StyleSheet.create({
   },
   sats: {
     justifyContent: 'center',
-    backgroundColor: colors.black,
+    backgroundColor: colors.dark,
     borderRadius: 5,
-    height: 70,
+    height: 50,
     flexDirection: 'row',
     flexWrap: 'wrap',
     margin: 5,
@@ -217,7 +188,6 @@ const styles = StyleSheet.create({
   },
   buttons: {
     backgroundColor: colors.dark,
-    width: defaultStyles.container.width * 0.9,
   },
   submit: {
     backgroundColor: colors.dark,

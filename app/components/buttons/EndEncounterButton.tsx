@@ -1,11 +1,26 @@
-import React from 'react';
-import {StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {FC} from 'react';
+import {StyleSheet, TouchableHighlight, View, ViewStyle} from 'react-native';
 import {nlsStore} from '../../brains/stateManagement/nlsState.store';
 
 import colors from '../../config/colors';
 import AppText from '../AppText';
 
-const EndEncounterButton = ({modalState, setLogVisible, style, title}) => {
+type EndEncounterButtonProps = {
+  modalState: {
+    value: boolean;
+    setValue: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+  setLogVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  style: ViewStyle;
+  title: string;
+};
+
+const EndEncounterButton: FC<EndEncounterButtonProps> = ({
+  modalState,
+  setLogVisible,
+  style,
+  title,
+}) => {
   const setModal = modalState.setValue;
 
   const handlePress = () => {
@@ -21,8 +36,7 @@ const EndEncounterButton = ({modalState, setLogVisible, style, title}) => {
       activeOpacity={0.5}
       underlayColor={colors.light}
       onPress={handlePress}
-      style={[styles.button, style]}
-      title={title}>
+      style={[styles.button, style]}>
       <View style={[styles.button, style]}>
         <AppText style={{color: colors.white}}>{title}</AppText>
       </View>

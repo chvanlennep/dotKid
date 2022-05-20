@@ -19,11 +19,13 @@ const RhythmModal = () => {
     setValue: setModalVisible,
   };
 
+  let getRhythmTime = aplsStore.rhythmTimer();
+
   //analyse rhythm logic
   const analyse = () => {
-    if (!aplsStore.rhythmTimer) {
+    if (getRhythmTime === '') {
       setModalVisible(true);
-    } else if (aplsStore.rhythmTimer) {
+    } else {
       Alert.alert(
         'You can only log this every 2 minutes',
         'Please click undo if you need to cancel this log entry.',
@@ -49,26 +51,24 @@ const RhythmModal = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const pressedStyle =
+    aplsStore.getFunctionButtonTime('Rhythm Analysed').length > 0 &&
+    getRhythmTime &&
+    styles.buttonPressed;
+
+  const blinkingStyle =
+    aplsStore.getFunctionButtonTime('Rhythm Analysed').length > 0 &&
+    getRhythmTime === '' &&
+    blink &&
+    styles.buttonBlink;
+
   return (
     <React.Fragment>
       <TouchableWithoutFeedback onPress={() => analyse()}>
-        <View
-          style={[
-            styles.button,
-            (aplsStore.getFunctionButtonTime('Rhythm Analysed').length > 0 &&
-              aplsStore.rhythmTimer &&
-              styles.buttonPressed) ||
-              (aplsStore.getFunctionButtonTime('Rhythm Analysed').length > 0 &&
-                !aplsStore.rhythmTimer &&
-                blink &&
-                styles.buttonBlink),
-          ]}>
+        <View style={[styles.button, pressedStyle || blinkingStyle]}>
           <AppText style={styles.holderText}>Analyse Rhythm</AppText>
-          {aplsStore.rhythmTimer ? (
-            <AppText style={styles.holderText}>
-              {' '}
-              {aplsStore.rhythmTimer}{' '}
-            </AppText>
+          {getRhythmTime !== '' ? (
+            <AppText style={styles.holderText}> {getRhythmTime} </AppText>
           ) : null}
         </View>
       </TouchableWithoutFeedback>

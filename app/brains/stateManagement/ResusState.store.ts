@@ -66,7 +66,7 @@ export class ResusStore {
     }
   }
 
-  //Timer
+  //Stopwatch Timer
   @observable startTime: number | null = null;
   @observable timerIsRunning = false;
   @observable currentTime: number | null = null;
@@ -104,5 +104,40 @@ export class ResusStore {
       return this.secondsConverter(seconds);
     }
     return '';
+  }
+
+  //custom adrenaline/rhythm/assess baby timer
+  customTimerMaker(
+    repeatTime: number,
+    procedureTitle: string,
+    thisContext: ResusStore,
+  ): () => string | null {
+    return action(() => {
+      let lastProcedureTime: null | number = null;
+      let outputTime: string = '';
+
+      if (thisContext.getFunctionButtonTime(procedureTitle).length) {
+        const allProcedureTimes =
+          thisContext.getFunctionButtonTime(procedureTitle);
+        lastProcedureTime =
+          allProcedureTimes[allProcedureTimes.length - 1].getTime();
+      }
+
+      if (this.currentTime && lastProcedureTime) {
+        const secDiff = Math.floor(
+          (this.currentTime - lastProcedureTime) / 1000,
+        );
+        if (thisContext.getFunctionButtonTime(procedureTitle).length > 0) {
+          const nextProcedureTime = repeatTime - secDiff;
+          if (nextProcedureTime >= 0 && nextProcedureTime < 180) {
+            outputTime = this.secondsConverter(nextProcedureTime);
+            return outputTime;
+          } else {
+            return '';
+          }
+        }
+      }
+      return outputTime;
+    });
   }
 }

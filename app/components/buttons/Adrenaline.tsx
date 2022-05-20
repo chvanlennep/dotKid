@@ -10,9 +10,10 @@ import AppText from '../AppText';
 
 const Adrenaline = observer(() => {
   const [blink, setBlink] = useState(false);
+  let getAdrenalineTime = aplsStore.adrenalineTimer();
 
   const adrenaline = () => {
-    if (!aplsStore.adrenalineDisplay) {
+    if (getAdrenalineTime === '') {
       aplsStore.addTimeHandler('Adrenaline Administered');
     } else {
       Alert.alert(
@@ -35,30 +36,30 @@ const Adrenaline = observer(() => {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      // eslint-disable-next-line @typescript-eslint/no-shadow
       setBlink(blink => !blink);
     }, 1000);
     return () => clearInterval(interval);
   }, []);
 
+  const pressedStyle =
+    aplsStore.getFunctionButtonTime('Adrenaline Administered').length > 0 &&
+    getAdrenalineTime &&
+    styles.buttonPressed;
+
+  const blinkingStyle =
+    aplsStore.getFunctionButtonTime('Adrenaline Administered').length > 0 &&
+    getAdrenalineTime === '' &&
+    blink &&
+    styles.buttonBlink;
+
   return (
     <TouchableWithoutFeedback onPress={() => adrenaline()}>
-      <View
-        style={[
-          styles.button,
-          (aplsStore.getFunctionButtonTime('Adrenaline Administered').length >
-            0 &&
-            aplsStore.adrenalineDisplay &&
-            styles.buttonPressed) ||
-            (aplsStore.getFunctionButtonTime('Adrenaline Administered').length >
-              0 &&
-              !aplsStore.adrenalineDisplay &&
-              blink &&
-              styles.buttonBlink),
-        ]}>
+      <View style={[styles.button, pressedStyle || blinkingStyle]}>
         <AppText style={styles.text}>Adrenaline</AppText>
 
-        {aplsStore.adrenalineDisplay ? (
-          <AppText style={styles.text}> {aplsStore.adrenalineDisplay} </AppText>
+        {getAdrenalineTime !== '' ? (
+          <AppText style={styles.text}> {getAdrenalineTime} </AppText>
         ) : null}
       </View>
     </TouchableWithoutFeedback>
