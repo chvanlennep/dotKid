@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useFormikContext} from 'formik';
 import colors from '../../../config/colors';
@@ -28,7 +29,7 @@ const APGARButton = ({pickerDetails, pickerStateObject}) => {
   const {setFieldValue, values} = useFormikContext();
 
   const changePickerState = (name, key, value) => {
-    setPickerState((pickerState) => {
+    setPickerState(pickerState => {
       const workingState = {...pickerState};
       workingState[name][key] = value;
       return workingState;

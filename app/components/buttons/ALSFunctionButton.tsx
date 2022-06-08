@@ -68,6 +68,7 @@ export const ALSFunctionButton: FC<ALSFunctionButtonsProps> = observer(
         clicks={specificArray.length}
         handlePress={handlePress}
         handleRemovePress={handleRemovePress}
+        kind={kind}
         pressedColor={pressedColor}
         style={style}
         title={title}

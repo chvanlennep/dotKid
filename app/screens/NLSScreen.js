@@ -97,6 +97,11 @@ const NLSScreen = () => {
     );
   };
 
+  const manualStartTimer = () => {
+    nlsStore.addTime('Start Time');
+    nlsStore.startTimer();
+  };
+
   const renderListItem = ({item}) => {
     if (item.type === 'preResusChecklist') {
       return (
@@ -129,9 +134,9 @@ const NLSScreen = () => {
         <ALSListHeader
           title={item.id}
           downArrow={item.downArrow}
-          onDownPress={() => scrollMe(item.onDownPress)}
+          onDownPress={() => scrollMe(item.downPressLocation)}
           upArrow={item.upArrow}
-          onUpPress={() => scrollMe(item.onUpPress)}
+          onUpPress={() => scrollMe(item.upPressLocation)}
           style={styles.headingButton}
         />
       );
@@ -180,10 +185,8 @@ const NLSScreen = () => {
 
   useEffect(() => {
     navigation.addListener('beforeRemove', e => {
-      if (nlsStore.timerIsRunning) {
-        e.preventDefault();
-        handleBackPress(e);
-      }
+      e.preventDefault();
+      handleBackPress(e);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -200,7 +203,7 @@ const NLSScreen = () => {
       <NLSToolbar reset={resetLog} setLogVisible={setLogVisible} />
       <View style={styles.middleContainer}>
         <View style={styles.verticalButtonContainer}>
-          <ALSDisplayButton onPress={nlsStore.startTimer} style={styles.button}>
+          <ALSDisplayButton onPress={manualStartTimer} style={styles.button}>
             <Stopwatch kind="neonate" />
           </ALSDisplayButton>
           <GeneralAssessBaby
@@ -239,7 +242,7 @@ const NLSScreen = () => {
             <ALSListHeader
               title="Pre-Resus Checklist:"
               downArrow={true}
-              onDownPress={() => scrollMe(600)}
+              onDownPress={() => scrollMe(1000)}
               style={styles.headingButton}
             />
           }

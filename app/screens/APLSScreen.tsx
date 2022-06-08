@@ -110,9 +110,9 @@ const APLSScreen = () => {
         <ALSListHeader
           title={item.id}
           downArrow={item.downArrow}
-          onDownPress={() => scrollMe(item.onDownPress)}
+          onDownPress={() => scrollMe(item.downPressLocation)}
           upArrow={item.upArrow}
-          onUpPress={() => scrollMe(item.onUpPress)}
+          onUpPress={() => scrollMe(item.upPressLocation)}
           style={styles.headingButton}
         />
       );
@@ -158,6 +158,11 @@ const APLSScreen = () => {
 
   const navigation = useNavigation();
 
+  const manualStartTimer = () => {
+    aplsStore.addTime('Start Time');
+    aplsStore.startTimer();
+  };
+
   useEffect(() => {
     navigation.addListener('beforeRemove', e => {
       if (aplsStore.timerIsRunning) {
@@ -180,9 +185,7 @@ const APLSScreen = () => {
       <ALSToolbar reset={resetLog} rip={RIPAPLS} rosc={ROSCAPLS} />
       <View style={styles.middleContainer}>
         <View style={[styles.verticalButtonContainer]}>
-          <ALSDisplayButton
-            onPress={aplsStore.startTimer}
-            style={styles.button}>
+          <ALSDisplayButton onPress={manualStartTimer} style={styles.button}>
             <Stopwatch kind="child" />
           </ALSDisplayButton>
           <Adrenaline />

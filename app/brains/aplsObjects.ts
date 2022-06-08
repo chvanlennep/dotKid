@@ -1,6 +1,8 @@
 import deepCopy from './deepCopy';
 
-export type FunctionButtonsType = {[buttonTitle: string]: Date[]};
+export type FunctionButtonsType = {
+  [buttonTitle: string]: Array<{date: Date; comment?: string}>;
+};
 
 export interface headerType {
   id?: string;

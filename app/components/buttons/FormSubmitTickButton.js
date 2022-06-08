@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {StyleSheet, View, useColorScheme, TouchableOpacity} from 'react-native';
 import {useFormikContext} from 'formik';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import useCombined from '../../brains/useCombined';

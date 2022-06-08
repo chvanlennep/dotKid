@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {FC, useState} from 'react';
 import {
   Alert,
   Image,
@@ -9,11 +9,19 @@ import {
   useColorScheme,
 } from 'react-native';
 
-import AppText from '../components/AppText';
+import AppText from './AppText';
 import colors from '../config/colors';
 import {windowWidth} from '../config/styles';
 
-const WalkthroughModal = ({setWalkthroughVisible, walkthroughVisible}) => {
+type WalkthroughType = {
+  walkthroughVisible: boolean;
+  setWalkthroughVisible: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const WalkthroughModal: FC<WalkthroughType> = ({
+  setWalkthroughVisible,
+  walkthroughVisible,
+}) => {
   const [currentPosition, setCurrentPosition] = useState(0);
 
   const handlePress = (forward = true) => {
@@ -21,10 +29,10 @@ const WalkthroughModal = ({setWalkthroughVisible, walkthroughVisible}) => {
       if (currentPosition === 2) {
         setWalkthroughVisible(false);
       } else {
-        setCurrentPosition((old) => old + 1);
+        setCurrentPosition(old => old + 1);
       }
     } else {
-      setCurrentPosition((old) => old - 1);
+      setCurrentPosition(old => old - 1);
     }
   };
 
@@ -98,7 +106,9 @@ const WalkthroughModal = ({setWalkthroughVisible, walkthroughVisible}) => {
                 <AppText style={styles.smallButtonText}>Previous</AppText>
               </TouchableOpacity>
             )}
-            <TouchableOpacity onPress={handlePress} style={styles.smallButton}>
+            <TouchableOpacity
+              onPress={() => handlePress}
+              style={styles.smallButton}>
               <AppText style={styles.smallButtonText}>
                 {currentPosition === 2 ? 'Finish' : 'Next'}
               </AppText>

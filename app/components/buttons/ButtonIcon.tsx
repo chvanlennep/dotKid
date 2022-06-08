@@ -1,5 +1,6 @@
 import React, {FC} from 'react';
 import {View, ViewStyle} from 'react-native';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import colors from '../../config/colors';
 

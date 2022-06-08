@@ -11,6 +11,7 @@ import {
 import {LineChart, XAxis, YAxis} from 'react-native-svg-charts';
 import * as shape from 'd3-shape';
 import {Circle, G} from 'react-native-svg';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import makeDataObject from '../brains/makeJaundiceChartData';
@@ -117,7 +118,7 @@ const JaundiceChart = ({ageInHours, gestationWeeks, sbr}) => {
                       fontSize: 9,
                     }}
                     numberOfTicks={10}
-                    formatLabel={(value) => `${value}`}
+                    formatLabel={value => `${value}`}
                     style={styles.axis}
                   />
                   <LineChart

@@ -17,9 +17,9 @@ export class ResusStore {
 
   //adds time to  interaction
   @action addTime(title: string) {
-    this.functionButtons[title].push(new Date());
+    this.functionButtons[title].push({date: new Date()});
+    console.log(this.functionButtons[title]);
   }
-
   //removes time from interaction
   @action removeTime(title: string) {
     this.functionButtons[title].splice(-1, 1);
@@ -42,6 +42,13 @@ export class ResusStore {
       this.startTimer();
     }
     this.addTime(title);
+  }
+
+  @action addComment(title: string, text: string) {
+    const lastIndex = this.functionButtons[title].length - 1;
+
+    this.functionButtons[title][lastIndex].comment = text;
+    console.log(this.functionButtons[title][lastIndex]);
   }
 
   //TIMERS
@@ -75,7 +82,6 @@ export class ResusStore {
   @action startTimer = () => {
     if (this.timerIsRunning === false) {
       this.timerIsRunning = true;
-      this.addTime('Start Time');
       this.startTime = new Date().getTime();
       this._intervalRef = setInterval(
         action(() => {
@@ -120,7 +126,7 @@ export class ResusStore {
         const allProcedureTimes =
           thisContext.getFunctionButtonTime(procedureTitle);
         lastProcedureTime =
-          allProcedureTimes[allProcedureTimes.length - 1].getTime();
+          allProcedureTimes[allProcedureTimes.length - 1].date.getTime();
       }
 
       if (this.currentTime && lastProcedureTime) {

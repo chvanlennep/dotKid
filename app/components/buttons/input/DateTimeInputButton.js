@@ -8,6 +8,7 @@ import {
   useColorScheme,
 } from 'react-native';
 
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {useFormikContext} from 'formik';

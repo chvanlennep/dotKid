@@ -18,10 +18,9 @@ const Stack = createStackNavigator();
 const NCalcNavigator = () => {
   return (
     <Stack.Navigator
-      name="RootN"
       screenOptions={{
         headerShown: false,
-        presentation: 'card'
+        presentation: 'card',
       }}>
       <Stack.Screen name="NeonateHomepage" component={NeonateHomepageScreen} />
       <Stack.Screen name="APGAR" component={APGARScreen} />

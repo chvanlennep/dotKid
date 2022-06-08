@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, Modal, StyleSheet, TouchableOpacity, View} from 'react-native';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../../app/config/colors';

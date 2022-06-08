@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, Appearance} from 'react-native';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import {windowWidth} from '../config/styles';

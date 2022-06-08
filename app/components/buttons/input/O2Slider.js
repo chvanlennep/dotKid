@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useFormikContext} from 'formik';
 
@@ -19,7 +20,7 @@ const O2Slider = ({pickerStateObject, type = 'fi'}) => {
   const [pickerState, setPickerState] = pickerStateObject;
 
   const changePickerState = (name, key, value) => {
-    setPickerState((pickerState) => {
+    setPickerState(pickerState => {
       const workingState = {...pickerState};
       workingState[name][key] = value;
       return workingState;
@@ -57,7 +58,7 @@ const O2Slider = ({pickerStateObject, type = 'fi'}) => {
               maximumValue={100}
               step={stepValue}
               value={oxygen}
-              onValueChange={(value) => setOxygen(value)}
+              onValueChange={value => setOxygen(value)}
               minimumTrackTintColor="#FFFFFF"
               maximumTrackTintColor="#000000"
             />

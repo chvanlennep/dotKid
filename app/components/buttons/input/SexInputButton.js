@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import {useFormikContext} from 'formik';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../../../config/colors';
@@ -66,7 +67,7 @@ const SexInputButton = ({kind}) => {
           trueUnits="Male"
           falseUnits="Female"
           isUnits={isMale}
-          setIsUnits={(newValue) => combinedSetter({isMale: newValue})}>
+          setIsUnits={newValue => combinedSetter({isMale: newValue})}>
           <View style={styles.acceptCancel}>
             <View style={styles.closeIcon}>
               <TouchableOpacity onPress={cancelInput}>

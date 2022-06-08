@@ -8,6 +8,7 @@ import {
   Modal,
   Dimensions,
 } from 'react-native';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import * as Yup from 'yup';
@@ -162,7 +163,7 @@ const NFluidInputModal = ({name, valuesObject}) => {
     },
   ];
 
-  const renderButtons = inputButtons.map((element) => (
+  const renderButtons = inputButtons.map(element => (
     <NumberInputButton
       {...commonProps}
       key={element.name}
@@ -174,7 +175,7 @@ const NFluidInputModal = ({name, valuesObject}) => {
     />
   ));
 
-  const submitRequirements = (values) => {
+  const submitRequirements = values => {
     writeItemToStorage(storageKey, setValues, values);
     setModalVisible(false);
   };

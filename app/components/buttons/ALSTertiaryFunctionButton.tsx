@@ -2,7 +2,8 @@
 
 // import React, {FC} from 'react';
 // import {StyleSheet, TouchableOpacity, View} from 'react-native';
-// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+// //@ts-ignore
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 // import colors from '../../config/colors';
 // import AppText from '../AppText';

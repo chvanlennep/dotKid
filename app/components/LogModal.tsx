@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, FC} from 'react';
 import {
   Modal,
   ScrollView,
@@ -7,10 +7,11 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import colors from '../../app/config/colors';
-import defaultStyles from '../../app/config/styles';
+import colors from '../config/colors';
+import defaultStyles from '../config/styles';
 import AppText from './AppText';
 import ALSDisplayButton from './buttons/ALSDisplayButton';
 import parseLog from '../brains/parseLog';
@@ -18,8 +19,25 @@ import onShare from '../brains/onShare';
 import {readItemFromStorage, writeItemToStorage} from '../brains/storage';
 import {aplsStore} from '../brains/stateManagement/aplsState.store';
 import {nlsStore} from '../brains/stateManagement/nlsState.store';
+import {FunctionButtonsType} from '../brains/aplsObjects';
+import {ViewStyle} from 'react-native';
 
-const LogModal = ({logInput, logVisibleState, kind, style}) => {
+type LogModalType = {
+  logInput: FunctionButtonsType;
+  logVisibleState: {
+    value: boolean;
+    setValue: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+  kind: 'child' | 'neonate';
+  style: ViewStyle;
+};
+
+const LogModal: FC<LogModalType> = ({
+  logInput,
+  logVisibleState,
+  kind,
+  style,
+}) => {
   const scheme = useColorScheme();
 
   const modalVisible = logVisibleState.value;
@@ -32,6 +50,7 @@ const LogModal = ({logInput, logVisibleState, kind, style}) => {
 
   const store = kind === 'child' ? aplsStore : nlsStore;
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const rawLog = parseLog(logInput, logType);
     rawLog && rawLog.length !== 103

@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 //@ts-ignore
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../config/colors';
