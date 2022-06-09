@@ -29,8 +29,6 @@ const NLSScreen = () => {
   const [logVisible, setLogVisible] = useState(false);
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [endEncounter, setEndEncounter] = useState(false);
-  const [initialAssessmentComplete, setInitialAssessmentComplete] =
-    useState(false);
   const [assessBaby, setAssessBaby] = useState(false);
   const [assessTime, setAssessTime] = useState(0);
 
@@ -42,11 +40,6 @@ const NLSScreen = () => {
   const assessmentTime = {
     value: assessTime,
     setValue: setAssessTime,
-  };
-
-  const initialAssessmentState = {
-    value: initialAssessmentComplete,
-    setValue: setInitialAssessmentComplete,
   };
 
   const encounterState = {
@@ -144,8 +137,6 @@ const NLSScreen = () => {
       return (
         <InitialAssessmentModal
           encounterState={encounterState}
-          assessmentState={assessmentState}
-          initialAssessmentState={initialAssessmentState}
           logState={logState}
           resetState={resetState}
           timerState={timerState}

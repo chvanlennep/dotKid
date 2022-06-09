@@ -18,8 +18,8 @@ export class ResusStore {
   //adds time to  interaction
   @action addTime(title: string) {
     this.functionButtons[title].push({date: new Date()});
-    console.log(this.functionButtons[title]);
   }
+
   //removes time from interaction
   @action removeTime(title: string) {
     this.functionButtons[title].splice(-1, 1);
@@ -121,7 +121,6 @@ export class ResusStore {
     return action(() => {
       let lastProcedureTime: null | number = null;
       let outputTime: string = '';
-
       if (thisContext.getFunctionButtonTime(procedureTitle).length) {
         const allProcedureTimes =
           thisContext.getFunctionButtonTime(procedureTitle);

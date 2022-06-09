@@ -35,6 +35,7 @@ const resusRequired: ButtonRecord = [
 // NOTE: an object with nested arrays
 const extraItems: FunctionButtonsType = {
   'Start Time': [],
+  'Baby Assessed:': [],
   RIP: [],
   '<60': [],
   '60-100': [],

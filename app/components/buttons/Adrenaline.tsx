@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     backgroundColor: colors.primary,
     justifyContent: 'center',
-    textAlign: 'center',
+    // textAlign: 'center',
   },
   text: {
     color: colors.white,

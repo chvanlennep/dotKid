@@ -8,7 +8,6 @@ import ALSDisplayButton from './buttons/ALSDisplayButton';
 import AppText from './AppText';
 import AppForm from '../components/AppForm';
 import O2Slider from './buttons/input/O2Slider';
-import AssessBabyTimer from './AssessBabyTimer';
 import AssessBabyInput from '../components/buttons/input/AssessBabyInput';
 import AssessBabyTitle from './AssessBabyTitle';
 import {assessBabyPickerDetails} from '../brains/nlsObjects';
@@ -39,11 +38,29 @@ const GeneralAssessBaby = ({assessmentState, assessmentTime, resetState}) => {
   const [submitForm, setSubmitForm] = useState(false);
   const [resetForm, setResetForm] = useState(false);
   const [blink, setBlink] = useState(false);
-  const [pressedBefore, setPressedBefore] = useState(false);
+  const [pressedBefore, setPressedBefore] = useState(Boolean(assessBaby));
 
   const reset = resetState.value;
 
   const allPickerDetails = assessBabyPickerDetails;
+  const getAssessBabyTime = nlsStore.assessBabyTimer();
+
+  const togglePicker = name => {
+    for (let i = 0; i < nameArray.length; i++) {
+      if (name !== nameArray[i]) {
+        if (pickerState[nameArray[i]].open) {
+          if (!pickerState[nameArray[i].color]) {
+          }
+          changePickerState(nameArray[i], 'open', false);
+          changePickerState(name, 'open', true);
+          name === 'Saturations'
+            ? setPickerText('Colour +/- Saturations')
+            : setPickerText(name);
+          break;
+        }
+      }
+    }
+  };
 
   const renderTopButtons = allPickerDetails.map((item, index) => (
     <TouchableOpacity onPress={() => togglePicker(item.name)} key={index}>
@@ -104,7 +121,7 @@ const GeneralAssessBaby = ({assessmentState, assessmentTime, resetState}) => {
     });
   };
 
-  const assessBaby = assessmentState.value;
+  const assessBaby = nlsStore.getFunctionButtonTime('Baby Assessed:').length;
   const setAssessBaby = assessmentState.setValue;
 
   const initialValues = {};
@@ -115,6 +132,7 @@ const GeneralAssessBaby = ({assessmentState, assessmentTime, resetState}) => {
     if (title === 'Inhaled O2' || title === 'Saturations') {
       nlsStore.addPickerTime(`${title}: ${oxygen}%`);
     } else {
+      console.log({title});
       nlsStore.addPickerTime(title);
     }
   };
@@ -138,7 +156,6 @@ const GeneralAssessBaby = ({assessmentState, assessmentTime, resetState}) => {
 
   //starts timer and opens modal
   const handlePress = () => {
-    nlsStore.addPickerTime('Baby Assessed:');
     setModalVisible(true);
     nlsStore.startTimer();
   };
@@ -175,9 +192,12 @@ const GeneralAssessBaby = ({assessmentState, assessmentTime, resetState}) => {
         // checks for all buttons filled in and starts logic to submit and close modal if true:
         let completed = 0;
         for (let i = 0; i < nameArray.length; i++) {
-          if (pickerState[nameArray[i]]['color']) completed++;
+          if (pickerState[nameArray[i]]['color']) {
+            completed++;
+          }
         }
-        if (completed === nameArray.at(-1) && !submitForm) {
+        if (completed === nameArray.length - 1 && !submitForm) {
+          nameArray.slice(0, nlsStore.addTime('Baby Assessed:'));
           setSubmitForm(true);
           break;
         }
@@ -235,22 +255,25 @@ const GeneralAssessBaby = ({assessmentState, assessmentTime, resetState}) => {
     }
   }, [reset]);
 
+  const pressedStyle =
+    nlsStore.getFunctionButtonTime('Baby Assessed:').length > 0 &&
+    getAssessBabyTime &&
+    styles.buttonPressed;
+
+  const blinkingStyle =
+    nlsStore.getFunctionButtonTime('Baby Assessed:').length > 0 &&
+    getAssessBabyTime === '' &&
+    blink &&
+    styles.buttonBlink;
+
   return (
     <React.Fragment>
       <ALSDisplayButton
         onPress={handlePress}
-        style={[
-          styles.button,
-          (assessBaby && styles.buttonPressed) ||
-            (pressedBefore && blink && styles.buttonBlink),
-        ]}>
+        style={[styles.button, pressedStyle || blinkingStyle]}>
         Assess Baby
-        {Boolean(assessBaby) && (
-          <AssessBabyTimer
-            assessmentState={assessmentState}
-            assessmentTime={assessmentTime}
-            resetState={resetState}
-          />
+        {Boolean(getAssessBabyTime) && (
+          <AppText style={styles.text}>{`\n${getAssessBabyTime}`}</AppText>
         )}
       </ALSDisplayButton>
 
@@ -399,8 +422,8 @@ const styles = StyleSheet.create({
   buttonPressed: {
     backgroundColor: colors.secondary,
     flexWrap: 'nowrap',
-    height: 80,
-    padding: 10,
+    flexDirection: 'column',
+    height: 90,
     justifyContent: 'center',
     textAlign: 'center',
   },
