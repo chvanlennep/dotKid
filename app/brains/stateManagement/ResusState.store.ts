@@ -134,8 +134,13 @@ export class ResusStore {
         );
         if (thisContext.getFunctionButtonTime(procedureTitle).length > 0) {
           const nextProcedureTime = repeatTime - secDiff;
-          if (nextProcedureTime >= 0 && nextProcedureTime < 180) {
+          if (
+            nextProcedureTime >= 0 &&
+            nextProcedureTime < 180 &&
+            nextProcedureTime <= repeatTime
+          ) {
             outputTime = this.secondsConverter(nextProcedureTime);
+
             return outputTime;
           } else {
             return '';
