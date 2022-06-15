@@ -13,7 +13,7 @@ import AssessBabyTitle from './AssessBabyTitle';
 import {assessBabyPickerDetails} from '../brains/nlsObjects';
 import {nlsStore} from '../brains/stateManagement/nlsState.store';
 
-const GeneralAssessBaby = ({assessmentState, assessmentTime, resetState}) => {
+const GeneralAssessBaby = () => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const nameArray = assessBabyPickerDetails.map(({name}) => name);
@@ -38,9 +38,6 @@ const GeneralAssessBaby = ({assessmentState, assessmentTime, resetState}) => {
   const [submitForm, setSubmitForm] = useState(false);
   const [resetForm, setResetForm] = useState(false);
   const [blink, setBlink] = useState(false);
-  const [pressedBefore, setPressedBefore] = useState(Boolean(assessBaby));
-
-  const reset = resetState.value;
 
   const allPickerDetails = assessBabyPickerDetails;
   const getAssessBabyTime = nlsStore.assessBabyTimer();
@@ -121,9 +118,6 @@ const GeneralAssessBaby = ({assessmentState, assessmentTime, resetState}) => {
     });
   };
 
-  const assessBaby = nlsStore.getFunctionButtonTime('Baby Assessed:').length;
-  const setAssessBaby = assessmentState.setValue;
-
   const initialValues = {};
   nameArray.map(item => (initialValues[item] = ''));
 
@@ -132,13 +126,12 @@ const GeneralAssessBaby = ({assessmentState, assessmentTime, resetState}) => {
     if (title === 'Inhaled O2' || title === 'Saturations') {
       nlsStore.addPickerTime(`${title}: ${oxygen}%`);
     } else {
-      console.log({title});
       nlsStore.addPickerTime(title);
     }
   };
 
   //form submission
-  const handleFormikSubmit = values => {
+  const handleFormSubmit = values => {
     for (const [key, value] of Object.entries(values)) {
       if (key === 'Inhaled O2') {
         updateTime('Inhaled O2', value);
@@ -150,7 +143,6 @@ const GeneralAssessBaby = ({assessmentState, assessmentTime, resetState}) => {
     }
     setModalVisible(false);
     setPickerText(nameArray[0]);
-    setAssessBaby(true);
     setPickerState(makeInitialPickerState());
   };
 
@@ -237,23 +229,11 @@ const GeneralAssessBaby = ({assessmentState, assessmentTime, resetState}) => {
   }, [pickerState, nameArray]);
 
   useEffect(() => {
-    if (assessBaby) {
-      setPressedBefore(true);
-    }
-  }, [assessBaby]);
-
-  useEffect(() => {
     const interval = setInterval(() => {
       setBlink(blink => !blink);
     }, 1000);
     return () => clearInterval(interval);
   }, []);
-
-  useEffect(() => {
-    if (reset) {
-      setPressedBefore(false);
-    }
-  }, [reset]);
 
   const pressedStyle =
     nlsStore.getFunctionButtonTime('Baby Assessed:').length > 0 &&
@@ -284,9 +264,7 @@ const GeneralAssessBaby = ({assessmentState, assessmentTime, resetState}) => {
           visible={modalVisible}
           onRequestClose={handleClosePress}>
           <View style={styles.centeredView}>
-            <AppForm
-              initialValues={initialValues}
-              onSubmit={handleFormikSubmit}>
+            <AppForm initialValues={initialValues} onSubmit={handleFormSubmit}>
               <View style={styles.modalView}>
                 <TouchableOpacity
                   style={styles.touchable}

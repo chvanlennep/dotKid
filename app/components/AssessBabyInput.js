@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from 'react';
+
 import {
-  Platform,
   StyleSheet,
   Dimensions,
   useColorScheme,
@@ -8,14 +8,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
-import {useFormikContext} from 'formik';
 
 import colors from '../../../config/colors';
-import defaultStyles from '../../../config/styles';
-import ButtonIcon from '../ButtonIcon';
 import AppText from '../../AppText';
 import ErrorMessage from '../../ErrorMessage';
-import {GlobalStateContext} from '../../GlobalStateContext';
 
 const AssessBabyInput = ({
   global = false,
@@ -35,7 +31,11 @@ const AssessBabyInput = ({
     ],
   };
 
-  const {setFieldValue, errors, touched, values} = useFormikContext();
+  const {
+    field: {isTouched, onChange, onBlur, value, ref},
+    fieldState: {error},
+  } = useController({control, name: fieldName});
+
   const scheme = useColorScheme();
 
   const toggleInput = () => {
@@ -43,7 +43,7 @@ const AssessBabyInput = ({
       setShowInput(false);
       if (local) {
         if (!global) {
-          setFieldValue(name, local);
+          onChange(name, local);
         }
       } else {
       }
@@ -59,7 +59,7 @@ const AssessBabyInput = ({
     setShowInput(false);
     setLocal('');
     if (!global) {
-      setFieldValue(name, '');
+      onChange(name, '');
     }
   };
 
@@ -68,7 +68,7 @@ const AssessBabyInput = ({
     if (local && !showInput) {
       if (!global) {
         // Reset by formik:
-        if (!values[name]) {
+        if (!value[name]) {
           setShowInput(false);
 
           setLocal('');
@@ -111,7 +111,7 @@ const AssessBabyInput = ({
           </TouchableOpacity>
         </React.Fragment>
       )}
-      <ErrorMessage error={errors[name]} visible={touched[name]} />
+      <ErrorMessage error={error[name]} visible={isTouched[name]} />
     </React.Fragment>
   );
 };

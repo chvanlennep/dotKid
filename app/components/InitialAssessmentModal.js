@@ -14,7 +14,7 @@ import {initialAssessmentDetails} from '../brains/nlsObjects';
 import {nlsStore} from '../brains/stateManagement/nlsState.store';
 import {observer} from 'mobx-react';
 
-const InitialAssessBabyModal = observer(({resetState, timerState}) => {
+const InitialAssessBabyModal = observer(() => {
   const nameArray = initialAssessmentDetails.map(({name}) => name);
 
   const makeInitialPickerState = () => {
@@ -98,13 +98,9 @@ const InitialAssessBabyModal = observer(({resetState, timerState}) => {
     }
   };
 
-  const reset = resetState.value;
-
   const initialAssessmentComplete = Boolean(
     nlsStore.getFunctionButtonTime('Baby Assessed:').length,
   );
-
-  const setIsTimerActive = timerState.setValue;
 
   const initialValues = {};
   nameArray.map(item => (initialValues[item] = ''));
@@ -124,7 +120,9 @@ const InitialAssessBabyModal = observer(({resetState, timerState}) => {
       const key = nameArray[i];
       const value = values[nameArray[i]];
       if (key === 'Dry and Wrap Baby' || key === 'Hat On') {
-        if (value === 'Done') submitArray.push(key);
+        if (value === 'Done') {
+          submitArray.push(key);
+        }
       } else {
         submitArray.push(value);
       }
@@ -150,7 +148,6 @@ const InitialAssessBabyModal = observer(({resetState, timerState}) => {
         ],
       );
     } else {
-      setIsTimerActive(true);
       setModalVisible(true);
     }
   };
