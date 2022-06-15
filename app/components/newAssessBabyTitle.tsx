@@ -1,30 +1,29 @@
 import React, {useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
-
-import {useFormikContext} from 'formik';
+import {useForm} from 'react-hook-form';
 
 import AppText from './AppText';
 import colors from '../config/colors';
 
 const AssessBabyTitle = ({submitObject, resetObject, children}) => {
-  const {handleSubmit, handleReset} = useFormikContext();
+  const {control, handleSubmit, reset} = useForm();
 
-  const [submit, setSubmit] = submitObject;
-  const [reset, setReset] = resetObject;
+  const [submitForm, setSubmitForm] = submitObject;
+  const [resetForm, setResetForm] = resetObject;
 
   useEffect(() => {
-    if (submit) {
+    if (submitForm) {
       handleSubmit();
-      setSubmit(false);
+      setSubmitForm(false);
     }
-  }, [submit]);
+  }, [submitForm]);
 
   useEffect(() => {
-    if (reset) {
-      handleReset();
-      setReset(false);
+    if (resetForm) {
+      reset();
+      setResetForm(false);
     }
-  }, [reset]);
+  }, [resetForm]);
 
   return (
     <View style={styles.pickerTitleContainer}>

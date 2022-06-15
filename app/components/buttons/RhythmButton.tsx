@@ -1,13 +1,27 @@
-import React, {useEffect, useState} from 'react';
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {FC} from 'react';
+import {
+  Alert,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
 
 import AppText from '../AppText';
 import colors from '../../config/colors';
-import ButtonIcon from '../buttons/ButtonIcon';
+import ButtonIcon from './ButtonIcon';
 import {aplsStore} from '../../brains/stateManagement/aplsState.store';
 
-const RhythmButton = ({modalState, style, title}) => {
-  const modalVisible = modalState.value;
+type RhythmButtonProps = {
+  style?: ViewStyle;
+  modalState: {
+    value: boolean;
+    setValue: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+  title: string;
+};
+
+const RhythmButton: FC<RhythmButtonProps> = ({modalState, style, title}) => {
   const setModalVisible = modalState.setValue;
 
   const handlePress = () => {

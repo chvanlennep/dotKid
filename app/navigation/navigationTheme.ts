@@ -1,5 +1,5 @@
-import { DefaultTheme } from '@react-navigation/native';
-import { Platform } from 'react-native';
+import {DefaultTheme} from '@react-navigation/native';
+import {Platform} from 'react-native';
 
 import colors from '../config/colors';
 
@@ -25,4 +25,4 @@ const darkTheme = {
   },
 };
 
-export { lightTheme, darkTheme };
+export {lightTheme, darkTheme};

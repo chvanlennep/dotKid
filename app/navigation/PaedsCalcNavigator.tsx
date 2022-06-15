@@ -22,10 +22,9 @@ const Stack = createStackNavigator();
 const PaedsCalcNavigator = () => {
   return (
     <Stack.Navigator
-      name="RootPaed"
       screenOptions={{
         headerShown: false,
-        presentation: 'card'
+        presentation: 'card',
       }}>
       <Stack.Screen name="PaedsHomepage" component={PaedsHomepageScreen} />
       <Stack.Screen name="Age" component={AgeScreen} />

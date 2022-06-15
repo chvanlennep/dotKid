@@ -7,6 +7,7 @@ import {
   ScrollView,
 } from 'react-native';
 import {useFormikContext} from 'formik';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import AppText from '../components/AppText';

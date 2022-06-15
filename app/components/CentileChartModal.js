@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../config/colors';
@@ -22,16 +23,11 @@ const chartHeight = chartWidth * 1.6;
 
 LogBox.ignoreLogs(['Warning: Failed prop type:']);
 
-const CentileChartModal = (props) => {
+const CentileChartModal = props => {
   const [modalVisible, setModalVisible] = useState(false);
 
-  const {
-    measurement,
-    measurementType,
-    kind,
-    ageInDays,
-    gestationInDays,
-  } = props;
+  const {measurement, measurementType, kind, ageInDays, gestationInDays} =
+    props;
 
   let titleLabel = '';
   let units = '(cm)';
@@ -94,7 +90,7 @@ const CentileChartModal = (props) => {
     <React.Fragment>
       <TouchableOpacity
         onPress={() => {
-          setModalVisible(true);
+          true;
         }}
         style={{margin: 6}}>
         <Icon

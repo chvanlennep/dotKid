@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {Modal, StyleSheet, View, TouchableOpacity} from 'react-native';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import AppText from '../AppText';

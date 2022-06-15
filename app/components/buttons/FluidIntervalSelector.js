@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import {useFormikContext} from 'formik';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../../config/colors';

@@ -1,8 +1,21 @@
-import React from 'react';
+/* eslint-disable react-native/no-inline-styles */
+import React, {FC} from 'react';
 import {View} from 'react-native';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-function Icon({
+type IconType = {
+  backgroundColor: string;
+  borderRadius: number;
+  height: number;
+  iconColor: string;
+  name: string;
+  width: number;
+  padding: number;
+  margin: number;
+};
+
+const Icon: FC<IconType> = ({
   backgroundColor = 'orange',
   borderRadius,
   height,
@@ -11,7 +24,7 @@ function Icon({
   width,
   padding,
   margin = 0,
-}) {
+}) => {
   return (
     <View
       style={{
@@ -32,6 +45,6 @@ function Icon({
       />
     </View>
   );
-}
+};
 
 export default Icon;

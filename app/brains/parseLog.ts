@@ -27,16 +27,16 @@ export default (functionButtons, type) => {
     }
   }
   objectAsArray.sort((a, b) => {
-    if (a[0].getTime() === b[0].getTime()) {
+    if (a[0].date.getTime() === b[0].date.getTime()) {
       return 0;
     } else {
-      return a[0].getTime() - b[0].getTime() < 0 ? -1 : 1;
+      return a[0].date.getTime() - b[0].date.getTime() < 0 ? -1 : 1;
     }
   });
   const formatTime = time => {
-    let hours = '' + time.getHours();
-    let minutes = '' + time.getMinutes();
-    let seconds = '' + time.getSeconds();
+    let hours = '' + time.date.getHours();
+    let minutes = '' + time.date.getMinutes();
+    let seconds = '' + time.date.getSeconds();
     if (hours.length < 2) {
       hours = '0' + hours;
     }
@@ -48,10 +48,12 @@ export default (functionButtons, type) => {
     }
     return `${hours}:${minutes}:${seconds}`; //removed .${milliseconds}
   };
-  const formatDate = date => {
-    let month = '' + (date.getMonth() + 1);
-    let day = '' + date.getDate();
-    const year = '' + date.getFullYear();
+
+  const formatDate = obj => {
+    let dateEntry = obj.date;
+    let month = '' + (dateEntry.getMonth() + 1);
+    let day = '' + dateEntry.getDate();
+    const year = '' + dateEntry.getFullYear();
     if (month.length < 2) month = '0' + month;
     if (day.length < 2) day = '0' + day;
     return [day, month, year].join('/');
@@ -63,15 +65,20 @@ export default (functionButtons, type) => {
   if (objectAsArray[0][1] !== 'Start Time') {
     startingItem = ` with '${objectAsArray[0][1]}'`;
   }
+  console.log(objectAsArray[0][1]);
   let outputString = `Log of ${type} encounter on ${formatDate(
     objectAsArray[0][0],
   )}:\n\n${formatTime(
     objectAsArray[0][0],
   )}: Resuscitation Encounter started${startingItem}`;
   for (let i = 1; i < objectAsArray.length; i++) {
+    let additionalComment = objectAsArray[i][0].comment
+      ? `\nAdditional note: ${objectAsArray[i][0].comment}`
+      : '';
+
     let newLine = `\n${formatTime(objectAsArray[i][0])}: ${
       objectAsArray[i][1]
-    }`;
+    }${additionalComment}`;
     if (objectAsArray[i][1] === 'Start Time') {
       newLine = `\n${formatTime(objectAsArray[i][0])}: Timer Started`;
     }
@@ -83,9 +90,9 @@ export default (functionButtons, type) => {
     (functionButtons.RIP.length === 1 || functionButtons.ROSC.length === 1)
   ) {
     outputString += `\nTotal elapsed time of resuscitation encounter: ${zeit(
-      objectAsArray[0][0],
+      objectAsArray[0][0].date,
       'string',
-      objectAsArray[objectAsArray.length - 1][0],
+      objectAsArray[objectAsArray.length - 1][0].date,
       true,
       0,
       true,
@@ -98,9 +105,9 @@ export default (functionButtons, type) => {
       functionButtons['Transferred to NICU'].length === 1)
   ) {
     outputString += `\nTotal elapsed time of resuscitation encounter: ${zeit(
-      objectAsArray[0][0],
+      objectAsArray[0][0].date,
       'string',
-      objectAsArray[objectAsArray.length - 1][0],
+      objectAsArray[objectAsArray.length - 1][0].date,
       true,
       0,
       true,

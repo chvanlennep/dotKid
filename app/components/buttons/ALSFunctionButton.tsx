@@ -1,56 +1,44 @@
 import React, {FC} from 'react';
-import {
-  Alert,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
+import {Alert, StyleProp, ViewStyle} from 'react-native';
 
 import colors from '../../config/colors';
-import AppText from '../AppText';
-import defaultStyles from '../../config/styles';
-//@ts-ignore
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import {observer} from 'mobx-react';
 import {aplsStore} from '../../brains/stateManagement/aplsState.store';
+import {nlsStore} from '../../brains/stateManagement/nlsState.store';
+import {ALSGenericFunctionButton} from './ALSGenericFunctionButton';
 
-type ALSFunctionButtonsProps = {
-  backgroundColorPressed: string | null;
+export type ALSFunctionButtonsProps = {
+  acceptsMultipleClicks?: boolean;
+  backgroundColorPressed?: string | null;
+  clicks?: number;
   kind: 'child' | 'neonate';
-  style: StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle>;
   title: string;
   type: 'function' | 'checklist';
 };
 
 export const ALSFunctionButton: FC<ALSFunctionButtonsProps> = observer(
-  ({
-    kind = 'child',
-    style,
-    backgroundColorPressed = null,
-    title,
-    type = 'function',
-  }) => {
-    const specificArray = aplsStore.getFunctionButtonTime(title);
+  ({acceptsMultipleClicks, kind, style, title, type = 'function'}) => {
+    const store = kind === 'child' ? aplsStore : nlsStore;
 
-    const changeBackground = specificArray.length > 0 ? true : false;
+    let specificArray = store.getFunctionButtonTime(title);
 
-    const movingChest = title === 'Chest is now moving' ? true : false;
-    // logs time with event button
+    //consider making a new component or changing code below
+    const changeBackground = specificArray.length > 0;
 
     const pressedColor = kind === 'child' ? colors.primary : colors.secondary;
 
     const updateTime = () => {
-      if (type === 'function' && aplsStore.endEncounter === false) {
-        aplsStore.addTimeHandler(title);
-      } else if (type === 'checklist' && aplsStore.endEncounter === false) {
-        //**work in progress for nlsStore**
+      if (type === 'function' && !store.endEncounter) {
+        store.addTimeHandler(title);
+      } else if (type === 'checklist' && !store.endEncounter) {
+        store.addTime(title);
       }
     };
 
     const handlePress = () => {
-      if (specificArray.length < 1) {
+      if (specificArray.length < 1 || acceptsMultipleClicks) {
         updateTime();
       } else {
         Alert.alert(
@@ -59,7 +47,7 @@ export const ALSFunctionButton: FC<ALSFunctionButtonsProps> = observer(
           [
             {
               text: 'Undo',
-              onPress: () => aplsStore.removeTime(title),
+              onPress: () => store.removeTime(title),
               style: 'cancel',
             },
             {text: 'OK', onPress: () => null},
@@ -70,59 +58,21 @@ export const ALSFunctionButton: FC<ALSFunctionButtonsProps> = observer(
     };
 
     const handleRemovePress = () => {
-      aplsStore.removeTime(title);
+      store.removeTime(title);
     };
 
     return (
-      <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
-        <View
-          style={[
-            styles.button,
-            style,
-            changeBackground && [
-              {
-                backgroundColor: backgroundColorPressed || pressedColor,
-              },
-            ],
-          ]}>
-          <AppText style={styles.text}>{title}</AppText>
-          {changeBackground && !movingChest && (
-            <>
-              <TouchableOpacity style={styles.undo} onPress={handleRemovePress}>
-                <MaterialCommunityIcons
-                  name="refresh"
-                  color={colors.white}
-                  size={20}
-                />
-              </TouchableOpacity>
-            </>
-          )}
-        </View>
-      </TouchableOpacity>
+      <ALSGenericFunctionButton
+        acceptsMultipleClicks={acceptsMultipleClicks}
+        changeBackground={changeBackground}
+        clicks={specificArray.length}
+        handlePress={handlePress}
+        handleRemovePress={handleRemovePress}
+        kind={kind}
+        pressedColor={pressedColor}
+        style={style}
+        title={title}
+      />
     );
   },
 );
-
-const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    backgroundColor: colors.medium,
-    borderRadius: 5,
-    flexDirection: 'row',
-    height: 57,
-    margin: 5,
-    padding: 10,
-  },
-  text: {
-    textAlignVertical: 'center',
-    height: 25,
-    color: colors.white,
-    width: defaultStyles.container.width - 55,
-  },
-  undo: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 35,
-    width: 35,
-  },
-});

@@ -6,7 +6,6 @@ import Screen from './Screen';
 import TopIcon from './TopIcon';
 import colors from '../config/colors';
 import routes from '../navigation/routes';
-import {aplsStore} from '../brains/stateManagement/aplsState.store';
 
 const ReferenceBackgroundScreen = ({
   children,
@@ -21,33 +20,6 @@ const ReferenceBackgroundScreen = ({
   if (!isHomePage) {
     renderBack = true;
   }
-
-  const handleBackPress = e => {
-    Alert.alert(
-      'Are you sure you want a different resuscitation screen?',
-      'This will reset your current resuscitation encounter',
-      [
-        {
-          text: 'Yes',
-          onPress: () => navigation.dispatch(e.data.action),
-        },
-        {
-          text: 'Cancel',
-          onPress: () => 'Cancel',
-        },
-      ],
-      {cancelable: false},
-    );
-  };
-
-  useEffect(() => {
-    navigation.addListener('beforeRemove', e => {
-      if (aplsStore.timerIsRunning) {
-        e.preventDefault();
-        handleBackPress(e);
-      }
-    });
-  }, []);
 
   return (
     <Screen

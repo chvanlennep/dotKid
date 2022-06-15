@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../../app/config/colors';
@@ -134,14 +135,14 @@ const APGARScreen = () => {
   });
 
   const changePickerState = (name, key, value) => {
-    setPickerState((pickerState) => {
+    setPickerState(pickerState => {
       const workingState = {...pickerState};
       workingState[name][key] = value;
       return workingState;
     });
   };
 
-  const togglePicker = (name) => {
+  const togglePicker = name => {
     for (let i = 0; i < apgarArray.length; i++) {
       if (name !== apgarArray[i]) {
         if (pickerState[apgarArray[i]].open) {
@@ -163,9 +164,9 @@ const APGARScreen = () => {
   };
 
   const initialValues = {};
-  apgarArray.map((item) => (initialValues[item] = ''));
+  apgarArray.map(item => (initialValues[item] = ''));
 
-  const handleFormikSubmit = (values) => {
+  const handleFormikSubmit = values => {
     let submitArray = [];
     let localScore = 0;
     for (let i = 0; i < apgarArray.length; i++) {

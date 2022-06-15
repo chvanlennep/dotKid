@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, Modal, StyleSheet, TouchableOpacity, View} from 'react-native';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../../app/config/colors';
@@ -9,91 +10,35 @@ import ALSListHeader from './buttons/ALSListHeader';
 import AppForm from '../components/AppForm';
 import AssessBabyInput from '../components/buttons/input/AssessBabyInput';
 import AssessBabyTitle from './AssessBabyTitle';
+import {initialAssessmentDetails} from '../brains/nlsObjects';
+import {nlsStore} from '../brains/stateManagement/nlsState.store';
+import {observer} from 'mobx-react';
 
-const InitialAssessBabyModal = ({
-  initialAssessmentState,
-  assessmentState,
-  logState,
-  resetState,
-  timerState,
-}) => {
-  const nameArray = [
-    'Dry and Wrap Baby',
-    'Hat On',
-    'Heart Rate',
-    'Breathing',
-    'Colour',
-    'Tone',
-  ];
+const InitialAssessBabyModal = observer(() => {
+  const nameArray = initialAssessmentDetails.map(({name}) => name);
 
   const makeInitialPickerState = () => {
-    let i = 0;
     const workingObject = {};
-    while (i < nameArray.length) {
-      workingObject[nameArray[i]] = {
-        open: nameArray[i] === 'Dry and Wrap Baby' ? true : false,
+    nameArray.forEach(name => {
+      workingObject[name] = {
+        open: name === 'Dry and Wrap Baby' ? true : false,
         color: false,
         filled: false,
         cancelled: false,
-        submitForm: false,
+        submit: false,
       };
-      i++;
-    }
+    });
+
     return workingObject;
   };
 
-  const setAssessBaby = assessmentState.setValue;
   const [modalVisible, setModalVisible] = useState(false);
   const [pickerState, setPickerState] = useState(makeInitialPickerState());
   const [pickerText, setPickerText] = useState(nameArray[0]);
   const [submitForm, setSubmitForm] = useState(false);
   const [resetForm, setResetForm] = useState(false);
 
-  const allPickerDetails = [
-    {
-      name: 'Dry and Wrap Baby',
-      iconName: 'tumble-dryer',
-      pickerContent: [{value: 'Done'}, {value: 'Not Done'}],
-    },
-    {
-      name: 'Hat On',
-      iconName: 'hat-fedora',
-      pickerContent: [{value: 'Done'}, {value: 'Not Done'}],
-    },
-    {
-      name: 'Heart Rate',
-      iconName: 'heart-pulse',
-      pickerContent: [{value: '<60'}, {value: '60-100'}, {value: '>100'}],
-    },
-    {
-      name: 'Breathing',
-      iconName: 'weather-windy',
-      pickerContent: [
-        {value: 'Apnoeic'},
-        {value: 'Inadequate Breathing'},
-        {value: 'Adequate Breathing'},
-      ],
-    },
-    {
-      name: 'Colour',
-      iconName: 'percent',
-      pickerContent: [
-        {value: 'Pale'},
-        {value: 'Blue'},
-        {value: 'Blue extremities'},
-        {value: 'Pink'},
-      ],
-    },
-    {
-      name: 'Tone',
-      iconName: 'human-handsdown',
-      pickerContent: [
-        {value: 'Floppy'},
-        {value: 'Poor Tone'},
-        {value: 'Good Tone'},
-      ],
-    },
-  ];
+  const allPickerDetails = initialAssessmentDetails;
   const renderTopButtons = allPickerDetails.map((item, index) => (
     <TouchableOpacity onPress={() => togglePicker(item.name)} key={index}>
       <View
@@ -128,19 +73,19 @@ const InitialAssessBabyModal = ({
   });
 
   const changePickerState = (name, key, value) => {
-    setPickerState((pickerState) => {
+    setPickerState(pickerState => {
       const workingState = {...pickerState};
       workingState[name][key] = value;
       return workingState;
     });
   };
 
-  const togglePicker = (name) => {
+  console.log({nameArray});
+  const togglePicker = name => {
     for (let i = 0; i < nameArray.length; i++) {
       if (name !== nameArray[i]) {
         if (pickerState[nameArray[i]].open) {
           if (!pickerState[nameArray[i].color]) {
-            //Alert.alert('');
           }
           changePickerState(nameArray[i], 'open', false);
           changePickerState(name, 'open', true);
@@ -153,54 +98,39 @@ const InitialAssessBabyModal = ({
     }
   };
 
-  const reset = resetState.value;
-
-  const functionButtons = logState.value;
-  const setFunctionButtons = logState.setValue;
-
-  const initialAssessmentComplete = initialAssessmentState.value;
-  const setInitialAssessmentComplete = initialAssessmentState.setValue;
-
-  const setIsTimerActive = timerState.setValue;
+  const initialAssessmentComplete = Boolean(
+    nlsStore.getFunctionButtonTime('Baby Assessed:').length,
+  );
 
   const initialValues = {};
-  nameArray.map((item) => (initialValues[item] = ''));
+  nameArray.map(item => (initialValues[item] = ''));
 
   // logs time with event button. This has been modified from the others to make sure dry / wrap and hat on appear in order
-  const updateTime = (submitArray, oldState) => {
+  const updateTime = submitArray => {
+    nlsStore.addTime('Baby Assessed:');
     for (let i = 0; i < submitArray.length; i++) {
-      const addTime = (date, millisecs) => {
-        date.setTime(date.getTime() + millisecs);
-        return date;
-      };
-      const timeStamp = addTime(new Date(), i * 5);
       const title = submitArray[i];
-      const oldButtonArray = oldState[title];
-      const newButtonArray = oldButtonArray.concat(timeStamp);
-      setFunctionButtons((oldState) => {
-        const updatingState = oldState;
-        updatingState[title] = newButtonArray;
-        return updatingState;
-      });
+      nlsStore.addTimeHandler(title);
     }
   };
 
-  const handleFormikSubmit = (values) => {
+  const handleSubmit = values => {
     let submitArray = [];
     for (let i = 0; i < nameArray.length; i++) {
       const key = nameArray[i];
       const value = values[nameArray[i]];
       if (key === 'Dry and Wrap Baby' || key === 'Hat On') {
-        if (value === 'Done') submitArray.push(key);
+        if (value === 'Done') {
+          submitArray.push(key);
+        }
       } else {
         submitArray.push(value);
       }
     }
-    updateTime(submitArray, functionButtons);
+    console.log({submitArray});
+    updateTime(submitArray);
     setPickerText(nameArray[0]);
     setPickerState(makeInitialPickerState());
-    setInitialAssessmentComplete(true);
-    setAssessBaby(true);
     setModalVisible(false);
   };
 
@@ -218,7 +148,6 @@ const InitialAssessBabyModal = ({
         ],
       );
     } else {
-      setIsTimerActive(true);
       setModalVisible(true);
     }
   };
@@ -246,13 +175,6 @@ const InitialAssessBabyModal = ({
     );
   };
 
-  // reset button logic
-  useEffect(() => {
-    if (reset === true) {
-      setInitialAssessmentComplete(false);
-    }
-  }, [reset, setInitialAssessmentComplete]);
-
   // tick button pressed
   useEffect(() => {
     for (let i = 0; i < nameArray.length; i++) {
@@ -264,6 +186,9 @@ const InitialAssessBabyModal = ({
             completed++;
           }
         }
+        console.log({completed});
+        console.log(nameArray.length);
+        console.log({submitForm});
         if (completed === nameArray.length - 1 && !submitForm) {
           setSubmitForm(true);
           break;
@@ -310,7 +235,6 @@ const InitialAssessBabyModal = ({
       <ALSListHeader
         iconColor={initialAssessmentComplete ? colors.secondary : colors.dark}
         isModal={true}
-        initialAssessmentState={initialAssessmentState}
         onPress={handlePress}
         style={[
           !initialAssessmentComplete && styles.headingButton,
@@ -337,9 +261,7 @@ const InitialAssessBabyModal = ({
               </View>
             </TouchableOpacity>
             <AppText style={styles.heading}>Initial Assessment</AppText>
-            <AppForm
-              initialValues={initialValues}
-              onSubmit={handleFormikSubmit}>
+            <AppForm initialValues={initialValues} onSubmit={handleSubmit}>
               <View style={styles.buttonRow}>{renderTopButtons}</View>
               <AssessBabyTitle
                 submitObject={[submitForm, setSubmitForm]}
@@ -354,7 +276,7 @@ const InitialAssessBabyModal = ({
       </Modal>
     </React.Fragment>
   );
-};
+});
 
 export default InitialAssessBabyModal;
 const styles = StyleSheet.create({

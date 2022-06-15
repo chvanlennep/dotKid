@@ -1,69 +1,43 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, FC} from 'react';
 import {
   Alert,
   Modal,
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  ListRenderItem,
   View,
+  ViewStyle,
+  NativeSyntheticEvent,
 } from 'react-native';
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../config/colors';
 import defaultStyles from '../config/styles';
 import ALSDisplayButton from './buttons/ALSDisplayButton';
 import {chestRiseFlatList, noChestRise} from '../brains/nlsObjects';
-import ALSFunctionButton from '../components/buttons/ALSFunctionButton';
 import AppText from './AppText';
-import ALSTertiaryFunctionButton from './buttons/ALSTertiaryFunctionButton';
+import {nlsStore} from '../brains/stateManagement/nlsState.store';
+import {ChestRiseSubmitButton} from './buttons/ChestRiseSubmitButton';
+import {ChestRiseButton} from './buttons/ChestRiseButton';
 
-const NoChestRiseModal = ({
-  afterClose,
-  logState,
-  encounterState,
-  resetState,
-  timerState,
-  style,
-}) => {
-  const makeInitialState = () => {
-    const initialState = {};
-    for (let i = 0; i < noChestRise.length; i++) {
-      initialState[noChestRise[i].id] = [];
-    }
-    return initialState;
-  };
-
-  const [localLog, setLocalLog] = useState(makeInitialState());
+const NoChestRiseModal: FC<{
+  afterClose: (event: NativeSyntheticEvent<any>) => void;
+  style: ViewStyle;
+}> = ({afterClose, style}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
-  const localLogState = {
-    value: localLog,
-    setValue: setLocalLog,
+  const modalState = {
+    value: modalVisible,
+    setValue: setModalVisible,
   };
 
-  const setIsTimerActive = timerState.setValue;
-  const isTimerActive = timerState.value;
-  const setFunctionButtons = logState.setValue;
-
-  const renderListItem = ({item}) => {
-    return (
-      <ALSTertiaryFunctionButton
-        kind="neonate"
-        title={item.id}
-        logState={localLogState}
-        encounterState={encounterState}
-        resetState={resetState}
-        timerState={timerState}
-        style={styles.buttons}
-        inModal
-      />
-    );
+  const renderListItem: ListRenderItem<any> = ({item}) => {
+    return <ChestRiseButton title={item.id} />;
   };
 
   const handlePress = () => {
-    if (!isTimerActive) {
-      setIsTimerActive(true);
-    }
     setModalVisible(true);
   };
 
@@ -79,7 +53,7 @@ const NoChestRiseModal = ({
         {
           text: 'Close Checklist',
           onPress: () => {
-            setLocalLog(makeInitialState());
+            nlsStore.resetChestRiseColor();
             setModalVisible(false);
           },
         },
@@ -87,23 +61,6 @@ const NoChestRiseModal = ({
       {cancelable: false},
     );
   };
-
-  useEffect(() => {
-    if (localLog['Chest is now moving'].length > 0) {
-      setFunctionButtons((oldState) => {
-        const updatingState = {...oldState};
-        for (const [key, value] of Object.entries(localLog)) {
-          const timeStamp = value;
-          const oldArray = updatingState[key];
-          const newArray = oldArray.concat(timeStamp);
-          updatingState[key] = newArray;
-        }
-        return updatingState;
-      });
-      setLocalLog(makeInitialState());
-      setModalVisible(false);
-    }
-  }, [localLog, setFunctionButtons]);
 
   return (
     <React.Fragment>
@@ -136,34 +93,16 @@ const NoChestRiseModal = ({
               <View style={styles.assessment}>
                 <FlatList
                   data={chestRiseFlatList}
-                  keyExtractor={(chestRiseFlatList) =>
+                  // eslint-disable-next-line @typescript-eslint/no-shadow
+                  keyExtractor={chestRiseFlatList =>
                     chestRiseFlatList.id.toString()
                   }
                   renderItem={renderListItem}
                   ListHeaderComponent={
-                    <ALSTertiaryFunctionButton
-                      kind="neonate"
-                      title={noChestRise[0].id}
-                      timerState={timerState}
-                      logState={localLogState}
-                      encounterState={encounterState}
-                      resetState={resetState}
-                      style={styles.buttons}
-                      inModal
-                    />
+                    <ChestRiseButton title={noChestRise[0].id} />
                   }
                   ListFooterComponent={
-                    <ALSFunctionButton
-                      kind="neonate"
-                      title={'Chest is now moving'}
-                      logState={localLogState}
-                      encounterState={encounterState}
-                      timerState={timerState}
-                      resetState={resetState}
-                      style={[styles.buttons]}
-                      backgroundColorPressed={colors.black}
-                      inModal
-                    />
+                    <ChestRiseSubmitButton modalState={modalState} />
                   }
                 />
               </View>

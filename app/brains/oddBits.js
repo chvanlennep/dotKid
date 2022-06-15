@@ -1,7 +1,7 @@
 import {Alert} from 'react-native';
 
 // input a number and outputs a string with ordinal suffix attached
-const addOrdinalSuffix = (inputNumber) => {
+const addOrdinalSuffix = inputNumber => {
   const answerNumber = inputNumber;
   let workingNumber = inputNumber;
   if (Number.isInteger(inputNumber) === false) {
@@ -32,7 +32,7 @@ const calculateBMI = (weight, heightInCm) => {
 };
 
 // simple check neonatal fluid values are at default (could've done JSON.stringify but only discovered this later)
-const checkDefault = (values) => {
+const checkDefault = values => {
   if (
     values.day1 === '60' &&
     values.day2 === '80' &&
@@ -49,9 +49,7 @@ const checkTimeStamps = (globalObject, initialFormikValues, minsAgo = 2) => {
   const nameArray = [];
   const now = new Date();
   for (const [key, value] of Object.entries(globalObject)) {
-    for (const [formikKey, formikObject] of Object.entries(
-      initialFormikValues,
-    )) {
+    for (const [Key, formikObject] of Object.entries(initialFormikValues)) {
       if (value.timeStamp && key === formikKey) {
         const timeStamp = value.timeStamp;
         const millisecondDifference = now.getTime() - timeStamp.getTime();
@@ -66,7 +64,7 @@ const checkTimeStamps = (globalObject, initialFormikValues, minsAgo = 2) => {
 };
 
 // simple is number plural or not
-const decidePluralSuffix = (inputNumber) => {
+const decidePluralSuffix = inputNumber => {
   if (inputNumber === 1) {
     return '';
   } else {
@@ -158,7 +156,7 @@ const handleOldValues = (
       for (let i = 0; i < oldValueArray.length; i++) {
         mutableObject[oldValueArray[i]].timeStamp = now;
       }
-      setGlobalStats((state) => {
+      setGlobalStats(state => {
         const newState = {...state};
         newState[kind] = mutableObject;
         return newState;
@@ -188,13 +186,13 @@ const handleOldValues = (
   }
 };
 
-const timeout = (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+const timeout = ms => {
+  return new Promise(resolve => setTimeout(resolve, ms));
 };
 
 // updates simple object states, first argument is an object containing the parts to be updated
 const updateLocalState = async (object, setState) => {
-  await setState((state) => {
+  await setState(state => {
     const mutableState = {...state};
     for (const [key, value] of Object.entries(object)) {
       mutableState[key] = value;

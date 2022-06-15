@@ -9,20 +9,19 @@ const Stack = createStackNavigator();
 const CalcNavigator = () => {
   return (
     <Stack.Navigator
-      name="RootCalc"
       screenOptions={{
         headerShown: false,
-        presentation: 'card'
+        presentation: 'card',
       }}>
       <Stack.Screen
         name="RootPaed"
         component={PaedsCalcNavigator}
-        screenOptions={{headerShown: false}}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name="RootN"
         component={NCalcNavigator}
-        screenOptions={{headerShown: false}}
+        options={{headerShown: false}}
       />
     </Stack.Navigator>
   );

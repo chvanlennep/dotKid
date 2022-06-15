@@ -32,4 +32,5 @@ export default Object.freeze({
   APLS: 'APLSScreen',
   NLS: 'NLSScreen',
   CGA: 'CGA',
+  COMMENT_MODAL: 'CommentModal',
 });

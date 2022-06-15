@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, FC} from 'react';
 import {
   Modal,
   StyleSheet,
@@ -6,15 +6,19 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
+//@ts-ignore
+//@ts-ignore
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../config/colors';
 import {containerWidth} from '../config/styles';
-import EndEncounterButton from '../components/buttons/EndEncounterButton';
+import EndEncounterButton from './buttons/EndEncounterButton';
 import AppText from './AppText';
 import ALSToolButton from './buttons/ALSToolButton';
 
-const EndEncounterModal = ({logState, setLogVisible}) => {
+const EndEncounterModal: FC<{
+  setLogVisible: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({setLogVisible}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const modalState = {
@@ -59,25 +63,19 @@ const EndEncounterModal = ({logState, setLogVisible}) => {
               </View>
               <View style={styles.assessment}>
                 <EndEncounterButton
-                  kind="neonate"
                   title="Resuscitation complete"
-                  logState={logState}
                   modalState={modalState}
                   setLogVisible={setLogVisible}
                   style={styles.buttons}
                 />
                 <EndEncounterButton
-                  kind="neonate"
                   title="Transferred to NICU"
-                  logState={logState}
                   modalState={modalState}
                   setLogVisible={setLogVisible}
                   style={styles.buttons}
                 />
                 <EndEncounterButton
-                  kind="neonate"
                   title="RIP"
-                  logState={logState}
                   modalState={modalState}
                   setLogVisible={setLogVisible}
                   style={styles.buttons}
